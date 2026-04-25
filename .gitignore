@@ -1,0 +1,22 @@
+.env
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+prompt_final/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Data artifacts — raw datasets should NOT be committed (too large + license issues)
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+
+# Reports
+reports/
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,17 @@
+drug_name,adverse_effect,sentence,source,record_id
+atorvastatin,rhabdomyolysis,A case of atorvastatin-induced rhabdomyolysis with acute renal failure.,ADE,ADE-00000001
+simvastatin,myopathy,Simvastatin therapy produced severe myopathy in a patient on amiodarone.,ADE,ADE-00000002
+warfarin,intracranial hemorrhage,Warfarin therapy was associated with spontaneous intracranial hemorrhage.,ADE,ADE-00000003
+amiodarone,pulmonary toxicity,Amiodarone-induced pulmonary toxicity presented as subacute dyspnea.,ADE,ADE-00000004
+lisinopril,angioedema,A 62-year-old developed angioedema of the tongue after starting lisinopril.,ADE,ADE-00000005
+metformin,lactic acidosis,Severe lactic acidosis was observed in a patient taking metformin with impaired renal function.,ADE,ADE-00000006
+methotrexate,pancytopenia,High-dose methotrexate treatment led to pancytopenia in a rheumatoid arthritis patient.,ADE,ADE-00000007
+ibuprofen,acute kidney injury,NSAID-induced acute kidney injury followed chronic ibuprofen use.,ADE,ADE-00000008
+sertraline,serotonin syndrome,Co-administration of sertraline and tramadol precipitated serotonin syndrome.,ADE,ADE-00000009
+digoxin,arrhythmia,Digoxin toxicity manifested as ventricular arrhythmia in an elderly patient.,ADE,ADE-00000010
+clarithromycin,QT prolongation,Clarithromycin was implicated in QT prolongation leading to torsades de pointes.,ADE,ADE-00000011
+omeprazole,vitamin B12 deficiency,Long-term omeprazole use has been associated with vitamin B12 deficiency.,ADE,ADE-00000012
+ciprofloxacin,tendinopathy,Achilles tendinopathy developed after ciprofloxacin therapy.,ADE,ADE-00000013
+spironolactone,gynecomastia,Spironolactone caused gynecomastia in a male patient with heart failure.,ADE,ADE-00000014
+aspirin,gastrointestinal bleeding,Low-dose aspirin therapy was complicated by gastrointestinal bleeding.,ADE,ADE-00000015
+furosemide,hypokalemia,Furosemide-induced hypokalemia precipitated cardiac arrhythmia.,ADE,ADE-00000016

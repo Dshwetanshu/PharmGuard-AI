@@ -1,0 +1,37 @@
+record_id,drug_name,side_effect_name,umls_cui,source
+SIDER-00000001,aspirin,gastritis,C0017152,SIDER
+SIDER-00000002,aspirin,gastrointestinal hemorrhage,C0017181,SIDER
+SIDER-00000003,aspirin,tinnitus,C0040264,SIDER
+SIDER-00000004,aspirin,dyspepsia,C0013395,SIDER
+SIDER-00000005,lisinopril,dry cough,C0010200,SIDER
+SIDER-00000006,lisinopril,hyperkalemia,C0020461,SIDER
+SIDER-00000007,lisinopril,angioedema,C0002994,SIDER
+SIDER-00000008,lisinopril,dizziness,C0012833,SIDER
+SIDER-00000009,spironolactone,hyperkalemia,C0020461,SIDER
+SIDER-00000010,spironolactone,gynecomastia,C0018418,SIDER
+SIDER-00000011,spironolactone,menstrual irregularity,C0025345,SIDER
+SIDER-00000012,warfarin,hemorrhage,C0019080,SIDER
+SIDER-00000013,warfarin,bruising,C0553470,SIDER
+SIDER-00000014,warfarin,hepatotoxicity,C0860207,SIDER
+SIDER-00000015,metformin,diarrhea,C0011991,SIDER
+SIDER-00000016,metformin,lactic acidosis,C0001125,SIDER
+SIDER-00000017,metformin,nausea,C0027497,SIDER
+SIDER-00000018,atorvastatin,myalgia,C0231528,SIDER
+SIDER-00000019,atorvastatin,elevated transaminases,C0151766,SIDER
+SIDER-00000020,atorvastatin,rhabdomyolysis,C0035410,SIDER
+SIDER-00000021,amiodarone,pulmonary toxicity,C0349506,SIDER
+SIDER-00000022,amiodarone,thyroid dysfunction,C0040128,SIDER
+SIDER-00000023,amiodarone,QT prolongation,C0429028,SIDER
+SIDER-00000024,sertraline,nausea,C0027497,SIDER
+SIDER-00000025,sertraline,insomnia,C0917801,SIDER
+SIDER-00000026,sertraline,sexual dysfunction,C0549622,SIDER
+SIDER-00000027,simvastatin,myopathy,C0026848,SIDER
+SIDER-00000028,simvastatin,elevated creatine kinase,C0741575,SIDER
+SIDER-00000029,digoxin,arrhythmia,C0003811,SIDER
+SIDER-00000030,digoxin,nausea,C0027497,SIDER
+SIDER-00000031,clarithromycin,taste disturbance,C0040822,SIDER
+SIDER-00000032,clarithromycin,QT prolongation,C0429028,SIDER
+SIDER-00000033,ibuprofen,gastrointestinal hemorrhage,C0017181,SIDER
+SIDER-00000034,ibuprofen,acute kidney injury,C0022660,SIDER
+SIDER-00000035,omeprazole,headache,C0018681,SIDER
+SIDER-00000036,omeprazole,vitamin B12 deficiency,C0042846,SIDER

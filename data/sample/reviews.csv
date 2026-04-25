@@ -1,0 +1,11 @@
+drug_name,condition,review_text,effectiveness,satisfaction,source,record_id
+lisinopril,hypertension,Works well for my blood pressure but gave me a persistent dry cough after 3 months. Had to switch.,4,3,WebMD,WMD-00000001
+lisinopril,hypertension,Good results. Takes about two weeks to see full effect. Mild dizziness initially.,5,4,WebMD,WMD-00000002
+metformin,type 2 diabetes,Works but the GI side effects were rough for the first month. Now tolerable.,4,4,WebMD,WMD-00000003
+metformin,type 2 diabetes,Reduced my A1C significantly. Take with food to avoid stomach upset.,5,5,WebMD,WMD-00000004
+warfarin,atrial fibrillation,Requires frequent INR checks. Dosage adjusted multiple times. Mind what you eat.,4,3,WebMD,WMD-00000005
+atorvastatin,high cholesterol,Lowered my LDL significantly. Some muscle aches at higher dose.,5,4,WebMD,WMD-00000006
+sertraline,depression,Took 6 weeks to feel better. Worth the wait. Mild sexual side effects.,5,4,WebMD,WMD-00000007
+aspirin,cardiovascular prevention,Low dose daily. No issues over years of use.,4,5,WebMD,WMD-00000008
+omeprazole,acid reflux,Works quickly. Concerned about long-term use effects.,5,4,WebMD,WMD-00000009
+amiodarone,atrial fibrillation,Effective but the side effect monitoring is intense. Regular labs required.,5,3,WebMD,WMD-00000010

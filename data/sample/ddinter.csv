@@ -1,0 +1,36 @@
+record_id,drug_a_name,drug_b_name,drug_a_rxcui,drug_b_rxcui,condition_name,condition_id,severity,mechanism,prr,frequency,source
+DDI-00000001,warfarin,aspirin,,,additive bleeding via dual antihemostatic action,,Major,Both drugs impair hemostasis; concurrent use markedly increases bleeding risk,,,DDInter
+DDI-00000002,warfarin,ibuprofen,,,NSAID potentiation of anticoagulation,,Major,NSAID inhibits platelet function and can displace warfarin from protein binding,,,DDInter
+DDI-00000003,lisinopril,spironolactone,,,additive potassium retention,,Major,ACE inhibition + K-sparing diuretic → hyperkalemia risk,,,DDInter
+DDI-00000004,simvastatin,clarithromycin,,,CYP3A4-mediated statin exposure,,Major,Clarithromycin strongly inhibits CYP3A4 metabolism of simvastatin,,,DDInter
+DDI-00000005,simvastatin,ritonavir,,,protease inhibitor × statin,,Major,Ritonavir CYP3A4 inhibition causes marked simvastatin accumulation,,,DDInter
+DDI-00000006,sertraline,phenelzine,,,serotonin syndrome,,Major,MAOI + SSRI co-administration is contraindicated,,,DDInter
+DDI-00000007,tramadol,sertraline,,,serotonergic overlap,,Major,Additive serotonergic effects can precipitate serotonin syndrome,,,DDInter
+DDI-00000008,tramadol,fluoxetine,,,serotonergic overlap,,Major,Additive serotonergic effects can precipitate serotonin syndrome,,,DDInter
+DDI-00000009,amiodarone,digoxin,,,digoxin clearance reduction,,Major,Amiodarone reduces digoxin clearance; digoxin dose typically halved,,,DDInter
+DDI-00000010,amiodarone,warfarin,,,CYP2C9 inhibition,,Major,Amiodarone inhibits warfarin metabolism; INR monitoring required,,,DDInter
+DDI-00000011,alprazolam,oxycodone,,,CNS depressant additivity,,Major,Benzodiazepine + opioid combination carries respiratory depression risk,,,DDInter
+DDI-00000012,methotrexate,ibuprofen,,,reduced methotrexate clearance,,Major,NSAID-induced renal clearance reduction can elevate methotrexate toxicity,,,DDInter
+DDI-00000013,azithromycin,sotalol,,,additive QT prolongation,,Major,Both drugs prolong the QT interval; risk of torsades,,,DDInter
+DDI-00000014,rifampin,ethinyl estradiol,,,CYP induction,,Major,Rifampin induces CYP3A4 lowering contraceptive exposure,,,DDInter
+DDI-00000015,theophylline,ciprofloxacin,,,CYP1A2 inhibition,,Major,Ciprofloxacin inhibits theophylline metabolism; toxicity risk,,,DDInter
+DDI-00000016,lithium,hydrochlorothiazide,,,lithium clearance reduction,,Major,Thiazide-induced sodium depletion reduces lithium renal clearance,,,DDInter
+DDI-00000017,metoprolol,verapamil,,,additive negative chronotropy,,Major,Beta-blocker + non-DHP CCB risk bradycardia and AV block,,,DDInter
+DDI-00000018,clopidogrel,omeprazole,,,CYP2C19 inhibition,,Moderate,PPI inhibition of CYP2C19 reduces clopidogrel activation,,,DDInter
+DDI-00000019,aspirin,omeprazole,,,reduced antiplatelet response,,Moderate,Observed signal of reduced aspirin efficacy with PPI co-use,,,DDInter
+DDI-00000020,aspirin,sertraline,,,additive GI bleeding,,Moderate,SSRI-induced platelet dysfunction plus aspirin raises bleeding risk,,,DDInter
+DDI-00000021,sertraline,ibuprofen,,,additive GI bleeding,,Moderate,SSRI + NSAID combination increases gastrointestinal bleeding,,,DDInter
+DDI-00000022,atorvastatin,gemfibrozil,,,myopathy risk,,Moderate,Fibrate inhibits statin glucuronidation raising myopathy risk,,,DDInter
+DDI-00000023,warfarin,trimethoprim,,,CYP2C9 inhibition,,Moderate,Trimethoprim inhibits warfarin metabolism; INR may rise,,,DDInter
+DDI-00000024,insulin,metoprolol,,,masked hypoglycemia,,Moderate,Beta-blocker may mask adrenergic signs of hypoglycemia,,,DDInter
+DDI-00000025,digoxin,furosemide,,,hypokalemia-driven digoxin toxicity,,Moderate,Diuretic-induced hypokalemia sensitizes the myocardium to digoxin,,,DDInter
+DDI-00000026,tamoxifen,paroxetine,,,CYP2D6 inhibition,,Moderate,Paroxetine blocks CYP2D6 activation of tamoxifen to endoxifen,,,DDInter
+DDI-00000027,methotrexate,omeprazole,,,reduced MTX clearance,,Moderate,PPI co-administration delays methotrexate elimination,,,DDInter
+DDI-00000028,ciprofloxacin,calcium carbonate,,,chelation-reduced absorption,,Moderate,Divalent cations chelate fluoroquinolones lowering absorption,,,DDInter
+DDI-00000029,albuterol,propranolol,,,beta-receptor antagonism,,Moderate,Non-selective beta-blockade can blunt bronchodilator effect,,,DDInter
+DDI-00000030,duloxetine,tramadol,,,serotonergic overlap,,Major,Combined serotonergic agents can precipitate serotonin syndrome,,,DDInter
+DDI-00000031,lisinopril,ibuprofen,,,NSAID-induced renal dysfunction,,Moderate,NSAID blunts renal prostaglandin-mediated protection during ACE-I use,,,DDInter
+DDI-00000032,gabapentin,oxycodone,,,CNS depressant additivity,,Moderate,Combined CNS depression with respiratory concerns,,,DDInter
+DDI-00000033,amlodipine,simvastatin,,,mild CYP3A4 interaction,,Minor,Amlodipine modestly increases simvastatin exposure,,,DDInter
+DDI-00000034,ferrous sulfate,levothyroxine,,,reduced levothyroxine absorption,,Moderate,Iron salts form chelates with levothyroxine lowering absorption,,,DDInter
+DDI-00000035,levothyroxine,omeprazole,,,reduced levothyroxine absorption,,Minor,Elevated gastric pH reduces levothyroxine dissolution,,,DDInter

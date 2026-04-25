@@ -1,0 +1,13 @@
+drug_name,condition,review_text,rating,source,record_id
+metformin,diabetes type 2,Helped control my blood sugar. GI upset faded after two weeks.,8,UCI,UCI-00000001
+lisinopril,high blood pressure,Lowered BP well but the dry cough was persistent.,6,UCI,UCI-00000002
+atorvastatin,high cholesterol,LDL dropped significantly after three months.,9,UCI,UCI-00000003
+sertraline,major depressive disorder,Took six weeks to kick in. Life-changing once it did.,9,UCI,UCI-00000004
+warfarin,atrial fibrillation,Effective anticoagulant but requires frequent INR monitoring.,7,UCI,UCI-00000005
+simvastatin,hypercholesterolemia,Muscle aches at higher doses; better tolerated at 20mg.,7,UCI,UCI-00000006
+omeprazole,GERD,Quick relief but worried about long-term PPI use.,8,UCI,UCI-00000007
+alprazolam,anxiety,Works fast for panic but dependence risk is real.,7,UCI,UCI-00000008
+gabapentin,neuropathic pain,Reduced nerve pain significantly. Some daytime drowsiness.,8,UCI,UCI-00000009
+ibuprofen,arthritis,Good for flare-ups; watch kidney function with daily use.,8,UCI,UCI-00000010
+amiodarone,ventricular arrhythmia,Effective but the side-effect burden is significant.,6,UCI,UCI-00000011
+levothyroxine,hypothyroidism,Normalized TSH. Must take on empty stomach for absorption.,9,UCI,UCI-00000012
