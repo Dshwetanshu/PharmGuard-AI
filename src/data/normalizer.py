@@ -175,5 +175,11 @@ class DrugNormalizer:
 
         return ResolvedDrug(query, None, None, None, 0.0, False, "unresolved")
 
+    def aliases_for(self, generics) -> Dict[str, str]:
+        """{alias: generic} for every local-vocabulary alias of the given generics."""
+        wanted = {str(g).lower() for g in generics if g}
+        return {alias: str(v[0]).lower() for alias, v in self._lookup.items()
+                if v[0] is not None and str(v[0]).lower() in wanted}
+
     def resolve_many(self, queries: List[str]) -> List[ResolvedDrug]:
         return [self.resolve(q) for q in queries]

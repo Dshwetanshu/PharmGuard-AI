@@ -20,6 +20,7 @@ from src.input_validation import clean_drug_names
 from src.retrieval.interaction_retriever import InteractionRetriever
 from src.retrieval.side_effect_retriever import SideEffectRetriever
 from src.retrieval.vector_store import VectorStore
+from src.verification import Evidence, build_evidence
 
 
 @dataclass
@@ -67,6 +68,12 @@ class PharmGuardPipeline:
             generator=Generator(cfg),
             cfg=cfg,
         )
+
+    def evidence(self, plan: RetrievalPlan, retrieval: RetrievalResult) -> Evidence:
+        """Flat, JSON-serializable evidence bundle for report validation."""
+        names = [d.generic_name for d in plan.resolved]
+        names += [x for recs in retrieval.interactions.values() for r in recs for x in (r.drug_a, r.drug_b)]
+        return build_evidence(plan, retrieval, self.normalizer.aliases_for(names), self.cfg.disclaimer)
 
     # ---------- main entry point ----------
 

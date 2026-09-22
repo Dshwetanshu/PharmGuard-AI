@@ -1,14 +1,10 @@
-"""Evaluation metrics.
+"""Retrieval metrics (internal consistency).
 
-Implements the six metrics defined in the proposal:
-  1. Retrieval Recall
-  2. Retrieval Precision
-  3. Faithfulness (LLM-judge; sampled human audit is out of scope for auto-eval)
-  4. Hallucination Rate
-  5. Severity Accuracy
-  6. Completeness Flagging
+Report-level metrics (semantic hallucination rate, uncited-claim rate, citation
+validity, omission rates, completeness) live in src/verification/checker.py.
+An LLM-judge faithfulness score is not implemented.
 
-Only (1) and (2) are computed, and only as an INTERNAL CONSISTENCY check: ground
+Recall and precision here are an INTERNAL CONSISTENCY check: ground
 truth = every input pair present in the loaded interactions table, derived with
 the same normalizer and table the retriever uses. Recall and precision are
 therefore 1.0 by construction and cannot detect normalization errors (e.g. the
@@ -17,7 +13,6 @@ see src/evaluation/hand_labels.py.
 """
 from __future__ import annotations
 
-import re
 from dataclasses import dataclass, field
 from itertools import combinations
 from typing import Dict, List, Optional, Set, Tuple
@@ -143,21 +138,3 @@ class Evaluator:
         for case in cases:
             agg.cases.append(self.evaluate_case(case))
         return agg
-
-    # ---------- hallucination detection on a generated report ----------
-
-    @staticmethod
-    def count_uncited_claims(report: str) -> int:
-        """Rough hallucination proxy: claim-like sentences without a [SOURCE:ID] citation."""
-        # Citations have the form [WORD:WORD]
-        cite_pattern = re.compile(r"\[[A-Z]+:[A-Za-z0-9_\-]+\]")
-        claim_markers = ("interaction", "risk", "severity", "contraindic", "bleeding",
-                         "hyperkalemia", "serotonin", "QT", "mechanism", "increase",
-                         "decrease", "elevate")
-        count = 0
-        for line in report.splitlines():
-            low = line.lower()
-            if any(m.lower() in low for m in claim_markers):
-                if not cite_pattern.search(line):
-                    count += 1
-        return count
