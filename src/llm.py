@@ -66,13 +66,17 @@ class LLMClient:
         mt = self.cfg.llm.max_tokens if max_tokens is None else max_tokens
 
         if self.provider == "anthropic":
+            # No temperature: Sonnet 5 rejects sampling parameters (400).
             resp = self._client.messages.create(
                 model=self.model,
                 system=system,
                 messages=messages,
-                temperature=t,
                 max_tokens=mt,
             )
+            if resp.stop_reason in ("refusal", "max_tokens"):
+                # A refused or truncated report must not be shown; the pipeline
+                # falls back to the deterministic template.
+                raise LLMError(f"Anthropic response incomplete: stop_reason={resp.stop_reason}")
             return "".join(block.text for block in resp.content if block.type == "text")
 
         if self.provider == "openai":

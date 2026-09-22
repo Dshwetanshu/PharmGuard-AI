@@ -34,8 +34,10 @@ def _detect_provider() -> str:
     return "anthropic"  # default; will error at call time if no key
 
 
+# Anthropic default checked 2026-09-22 against the Claude API model table
+# (claude-sonnet-4-5 / -4-6 are previous-generation).
 DEFAULT_MODELS = {
-    "anthropic": "claude-sonnet-4-5",
+    "anthropic": "claude-sonnet-5",
     "openai": "gpt-4o-mini",
     "gemini": "gemini-1.5-flash",
 }
@@ -69,10 +71,13 @@ class PathConfig:
 class LLMConfig:
     provider: str = field(default_factory=_detect_provider)
     model: Optional[str] = field(default_factory=lambda: os.getenv("PHARMGUARD_LLM_MODEL"))
+    # Used for OpenAI/Gemini only: current Anthropic models (Sonnet 5 and later)
+    # reject sampling parameters with a 400, so LLMClient does not send it there.
     temperature: float = field(
         default_factory=lambda: float(os.getenv("PHARMGUARD_LLM_TEMPERATURE", "0.1"))
     )
-    max_tokens: int = 2048
+    # Sonnet 5 thinks adaptively by default; thinking tokens count against this.
+    max_tokens: int = 16000
 
     def resolved_model(self) -> str:
         return self.model or DEFAULT_MODELS.get(self.provider, DEFAULT_MODELS["anthropic"])
