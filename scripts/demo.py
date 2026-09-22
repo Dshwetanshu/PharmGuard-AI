@@ -12,6 +12,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+from src.input_validation import InvalidDrugNameError
 from src.pipeline import PharmGuardPipeline
 
 
@@ -29,7 +30,11 @@ def main():
         print("Hint: run `python scripts/ingest_data.py --sample` first.", file=sys.stderr)
         sys.exit(1)
 
-    result = pipeline.run(args.drugs, use_llm=args.llm)
+    try:
+        result = pipeline.run(args.drugs, use_llm=args.llm)
+    except InvalidDrugNameError as e:
+        print(f"ERROR: {e}", file=sys.stderr)
+        sys.exit(2)
     print(result.report)
     print()
     print("=" * 60)
