@@ -102,3 +102,18 @@ def test_llm_report_has_canonical_disclaimer_exactly_once(sample_pipeline, llm_t
 def test_template_report_has_canonical_disclaimer_exactly_once(sample_pipeline):
     report = sample_pipeline.run(["aspirin", "warfarin"], use_llm=False).report
     assert report.count(sample_pipeline.cfg.disclaimer) == 1
+
+
+# ---------- coverage notes ----------
+
+def test_template_lists_every_no_data_pair_and_unresolved_input(sample_pipeline):
+    drugs = ["lisinopril", "spironolactone", "metformin", "atorvastatin",
+             "aspirin", "omeprazole", "sertraline", "fictional_drug_xyz"]
+    result = sample_pipeline.run(drugs, use_llm=False)
+    report = result.report
+    assert len(result.retrieval.no_data_pairs) == 16
+    assert "### No Curated Interaction Data" in report
+    for a, b in result.retrieval.no_data_pairs:
+        assert f"\n- {a} + {b}\n" in report
+    assert "### Unresolved Inputs" in report and "\n- fictional_drug_xyz\n" in report
+    assert "..." not in report

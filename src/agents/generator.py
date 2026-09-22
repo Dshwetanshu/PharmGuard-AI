@@ -112,28 +112,29 @@ class Generator:
                     )
                 lines.append("")
 
-        # Coverage
+        # Coverage: every unresolved input and every no-data pair is listed.
         lines.append("## Coverage Notes")
         if plan.unresolved:
-            lines.append(
-                "**Unresolved inputs:** "
-                + ", ".join(u.query for u in plan.unresolved)
-                + " — these could not be matched to a drug in the local vocabulary and were excluded."
-            )
+            lines.append("### Unresolved Inputs")
+            lines.append("These inputs could not be matched to a drug in the local vocabulary and were excluded:")
+            lines.extend(f"- {u.query}" for u in plan.unresolved)
+            lines.append("")
         if result.no_data_pairs:
+            lines.append("### No Curated Interaction Data")
             lines.append(
-                f"**No curated interaction data** for {len(result.no_data_pairs)} pair(s): "
-                + ", ".join(f"{a}+{b}" for a, b in result.no_data_pairs[:5])
-                + ("..." if len(result.no_data_pairs) > 5 else "")
+                f"No record in the queried curated sources for these {len(result.no_data_pairs)} pair(s). "
+                "Absence of a record does not mean the combination is safe."
             )
+            lines.extend(f"- {a} + {b}" for a, b in result.no_data_pairs)
             if result.faers_signals:
                 lines.append(
                     f"FAERS spontaneous reports were found for {len(result.faers_signals)} "
                     "of these pair(s); see the unvalidated section below."
                 )
+            lines.append("")
         if not plan.unresolved and not result.no_data_pairs:
             lines.append("All inputs resolved; all pairs had coverage in queried sources.")
-        lines.append("")
+            lines.append("")
 
         faers = self._faers_section(result)
         if faers:
