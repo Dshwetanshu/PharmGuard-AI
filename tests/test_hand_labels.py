@@ -32,3 +32,12 @@ def test_lithium_label_is_hit_on_sample_data(sample_pipeline):
 
     r = score_hand_labels(mh02, retrieve, build_alias_map(vocab))
     assert r["missed"] == [] and r["hits"] == 1
+
+
+def test_eval_output_has_no_hard_coded_metrics():
+    # completeness_flagging was `1.0 if all(True for _ in cases)`: a constant, not a measurement.
+    from src.evaluation.metrics import AggregateMetrics
+
+    out = AggregateMetrics().as_dict()
+    assert "completeness_flagging" not in out
+    assert "1.0 by construction" in out["note"]

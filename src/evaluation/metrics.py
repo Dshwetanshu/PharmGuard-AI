@@ -63,19 +63,13 @@ class AggregateMetrics:
         vals = [c.precision for c in self.cases if c.retrieved_pairs > 0]
         return sum(vals) / len(vals) if vals else 0.0
 
-    @property
-    def completeness_flagging(self) -> float:
-        """Fraction of cases where cases with no-data pairs correctly surfaced them."""
-        # Any case is compliant if it surfaces its no-data pairs (we always do by design)
-        # This metric is a contract check, not a discovered score.
-        return 1.0 if all(True for _ in self.cases) else 0.0
-
     def as_dict(self) -> dict:
         return {
+            "note": "internal consistency: ground truth uses the same normalizer and "
+                    "table as retrieval, so recall/precision are 1.0 by construction",
             "num_cases": len(self.cases),
             "mean_recall": round(self.mean_recall, 3),
             "mean_precision": round(self.mean_precision, 3),
-            "completeness_flagging": round(self.completeness_flagging, 3),
             "cases": [c.__dict__ for c in self.cases],
         }
 
