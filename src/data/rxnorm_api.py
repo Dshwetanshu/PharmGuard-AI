@@ -15,11 +15,21 @@ Design notes:
   - 4 s timeout per call (fast-fail)
   - In-memory cache keyed by lowercased query
   - Returns None on any error — caller falls back to "unresolved"
+  - Only candidates that carry an RxNorm-sourced name and score at least
+    ``min_score`` are accepted. The returned name (never the user's query) is
+    what the normalizer maps back through the local vocabulary.
+
+approximateTerm scores are unnormalised and do NOT separate good matches from
+garbage on their own. Observed 2026-09-22: "coumadin" 13.6, "xanax" 13.6,
+"warfarin" 12.1, "insulin" 10.9, "lisonopril" 8.0 — but
+"definitely_not_a_drug_xyz" 10.5 and "fictional_drug_xyz" 8.4. The threshold
+is a first filter; mapping the RxNorm name back to local data is the real guard.
 """
 from __future__ import annotations
 
 import json
-from typing import Optional, Tuple
+from dataclasses import dataclass
+from typing import Optional
 from urllib.parse import quote_plus
 
 try:
@@ -33,16 +43,25 @@ except ImportError:
 RXNORM_BASE = "https://rxnav.nlm.nih.gov/REST"
 
 
-class RxNormApiResolver:
-    """Resolves free-form drug names to (generic_name, rxcui) via RxNorm REST API."""
+@dataclass(frozen=True)
+class RxNormMatch:
+    rxcui: str
+    name: str                  # RxNorm's name for the matched concept (lowercased)
+    ingredient: Optional[str]  # ingredient (TTY=IN) name, if RxNorm returned one
+    score: float               # raw approximateTerm score (unnormalised)
 
-    def __init__(self, enabled: bool = True, timeout_s: float = 4.0):
+
+class RxNormApiResolver:
+    """Resolves free-form drug names to an RxNorm concept via the RxNorm REST API."""
+
+    def __init__(self, enabled: bool = True, timeout_s: float = 4.0, min_score: float = 10.0):
         self.enabled = enabled and _HAS_URLLIB
         self.timeout_s = timeout_s
-        self._cache: dict = {}   # query (lower) -> (generic_name, rxcui) or None
+        self.min_score = min_score
+        self._cache: dict = {}   # query (lower) -> RxNormMatch or None
 
-    def resolve(self, query: str) -> Optional[Tuple[str, str]]:
-        """Return (generic_name, rxcui) or None if not resolvable."""
+    def resolve(self, query: str) -> Optional[RxNormMatch]:
+        """Return the best confident RxNorm match, or None."""
         if not self.enabled or not query:
             return None
 
@@ -51,15 +70,11 @@ class RxNormApiResolver:
             return self._cache[key]
 
         try:
-            rxcui = self._approximate_rxcui(key)
-            if not rxcui:
-                self._cache[key] = None
-                return None
-
-            # Prefer the ingredient (generic) form for the resolved RXCUI
-            ingredient = self._ingredient_for(rxcui)
-            name = (ingredient or key).lower()
-            result = (name, str(rxcui))
+            best = self._best_candidate(key)
+            result = None
+            if best is not None:
+                rxcui, name, score = best
+                result = RxNormMatch(rxcui, name, self._ingredient_for(rxcui), score)
             self._cache[key] = result
             return result
         except Exception:
@@ -74,26 +89,32 @@ class RxNormApiResolver:
         with urllib_request.urlopen(req, timeout=self.timeout_s) as resp:
             return json.loads(resp.read().decode("utf-8"))
 
-    def _approximate_rxcui(self, name: str) -> Optional[str]:
-        """Resolve free text → RXCUI using RxNorm's approximate match endpoint.
+    def _best_candidate(self, name: str) -> Optional[tuple]:
+        """Return (rxcui, rxnorm_name, score) for the highest-scoring candidate that
+        has an RxNorm-sourced name and clears min_score, else None.
 
-        This is the right endpoint for noisy user input: it handles
-        misspellings, brand names, and variant forms.
+        approximateTerm is the right endpoint for noisy input (misspellings,
+        brand names), but it always returns *something*, so candidates are
+        filtered rather than trusting the top hit.
         """
         url = (
             f"{RXNORM_BASE}/approximateTerm.json"
-            f"?term={quote_plus(name)}&maxEntries=1"
+            f"?term={quote_plus(name)}&maxEntries=5"
         )
         payload = self._fetch(url)
-        candidates = (
-            payload.get("approximateGroup", {}).get("candidate", [])
-        )
-        if not candidates:
-            return None
-        top = candidates[0]
-        rxcui = top.get("rxcui")
-        # RxNorm returns strings; coerce to str just in case
-        return str(rxcui) if rxcui else None
+        candidates = payload.get("approximateGroup", {}).get("candidate", []) or []
+        best = None
+        for c in candidates:
+            rxcui, cname = c.get("rxcui"), (c.get("name") or "").strip()
+            if c.get("source") != "RXNORM" or not rxcui or not cname:
+                continue
+            try:
+                score = float(c.get("score"))
+            except (TypeError, ValueError):
+                continue
+            if score >= self.min_score and (best is None or score > best[2]):
+                best = (str(rxcui), cname.lower(), score)
+        return best
 
     def _ingredient_for(self, rxcui: str) -> Optional[str]:
         """Resolve an RXCUI to its canonical ingredient (generic) name."""

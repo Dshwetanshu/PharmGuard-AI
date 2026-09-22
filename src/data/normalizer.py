@@ -59,9 +59,9 @@ class ResolvedDrug:
     generic_name: Optional[str]   # canonical generic name
     rxcui: Optional[str]          # RxNorm concept unique identifier
     drugbank_id: Optional[str]    # DrugBank ID if available
-    confidence: float             # 0-100
+    confidence: float             # 0-100 for local matches; raw RxNorm score for "rxnorm_api"
     resolved: bool                # True if confidence ≥ threshold
-    method: str                   # "exact" | "synonym" | "fuzzy" | "unresolved"
+    method: str                   # "exact" | "fuzzy" | "rxnorm_api" | "rxnorm_not_in_local_vocab" | "unresolved"
 
 
 class DrugNormalizer:
@@ -70,8 +70,11 @@ class DrugNormalizer:
     Resolution order:
       1. Exact match against the local vocabulary
       2. Fuzzy match against the local vocabulary (rapidfuzz / difflib)
-      3. RxNorm REST API fallback (when enabled) — handles ANY drug known to
-         the National Library of Medicine, including misspellings and brand names
+      3. RxNorm REST API fallback (when enabled): a confident RxNorm match is
+         accepted only if the name RxNorm returns (ingredient first, then the
+         concept name) maps back to an entry in the local vocabulary. A drug
+         RxNorm knows but the local data doesn't is still unresolved, because
+         there is nothing to retrieve for it.
       4. "unresolved"
     """
 
@@ -130,7 +133,9 @@ class DrugNormalizer:
         """Lazily instantiate the RxNorm API resolver if enabled in config."""
         if self._api_resolver is None and self.cfg.retrieval.rxnorm_api_enabled:
             from src.data.rxnorm_api import RxNormApiResolver
-            self._api_resolver = RxNormApiResolver(enabled=True)
+            self._api_resolver = RxNormApiResolver(
+                enabled=True, min_score=self.cfg.retrieval.min_confidence
+            )
         return self._api_resolver
 
     def resolve(self, query: str) -> ResolvedDrug:
@@ -155,17 +160,18 @@ class DrugNormalizer:
             generic, rxcui, dbid = self._lookup[name]
             return ResolvedDrug(query, generic, rxcui, dbid, float(score), True, "fuzzy")
 
-        # 3. RxNorm REST API fallback — opens the system up to ANY FDA-approved drug
+        # 3. RxNorm REST API fallback, mapped back through the local vocabulary
         api = self._ensure_api_resolver()
         if api is not None:
-            hit = api.resolve(q)
-            if hit:
-                generic, rxcui = hit
-                # Opportunistically cache so repeat queries in the same session are instant
-                self._lookup[q] = (generic, rxcui, None)
-                if q not in self._all_names:
-                    self._all_names.append(q)
-                return ResolvedDrug(query, generic, rxcui, None, 90.0, True, "rxnorm_api")
+            match = api.resolve(q)
+            if match:
+                for name in (match.ingredient, match.name):
+                    if name and name in self._lookup:
+                        generic, rxcui, dbid = self._lookup[name]
+                        return ResolvedDrug(query, generic, rxcui, dbid, match.score, True, "rxnorm_api")
+                return ResolvedDrug(
+                    query, None, match.rxcui, None, match.score, False, "rxnorm_not_in_local_vocab"
+                )
 
         return ResolvedDrug(query, None, None, None, 0.0, False, "unresolved")
 

@@ -105,7 +105,7 @@ class Generator:
             lines.append(
                 "**Unresolved inputs:** "
                 + ", ".join(u.query for u in plan.unresolved)
-                + " — these were not matched to any drug in the RxNorm/DrugBank vocabulary and were excluded."
+                + " — these could not be matched to a drug in the local vocabulary and were excluded."
             )
         if result.no_data_pairs:
             lines.append(

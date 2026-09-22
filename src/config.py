@@ -81,8 +81,10 @@ class LLMConfig:
 @dataclass
 class RetrievalConfig:
     top_k: int = field(default_factory=lambda: int(os.getenv("PHARMGUARD_TOP_K", "5")))
+    # Minimum RxNorm approximateTerm score for accepting a live match. The score
+    # is unnormalised (not 0-100); see src/data/rxnorm_api.py for observed values.
     min_confidence: float = field(
-        default_factory=lambda: float(os.getenv("PHARMGUARD_MIN_CONFIDENCE", "0.0"))
+        default_factory=lambda: float(os.getenv("PHARMGUARD_MIN_CONFIDENCE", "10.0"))
     )
     # TWOSIDES uses PRR / mean-reporting-frequency as significance signals
     twosides_min_prr: float = 2.0
