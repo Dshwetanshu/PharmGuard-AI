@@ -11,10 +11,29 @@ loader are the only thing you'd adjust.
 """
 from __future__ import annotations
 
+import hashlib
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
 import pandas as pd
+
+
+def _content_ids(df: pd.DataFrame, prefix: str) -> List[str]:
+    """Deterministic record IDs derived from row content, e.g. "TS-3f9a0c1b2d".
+
+    The ID hashes every column except record_id (in sorted column order), so it
+    does not change when rows are reordered or other rows are filtered out.
+    Exact duplicate rows get "-2", "-3" suffixes; they are indistinguishable,
+    so which copy gets which suffix does not matter. Sample CSVs keep their own
+    hand-assigned IDs (e.g. TS-00000006) because they already carry record_id.
+    """
+    cols = sorted(c for c in df.columns if c != "record_id")
+    keys = pd.Series("", index=df.index)
+    for c in cols:  # explicit str() so missing values hash the same on pandas 2 and 3
+        keys = keys + "\x1f" + df[c].map(lambda v: "" if pd.isna(v) else str(v))
+    digests = keys.map(lambda k: hashlib.sha1(k.encode("utf-8")).hexdigest()[:10])
+    nth = digests.groupby(digests).cumcount()
+    return [f"{prefix}-{d}" if n == 0 else f"{prefix}-{d}-{n + 1}" for d, n in zip(digests, nth)]
 
 
 # ============================================================
@@ -66,7 +85,7 @@ def load_twosides(path: Path, min_prr: float = 2.0) -> pd.DataFrame:
     # Synthesize a severity tier from PRR (TWOSIDES has no native severity field)
     df["severity"] = df["prr"].apply(_prr_to_severity) if "prr" in df.columns else "Unknown"
     df["source"] = "TWOSIDES"
-    df["record_id"] = [f"TS-{i:08d}" for i in range(len(df))]
+    df["record_id"] = _content_ids(df, "TS")
     return df.reset_index(drop=True)
 
 
@@ -145,7 +164,7 @@ def load_sider_side_effects(path: Path) -> pd.DataFrame:
         "umls_cui": df["umls_meddra"],
     })
     out["source"] = "SIDER"
-    out["record_id"] = [f"SIDER-{i:08d}" for i in range(len(out))]
+    out["record_id"] = _content_ids(out, "SIDER")
     return out.reset_index(drop=True)
 
 
@@ -214,7 +233,7 @@ def load_webmd_reviews(path: Path, max_rows: Optional[int] = None) -> pd.DataFra
     if "drug_name" in df.columns:
         df["drug_name"] = df["drug_name"].astype(str).str.lower().str.strip()
     df["source"] = "WebMD"
-    df["record_id"] = [f"WMD-{i:08d}" for i in range(len(df))]
+    df["record_id"] = _content_ids(df, "WMD")
     return df.reset_index(drop=True)
 
 
@@ -279,7 +298,7 @@ def load_ddinter(path: Path) -> pd.DataFrame:
             df[col] = None
 
     df["source"] = "DDInter"
-    df["record_id"] = [f"DDI-{i:08d}" for i in range(len(df))]
+    df["record_id"] = _content_ids(df, "DDI")
 
     keep = [c for c in (
         "drug_a_name", "drug_b_name", "drug_a_rxcui", "drug_b_rxcui",
@@ -324,7 +343,7 @@ def load_uci_reviews(path: Path, max_rows: Optional[int] = 30_000) -> pd.DataFra
         df["review_text"] = df["review_text"].astype(str)
 
     df["source"] = "UCI"
-    df["record_id"] = [f"UCI-{i:08d}" for i in range(len(df))]
+    df["record_id"] = _content_ids(df, "UCI")
     return df.reset_index(drop=True)
 
 
@@ -368,5 +387,5 @@ def load_ade_corpus(path: Path) -> pd.DataFrame:
     df = df[keep].copy()
 
     df["source"] = "ADE"
-    df["record_id"] = [f"ADE-{i:08d}" for i in range(len(df))]
+    df["record_id"] = _content_ids(df, "ADE")
     return df.reset_index(drop=True)
