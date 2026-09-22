@@ -6,6 +6,7 @@ Every test runs offline and without LLM keys unless it is marked
 from __future__ import annotations
 
 import os
+import shutil
 import socket
 import sys
 from pathlib import Path
@@ -68,19 +69,31 @@ def _block_network(request, monkeypatch):
     monkeypatch.setattr(socket.socket, "connect", guarded_connect)
 
 
+REPO_SAMPLE_DIR = Path(__file__).resolve().parent.parent / "data" / "sample"
+
+
 @pytest.fixture(scope="session")
-def sample_ingest_report():
+def test_data_dir(tmp_path_factory):
+    """A temp data dir holding a copy of data/sample, so tests never write to
+    the repo's data/processed."""
+    data_dir = tmp_path_factory.mktemp("pharmguard") / "data"
+    shutil.copytree(REPO_SAMPLE_DIR, data_dir / "sample")
+    return data_dir
+
+
+@pytest.fixture(scope="session")
+def sample_ingest_report(test_data_dir):
     """Ingest the sample data once per session and return the ingestion report."""
     cfg = Config()
-    cfg.paths.data_dir = Path(__file__).resolve().parent.parent / "data"
+    cfg.paths.data_dir = test_data_dir
     return Ingester(cfg).ingest_sample()
 
 
 @pytest.fixture(scope="module")
-def sample_pipeline(sample_ingest_report):
+def sample_pipeline(test_data_dir, sample_ingest_report):
     """Build a pipeline over the ingested sample data."""
     cfg = Config()
-    cfg.paths.data_dir = Path(__file__).resolve().parent.parent / "data"
+    cfg.paths.data_dir = test_data_dir
     normalizer = DrugNormalizer(cfg).load()
     ir = InteractionRetriever(cfg).load()
     ser = SideEffectRetriever(cfg).load()
