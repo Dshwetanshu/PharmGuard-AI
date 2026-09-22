@@ -72,17 +72,22 @@ class Generator:
         Idempotent, so it can be applied to a report that already has a footer."""
         return self._with_disclaimer(report.split("\n"))
 
-    def generate(self, plan: RetrievalPlan, result: RetrievalResult) -> str:
+    def generate(self, plan: RetrievalPlan, result: RetrievalResult,
+                 prior_draft: Optional[str] = None, feedback: Optional[str] = None) -> str:
+        """LLM report. For a retry, pass the rejected draft and the checker's
+        feedback; they are sent as an assistant turn and a follow-up user turn."""
         if self.llm is None:
             self.llm = LLMClient(self.cfg)
 
         evidence = self._format_evidence(plan, result)
         user_message = self._build_user_message(plan, result, evidence)
+        messages = [{"role": "user", "content": user_message}]
+        if feedback:
+            if prior_draft:
+                messages.append({"role": "assistant", "content": prior_draft})
+            messages.append({"role": "user", "content": feedback})
 
-        report = self.llm.complete(
-            system=SYSTEM_PROMPT,
-            messages=[{"role": "user", "content": user_message}],
-        )
+        report = self.llm.complete(system=SYSTEM_PROMPT, messages=messages)
 
         # FAERS signals are rendered by code, not by the model, so they are always
         # shown and always carry the "unvalidated" label.

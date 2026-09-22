@@ -21,6 +21,7 @@ class LLMClient:
         self.provider = self.cfg.llm.provider
         self.model = self.cfg.llm.resolved_model()
         self._client = self._build_client()
+        self.last_usage: Optional[Dict[str, int]] = None  # token usage of the last call, if reported
 
     # ---------- provider dispatch ----------
 
@@ -73,6 +74,9 @@ class LLMClient:
                 messages=messages,
                 max_tokens=mt,
             )
+            usage = getattr(resp, "usage", None)
+            self.last_usage = ({"input_tokens": int(usage.input_tokens), "output_tokens": int(usage.output_tokens)}
+                               if usage is not None else None)
             if resp.stop_reason in ("refusal", "max_tokens"):
                 # A refused or truncated report must not be shown; the pipeline
                 # falls back to the deterministic template.
@@ -87,6 +91,9 @@ class LLMClient:
                 temperature=t,
                 max_tokens=mt,
             )
+            usage = getattr(resp, "usage", None)
+            self.last_usage = ({"input_tokens": int(usage.prompt_tokens), "output_tokens": int(usage.completion_tokens)}
+                               if usage is not None else None)
             return resp.choices[0].message.content or ""
 
         if self.provider == "gemini":

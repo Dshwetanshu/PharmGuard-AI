@@ -48,3 +48,37 @@ def test_incomplete_responses_raise(monkeypatch, stop_reason):
     client = _client(monkeypatch, stop_reason=stop_reason)
     with pytest.raises(LLMError, match=stop_reason):
         client.complete("sys", [{"role": "user", "content": "hi"}])
+
+
+def test_token_usage_is_recorded_when_sdk_returns_it(monkeypatch):
+    client = _client(monkeypatch)
+    msgs = client._client.messages
+    orig = msgs.create
+
+    def create(**kwargs):
+        resp = orig(**kwargs)
+        resp.usage = SimpleNamespace(input_tokens=1200, output_tokens=345)
+        return resp
+
+    msgs.create = create
+    client.complete("sys", [{"role": "user", "content": "hi"}])
+    assert client.last_usage == {"input_tokens": 1200, "output_tokens": 345}
+
+
+def test_retry_turns_carry_rejected_draft_and_feedback(sample_pipeline):
+    from src.agents.generator import Generator
+
+    class Capture:
+        last_usage = None
+
+        def complete(self, system, messages, **kw):
+            self.messages = messages
+            return "## Summary\nok"
+
+    llm = Capture()
+    r = sample_pipeline.run(["aspirin", "warfarin"], use_llm=False)
+    Generator(sample_pipeline.cfg, llm=llm).generate(r.plan, r.retrieval,
+                                                     prior_draft="DRAFT", feedback="FIX: [PHANTOM_CITATION]")
+    assert [m["role"] for m in llm.messages] == ["user", "assistant", "user"]
+    assert llm.messages[1]["content"] == "DRAFT"
+    assert "PHANTOM_CITATION" in llm.messages[2]["content"]
