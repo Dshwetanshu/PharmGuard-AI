@@ -43,13 +43,14 @@ def _pipeline(sample_pipeline, faers=None, llm=None):
 @pytest.mark.parametrize("use_llm", [False, True])
 def test_faers_pairs_stay_no_data_and_are_shown_as_unvalidated(sample_pipeline, use_llm):
     # metformin + levothyroxine has no curated record in the sample data.
-    p = _pipeline(sample_pipeline, faers=StubFaers(), llm=StubLLM())
-    result = p.run(["metformin", "levothyroxine"], use_llm=use_llm)
-    assert result.trace["generator"] == ("llm" if use_llm else "deterministic")
-
+    p = _pipeline(sample_pipeline, faers=StubFaers())
+    result = p.run(["metformin", "levothyroxine"], use_llm=False)
     assert result.retrieval.no_data_pairs == [("levothyroxine", "metformin")]
     assert result.retrieval.total_faers_signals == 1
-    report = result.report
+    if use_llm:  # the LLM path itself (the pipeline guardrail is tested separately)
+        report = Generator(sample_pipeline.cfg, llm=StubLLM()).generate(result.plan, result.retrieval)
+    else:
+        report = result.report
     assert "all pairs had coverage" not in report.lower()
     assert "FAERS Spontaneous Reports (unvalidated)" in report
     assert "[FAERS:FAERS-abc123]" in report
@@ -93,8 +94,9 @@ def test_llm_is_told_about_ungraded_records(sample_pipeline):
 ])
 def test_llm_report_has_canonical_disclaimer_exactly_once(sample_pipeline, llm_text):
     disclaimer = sample_pipeline.cfg.disclaimer
-    p = _pipeline(sample_pipeline, llm=StubLLM(llm_text.format(disclaimer=disclaimer)))
-    report = p.run(["aspirin", "warfarin"], use_llm=True).report
+    r = sample_pipeline.run(["aspirin", "warfarin"], use_llm=False)
+    llm = StubLLM(llm_text.format(disclaimer=disclaimer))
+    report = Generator(sample_pipeline.cfg, llm=llm).generate(r.plan, r.retrieval)
     assert report.count(disclaimer) == 1
     assert report.rstrip().endswith(disclaimer)
 
@@ -125,5 +127,6 @@ def test_source_mechanism_is_quoted_verbatim_in_both_paths(sample_pipeline):
     assert f'source mechanism: "{mech}" [DDInter:DDI-00000003]' in report
 
     llm = StubLLM()
-    _pipeline(sample_pipeline, llm=llm).run(["lisinopril", "spironolactone"], use_llm=True)
+    r = sample_pipeline.run(["lisinopril", "spironolactone"], use_llm=False)
+    Generator(sample_pipeline.cfg, llm=llm).generate(r.plan, r.retrieval)
     assert f'mechanism="{mech}"' in llm.calls[0][1][0]["content"]

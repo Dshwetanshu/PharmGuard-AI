@@ -21,4 +21,5 @@ def test_network_is_blocked_in_unmarked_tests():
 
 def test_llm_path_without_key_falls_back_to_template(sample_pipeline):
     result = sample_pipeline.run(["aspirin", "warfarin"], use_llm=True)
-    assert result.trace["generator"] == "deterministic (llm_error: LLMError)"
+    assert result.trace["report_source"] == "deterministic_fallback"
+    assert result.trace["fallback_reason"] == "llm_error: LLMError"

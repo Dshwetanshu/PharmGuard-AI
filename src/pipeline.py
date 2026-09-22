@@ -20,7 +20,7 @@ from src.input_validation import clean_drug_names
 from src.retrieval.interaction_retriever import InteractionRetriever
 from src.retrieval.side_effect_retriever import SideEffectRetriever
 from src.retrieval.vector_store import VectorStore
-from src.verification import Evidence, build_evidence
+from src.verification import Evidence, build_evidence, validate_report
 
 
 @dataclass
@@ -110,19 +110,31 @@ class PharmGuardPipeline:
         trace["total_interactions"] = retrieval_result.total_interactions
         trace["no_data_pairs"] = len(retrieval_result.no_data_pairs)
 
-        # 4. Generate
+        # 4. Generate. An LLM report is returned only if it passes validation
+        # against the retrieved evidence; otherwise the deterministic template is.
         t0 = time.perf_counter()
         if use_llm:
             try:
-                report = self.generator.generate(plan, retrieval_result)
-                trace["generator"] = "llm"
+                llm_report = self.generator.generate(plan, retrieval_result)
             except Exception as exc:
-                # Hard fallback: deterministic report if LLM fails
+                llm_report = None
+                trace["fallback_reason"] = f"llm_error: {type(exc).__name__}"
+            if llm_report is not None:
+                t1 = time.perf_counter()
+                validation = validate_report(llm_report, self.evidence(plan, retrieval_result))
+                trace["validate_ms"] = int((time.perf_counter() - t1) * 1000)
+                trace["llm_validation"] = validation.to_dict()
+                if not validation.passed:
+                    trace["fallback_reason"] = "validation_failed"
+            if llm_report is not None and validation.passed:
+                report = llm_report
+                trace["report_source"] = "llm"
+            else:
                 report = self.generator.generate_deterministic(plan, retrieval_result)
-                trace["generator"] = f"deterministic (llm_error: {type(exc).__name__})"
+                trace["report_source"] = "deterministic_fallback"
         else:
             report = self.generator.generate_deterministic(plan, retrieval_result)
-            trace["generator"] = "deterministic"
+            trace["report_source"] = "deterministic"
         trace["generate_ms"] = int((time.perf_counter() - t0) * 1000)
 
         return PipelineResult(

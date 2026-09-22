@@ -145,6 +145,17 @@ if go:
 
     # ---------- report ----------
     st.markdown("---")
+    source = result.trace.get("report_source")
+    if source == "llm":
+        st.caption("Report source: LLM (passed validation against the retrieved evidence)")
+    elif source == "deterministic_fallback":
+        n = len(result.trace.get("llm_validation", {}).get("findings", []))
+        reason = result.trace.get("fallback_reason", "")
+        detail = f"failed validation ({n} finding(s))" if reason == "validation_failed" else f"was unavailable ({reason})"
+        st.warning(f"The LLM report {detail}; showing the deterministic template report. "
+                   "Details are in the Pipeline trace below.")
+    else:
+        st.caption("Report source: deterministic template (no LLM)")
     st.markdown(result.report)
 
     # ---------- evidence audit trail ----------
