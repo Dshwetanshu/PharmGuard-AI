@@ -1,11 +1,17 @@
 """Run PharmGuard evaluation against the curated test suite.
 
-Two retrieval-only checks (no LLM is called):
+Retrieval checks:
   1. Internal consistency: ground truth is derived from the same normalizer and
      interaction table the retriever uses, so recall/precision are 1.0 by
      construction. It only catches bugs in pair enumeration/lookup plumbing.
   2. Hand labels: retrieval scored against known_interaction_pairs in
      src/evaluation/test_cases.py (partial labels; precision is a lower bound).
+Report checks (src/verification, the same checker as the runtime guardrail):
+  3. Template path: every case's deterministic report.
+  4. LLM path: only if an API key for the configured provider is set (costs one
+     LLM call per case). Metrics are on the raw LLM reports, before fallback.
+     Without a key these cells are "—".
+The semantic checks are lexicon-based and therefore a lower bound.
 All current data is synthetic sample data.
 
 Usage:
@@ -17,12 +23,12 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-import pandas as pd
 
 from src.config import config
 from src.data.normalizer import DrugNormalizer
@@ -35,12 +41,24 @@ from src.data.canonical import build_alias_map
 from src.evaluation.hand_labels import score_hand_labels
 from src.evaluation.metrics import Evaluator
 from src.evaluation.test_cases import TEST_CASES
+from src.pipeline import PharmGuardPipeline
+from src.verification import aggregate_stats, validate_report
+
+KEY_VARS = {"anthropic": "ANTHROPIC_API_KEY", "openai": "OPENAI_API_KEY", "gemini": "GOOGLE_API_KEY"}
+# uncited_claim_rate is the old syntactic metric; the others are semantic.
+REPORT_METRICS = ("uncited_claim_rate", "semantic_hallucination_rate", "citation_validity",
+                  "pair_omission_rate", "major_omission_rate", "completeness")
+
+
+def _fmt(v) -> str:
+    return "—" if v is None else f"{v:.3f}"
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--output", type=str, default=None, help="Path to save JSON report.")
     ap.add_argument("--subset", type=str, default=None, help="Filter case IDs by prefix.")
+    ap.add_argument("--skip-llm", action="store_true", help="Don't run the LLM path even if a key is set.")
     args = ap.parse_args()
 
     normalizer = DrugNormalizer().load()
@@ -67,7 +85,31 @@ def main():
     vocab = read_table(config.paths.processed_dir / "drug_vocabulary.parquet")
     hand = score_hand_labels(cases, retrieve_pairs, build_alias_map(vocab))
 
-    report = {"internal_consistency": internal, "hand_labels": hand}
+    pipeline = PharmGuardPipeline.from_config()
+    template_stats = []
+    for case in cases:
+        r = pipeline.run(case.input_drugs, use_llm=False)
+        template_stats.append(validate_report(r.report, pipeline.evidence(r.plan, r.retrieval)).stats)
+    checks = {"template": aggregate_stats(template_stats), "llm": None, "llm_fallback_rate": None,
+              "llm_model": None, "llm_skipped_reason": None}
+
+    key_var = KEY_VARS.get(config.llm.provider)
+    if args.skip_llm:
+        checks["llm_skipped_reason"] = "--skip-llm"
+    elif not (key_var and os.getenv(key_var)):
+        checks["llm_skipped_reason"] = f"no {key_var or 'API key'} configured"
+    else:
+        llm_stats, fallbacks = [], 0
+        for case in cases:
+            r = pipeline.run(case.input_drugs, use_llm=True)
+            fallbacks += r.trace["report_source"] != "llm"
+            if "llm_validation" in r.trace:
+                llm_stats.append(r.trace["llm_validation"]["stats"])
+        checks.update(llm=aggregate_stats(llm_stats) if llm_stats else None,
+                      llm_fallback_rate=round(fallbacks / len(cases), 4),
+                      llm_model=f"{config.llm.provider}:{config.llm.resolved_model()}")
+
+    report = {"internal_consistency": internal, "hand_labels": hand, "report_checks": checks}
 
     print("\n=== Internal consistency (1.0 by construction: same normalizer + table) ===")
     print(f"Mean recall:    {internal['mean_recall']}")
@@ -78,6 +120,14 @@ def main():
           f"({hand['hits']}/{hand['retrieved_pairs']} retrieved pairs are labelled)")
     for case_id, pair in hand["missed"]:
         print(f"  missed: {case_id} {pair[0]} + {pair[1]}")
+    print("\n=== Report checks (lexicon-based: a lower bound) ===")
+    tmpl, llm = checks["template"], checks["llm"] or {}
+    print(f"{'metric':32s} {'template':>10s} {'llm':>10s}")
+    for key in REPORT_METRICS:
+        print(f"{key:32s} {_fmt(tmpl.get(key)):>10s} {_fmt(llm.get(key)):>10s}")
+    print(f"{'llm_fallback_rate':32s} {'':>10s} {_fmt(checks['llm_fallback_rate']):>10s}")
+    if checks["llm_skipped_reason"]:
+        print(f"LLM path not run: {checks['llm_skipped_reason']}")
     print(f"Cases evaluated: {internal['num_cases']}")
 
     if args.output:

@@ -235,3 +235,23 @@ def validate_report(report: str, evidence: Evidence, final: bool = True) -> Vali
         "completeness": _rate(declared, len(evidence.no_data_pairs)),
     }
     return ValidationResult(passed=not findings, findings=findings, stats=stats)
+
+
+_COUNTS = ("clinical_claims", "fabricated_claims", "uncited_claims", "citations", "valid_citations",
+           "pairs_with_records", "omitted_pairs", "major_pairs", "omitted_major_pairs",
+           "no_data_pairs", "declared_no_data_pairs")
+
+
+def aggregate_stats(stats: List[Dict[str, Optional[float]]]) -> Dict[str, Optional[float]]:
+    """Micro-average per-report stats: sum the counts, then recompute the rates."""
+    tot = {k: sum(int(s[k]) for s in stats) for k in _COUNTS}
+    return {
+        "reports": len(stats),
+        **tot,
+        "semantic_hallucination_rate": _rate(tot["fabricated_claims"], tot["clinical_claims"]),
+        "uncited_claim_rate": _rate(tot["uncited_claims"], tot["clinical_claims"]),
+        "citation_validity": _rate(tot["valid_citations"], tot["citations"]),
+        "pair_omission_rate": _rate(tot["omitted_pairs"], tot["pairs_with_records"]),
+        "major_omission_rate": _rate(tot["omitted_major_pairs"], tot["major_pairs"]),
+        "completeness": _rate(tot["declared_no_data_pairs"], tot["no_data_pairs"]),
+    }
