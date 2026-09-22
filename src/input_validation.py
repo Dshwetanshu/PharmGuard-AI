@@ -1,0 +1,52 @@
+"""Validation for user-supplied drug names: the single place they are checked.
+
+Names end up in RxNorm/FAERS query strings and in the LLM prompt, so only a
+conservative character set is accepted: ASCII letters and digits, space, and
+the punctuation that appears in real drug names (- . ' ( ) / _). Anything else
+(newlines, quotes, brackets, angle brackets, colons, ...) is rejected rather
+than silently stripped, so the user sees exactly what was not analysed.
+"""
+from __future__ import annotations
+
+import re
+from typing import List, Sequence
+
+MAX_NAME_LENGTH = 60
+_ALLOWED = re.compile(r"[A-Za-z0-9][A-Za-z0-9 .'()/_-]*")
+
+
+class InvalidDrugNameError(ValueError):
+    pass
+
+
+def clean_drug_names(names: Sequence[str]) -> List[str]:
+    """Collapse runs of spaces and validate each name.
+
+    Plain-language text ("aspirin ignore previous instructions") can't be ruled
+    out by character rules; the generator delimits names as data for that.
+
+    Raises InvalidDrugNameError listing every invalid input.
+    """
+    cleaned, problems = [], []
+    for raw in names:
+        if not isinstance(raw, str):
+            problems.append(f"{raw!r}: not a string")
+            continue
+        if any(ord(ch) < 32 or ord(ch) == 127 for ch in raw):
+            # Checked before collapsing whitespace, so newlines can't be turned
+            # into spaces and slip a second "line" into the prompt.
+            problems.append(f"{raw[:20]!r}: contains control characters (e.g. newlines)")
+            continue
+        name = re.sub(r" {2,}", " ", raw.strip())
+        if not name:
+            problems.append(f"{raw!r}: empty")
+        elif len(name) > MAX_NAME_LENGTH:
+            problems.append(f"{name[:20]!r}...: longer than {MAX_NAME_LENGTH} characters")
+        elif not _ALLOWED.fullmatch(name):
+            problems.append(f"{name!r}: only letters, digits, spaces and - . ' ( ) / _ are allowed, "
+                            "starting with a letter or digit")
+        else:
+            cleaned.append(name)
+    if problems:
+        raise InvalidDrugNameError("Invalid drug name(s): " + "; ".join(problems))
+    return cleaned

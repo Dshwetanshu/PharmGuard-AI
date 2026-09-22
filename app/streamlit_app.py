@@ -12,6 +12,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import streamlit as st
 
+from src.input_validation import InvalidDrugNameError
 from src.pipeline import PharmGuardPipeline
 
 
@@ -122,7 +123,11 @@ if go:
         st.stop()
 
     with st.spinner(f"Analyzing {len(drugs)} medications..."):
-        result = pipeline.run(drugs, use_llm=use_llm)
+        try:
+            result = pipeline.run(drugs, use_llm=use_llm)
+        except InvalidDrugNameError as e:
+            st.error(str(e))
+            st.stop()
 
     # ---------- header metrics ----------
     m1, m2, m3, m4 = st.columns(4)

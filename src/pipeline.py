@@ -16,6 +16,7 @@ from src.data.normalizer import DrugNormalizer, ResolvedDrug
 from src.agents.planner import Planner, RetrievalPlan
 from src.agents.retriever import Retriever, RetrievalResult
 from src.agents.generator import Generator
+from src.input_validation import clean_drug_names
 from src.retrieval.interaction_retriever import InteractionRetriever
 from src.retrieval.side_effect_retriever import SideEffectRetriever
 from src.retrieval.vector_store import VectorStore
@@ -79,6 +80,7 @@ class PharmGuardPipeline:
             raise ValueError("At least one drug must be provided.")
         if len(drug_names) > 12:
             raise ValueError("MVP supports up to 12 drugs. Got %d." % len(drug_names))
+        drug_names = clean_drug_names(drug_names)  # raises InvalidDrugNameError
 
         start = time.perf_counter()
         trace = {}

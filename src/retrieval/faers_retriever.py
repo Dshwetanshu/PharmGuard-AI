@@ -22,7 +22,7 @@ import json
 import time
 from dataclasses import dataclass, asdict
 from typing import List, Optional
-from urllib.parse import quote_plus
+from urllib.parse import urlencode
 
 try:
     import urllib.request as urllib_request
@@ -126,14 +126,7 @@ class FaersRetriever:
     def _query_faers(self, drug_a: str, drug_b: str) -> List[tuple]:
         """Return [(reaction_name, report_count), ...] sorted desc by count."""
         # Search for reports mentioning BOTH drugs, count by reaction term.
-        search = (
-            f'(patient.drug.medicinalproduct:"{drug_a}"+AND+'
-            f'patient.drug.medicinalproduct:"{drug_b}")'
-        )
-        url = (
-            f"{FAERS_ENDPOINT}?search={search}"
-            f"&count=patient.reaction.reactionmeddrapt.exact&limit=10"
-        )
+        url = self._query_url(drug_a, drug_b, limit=10)
 
         req = urllib_request.Request(url, headers={"User-Agent": "PharmGuard/1.0"})
         try:
@@ -149,13 +142,25 @@ class FaersRetriever:
         return [(r.get("term", "").lower(), int(r.get("count", 0))) for r in results]
 
     @staticmethod
-    def _public_query_url(drug_a: str, drug_b: str) -> str:
+    def _query_url(drug_a: str, drug_b: str, limit: Optional[int] = None) -> str:
+        """Build the OpenFDA count query. Every parameter value is URL-encoded, and
+        double quotes are removed from names so they cannot end the phrase."""
+        def phrase(name: str) -> str:
+            return '"' + name.replace('"', "") + '"'
+
+        params = {
+            "search": f"patient.drug.medicinalproduct:{phrase(drug_a)} AND "
+                      f"patient.drug.medicinalproduct:{phrase(drug_b)}",
+            "count": "patient.reaction.reactionmeddrapt.exact",
+        }
+        if limit is not None:
+            params["limit"] = str(limit)
+        return f"{FAERS_ENDPOINT}?{urlencode(params)}"
+
+    @classmethod
+    def _public_query_url(cls, drug_a: str, drug_b: str) -> str:
         """Return a URL a clinician can paste into a browser to reproduce the query."""
-        search = (
-            f'(patient.drug.medicinalproduct:"{drug_a}"+AND+'
-            f'patient.drug.medicinalproduct:"{drug_b}")'
-        )
-        return f"{FAERS_ENDPOINT}?search={search}&count=patient.reaction.reactionmeddrapt.exact"
+        return cls._query_url(drug_a, drug_b)
 
     @staticmethod
     def _count_to_severity(count: int) -> str:
