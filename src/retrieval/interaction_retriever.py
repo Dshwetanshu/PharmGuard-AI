@@ -31,6 +31,7 @@ class InteractionRecord:
     prr: Optional[float]
     frequency: Optional[float]
     source: str
+    mechanism: Optional[str] = None   # source-provided mechanism prose (DDInter), if any
 
     def citation(self) -> str:
         return f"[{self.source}:{self.record_id}]"
@@ -107,6 +108,7 @@ class InteractionRetriever:
                     prr=_opt_float(r.get("prr")),
                     frequency=_opt_float(r.get("frequency")),
                     source=str(r.get("source") or "TWOSIDES"),
+                    mechanism=_opt_str(r.get("mechanism")),
                 )
             )
         return records

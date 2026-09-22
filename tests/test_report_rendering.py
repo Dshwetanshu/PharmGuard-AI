@@ -117,3 +117,13 @@ def test_template_lists_every_no_data_pair_and_unresolved_input(sample_pipeline)
         assert f"\n- {a} + {b}\n" in report
     assert "### Unresolved Inputs" in report and "\n- fictional_drug_xyz\n" in report
     assert "..." not in report
+
+
+def test_source_mechanism_is_quoted_verbatim_in_both_paths(sample_pipeline):
+    mech = "ACE inhibition + K-sparing diuretic → hyperkalemia risk"
+    report = sample_pipeline.run(["lisinopril", "spironolactone"], use_llm=False).report
+    assert f'source mechanism: "{mech}" [DDInter:DDI-00000003]' in report
+
+    llm = StubLLM()
+    _pipeline(sample_pipeline, llm=llm).run(["lisinopril", "spironolactone"], use_llm=True)
+    assert f'mechanism="{mech}"' in llm.calls[0][1][0]["content"]

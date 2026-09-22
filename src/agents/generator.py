@@ -104,12 +104,12 @@ class Generator:
             if buckets[label]:
                 lines.append(f"## {heading}")
                 for pair, r in buckets[label]:
-                    lines.append(
-                        f"- **{r.drug_a} + {r.drug_b}** — {r.condition} "
-                        f"(PRR={r.prr:.2f}) {r.citation()}"
-                        if r.prr is not None
-                        else f"- **{r.drug_a} + {r.drug_b}** — {r.condition} {r.citation()}"
-                    )
+                    line = f"- **{r.drug_a} + {r.drug_b}** — {r.condition}"
+                    if r.prr is not None:
+                        line += f" (PRR={r.prr:.2f})"
+                    if r.mechanism:
+                        line += f'; source mechanism: "{r.mechanism}"'
+                    lines.append(f"{line} {r.citation()}")
                 lines.append("")
 
         # Coverage: every unresolved input and every no-data pair is listed.
@@ -182,9 +182,10 @@ class Generator:
                 prr = f"{r.prr:.2f}" if r.prr is not None else "n/a"
                 severity = r.severity if r.severity in ("Major", "Moderate", "Minor") else "not graded"
                 freq = f"{r.frequency:.4f}" if r.frequency is not None else "n/a"
+                mech = f'"{r.mechanism}"' if r.mechanism else "not specified in source"
                 blocks.append(
                     f"  - [{r.source}:{r.record_id}] severity={severity}, "
-                    f"condition={r.condition}, PRR={prr}, freq={freq}"
+                    f"condition={r.condition}, PRR={prr}, freq={freq}, mechanism={mech}"
                 )
 
         if result.side_effects:
