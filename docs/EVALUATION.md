@@ -2,94 +2,101 @@
 
 > If you cannot describe the failure mode that keeps you up at night, you have not thought hard enough about your system.
 
-This doc specifies how PharmGuard is evaluated and, importantly, what counts as failure.
+This doc says how PharmGuard is evaluated, what is actually measured today, and what is not. All numbers below come from running the code in this repository on the **synthetic sample data** (85 interaction records). None come from the real TWOSIDES, DDInter or SIDER releases, which have not been ingested. Unmeasured values are shown as "—".
 
 ## The silent-failure scenario
 
-The target failure mode — the one the evaluation is engineered to catch — is:
+The target failure mode is:
 
-> A patient inputs six medications. The system returns a cleanly formatted report listing four interactions with professional-sounding mechanism descriptions. It looks authoritative. But the system has missed two critical interactions — one classified as *Major* severity in the source database — and has fabricated a CYP3A4 inhibition pathway where the actual mechanism is P-glycoprotein competition.
+> A patient inputs six medications. The system returns a cleanly formatted report listing four interactions with professional-sounding mechanism descriptions. It looks authoritative. But the system has missed two critical interactions, one classified as *Major* severity in the source database, and has fabricated a CYP3A4 inhibition pathway where the actual mechanism is P-glycoprotein competition.
 
-The output is polished, fluent, and dangerous. Traditional benchmarks miss this because they score confident-sounding language well. PharmGuard's eval deliberately does not.
+Counting citations can't catch this: the fabricated sentence can carry a real citation. So PharmGuard checks each claim against the record it cites (see *Report checks* below). The same checker runs as a runtime guardrail: an LLM report that fails it is never shown, and the deterministic template report is returned instead.
 
-## Ground truth construction
+## Test cases
 
-For each test case, ground truth is derived **programmatically**, not curated:
+`src/evaluation/test_cases.py` defines 48 cases across 12 groups (geriatric, textbook interactions, edge cases, mental health, cardiology, endocrine, infectious disease, oncology-adjacent, pain, respiratory, GI, a 10-drug profile). Each case has hand-written `known_interaction_pairs`. The labels are partial: 14 cases list none, and some labels are suspected to be wrong. Suspected errors are flagged for review, not edited.
 
-```
-ground_truth(input_drugs) = {
-    (a, b) for (a, b) in combinations(normalize(input_drugs), 2)
-    if (a, b) exists in the loaded interactions table
-}
-```
+## Retrieval metrics
 
-This makes eval self-consistent with whatever dataset was ingested. If you load full TWOSIDES, ground truth is ~all TWOSIDES pairs in your input. If you load only the sample, ground truth is the sample's pairs. The same evaluator code produces meaningful numbers in both cases.
+### Internal consistency (recall / precision)
 
-## The six metrics
+Ground truth = every input pair present in the loaded interaction table, derived with **the same normalizer and table the retriever uses**. Recall and precision are therefore 1.0 **by construction**. This only catches bugs in pair enumeration and lookup plumbing. It scored 1.0 while lithium + hydrochlorothiazide (Major) was reported as "no data" because of a lithium / lithium carbonate key mismatch.
 
-### 1. Retrieval Recall — target ≥ 95%
+### Hand labels
 
-`recall = true_positives / (true_positives + false_negatives)`
+Retrieval is scored against `known_interaction_pairs`, with labels mapped to canonical names by exact vocabulary alias only (`src/evaluation/hand_labels.py`). Precision is a lower bound because the labels are partial.
 
-Fraction of ground-truth interaction pairs that the retriever surfaced. This is the **most important metric**. A missed major interaction is the worst-case outcome; recall measures how often that happens.
+## Report checks (`src/verification`)
 
-### 2. Retrieval Precision — target ≥ 90%
+`validate_report(report, evidence)` parses the report into claims (bullets and sentences), reads their `[SOURCE:RECORD_ID]` citations and drug mentions, and checks each claim against the records it cites:
 
-`precision = true_positives / (true_positives + false_positives)`
+| Code | What it catches |
+|---|---|
+| `PHANTOM_CITATION` | cited ID is not in the retrieved evidence |
+| `MISATTRIBUTED_CITATION` | cited record belongs to a different drug pair |
+| `SEVERITY_MISMATCH` | section or tier word differs from the record's severity |
+| `NUMERIC_MISMATCH` | PRR (or FAERS report count) differs from the record |
+| `EVENT_MISATTRIBUTION` | adverse event named is not the cited record's |
+| `UNSUPPORTED_MECHANISM` | mechanism term (CYP isoform, P-gp, OATP, UGT, QT, serotonergic, ...) absent from the record; isoform-aware, so CYP3A matches CYP3A4 but CYP2D6 does not |
+| `UNSUPPORTED_POPULATION` | elderly / pediatric / pregnancy / renal / hepatic claim absent from the record |
+| `FAERS_AS_CURATED` | an unvalidated FAERS report cited outside the FAERS section |
+| `UNCITED_CLAIM` | clinical claim with no citation (the old syntactic check) |
+| `OMITTED_INTERACTION`, `OMITTED_MAJOR` | a pair with records (or a Major record) is never cited |
+| `MISSING_NO_DATA_DECLARATION`, `CONFLATED_ABSENCE` | a no-data pair is not declared, or is described as safe / non-interacting |
+| `MISSING_UNRESOLVED_DECLARATION`, `MISSING_DISCLAIMER` | an unresolved input is not declared; disclaimer not present exactly once |
 
-Since the retriever uses exact-pair lookups (not semantic search), precision should be extremely high by construction. Sub-90% precision would indicate a bug in pair normalization or the interactions index.
+Metrics (micro-averaged over reports):
+- **semantic_hallucination_rate**: clinical claims with at least one fabrication finding ÷ clinical claims
+- **uncited_claim_rate**: the old syntactic metric
+- **citation_validity**
+- **pair_omission_rate**, **major_omission_rate**
+- **completeness**: no-data pairs declared ÷ total
 
-### 3. Faithfulness — target ≥ 85%
+**These checks are a lower bound.** Mechanisms, events and populations are matched with hand-written lexicons (`src/verification/lexicon.py`), so a fabrication worded outside them passes. Five such probes (for example "hepatic enzyme blockade", "patients over 80", "risk roughly triples") are all missed; see `results/checker_validation.md`. An LLM judge for semantic entailment is planned as a later layer. It is **not implemented**, and no faithfulness score is reported.
 
-Does the generated mechanism match the retrieved source record?
+### Validating the checker
 
-**Automated path:** an LLM-judge (separate model instance) compares each generated paragraph against the retrieved record using semantic entailment. See `src/evaluation/metrics.py::count_uncited_claims` for a faster heuristic proxy.
+`python scripts/validate_checker.py` writes `results/checker_validation.{json,md}`:
+- **False positives:** the template reports for all 48 cases, plus clean synthetic `FX-` fixture reports in template and LLM-style prose, give 0 findings.
+- **Sensitivity:** 12 fault types are injected into the fixtures, including the canonical case above (a record saying P-glycoprotein, a report claiming CYP3A4). Each fault's expected code is raised on every injected instance. This shows each check works on the fault it targets. It is not an estimate of how often real LLM errors are caught: the injected terms come from the checker's own lexicons, and the fixtures are small.
 
-**Human audit:** 20% of cases are manually reviewed. If auto-judge and human score diverge by more than 10 percentage points, the pipeline is recalibrated before reporting final numbers.
+## Results (synthetic sample data)
 
-### 4. Hallucination Rate — target ≤ 5%
+From `python scripts/run_eval.py` (48 cases). The LLM column requires an API key; none was configured when these numbers were produced.
 
-Fraction of clinical claims in the report that cannot be traced to any source record in the retrieval evidence.
+| Metric | Deterministic template | LLM path |
+|---|---:|---:|
+| Internal-consistency recall / precision | 1.000 / 1.000 (by construction) | n/a (retrieval only) |
+| Hand-label recall | 0.974 (37/38) | n/a |
+| Hand-label precision (lower bound) | 0.587 (37/63) | n/a |
+| uncited_claim_rate | 0.000 | — |
+| semantic_hallucination_rate | 0.000 | — |
+| citation_validity | 1.000 | — |
+| pair_omission_rate / major_omission_rate | 0.000 / 0.000 | — |
+| completeness | 1.000 | — |
+| LLM fallback rate | n/a | — |
+| Faithfulness (LLM judge) | — (not implemented) | — |
 
-Detected via regex: every sentence containing clinical markers (`interaction`, `bleeding`, `QT`, `mechanism`, etc.) must include a `[SOURCE:RECORD_ID]` citation. Uncited clinical claims are candidate hallucinations and flagged for audit.
-
-### 5. Severity Accuracy — target ≥ 90%
-
-Does the generated report's severity tier match the retrieved record's severity field?
-
-### 6. Completeness Flagging — target 100%
-
-For every input pair where the retriever returned no data, does the final report explicitly say "No interaction data available"?
-
-This is a **contract check**, not a learned behavior. The pipeline surfaces `no_data_pairs` by construction — if this ever drops below 100%, it's a bug, not a model failure.
+The template's zeros are expected: the template only restates record fields, and the checker was validated against it (the false-positive check above). Those zeros say nothing about LLM output.
 
 ## Running the evaluation
 
 ```bash
-# All 48 cases
-python scripts/run_eval.py --output reports/eval_full.json
-
-# Only geriatric cases
-python scripts/run_eval.py --subset GER
-
-# Only drug-textbook cases
-python scripts/run_eval.py --subset TXT
+python scripts/ingest_data.py --sample
+python scripts/run_eval.py --output /tmp/eval.json            # all 48 cases
+python scripts/run_eval.py --subset GER --skip-llm            # geriatric cases, no LLM calls
+python scripts/validate_checker.py                            # checker false positives / sensitivity
 ```
 
-The JSON output includes per-case breakdown so you can drill into any failure.
+With an API key in `.env`, `run_eval.py` also runs every case through the LLM path (one paid call per case) and reports the same metrics on the raw LLM reports, plus the fallback rate.
 
-## What the evaluation deliberately does NOT measure
+## What the evaluation does not measure
 
-- **Clinical appropriateness.** PharmGuard flags an interaction if the source data does. Whether a clinician should act on a Moderate Minor interaction is a judgment call that belongs to the clinician, not the system.
-- **Coverage of drugs outside the loaded database.** If TWOSIDES doesn't cover a drug, neither does PharmGuard. This is a data coverage limitation, not an accuracy failure — and it's reported honestly via the `unresolved_inputs` and `no_data_pairs` outputs.
-- **Clinical outcomes.** Whether the system *improves patient outcomes* requires a prospective study, not a retrieval benchmark.
+- **Real-data performance.** Only synthetic sample data has been evaluated.
+- **Clinical appropriateness.** PharmGuard reports what its sources record; whether to act on it is the clinician's call.
+- **Coverage of drugs outside the loaded data.** Reported via unresolved inputs and no-data pairs, not scored.
+- **Clinical outcomes.** That would need a prospective study, not a retrieval benchmark.
 
 ## Interpreting the numbers
 
-A 95% recall sounds great until you realize: 5% of major interactions missed, across 1.3M ED visits/year attributed to ADEs, is a very large number of potential harms. That's why the system pairs its metrics with:
-
-- Explicit `no_data_pairs` (not just "silence")
-- Source-record citations on every claim (so the clinician can verify)
-- Disclaimer on every output
-
-The evaluation philosophy is: **be honest about what you know and what you don't.** A system that scores 92% recall but flags the 8% uncertain pairs as uncertain is clinically safer than one that scores 95% recall but is silent about its gaps.
+A 95% recall still misses 1 in 20 interactions. That's why every report also lists no-data pairs explicitly, cites a source record for every claim so a clinician can verify it, and carries a disclaimer. A system that flags its gaps is safer than one that scores slightly higher but is silent about them.
