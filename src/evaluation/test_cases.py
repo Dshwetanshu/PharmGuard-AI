@@ -18,6 +18,8 @@ from typing import List, Tuple
 
 @dataclass
 class TestCase:
+    __test__ = False  # not a pytest test class
+
     case_id: str
     description: str
     input_drugs: List[str]

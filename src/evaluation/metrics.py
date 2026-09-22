@@ -8,10 +8,12 @@ Implements the six metrics defined in the proposal:
   5. Severity Accuracy
   6. Completeness Flagging
 
-Ground truth for recall/precision is derived programmatically: for a given
-input drug list, ground truth = every pair in the loaded interactions table
-that has both drugs present. This makes the eval self-consistent with whatever
-dataset was ingested (full TWOSIDES, sample subset, etc.).
+Only (1) and (2) are computed, and only as an INTERNAL CONSISTENCY check: ground
+truth = every input pair present in the loaded interactions table, derived with
+the same normalizer and table the retriever uses. Recall and precision are
+therefore 1.0 by construction and cannot detect normalization errors (e.g. the
+lithium / lithium carbonate key mismatch scored 1.0). For an independent check
+see src/evaluation/hand_labels.py.
 """
 from __future__ import annotations
 

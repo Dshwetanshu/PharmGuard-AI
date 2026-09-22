@@ -1,0 +1,34 @@
+"""Hand-label scoring: independent of the normalizer/table used for retrieval."""
+from __future__ import annotations
+
+from src.evaluation.hand_labels import score_hand_labels
+from src.evaluation.test_cases import TEST_CASES, TestCase
+
+
+def test_scorer_counts_hits_misses_and_unlabelled():
+    cases = [
+        TestCase("A", "", ["lithium", "hctz", "x"], [("lithium", "hctz"), ("x", "hctz")]),
+        TestCase("B", "", ["p", "q"], []),
+    ]
+    retrieved = {"A": {("hctz", "lithium carbonate")}, "B": {("p", "q")}}
+    alias = {"lithium": "lithium carbonate"}
+    r = score_hand_labels(cases, lambda drugs: retrieved["A" if "x" in drugs else "B"], alias)
+    assert (r["labelled_pairs"], r["retrieved_pairs"], r["hits"]) == (2, 2, 1)
+    assert (r["recall"], r["precision_lower_bound"]) == (0.5, 0.5)
+    assert r["missed"] == [("A", ["hctz", "x"])]
+    assert r["unlabelled_retrieved"] == [("B", ["p", "q"])]
+
+
+def test_lithium_label_is_hit_on_sample_data(sample_pipeline):
+    import pandas as pd
+    from src.data.canonical import build_alias_map
+
+    vocab = pd.read_parquet(sample_pipeline.cfg.paths.processed_dir / "drug_vocabulary.parquet")
+    mh02 = [c for c in TEST_CASES if c.case_id == "MH-02"]
+
+    def retrieve(drugs):
+        plan = sample_pipeline.planner.plan(sample_pipeline.normalizer.resolve_many(drugs))
+        return set(sample_pipeline.retriever.execute(plan).interactions)
+
+    r = score_hand_labels(mh02, retrieve, build_alias_map(vocab))
+    assert r["missed"] == [] and r["hits"] == 1
