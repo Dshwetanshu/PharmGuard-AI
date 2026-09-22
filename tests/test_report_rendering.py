@@ -82,3 +82,23 @@ def test_llm_is_told_about_ungraded_records(sample_pipeline):
     system, messages = llm.calls[0]
     assert "Severity Not Graded" in system
     assert "severity=not graded" in messages[0]["content"]
+
+
+# ---------- disclaimer ----------
+
+@pytest.mark.parametrize("llm_text", [
+    "## Summary\nThe word disclaimer appears here, but no actual disclaimer.",
+    "## Summary\nok\n\n---\n**Disclaimer.** {disclaimer}",   # model echoes the canonical text
+    "## Summary\nok\n\n{disclaimer}\n\n{disclaimer}",       # ...even twice
+])
+def test_llm_report_has_canonical_disclaimer_exactly_once(sample_pipeline, llm_text):
+    disclaimer = sample_pipeline.cfg.disclaimer
+    p = _pipeline(sample_pipeline, llm=StubLLM(llm_text.format(disclaimer=disclaimer)))
+    report = p.run(["aspirin", "warfarin"], use_llm=True).report
+    assert report.count(disclaimer) == 1
+    assert report.rstrip().endswith(disclaimer)
+
+
+def test_template_report_has_canonical_disclaimer_exactly_once(sample_pipeline):
+    report = sample_pipeline.run(["aspirin", "warfarin"], use_llm=False).report
+    assert report.count(sample_pipeline.cfg.disclaimer) == 1

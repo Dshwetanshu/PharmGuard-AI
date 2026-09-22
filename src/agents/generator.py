@@ -68,11 +68,9 @@ class Generator:
         if faers:
             report = report.rstrip() + "\n\n" + "\n".join(faers)
 
-        # Always append the disclaimer — this is a safety invariant, not a model choice
-        if "disclaimer" not in report.lower():
-            report += f"\n\n---\n**Disclaimer.** {self.cfg.disclaimer}"
-
-        return report
+        # Remove any copy the model wrote, then append the canonical one below.
+        report = report.replace(self.cfg.disclaimer, "")
+        return self._with_disclaimer(report.rstrip().split("\n"))
 
     # ---------- deterministic report (no LLM) ----------
     # Useful for testing, offline mode, and as a fallback if the LLM call fails.
@@ -139,13 +137,17 @@ class Generator:
         if faers:
             lines.extend(faers + [""])
 
-        # Disclaimer
-        lines.append("---")
-        lines.append(f"**Disclaimer.** {self.cfg.disclaimer}")
-
-        return "\n".join(lines)
+        return self._with_disclaimer(lines)
 
     # ---------- helpers ----------
+
+    def _with_disclaimer(self, lines: List[str]) -> str:
+        """Append the canonical disclaimer exactly once. This is a safety invariant
+        enforced in code for both report paths, not a model choice."""
+        body = "\n".join(lines).rstrip()
+        while body.endswith("---") or body.endswith("**Disclaimer.**"):
+            body = body[: body.rfind("---" if body.endswith("---") else "**Disclaimer.**")].rstrip()
+        return f"{body}\n\n---\n**Disclaimer.** {self.cfg.disclaimer}"
 
     @staticmethod
     def _faers_section(result: RetrievalResult) -> List[str]:
