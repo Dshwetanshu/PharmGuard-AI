@@ -98,7 +98,7 @@ def test_llm_report_has_canonical_disclaimer_exactly_once(sample_pipeline, llm_t
     llm = StubLLM(llm_text.format(disclaimer=disclaimer))
     report = Generator(sample_pipeline.cfg, llm=llm).generate(r.plan, r.retrieval)
     assert report.count(disclaimer) == 1
-    assert report.rstrip().endswith(disclaimer)
+    assert report.rstrip().endswith(f"**Disclaimer.** {disclaimer}\n\n{Generator(sample_pipeline.cfg).provenance}")
 
 
 def test_template_report_has_canonical_disclaimer_exactly_once(sample_pipeline):

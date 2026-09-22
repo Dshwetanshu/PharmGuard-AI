@@ -115,10 +115,9 @@ class Config:
 
     # Disclaimer text appended to every generated report
     disclaimer: str = (
-        "PharmGuard is a decision-support tool grounded in public pharmaceutical "
-        "databases. It is not a substitute for professional medical judgment. "
-        "Always consult a licensed clinician or pharmacist before making changes to "
-        "a medication regimen."
+        "PharmGuard is a decision-support prototype, not a substitute for professional "
+        "medical judgment. It reports only what its loaded data contains; absence of "
+        "data is not evidence of safety."
     )
 
 

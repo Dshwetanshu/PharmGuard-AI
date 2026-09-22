@@ -16,6 +16,7 @@ import pandas as pd
 
 from src.config import Config, config as default_config
 from src.data.storage import write_table
+from src.data.provenance import write_provenance
 from src.data.canonical import (
     build_alias_map,
     canonicalize_columns,
@@ -122,6 +123,7 @@ class Ingester:
             }
 
         report["join_integrity"] = self._join_integrity(merged_interactions, merged_se, alias_map)
+        report["provenance"] = str(write_provenance(self.cfg.paths.processed_dir, "full", report))
         return report
 
     # ---------- canonical keys ----------
@@ -264,6 +266,7 @@ class Ingester:
             report["reviews"] = {"rows": len(reviews), "by_source": by_src, "path": str(out)}
 
         report["join_integrity"] = self._join_integrity(interactions, se, alias_map)
+        report["provenance"] = str(write_provenance(self.cfg.paths.processed_dir, "sample", report))
         return report
 
     # ---------- helpers ----------

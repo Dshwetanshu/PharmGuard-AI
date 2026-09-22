@@ -18,6 +18,7 @@ from typing import List, Optional
 from src.agents.planner import RetrievalPlan
 from src.agents.retriever import RetrievalResult
 from src.config import Config, config as default_config
+from src.data.provenance import provenance_line
 from src.llm import LLMClient
 
 
@@ -54,9 +55,22 @@ Be concise. A clinician reads this in 30 seconds."""
 
 
 class Generator:
-    def __init__(self, cfg: Optional[Config] = None, llm: Optional[LLMClient] = None):
+    def __init__(self, cfg: Optional[Config] = None, llm: Optional[LLMClient] = None,
+                 provenance: Optional[str] = None):
         self.cfg = cfg or default_config
         self.llm = llm  # Lazy init — allows dry-run without API key
+        self._provenance = provenance  # footer "Data: ..." line; read from the ingest record if None
+
+    @property
+    def provenance(self) -> str:
+        if self._provenance is None:
+            self._provenance = provenance_line(self.cfg.paths.processed_dir)
+        return self._provenance
+
+    def finalize(self, report: str) -> str:
+        """Normalize the footer: canonical disclaimer then provenance, exactly once.
+        Idempotent, so it can be applied to a report that already has a footer."""
+        return self._with_disclaimer(report.split("\n"))
 
     def generate(self, plan: RetrievalPlan, result: RetrievalResult) -> str:
         if self.llm is None:
@@ -76,8 +90,7 @@ class Generator:
         if faers:
             report = report.rstrip() + "\n\n" + "\n".join(faers)
 
-        # Remove any copy the model wrote, then append the canonical one below.
-        report = report.replace(self.cfg.disclaimer, "")
+        # Any copy the model wrote is removed; the canonical footer is appended.
         return self._with_disclaimer(report.rstrip().split("\n"))
 
     # ---------- deterministic report (no LLM) ----------
@@ -151,12 +164,13 @@ class Generator:
     # ---------- helpers ----------
 
     def _with_disclaimer(self, lines: List[str]) -> str:
-        """Append the canonical disclaimer exactly once. This is a safety invariant
-        enforced in code for both report paths, not a model choice."""
-        body = "\n".join(lines).rstrip()
+        """Append the canonical disclaimer and the provenance line exactly once.
+        This is a safety invariant enforced in code for both report paths, not a
+        model choice. Existing copies (e.g. written by the model) are removed first."""
+        body = "\n".join(lines).replace(self.cfg.disclaimer, "").replace(self.provenance, "").rstrip()
         while body.endswith("---") or body.endswith("**Disclaimer.**"):
             body = body[: body.rfind("---" if body.endswith("---") else "**Disclaimer.**")].rstrip()
-        return f"{body}\n\n---\n**Disclaimer.** {self.cfg.disclaimer}"
+        return f"{body}\n\n---\n**Disclaimer.** {self.cfg.disclaimer}\n\n{self.provenance}"
 
     @staticmethod
     def _faers_section(result: RetrievalResult) -> List[str]:

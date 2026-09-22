@@ -22,6 +22,7 @@ from src.verification import Evidence, build_evidence
 from src.verification.lexicon import event_supported, unsupported_mechanisms
 
 CFG = Config()
+PROVENANCE = "Data: synthetic FX- fixture records, not real clinical data."
 
 
 def _ix(rid, src, a, b, event, sev, prr=None, mech=None):
@@ -111,7 +112,7 @@ def render_prose(s: Scenario, plan, result) -> str:
     """LLM-style report: sentences instead of bullets, brand names, inline tier
     words, 1-decimal PRRs. Same section headings as the template (the system
     prompt requires them)."""
-    gen = Generator(CFG)
+    gen = Generator(CFG, provenance=PROVENANCE)
     brand = {v: k for k, v in s.aliases.items()}
     lines = ["# PharmGuard Interaction Report", "", "## Summary",
              f"{plan.num_drugs} medications, {plan.num_pairs} pairs and {result.total_interactions} "
@@ -163,7 +164,7 @@ def render(s: Scenario, records=None, style: str = "template") -> str:
     plan, result = build(s, records)
     if style == "prose":
         return render_prose(s, plan, result)
-    return Generator(CFG).generate_deterministic(plan, result)
+    return Generator(CFG, provenance=PROVENANCE).generate_deterministic(plan, result)
 
 
 def template(s: Scenario, records=None) -> str:
