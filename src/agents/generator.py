@@ -38,6 +38,7 @@ Your output format is structured markdown with these sections:
   - Major Findings (severity = Major)
   - Moderate Findings (severity = Moderate)
   - Minor Findings (severity = Minor)
+  - Severity Not Graded (severity = not graded: the source has an interaction record but no severity tier; list these, never drop them or assign a tier)
   - Coverage Notes (list unresolved inputs and no-data pairs exactly as given in evidence)
   - (Disclaimer is appended automatically by the system — do not add one.)
 
@@ -93,9 +94,15 @@ class Generator:
             for r in records:
                 buckets.get(r.severity, buckets["Unknown"]).append((pair, r))
 
-        for label in ("Major", "Moderate", "Minor"):
+        headings = {
+            "Major": "Major Findings",
+            "Moderate": "Moderate Findings",
+            "Minor": "Minor Findings",
+            "Unknown": "Severity Not Graded",
+        }
+        for label, heading in headings.items():
             if buckets[label]:
-                lines.append(f"## {label} Findings")
+                lines.append(f"## {heading}")
                 for pair, r in buckets[label]:
                     lines.append(
                         f"- **{r.drug_a} + {r.drug_b}** — {r.condition} "
@@ -168,9 +175,10 @@ class Generator:
             blocks.append(f"\nPair: {pair[0]} + {pair[1]}")
             for r in records:
                 prr = f"{r.prr:.2f}" if r.prr is not None else "n/a"
+                severity = r.severity if r.severity in ("Major", "Moderate", "Minor") else "not graded"
                 freq = f"{r.frequency:.4f}" if r.frequency is not None else "n/a"
                 blocks.append(
-                    f"  - [{r.source}:{r.record_id}] severity={r.severity}, "
+                    f"  - [{r.source}:{r.record_id}] severity={severity}, "
                     f"condition={r.condition}, PRR={prr}, freq={freq}"
                 )
 

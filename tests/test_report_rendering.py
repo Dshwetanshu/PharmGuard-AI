@@ -54,3 +54,31 @@ def test_faers_pairs_stay_no_data_and_are_shown_as_unvalidated(sample_pipeline, 
     assert "FAERS Spontaneous Reports (unvalidated)" in report
     assert "[FAERS:FAERS-abc123]" in report
     assert "600" in report
+
+
+# ---------- ungraded severity ----------
+
+def _ungraded_case(sample_pipeline):
+    from src.agents.retriever import RetrievalResult
+    from src.retrieval.interaction_retriever import InteractionRecord
+
+    plan = Planner().plan(sample_pipeline.normalizer.resolve_many(["warfarin", "digoxin"]))
+    rec = InteractionRecord("DDI-00009999", "digoxin", "warfarin", None, None,
+                            "interaction", "Unknown", None, None, "DDInter")
+    return plan, RetrievalResult(interactions={("digoxin", "warfarin"): [rec]})
+
+
+def test_unknown_severity_is_shown_as_not_graded(sample_pipeline):
+    plan, result = _ungraded_case(sample_pipeline)
+    report = Generator(sample_pipeline.cfg).generate_deterministic(plan, result)
+    assert "## Severity Not Graded" in report
+    assert "[DDInter:DDI-00009999]" in report
+
+
+def test_llm_is_told_about_ungraded_records(sample_pipeline):
+    plan, result = _ungraded_case(sample_pipeline)
+    llm = StubLLM()
+    Generator(sample_pipeline.cfg, llm=llm).generate(plan, result)
+    system, messages = llm.calls[0]
+    assert "Severity Not Graded" in system
+    assert "severity=not graded" in messages[0]["content"]
