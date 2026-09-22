@@ -1,0 +1,293 @@
+{
+  "blind_spots": {
+    "prose": {
+      "event outside lexicon ('muscle breakdown')": {
+        "codes": [],
+        "detected": false,
+        "expected_code_if_caught": "EVENT_MISATTRIBUTION"
+      },
+      "mechanism outside lexicon ('hepatic enzyme blockade')": {
+        "codes": [],
+        "detected": false,
+        "expected_code_if_caught": "UNSUPPORTED_MECHANISM"
+      },
+      "population outside lexicon ('patients over 80')": {
+        "codes": [],
+        "detected": false,
+        "expected_code_if_caught": "UNSUPPORTED_POPULATION"
+      },
+      "reversed direction ('lowering digoxin levels')": {
+        "codes": [],
+        "detected": false,
+        "expected_code_if_caught": "UNSUPPORTED_MECHANISM"
+      },
+      "unquantified magnitude ('risk roughly triples')": {
+        "codes": [],
+        "detected": false,
+        "expected_code_if_caught": "NUMERIC_MISMATCH"
+      }
+    },
+    "template": {
+      "event outside lexicon ('muscle breakdown')": {
+        "codes": [],
+        "detected": false,
+        "expected_code_if_caught": "EVENT_MISATTRIBUTION"
+      },
+      "mechanism outside lexicon ('hepatic enzyme blockade')": {
+        "codes": [],
+        "detected": false,
+        "expected_code_if_caught": "UNSUPPORTED_MECHANISM"
+      },
+      "population outside lexicon ('patients over 80')": {
+        "codes": [],
+        "detected": false,
+        "expected_code_if_caught": "UNSUPPORTED_POPULATION"
+      },
+      "reversed direction ('lowering digoxin levels')": {
+        "codes": [],
+        "detected": false,
+        "expected_code_if_caught": "UNSUPPORTED_MECHANISM"
+      },
+      "unquantified magnitude ('risk roughly triples')": {
+        "codes": [],
+        "detected": false,
+        "expected_code_if_caught": "NUMERIC_MISMATCH"
+      }
+    }
+  },
+  "command": "python scripts/validate_checker.py",
+  "false_positives": {
+    "fixture_clean_reports": {
+      "prose/anticoagulation": {
+        "clinical_claims": 8,
+        "findings": []
+      },
+      "prose/cardiac": {
+        "clinical_claims": 8,
+        "findings": []
+      },
+      "prose/renal": {
+        "clinical_claims": 6,
+        "findings": []
+      },
+      "template/anticoagulation": {
+        "clinical_claims": 6,
+        "findings": []
+      },
+      "template/cardiac": {
+        "clinical_claims": 6,
+        "findings": []
+      },
+      "template/renal": {
+        "clinical_claims": 5,
+        "findings": []
+      }
+    },
+    "sample_template_reports": {
+      "by_code": {},
+      "clinical_claims_checked": 122,
+      "failing_cases": {},
+      "findings": 0,
+      "reports": 48,
+      "reports_with_findings": 0
+    }
+  },
+  "sensitivity": {
+    "prose": {
+      "absence_as_safety": {
+        "any_finding_rate": 1.0,
+        "detected": 9,
+        "detection_rate": 1.0,
+        "expected_code": "CONFLATED_ABSENCE",
+        "injected": 9,
+        "missed": []
+      },
+      "canonical_pgp_to_cyp3a4": {
+        "any_finding_rate": 1.0,
+        "detected": 1,
+        "detection_rate": 1.0,
+        "expected_code": "UNSUPPORTED_MECHANISM",
+        "injected": 1,
+        "missed": []
+      },
+      "citation_swap": {
+        "any_finding_rate": 1.0,
+        "detected": 14,
+        "detection_rate": 1.0,
+        "expected_code": "MISATTRIBUTED_CITATION",
+        "injected": 14,
+        "missed": []
+      },
+      "event_swap": {
+        "any_finding_rate": 1.0,
+        "detected": 14,
+        "detection_rate": 1.0,
+        "expected_code": "EVENT_MISATTRIBUTION",
+        "injected": 14,
+        "missed": []
+      },
+      "faers_as_curated": {
+        "any_finding_rate": 1.0,
+        "detected": 3,
+        "detection_rate": 1.0,
+        "expected_code": "FAERS_AS_CURATED",
+        "injected": 3,
+        "missed": []
+      },
+      "mechanism_injection": {
+        "any_finding_rate": 1.0,
+        "detected": 14,
+        "detection_rate": 1.0,
+        "expected_code": "UNSUPPORTED_MECHANISM",
+        "injected": 14,
+        "missed": []
+      },
+      "omitted_major": {
+        "any_finding_rate": 1.0,
+        "detected": 6,
+        "detection_rate": 1.0,
+        "expected_code": "OMITTED_MAJOR",
+        "injected": 6,
+        "missed": []
+      },
+      "phantom_citation": {
+        "any_finding_rate": 1.0,
+        "detected": 14,
+        "detection_rate": 1.0,
+        "expected_code": "PHANTOM_CITATION",
+        "injected": 14,
+        "missed": []
+      },
+      "population_injection": {
+        "any_finding_rate": 1.0,
+        "detected": 14,
+        "detection_rate": 1.0,
+        "expected_code": "UNSUPPORTED_POPULATION",
+        "injected": 14,
+        "missed": []
+      },
+      "prr_distortion": {
+        "any_finding_rate": 1.0,
+        "detected": 9,
+        "detection_rate": 1.0,
+        "expected_code": "NUMERIC_MISMATCH",
+        "injected": 9,
+        "missed": []
+      },
+      "severity_flip": {
+        "any_finding_rate": 1.0,
+        "detected": 14,
+        "detection_rate": 1.0,
+        "expected_code": "SEVERITY_MISMATCH",
+        "injected": 14,
+        "missed": []
+      },
+      "uncited_claim": {
+        "any_finding_rate": 1.0,
+        "detected": 14,
+        "detection_rate": 1.0,
+        "expected_code": "UNCITED_CLAIM",
+        "injected": 14,
+        "missed": []
+      }
+    },
+    "template": {
+      "absence_as_safety": {
+        "any_finding_rate": 1.0,
+        "detected": 9,
+        "detection_rate": 1.0,
+        "expected_code": "CONFLATED_ABSENCE",
+        "injected": 9,
+        "missed": []
+      },
+      "canonical_pgp_to_cyp3a4": {
+        "any_finding_rate": 1.0,
+        "detected": 1,
+        "detection_rate": 1.0,
+        "expected_code": "UNSUPPORTED_MECHANISM",
+        "injected": 1,
+        "missed": []
+      },
+      "citation_swap": {
+        "any_finding_rate": 1.0,
+        "detected": 14,
+        "detection_rate": 1.0,
+        "expected_code": "MISATTRIBUTED_CITATION",
+        "injected": 14,
+        "missed": []
+      },
+      "event_swap": {
+        "any_finding_rate": 1.0,
+        "detected": 14,
+        "detection_rate": 1.0,
+        "expected_code": "EVENT_MISATTRIBUTION",
+        "injected": 14,
+        "missed": []
+      },
+      "faers_as_curated": {
+        "any_finding_rate": 1.0,
+        "detected": 3,
+        "detection_rate": 1.0,
+        "expected_code": "FAERS_AS_CURATED",
+        "injected": 3,
+        "missed": []
+      },
+      "mechanism_injection": {
+        "any_finding_rate": 1.0,
+        "detected": 14,
+        "detection_rate": 1.0,
+        "expected_code": "UNSUPPORTED_MECHANISM",
+        "injected": 14,
+        "missed": []
+      },
+      "omitted_major": {
+        "any_finding_rate": 1.0,
+        "detected": 6,
+        "detection_rate": 1.0,
+        "expected_code": "OMITTED_MAJOR",
+        "injected": 6,
+        "missed": []
+      },
+      "phantom_citation": {
+        "any_finding_rate": 1.0,
+        "detected": 14,
+        "detection_rate": 1.0,
+        "expected_code": "PHANTOM_CITATION",
+        "injected": 14,
+        "missed": []
+      },
+      "population_injection": {
+        "any_finding_rate": 1.0,
+        "detected": 14,
+        "detection_rate": 1.0,
+        "expected_code": "UNSUPPORTED_POPULATION",
+        "injected": 14,
+        "missed": []
+      },
+      "prr_distortion": {
+        "any_finding_rate": 1.0,
+        "detected": 9,
+        "detection_rate": 1.0,
+        "expected_code": "NUMERIC_MISMATCH",
+        "injected": 9,
+        "missed": []
+      },
+      "severity_flip": {
+        "any_finding_rate": 1.0,
+        "detected": 14,
+        "detection_rate": 1.0,
+        "expected_code": "SEVERITY_MISMATCH",
+        "injected": 14,
+        "missed": []
+      },
+      "uncited_claim": {
+        "any_finding_rate": 1.0,
+        "detected": 14,
+        "detection_rate": 1.0,
+        "expected_code": "UNCITED_CLAIM",
+        "injected": 14,
+        "missed": []
+      }
+    }
+  }
+}

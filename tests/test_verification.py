@@ -145,3 +145,17 @@ def test_verification_package_uses_standard_library_only():
             for name in names:
                 top = name.split(".")[0]
                 assert top in sys.stdlib_module_names or top in ("src", "__future__"), f"{path.name}: {name}"
+
+
+def test_committed_checker_validation_results_are_current():
+    import importlib.util
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parent.parent
+    spec = importlib.util.spec_from_file_location("validate_checker", root / "scripts" / "validate_checker.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    committed = json.loads((root / "results" / "checker_validation.json").read_text())
+    assert committed["sensitivity"] == mod.sensitivity()
+    assert committed["false_positives"]["fixture_clean_reports"] == mod.false_positives_on_fixtures()
+    assert committed["false_positives"]["sample_template_reports"]["findings"] == 0
