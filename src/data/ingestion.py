@@ -16,6 +16,12 @@ import pandas as pd
 
 from src.config import Config, config as default_config
 from src.data.storage import write_table
+from src.data.canonical import (
+    build_alias_map,
+    canonicalize_columns,
+    ensure_self_aliases,
+    find_join_integrity_issues,
+)
 from src.data.loaders import (
     load_twosides,
     load_ddinter,
@@ -27,6 +33,10 @@ from src.data.loaders import (
     load_ade_corpus,
 )
 
+
+INTERACTION_NAME_COLS = ("drug_a_name", "drug_b_name")
+SIDE_EFFECT_NAME_COLS = ("drug_name",)
+REVIEW_NAME_COLS = ("drug_name",)
 
 RAW_FILE_HINTS = {
     "twosides": "twosides.csv",
@@ -57,8 +67,10 @@ class Ingester:
         drugbank_df = self._maybe_load(raw / RAW_FILE_HINTS["drugbank"], load_drugbank_vocabulary)
         vocab = self._build_vocabulary(rxnorm_df, drugbank_df)
         if vocab is not None:
+            vocab = ensure_self_aliases(vocab)
             out = write_table(vocab, self.cfg.paths.processed_dir / "drug_vocabulary.parquet")
             report["drug_vocabulary"] = {"rows": len(vocab), "path": str(out)}
+        alias_map = build_alias_map(vocab) if vocab is not None else None
 
         # 2. TWOSIDES + DDInter → unified interactions
         tw = self._maybe_load(
@@ -66,7 +78,7 @@ class Ingester:
             lambda p: load_twosides(p, min_prr=self.cfg.retrieval.twosides_min_prr),
         )
         ddi = self._maybe_load(raw / RAW_FILE_HINTS["ddinter"], load_ddinter)
-        merged_interactions = self._merge_interactions(tw, ddi)
+        merged_interactions = self._canonical(self._merge_interactions(tw, ddi), INTERACTION_NAME_COLS, alias_map)
         if merged_interactions is not None:
             out = write_table(
                 merged_interactions,
@@ -82,7 +94,7 @@ class Ingester:
         # 3. SIDER + ADE → side_effects
         sider = self._maybe_load(raw / RAW_FILE_HINTS["sider_se"], load_sider_side_effects)
         ade = self._maybe_load(raw / RAW_FILE_HINTS["ade"], load_ade_corpus)
-        merged_se = self._merge_side_effects(sider, ade)
+        merged_se = self._canonical(self._merge_side_effects(sider, ade), SIDE_EFFECT_NAME_COLS, alias_map)
         if merged_se is not None:
             out = write_table(merged_se, self.cfg.paths.processed_dir / "side_effects.parquet")
             by_src = merged_se.groupby("source").size().to_dict() if "source" in merged_se.columns else {}
@@ -99,7 +111,7 @@ class Ingester:
         uci = self._maybe_load(
             raw / RAW_FILE_HINTS["uci"], lambda p: load_uci_reviews(p, max_rows=30_000)
         )
-        merged_reviews = self._merge_reviews(webmd, uci)
+        merged_reviews = self._canonical(self._merge_reviews(webmd, uci), REVIEW_NAME_COLS, alias_map)
         if merged_reviews is not None:
             out = write_table(merged_reviews, self.cfg.paths.processed_dir / "reviews.parquet")
             by_src = merged_reviews.groupby("source").size().to_dict() if "source" in merged_reviews.columns else {}
@@ -109,7 +121,33 @@ class Ingester:
                 "path": str(out),
             }
 
+        report["join_integrity"] = self._join_integrity(merged_interactions, merged_se, alias_map)
         return report
+
+    # ---------- canonical keys ----------
+
+    @staticmethod
+    def _canonical(df: Optional[pd.DataFrame], columns, alias_map) -> Optional[pd.DataFrame]:
+        if df is None or alias_map is None:
+            return df
+        return canonicalize_columns(df, columns, alias_map)
+
+    @staticmethod
+    def _join_integrity(interactions, side_effects, alias_map) -> dict:
+        """Every drug name in the interaction and side-effect tables must resolve
+        to itself through the local vocabulary; report the ones that don't."""
+        if alias_map is None:
+            return {"checked": False, "reason": "no drug vocabulary ingested", "issues": []}
+        issues = find_join_integrity_issues(
+            {
+                "interactions": (interactions, INTERACTION_NAME_COLS),
+                "side_effects": (side_effects, SIDE_EFFECT_NAME_COLS),
+            },
+            alias_map,
+        )
+        for i in issues:
+            print(f"  [join-integrity] {i.table}.{i.column}: {i.name!r} resolves to {i.resolves_to!r}")
+        return {"checked": True, "issues": [i.__dict__ for i in issues]}
 
     # ---------- dataset merge helpers ----------
 
@@ -187,14 +225,17 @@ class Ingester:
 
         # 1. drug_vocabulary (single-source)
         vocab = _read("drug_vocabulary")
+        alias_map = None
         if vocab is not None:
+            vocab = ensure_self_aliases(vocab)
+            alias_map = build_alias_map(vocab)
             out = write_table(vocab, self.cfg.paths.processed_dir / "drug_vocabulary.parquet")
             report["drug_vocabulary"] = {"rows": len(vocab), "path": str(out)}
 
         # 2. interactions = twosides ∪ ddinter
         tw = _read("interactions")
         ddi = _read("ddinter")
-        interactions = self._merge_interactions(tw, ddi)
+        interactions = self._canonical(self._merge_interactions(tw, ddi), INTERACTION_NAME_COLS, alias_map)
         if interactions is not None:
             out = write_table(interactions, self.cfg.paths.processed_dir / "interactions.parquet")
             by_src = interactions.groupby("source").size().to_dict() if "source" in interactions.columns else {}
@@ -207,7 +248,7 @@ class Ingester:
             ade = ade.rename(columns={"adverse_effect": "side_effect_name"})
             if "umls_cui" not in ade.columns:
                 ade["umls_cui"] = None
-        se = self._merge_side_effects(sider, ade)
+        se = self._canonical(self._merge_side_effects(sider, ade), SIDE_EFFECT_NAME_COLS, alias_map)
         if se is not None:
             out = write_table(se, self.cfg.paths.processed_dir / "side_effects.parquet")
             by_src = se.groupby("source").size().to_dict() if "source" in se.columns else {}
@@ -216,12 +257,13 @@ class Ingester:
         # 4. reviews = webmd ∪ uci
         webmd = _read("reviews")
         uci = _read("uci_reviews")
-        reviews = self._merge_reviews(webmd, uci)
+        reviews = self._canonical(self._merge_reviews(webmd, uci), REVIEW_NAME_COLS, alias_map)
         if reviews is not None:
             out = write_table(reviews, self.cfg.paths.processed_dir / "reviews.parquet")
             by_src = reviews.groupby("source").size().to_dict() if "source" in reviews.columns else {}
             report["reviews"] = {"rows": len(reviews), "by_source": by_src, "path": str(out)}
 
+        report["join_integrity"] = self._join_integrity(interactions, se, alias_map)
         return report
 
     # ---------- helpers ----------
