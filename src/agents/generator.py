@@ -61,6 +61,12 @@ class Generator:
             messages=[{"role": "user", "content": user_message}],
         )
 
+        # FAERS signals are rendered by code, not by the model, so they are always
+        # shown and always carry the "unvalidated" label.
+        faers = self._faers_section(result)
+        if faers:
+            report = report.rstrip() + "\n\n" + "\n".join(faers)
+
         # Always append the disclaimer — this is a safety invariant, not a model choice
         if "disclaimer" not in report.lower():
             report += f"\n\n---\n**Disclaimer.** {self.cfg.disclaimer}"
@@ -109,13 +115,22 @@ class Generator:
             )
         if result.no_data_pairs:
             lines.append(
-                f"**No data found** for {len(result.no_data_pairs)} pair(s): "
+                f"**No curated interaction data** for {len(result.no_data_pairs)} pair(s): "
                 + ", ".join(f"{a}+{b}" for a, b in result.no_data_pairs[:5])
                 + ("..." if len(result.no_data_pairs) > 5 else "")
             )
+            if result.faers_signals:
+                lines.append(
+                    f"FAERS spontaneous reports were found for {len(result.faers_signals)} "
+                    "of these pair(s); see the unvalidated section below."
+                )
         if not plan.unresolved and not result.no_data_pairs:
             lines.append("All inputs resolved; all pairs had coverage in queried sources.")
         lines.append("")
+
+        faers = self._faers_section(result)
+        if faers:
+            lines.extend(faers + [""])
 
         # Disclaimer
         lines.append("---")
@@ -124,6 +139,24 @@ class Generator:
         return "\n".join(lines)
 
     # ---------- helpers ----------
+
+    @staticmethod
+    def _faers_section(result: RetrievalResult) -> List[str]:
+        """Markdown lines for FAERS signals, or [] if there are none."""
+        if not result.faers_signals:
+            return []
+        lines = [
+            "## FAERS Spontaneous Reports (unvalidated)",
+            "Raw counts of FDA adverse-event reports that mention both drugs, for pairs "
+            "with no curated interaction record. Spontaneous reports are not validated, "
+            "are not rate-adjusted, and do not establish that the drugs interact.",
+        ]
+        for (a, b), signals in result.faers_signals.items():
+            for s in signals:
+                lines.append(
+                    f"- **{a} + {b}** — {s.condition}: {s.report_count} report(s) {s.citation()}"
+                )
+        return lines
 
     def _format_evidence(self, plan: RetrievalPlan, result: RetrievalResult) -> str:
         blocks: List[str] = []

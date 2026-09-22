@@ -71,17 +71,16 @@ class Retriever:
                 if ses:
                     result.side_effects[name] = ses
 
-        # 3. FAERS fallback — only for pairs with no local data, only if enabled
+        # 3. FAERS fallback — only for pairs with no local data, only if enabled.
+        # FAERS hits are unvalidated spontaneous reports, not curated interaction
+        # data, so the pair stays in no_data_pairs; the signals are reported
+        # separately.
         if self.faers is not None and self.faers.enabled and result.no_data_pairs:
-            still_no_data = []
             for pair in result.no_data_pairs:
                 a, b = pair
                 signals = self.faers.retrieve_pair(a, b)
                 if signals:
                     result.faers_signals[pair] = signals
-                else:
-                    still_no_data.append(pair)
-            result.no_data_pairs = still_no_data
 
         # 4. Optional review context (WebMD + UCI in the vector store)
         if with_reviews and self.vector_store is not None:
