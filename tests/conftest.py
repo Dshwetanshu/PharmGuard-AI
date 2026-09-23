@@ -38,19 +38,23 @@ from src.pipeline import PharmGuardPipeline
 def pytest_addoption(parser):
     parser.addoption("--run-live", action="store_true", default=False,
                      help="run tests marked 'live' (real network calls to free public APIs)")
+    parser.addoption("--run-realdata", action="store_true", default=False,
+                     help="run tests marked 'realdata' against data/profiles/<profile> (built locally)")
 
 
 def pytest_configure(config):
     config.addinivalue_line("markers", "live: makes real network calls; skipped unless --run-live")
+    config.addinivalue_line("markers", "realdata: needs the real-data builds; skipped unless --run-realdata")
 
 
 def pytest_collection_modifyitems(config, items):
-    if config.getoption("--run-live"):
-        return
-    skip = pytest.mark.skip(reason="live test; run with --run-live")
-    for item in items:
-        if "live" in item.keywords:
-            item.add_marker(skip)
+    for marker, option in (("live", "--run-live"), ("realdata", "--run-realdata")):
+        if config.getoption(option):
+            continue
+        skip = pytest.mark.skip(reason=f"{marker} test; run with {option}")
+        for item in items:
+            if marker in item.keywords:
+                item.add_marker(skip)
 
 
 @pytest.fixture(autouse=True)
