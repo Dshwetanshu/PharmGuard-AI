@@ -12,8 +12,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass, asdict
 from pathlib import Path
-from typing import List, Optional
+from typing import Dict, List, Optional
 
+import numpy as np
 import pandas as pd
 
 from src.config import Config, config as default_config
@@ -40,12 +41,16 @@ class InteractionRecord:
         return asdict(self)
 
 
+SEVERITY_RANK = {"Major": 0, "Moderate": 1, "Minor": 2, "Unknown": 3}
+
+
 class InteractionRetriever:
     """Retrieves interaction records for specified drug pairs."""
 
     def __init__(self, cfg: Optional[Config] = None):
         self.cfg = cfg or default_config
         self._df: Optional[pd.DataFrame] = None
+        self._index: Dict[str, np.ndarray] = {}   # "a||b" (sorted, lowercase) -> row positions
 
     def load(self) -> "InteractionRetriever":
         from src.data.storage import read_table, table_exists
@@ -55,18 +60,30 @@ class InteractionRetriever:
                 f"Interactions table not found at {path} (or .csv). Run ingest_data.py first."
             )
         self._df = read_table(path)
-        # Build a fast lookup index — lowercase & sorted pair key
-        self._df["_pair_key"] = self._df.apply(
-            lambda r: self._pair_key(r.get("drug_a_name"), r.get("drug_b_name")), axis=1
-        )
+        self._build_index()
         return self
 
     def load_from_dataframe(self, df: pd.DataFrame) -> "InteractionRetriever":
         self._df = df.copy()
-        self._df["_pair_key"] = self._df.apply(
-            lambda r: self._pair_key(r.get("drug_a_name"), r.get("drug_b_name")), axis=1
-        )
+        self._build_index()
         return self
+
+    def _build_index(self) -> None:
+        """Pair key -> row positions, built once with vectorized string ops.
+
+        Replaces a row-by-row apply plus a full boolean scan per queried pair.
+        Positions are in table order, so results match the old scan exactly.
+        """
+        df = self._df.reset_index(drop=True)
+        a = df["drug_a_name"].fillna("").astype(str).str.lower().str.strip()
+        b = df["drug_b_name"].fillna("").astype(str).str.lower().str.strip()
+        lo, hi = a.where(a <= b, b), b.where(a <= b, a)
+        df = df.assign(_key=lo + "||" + hi, _sev=df["severity"].map(SEVERITY_RANK).fillna(3))
+        # Pre-sort once: pair, then severity, then PRR desc (NaN last). A stable sort keeps
+        # table order for ties, exactly like the old per-query sort.
+        df = df.sort_values(["_key", "_sev", "prr"], ascending=[True, True, False], kind="mergesort")
+        self._df = df.reset_index(drop=True)
+        self._index = {k: np.asarray(v) for k, v in self._df.groupby("_key", sort=False).indices.items()}
 
     @staticmethod
     def _pair_key(a: Optional[str], b: Optional[str]) -> str:
@@ -80,22 +97,14 @@ class InteractionRetriever:
         if self._df is None:
             raise RuntimeError("InteractionRetriever.load() must be called first.")
 
-        key = self._pair_key(drug_a, drug_b)
-        hits = self._df[self._df["_pair_key"] == key]
-
-        if hits.empty:
+        positions = self._index.get(self._pair_key(drug_a, drug_b))
+        if positions is None:
             return []
-
-        # Severity order: Major > Moderate > Minor > Unknown, then PRR desc
-        severity_rank = {"Major": 0, "Moderate": 1, "Minor": 2, "Unknown": 3}
-        hits = hits.assign(_sev=hits["severity"].map(severity_rank).fillna(3))
-        hits = hits.sort_values(["_sev", "prr"], ascending=[True, False])
-
+        # Positions are already in severity / PRR order (see _build_index).
         k = top_k or self.cfg.retrieval.top_k
-        hits = hits.head(k)
-
+        hits = self._df.iloc[positions[:k]]
         records: List[InteractionRecord] = []
-        for _, r in hits.iterrows():
+        for r in hits.to_dict("records"):
             records.append(
                 InteractionRecord(
                     record_id=str(r["record_id"]),
