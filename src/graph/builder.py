@@ -115,6 +115,34 @@ def _normalizer_method(d: ResolvedDrug) -> str:
     return {"rxnorm_api": "rxnorm", "rxnorm_not_in_local_vocab": "rxnorm_no_local_match"}.get(d.method, d.method)
 
 
+# ------------------------------------------------------------ decision points
+# The graph's orchestration decisions, as small module-level functions. Nodes and
+# routes call them by name at run time, so the trajectory evaluation can seed bugs
+# here (src/evaluation/seeded_bugs.py) and check the invariants catch them.
+
+def attempts_left(state: Dict[str, Any], settings: Settings) -> bool:
+    return state["llm_attempts"] < settings.max_llm_attempts
+
+
+def faers_needed(state: Dict[str, Any], settings: Settings) -> bool:
+    """Consult FAERS only when it's enabled and some planned pair has no curated record."""
+    return settings.faers_enabled and bool(state["retrieval"]["no_data_pairs"])
+
+
+def complete_plan(p):
+    """Enforce exactly C(k,2) pairs for k unique resolved drugs. Returns (plan, patched)."""
+    expected = list(combinations(sorted(d.generic_name.lower() for d in p.resolved), 2))
+    patched = sorted(p.pairs) != expected or len(p.pairs) != comb(p.num_drugs, 2)
+    if patched:
+        p.pairs = expected
+    return p, patched
+
+
+def fallback_report(c: "Components", p, result, state: Dict[str, Any]) -> str:
+    """The template report. Never the rejected LLM draft."""
+    return c.generator.generate_deterministic(p, result)
+
+
 def build_graph(settings: Settings, c: Components, tracing: Optional[Tracing] = None):
     """Define the topology and compile the graph. The only place edges are declared."""
     tracing = tracing or Tracing()
@@ -144,20 +172,20 @@ def build_graph(settings: Settings, c: Components, tracing: Optional[Tracing] = 
         return "generate_llm"
 
     def route_after_retrieve(state: GraphState) -> str:
-        return "faers" if settings.faers_enabled else route_generation(state)
+        return "faers" if faers_needed(state, settings) else route_generation(state)
 
     def route_after_generate(state: GraphState) -> str:
         if state.get("llm_error") is None:
             return "validate"
         # Only transient errors are retried; auth / invalid-request errors won't fix themselves.
-        if state.get("llm_error_retryable") and state["llm_attempts"] < settings.max_llm_attempts:
+        if state.get("llm_error_retryable") and attempts_left(state, settings):
             return "generate_llm"
         return "template"
 
     def route_after_validate(state: GraphState) -> str:
         if state.get("report_source") in ("llm", "llm_retry"):
             return "finalize"
-        return "generate_llm" if state["llm_attempts"] < settings.max_llm_attempts else "template"
+        return "generate_llm" if attempts_left(state, settings) else "template"
 
     # ----------------------------------------------------------------- nodes
     def normalize(state):
@@ -169,12 +197,8 @@ def build_graph(settings: Settings, c: Components, tracing: Optional[Tracing] = 
         return {"resolved": jsonable(resolved)}, "ok", detail
 
     def plan(state):
-        p = c.planner.plan([ResolvedDrug(**d) for d in state["resolved"]])
+        p, patched = complete_plan(c.planner.plan([ResolvedDrug(**d) for d in state["resolved"]]))
         k = p.num_drugs
-        expected = list(combinations(sorted(d.generic_name.lower() for d in p.resolved), 2))
-        patched = sorted(p.pairs) != expected or len(p.pairs) != comb(k, 2)
-        if patched:
-            p.pairs = expected
         update = {"plan": plan_to_dict(p)}
         detail = {"unique_drugs": k, "pairs": len(p.pairs), "expected_pairs": comb(k, 2), "patched": patched,
                   "route": route_after_plan(update)}
@@ -188,8 +212,9 @@ def build_graph(settings: Settings, c: Components, tracing: Optional[Tracing] = 
         result.no_data_pairs = [pr for pr in result.no_data_pairs if pr not in result.interactions] + neither
         update = {"retrieval": result_to_dict(result), "evidence": evidence(p, result)}
         detail = {"pairs_with_records": len(result.interactions), "no_data_pairs": len(result.no_data_pairs),
-                  "records": result.total_interactions, "faers_consulted": settings.faers_enabled,
-                  "patched_both": both, "patched_neither": neither, "route": route_after_retrieve(state)}
+                  "records": result.total_interactions, "faers_consulted": faers_needed(update, settings),
+                  "patched_both": both, "patched_neither": neither,
+                  "route": route_after_retrieve({**state, **update})}
         return update, ("patched" if both or neither else "ok"), detail
 
     def faers(state):
@@ -255,7 +280,7 @@ def build_graph(settings: Settings, c: Components, tracing: Optional[Tracing] = 
             reason = "deterministic_no_llm"
         else:
             reason = "deterministic_fallback"
-        update = {"report": c.generator.generate_deterministic(p, result), "report_source": reason}
+        update = {"report": fallback_report(c, p, result, state), "report_source": reason}
         if "evidence" not in state:
             update["evidence"] = evidence(p, result)
         return update, "ok", {"reason": reason, "llm_attempts": state.get("llm_attempts", 0)}

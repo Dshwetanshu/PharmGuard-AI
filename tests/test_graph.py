@@ -258,3 +258,16 @@ def test_transient_error_class_is_recorded(settings, components, good_draft):
     gen = [t["detail"] for t in s["trajectory"] if t["node"] == "generate_llm"]
     assert (gen[0]["error_class"], gen[0]["retryable"], gen[0]["route"]) == ("TimeoutError", True, "generate_llm")
     assert s["report_source"] == "llm_retry"
+
+
+def test_faers_skipped_when_every_pair_has_records(settings, components):
+    class CountingFaers(StubFaers):
+        calls = 0
+
+        def retrieve_pair(self, a, b):
+            CountingFaers.calls += 1
+            return super().retrieve_pair(a, b)
+
+    s = graph(settings, components, faers=CountingFaers(), faers_enabled=True).run(["lisinopril", "spironolactone"])
+    assert "faers" not in nodes(s) and CountingFaers.calls == 0
+    assert s["trajectory"][nodes(s).index("retrieve")]["detail"]["faers_consulted"] is False
