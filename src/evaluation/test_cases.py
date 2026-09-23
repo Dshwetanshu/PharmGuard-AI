@@ -13,7 +13,7 @@ with realistic, clinically-motivated inputs.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 
 
 @dataclass
@@ -24,6 +24,19 @@ class TestCase:
     description: str
     input_drugs: List[str]
     known_interaction_pairs: List[Tuple[str, str]] = field(default_factory=list)
+    # Trajectory evaluation (src/evaluation/trajectory.py). Inputs not listed must
+    # simply resolve; these pin down the edge cases (input -> expected canonical name).
+    expected_resolved: Dict[str, str] = field(default_factory=dict)
+    expected_unresolved: List[str] = field(default_factory=list)
+
+
+# Hand labels suspected to be wrong (flagged for the user's review, NOT changed).
+# The trajectory evaluation counts misses on these pairs separately.
+SUSPECTED_LABEL_ERRORS: Dict[str, List[Tuple[str, str]]] = {
+    # No record in the sample data, and no clinically significant interaction is
+    # generally described for this pair; the case exists to test brand-name lookup.
+    "EDG-03": [("atorvastatin", "lisinopril")],
+}
 
 
 TEST_CASES: List[TestCase] = [
@@ -89,12 +102,16 @@ TEST_CASES: List[TestCase] = [
     TestCase("EDG-02", "Two drugs with no known interaction",
              ["acetaminophen", "levothyroxine"], []),
     TestCase("EDG-03", "Brand name input",
-             ["Lipitor", "Prinivil"], [("atorvastatin", "lisinopril")]),
+             ["Lipitor", "Prinivil"], [("atorvastatin", "lisinopril")],
+             expected_resolved={"Lipitor": "atorvastatin", "Prinivil": "lisinopril"}),
     TestCase("EDG-04", "Mixed case + whitespace",
-             ["  METFORMIN  ", "Lisinopril", "aspirin"], []),
-    TestCase("EDG-05", "Misspelling", ["metfromin", "lisonopril"], []),
+             ["  METFORMIN  ", "Lisinopril", "aspirin"], [],
+             expected_resolved={"  METFORMIN  ": "metformin", "Lisinopril": "lisinopril"}),
+    TestCase("EDG-05", "Misspelling", ["metfromin", "lisonopril"], [],
+             expected_resolved={"metfromin": "metformin", "lisonopril": "lisinopril"}),
     TestCase("EDG-06", "Unknown drug",
-             ["lisinopril", "fictional_drug_xyz"], []),
+             ["lisinopril", "fictional_drug_xyz"], [],
+             expected_resolved={"lisinopril": "lisinopril"}, expected_unresolved=["fictional_drug_xyz"]),
     TestCase("EDG-07", "Max-size list (12 drugs)",
              ["lisinopril", "metformin", "aspirin", "atorvastatin", "omeprazole",
               "sertraline", "amlodipine", "levothyroxine", "ibuprofen", "warfarin",
@@ -104,13 +121,15 @@ TEST_CASES: List[TestCase] = [
     TestCase("MH-01", "SSRI + NSAID bleeding",
              ["sertraline", "ibuprofen"], [("sertraline", "ibuprofen")]),
     TestCase("MH-02", "Lithium + thiazide",
-             ["lithium", "hydrochlorothiazide"], [("lithium", "hydrochlorothiazide")]),
+             ["lithium", "hydrochlorothiazide"], [("lithium", "hydrochlorothiazide")],
+             expected_resolved={"lithium": "lithium carbonate"}),   # canonical name in the vocabulary
     TestCase("MH-03", "Antipsychotic combination",
              ["haloperidol", "quetiapine"], []),
     TestCase("MH-04", "Anxiety + sleep combination",
              ["alprazolam", "zolpidem", "trazodone"], []),
     TestCase("MH-05", "Bipolar regimen",
-             ["lithium", "valproic acid", "quetiapine"], []),
+             ["lithium", "valproic acid", "quetiapine"], [],
+             expected_resolved={"lithium": "lithium carbonate", "valproic acid": "valproic acid"}),
 
     # ---------- Cardiology ----------
     TestCase("CV-01", "Heart failure triple therapy",
