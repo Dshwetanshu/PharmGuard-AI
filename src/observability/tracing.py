@@ -14,6 +14,7 @@ Rules:
 from __future__ import annotations
 
 import contextlib
+import contextvars
 import json
 import logging
 import socket
@@ -22,6 +23,34 @@ from typing import Any, Callable, Dict, Iterator, List, Optional
 from urllib.parse import urlparse
 
 log = logging.getLogger("pharmguard.tracing")
+_SUPPRESSED: contextvars.ContextVar = contextvars.ContextVar("pharmguard_tracing_suppressed", default=False)
+
+
+@contextlib.contextmanager
+def suppress_tracing() -> Iterator[None]:
+    """Run a block without producing any trace data (our spans and OTel instrumentors)."""
+    token = _SUPPRESSED.set(True)
+    otel_token = None
+    try:
+        from opentelemetry import context as otel_context
+        otel_token = otel_context.attach(otel_context.set_value(otel_context._SUPPRESS_INSTRUMENTATION_KEY, True))
+    except Exception:
+        pass
+    try:
+        with _langsmith_disabled():
+            yield
+    finally:
+        if otel_token is not None:
+            _safe(otel_context.detach, otel_token)
+        _SUPPRESSED.reset(token)
+
+
+def _langsmith_disabled():
+    try:
+        from langsmith import tracing_context
+        return tracing_context(enabled=False)
+    except Exception:
+        return contextlib.nullcontext()
 
 # Node-detail keys that are safe to record on spans even with redaction on
 # (no drug names, no report text).
@@ -71,12 +100,7 @@ class Tracing:
                 inputs: Dict[str, Any]) -> Iterator["RequestHandle"]:
         # Block LangChain's env-driven auto tracing (LANGSMITH_TRACING=true) when this
         # backend isn't LangSmith, so nothing is sent to a hosted service by accident.
-        try:
-            from langsmith import tracing_context
-            ctx = tracing_context(enabled=False)
-        except Exception:
-            ctx = contextlib.nullcontext()
-        with ctx:
+        with _langsmith_disabled():
             yield RequestHandle()
 
     def graph_config(self) -> Dict[str, Any]:
@@ -170,6 +194,10 @@ class PhoenixTracing(Tracing):
         from openinference.instrumentation import using_attributes
         from opentelemetry import trace as trace_api
 
+        if _SUPPRESSED.get():
+            with super().request(run_name, tags, metadata, inputs) as h:
+                yield h
+            return
         span = None
         try:
             span = self.tracer.start_span(run_name, attributes={
@@ -211,6 +239,9 @@ class PhoenixTracing(Tracing):
 
     @contextlib.contextmanager
     def http(self, name, url):
+        if _SUPPRESSED.get():
+            yield lambda a: None
+            return
         u = urlparse(url)
         attrs = {"openinference.span.kind": "TOOL", "http.request.method": "GET",
                  "server.address": u.hostname or "", "url.path": u.path}
@@ -225,7 +256,7 @@ class PhoenixTracing(Tracing):
 
     @contextlib.contextmanager
     def llm(self, provider, model, messages):
-        if provider in self.instrumented_sdks:
+        if provider in self.instrumented_sdks or _SUPPRESSED.get():
             yield lambda usage=None, output=None: None
             return
         attrs = {"openinference.span.kind": "LLM", "llm.provider": provider, "llm.system": provider,
@@ -276,6 +307,10 @@ class LangSmithTracing(Tracing):
     @contextlib.contextmanager
     def request(self, run_name, tags, metadata, inputs):
         from langsmith import trace, tracing_context
+        if _SUPPRESSED.get():
+            with super().request(run_name, tags, metadata, inputs) as h:
+                yield h
+            return
         try:
             cm = trace(run_name, run_type="chain", inputs=inputs, tags=list(tags), metadata=metadata,
                        client=self.client, project_name=self.project)
@@ -308,6 +343,9 @@ class LangSmithTracing(Tracing):
     @contextlib.contextmanager
     def http(self, name, url):
         from langsmith import trace
+        if _SUPPRESSED.get():
+            yield lambda a: None
+            return
         u = urlparse(url)
         inputs = {"server": u.hostname, "path": u.path, **({} if self.redact else {"query": u.query})}
         cm = _safe(trace, name, run_type="tool", inputs=inputs, client=self.client, project_name=self.project)

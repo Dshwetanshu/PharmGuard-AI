@@ -288,3 +288,13 @@ def test_anthropic_call_gets_an_llm_span_with_tokens_and_no_prompt(traced, monke
     assert (a["openinference.span.kind"], a["llm.model_name"]) == ("LLM", "claude-sonnet-5")
     assert (a["llm.token_count.prompt"], a["llm.token_count.completion"], a["llm.token_count.total"]) == (900, 120, 1020)
     assert "lisinopril" not in _all_text([span])
+
+
+def test_simulated_retry_produces_exactly_one_trace(traced):
+    graph, exporter = traced()
+    sim = simulated_retry_graph(graph, DRUGS)      # builds its drafts from an internal graph run
+    assert len(exporter.get_finished_spans()) == 0  # ...which must not be traced
+    sim.run(DRUGS)
+    spans = exporter.get_finished_spans()
+    assert len({sp.context.trace_id for sp in spans}) == 1
+    assert [sp.name for sp in spans].count("pharmguard.request") == 1

@@ -45,11 +45,13 @@ def simulated_retry_graph(graph, drug_names: List[str]):
     Raises ValueError if the drugs have no interaction record to fabricate on."""
     from src.agents.generator import Generator
     from src.graph.builder import PharmGuardGraph
-    from src.observability import Tracing
+    from src.observability import Tracing, suppress_tracing
 
-    # Build the drafts from an untraced deterministic run, so it doesn't appear as its own trace.
+    # Build the drafts from a deterministic run that produces no trace data at all
+    # (the OTel instrumentors are process-wide, so a no-op backend alone isn't enough).
     helper = PharmGuardGraph(graph.settings.with_mode("deterministic"), graph.components, Tracing())
-    clean = helper.run(drug_names)["report"].split("\n---\n")[0]
+    with suppress_tracing():
+        clean = helper.run(drug_names)["report"].split("\n---\n")[0]
     bad = inject_cyp3a4(clean)
     if bad is None:
         raise ValueError("--simulate-retry needs at least one interaction finding; try e.g. "
