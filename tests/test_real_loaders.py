@@ -88,7 +88,7 @@ def test_ddinter_ids_do_not_depend_on_file_order():
 
 # ----------------------------------------------------------------- TWOSIDES
 
-@pytest.mark.parametrize("chunksize", [2, 1000])
+@pytest.mark.parametrize("chunksize", [1, 2, 1000])
 def test_twosides_filters_top_events_and_header_typo(vocab, alias, chunksize):
     df, stats = load_twosides_filtered(FX / "twosides" / "TWOSIDES.csv", alias, vocab.rxcui_to_generic,
                                        chunksize=chunksize)

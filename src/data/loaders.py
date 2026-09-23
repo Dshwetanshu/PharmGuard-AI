@@ -104,7 +104,7 @@ def load_twosides(path: Path, min_prr: float = 2.0) -> pd.DataFrame:
 
 def load_twosides_filtered(path: Path, name_to_generic: Dict[str, str], rxcui_to_generic: Dict[str, str],
                            min_prr: float = 2.0, min_reports: int = 5, top_events: int = 5,
-                           exclude_terms=TWOSIDES_ADMIN_TERMS, chunksize: int = 1_000_000
+                           exclude_terms=TWOSIDES_ADMIN_TERMS, chunksize: int = 500_000
                            ) -> Tuple[pd.DataFrame, Dict]:
     """Stream the full TWOSIDES file (~43M rows) in chunks and keep a filtered subset.
 
@@ -113,12 +113,19 @@ def load_twosides_filtered(path: Path, name_to_generic: Dict[str, str], rxcui_to
     Per canonical pair: one row per event (the higher-PRR orientation), then the
     top_events events by PRR (ties by A). Unmatched drug names are counted, not
     silently dropped. Returns (dataframe, stats).
+
+    Memory: each chunk is pruned to its own top_events per pair before the final
+    cut. That gives the same result as one global cut: a row in the global top k
+    is the best for its event and outranks all but < k events, so it is also in
+    its chunk's top k (dedupe happens first, with the same tie-break).
     """
     stats = Counter()
     unmatched: Counter = Counter()
     names_seen: set = set()
     kept = []
-    for chunk in pd.read_csv(path, chunksize=chunksize, dtype=str, compression="infer"):
+    wanted = set(TWOSIDES_COLUMN_MAP)
+    for chunk in pd.read_csv(path, chunksize=chunksize, dtype=str, compression="infer",
+                             usecols=lambda col: col in wanted):
         present = {src: dst for src, dst in TWOSIDES_COLUMN_MAP.items() if src in chunk.columns}
         c = chunk.rename(columns=present)
         stats["rows_read"] += len(c)
@@ -162,20 +169,16 @@ def load_twosides_filtered(path: Path, name_to_generic: Dict[str, str], rxcui_to
             "_raw": c["drug_a_rxcui"].astype(str) + "|" + c["drug_b_rxcui"].astype(str) + "|"
                     + c["condition_id"].astype(str) + "|" + c["prr"].astype(str) + "|" + c["reports"].astype(str),
         })
+        out, dups, cut = _dedupe_top_events(out, top_events)
+        stats["dropped_orientation_duplicates"] += dups
+        stats["dropped_top_k"] += cut
         kept.append(out)
     df = pd.concat(kept, ignore_index=True) if kept else pd.DataFrame(columns=[
         "drug_a_name", "drug_b_name", "drug_a_rxcui", "drug_b_rxcui", "condition_id", "condition_name", "prr",
         "reports", "frequency", "_raw"])
-    df = df.sort_values(["drug_a_name", "drug_b_name", "condition_id", "prr", "reports", "_raw"],
-                        ascending=[True, True, True, False, False, True])
-    before = len(df)
-    df = df.drop_duplicates(["drug_a_name", "drug_b_name", "condition_id"], keep="first")
-    stats["dropped_orientation_duplicates"] = before - len(df)
-    df = df.sort_values(["drug_a_name", "drug_b_name", "prr", "reports", "_raw"],
-                        ascending=[True, True, False, False, True])
-    before = len(df)
-    df = df.groupby(["drug_a_name", "drug_b_name"], sort=False).head(top_events)
-    stats["dropped_top_k"] = before - len(df)
+    df, dups, cut = _dedupe_top_events(df, top_events)
+    stats["dropped_orientation_duplicates"] += dups
+    stats["dropped_top_k"] += cut
     df["record_id"] = _content_ids(df[["_raw"]], "TS")
     df = df.drop(columns=["_raw"])
     df["severity"] = df["prr"].apply(_prr_to_severity)
@@ -189,6 +192,20 @@ def load_twosides_filtered(path: Path, name_to_generic: Dict[str, str], rxcui_to
     out["filters"] = {"min_prr": min_prr, "min_reports": min_reports, "top_events_per_pair": top_events,
                       "excluded_terms": sorted(exclude_terms)}
     return df.reset_index(drop=True), out
+
+
+def _dedupe_top_events(df: pd.DataFrame, k: int) -> Tuple[pd.DataFrame, int, int]:
+    """One row per (pair, event) with the highest PRR (ties: reports, then source row),
+    then the k highest-PRR events per pair. Returns (df, duplicates dropped, rows cut)."""
+    n0 = len(df)
+    df = df.sort_values(["drug_a_name", "drug_b_name", "condition_id", "prr", "reports", "_raw"],
+                        ascending=[True, True, True, False, False, True])
+    df = df.drop_duplicates(["drug_a_name", "drug_b_name", "condition_id"], keep="first")
+    n1 = len(df)
+    df = df.sort_values(["drug_a_name", "drug_b_name", "prr", "reports", "_raw"],
+                        ascending=[True, True, False, False, True])
+    df = df.groupby(["drug_a_name", "drug_b_name"], sort=False).head(k)
+    return df, n0 - n1, n1 - len(df)
 
 
 def _prr_to_severity(prr: float) -> str:
