@@ -79,3 +79,35 @@ def test_pipeline_runs_on_a_real_format_build(builds):
     assert s["final_validation"]["passed"], s["final_validation"]["findings"]
     assert "combination product: acetaminophen + oxycodone" in s["report"]
     assert "[DDInter:DDI-" in s["report"] and "Data: public build from" in s["report"]
+
+
+def test_real_build_states_no_mechanisms_and_checker_rejects_any(builds):
+    """DDInter bulk files have no mechanism text: the prompt says so, and any mechanism fails."""
+    from src.agents.generator import Generator
+    from src.graph import PharmGuardGraph, Settings
+    from src.verification import validate_report
+
+    _, processed = builds["public"]
+    g = PharmGuardGraph(Settings(data_dir=processed.parent, mode="deterministic"))
+    s = g.run(["aspirin", "warfarin"])
+    assert "mechanism" not in s["report"].lower().split("---")[0]      # the template states none
+
+    class Capture:
+        last_usage = None
+
+        def complete(self, system, messages, **kw):
+            self.user = messages[0]["content"]
+            return "## Summary\nok"
+
+    from src.graph.serde import plan_from_dict, result_from_dict
+    llm = Capture()
+    Generator(g.components.generator.cfg, llm=llm).generate(plan_from_dict(s["plan"]), result_from_dict(s["retrieval"]))
+    assert "None of the records below has mechanism text" in llm.user
+
+    body = s["report"].split("\n---\n")[0]
+    line = next(ln for ln in body.splitlines() if "[DDInter:" in ln)
+    for injected in (" via CYP2C9 inhibition", " through platelet inhibition", " by displacing it from protein binding"):
+        bad = body.replace(line, line.replace(" [DDInter:", injected + " [DDInter:"))
+        from src.verification import Evidence
+        v = validate_report(g.components.generator.finalize(bad), Evidence.from_dict(s["evidence"]))
+        assert "UNSUPPORTED_MECHANISM" in v.codes(), injected

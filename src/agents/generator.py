@@ -236,8 +236,15 @@ class Generator:
 
     def _build_user_message(self, plan: RetrievalPlan, result: RetrievalResult, evidence: str) -> str:
         drugs = _tagged("medication_list", [d.generic_name for d in plan.resolved])
+        records = [r for recs in result.interactions.values() for r in recs]
+        no_mechanisms = (
+            "None of the records below has mechanism text: do not state or imply any mechanism "
+            "(enzymes, transporters, receptors, protein binding, clearance, or any other pathway).\n\n"
+            if records and not any(r.mechanism for r in records) else ""
+        )
         return (
             f"Patient medication list (canonical names):\n{drugs}\n\n"
+            f"{no_mechanisms}"
             f"Evidence retrieved from pharmaceutical databases:\n\n{evidence}\n\n"
             "Generate the PharmGuard interaction report using ONLY the evidence above. "
             "Cite every clinical claim with [SOURCE:RECORD_ID]. For pairs with no data, "
