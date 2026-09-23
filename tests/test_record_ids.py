@@ -29,19 +29,6 @@ RAW = {
         ["CID2", "CID2s", "C2", "PT", "C0020461", "Hyperkalemia"],
         ["CID2", "CID2s", "C2", "LLT", "C0020461", "Hyperkalaemia"],
     ])),
-    "ade": (loaders.load_ade_corpus, "csv", pd.DataFrame({
-        "text": ["Atorvastatin caused rhabdomyolysis.", "Warfarin led to bleeding."],
-        "drug": ["atorvastatin", "warfarin"], "effect": ["rhabdomyolysis", "bleeding"],
-    })),
-    "webmd": (loaders.load_webmd_reviews, "csv", pd.DataFrame({
-        "Drug": ["lisinopril", "metformin"], "Condition": ["htn", "dm2"],
-        "Reviews": ["Dry cough after a month.", "GI upset early on."], "Sides": ["cough", "nausea"],
-        "Effectiveness": [4, 5], "Satisfaction": [3, 4],
-    })),
-    "uci": (loaders.load_uci_reviews, "csv", pd.DataFrame({
-        "uniqueID": [1, 2], "drugName": ["metformin", "lisinopril"], "condition": ["dm2", "htn"],
-        "review": ["Helped my sugars.", "Cough."], "rating": [8, 6],
-    })),
 }
 
 

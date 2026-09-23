@@ -2,9 +2,8 @@
 
 Executes a RetrievalPlan against the configured knowledge sources:
   - Interactions (structured lookup over TWOSIDES + DDInter)
-  - Side effects (structured lookup over SIDER + ADE-Corpus-V2)
+  - Side effects (structured lookup over SIDER)
   - Optional: FAERS live-query fallback for pairs with no local data
-  - Optional: patient-review context (vector search over WebMD + UCI)
 
 Returns a RetrievalResult bundle that the Generator consumes.
 """
@@ -16,7 +15,6 @@ from typing import Dict, List, Optional
 from src.agents.planner import RetrievalPlan
 from src.retrieval.interaction_retriever import InteractionRetriever, InteractionRecord
 from src.retrieval.side_effect_retriever import SideEffectRetriever, SideEffectRecord
-from src.retrieval.vector_store import VectorStore
 from src.retrieval.faers_retriever import FaersRetriever, FaersRecord
 
 
@@ -25,7 +23,6 @@ class RetrievalResult:
     # pair_key (sorted tuple of drug names) -> list of interaction records
     interactions: Dict[tuple, List[InteractionRecord]] = field(default_factory=dict)
     side_effects: Dict[str, List[SideEffectRecord]] = field(default_factory=dict)
-    review_context: Dict[str, List[dict]] = field(default_factory=dict)
     faers_signals: Dict[tuple, List[FaersRecord]] = field(default_factory=dict)
     # Pairs that returned zero interaction records — surfaced, not silenced
     no_data_pairs: List[tuple] = field(default_factory=list)
@@ -44,15 +41,13 @@ class Retriever:
         self,
         interaction_retriever: InteractionRetriever,
         side_effect_retriever: Optional[SideEffectRetriever] = None,
-        vector_store: Optional[VectorStore] = None,
         faers_retriever: Optional[FaersRetriever] = None,
     ):
         self.interactions = interaction_retriever
         self.side_effects = side_effect_retriever
-        self.vector_store = vector_store
         self.faers = faers_retriever
 
-    def execute(self, plan: RetrievalPlan, with_reviews: bool = False) -> RetrievalResult:
+    def execute(self, plan: RetrievalPlan) -> RetrievalResult:
         result = RetrievalResult()
 
         # 1. Pairwise interactions from local index (TWOSIDES + DDInter)
@@ -64,7 +59,7 @@ class Retriever:
             else:
                 result.no_data_pairs.append(pair)
 
-        # 2. Per-drug side effects (SIDER + ADE if loaded)
+        # 2. Per-drug side effects (SIDER)
         if self.side_effects is not None:
             for name in plan.side_effect_lookups:
                 ses = self.side_effects.retrieve_for_drug(name, top_k=8)
@@ -81,20 +76,5 @@ class Retriever:
                 signals = self.faers.retrieve_pair(a, b)
                 if signals:
                     result.faers_signals[pair] = signals
-
-        # 4. Optional review context (WebMD + UCI in the vector store)
-        if with_reviews and self.vector_store is not None:
-            for name in plan.side_effect_lookups:
-                try:
-                    hits = self.vector_store.search(
-                        query=f"patient experience with {name}",
-                        top_k=3,
-                        where={"drug_name": name},
-                    )
-                    if hits:
-                        result.review_context[name] = hits
-                except Exception:
-                    # Vector store is a nice-to-have — don't crash the pipeline
-                    pass
 
         return result

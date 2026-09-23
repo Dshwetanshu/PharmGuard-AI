@@ -7,7 +7,9 @@ adverse-event signals that predate official labeling.
 
 Design notes:
   - Requires network access (opt-in; disabled by default)
-  - Respects OpenFDA's unauthenticated rate limit (1000 req/day, 40 req/min)
+  - Throttled to one call every 1.5 s. OpenFDA's limits (open.fda.gov/apis/authentication,
+    checked 2026-09-22): 240 requests/minute and 1,000/day per IP without a key;
+    240/minute and 120,000/day with a free API key
   - Each returned record gets a FAERS-<hash> record_id that cites back to the
     OpenFDA query URL so clinicians can verify
   - Timeouts are short and errors are swallowed — FAERS is a nice-to-have, not

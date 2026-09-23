@@ -53,7 +53,6 @@ def result_to_dict(result: RetrievalResult) -> Dict[str, Any]:
         "interactions": [{"pair": list(p), "records": recs} for p, recs in result.interactions.items()],
         "side_effects": [{"drug": d, "records": recs} for d, recs in result.side_effects.items()],
         "faers": [{"pair": list(p), "records": recs} for p, recs in result.faers_signals.items()],
-        "review_context": result.review_context,
         "no_data_pairs": [list(p) for p in result.no_data_pairs],
     })
 
@@ -63,7 +62,6 @@ def result_from_dict(d: Dict[str, Any]) -> RetrievalResult:
         interactions={tuple(x["pair"]): [InteractionRecord(**r) for r in x["records"]] for x in d["interactions"]},
         side_effects={x["drug"]: [SideEffectRecord(**r) for r in x["records"]] for x in d["side_effects"]},
         faers_signals={tuple(x["pair"]): [FaersRecord(**r) for r in x["records"]] for x in d["faers"]},
-        review_context=dict(d.get("review_context") or {}),
         no_data_pairs=[tuple(p) for p in d["no_data_pairs"]],
     )
 

@@ -59,13 +59,6 @@ class PathConfig:
     def sample_dir(self) -> Path:
         return self.data_dir / "sample"
 
-    @property
-    def vector_db_path(self) -> Path:
-        override = os.getenv("PHARMGUARD_VECTOR_DB_PATH")
-        if override:
-            return Path(override).expanduser().resolve()
-        return self.processed_dir / "chroma"
-
 
 @dataclass
 class LLMConfig:

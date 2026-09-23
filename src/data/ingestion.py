@@ -5,8 +5,6 @@ The sample ingest produces:
   data/processed/drug_vocabulary.parquet     (for normalizer)
   data/processed/interactions.parquet        (for interaction retrieval)
   data/processed/side_effects.parquet        (for SIDER retrieval)
-  data/processed/reviews.parquet             (for WebMD context retrieval)
-  data/processed/chroma/                     (vector store, built separately)
 """
 from __future__ import annotations
 
@@ -28,7 +26,6 @@ from src.data.canonical import (
 
 INTERACTION_NAME_COLS = ("drug_a_name", "drug_b_name")
 SIDE_EFFECT_NAME_COLS = ("drug_name",)
-REVIEW_NAME_COLS = ("drug_name",)
 
 class Ingester:
     def __init__(self, cfg: Optional[Config] = None):
@@ -80,39 +77,6 @@ class Ingester:
             aligned.append(f[sorted(all_cols)])
         return pd.concat(aligned, ignore_index=True)
 
-    @staticmethod
-    def _merge_side_effects(sider: Optional[pd.DataFrame], ade: Optional[pd.DataFrame]) -> Optional[pd.DataFrame]:
-        frames = []
-        if sider is not None and not sider.empty:
-            frames.append(sider[["drug_name", "side_effect_name", "umls_cui", "source", "record_id"]]
-                          if "drug_name" in sider.columns
-                          else sider.assign(drug_name=None)[["drug_name", "side_effect_name", "umls_cui", "source", "record_id"]])
-        if ade is not None and not ade.empty:
-            ade_mapped = ade.rename(columns={"adverse_effect": "side_effect_name"}).copy()
-            if "umls_cui" not in ade_mapped.columns:
-                ade_mapped["umls_cui"] = None
-            frames.append(ade_mapped[["drug_name", "side_effect_name", "umls_cui", "source", "record_id"]])
-        if not frames:
-            return None
-        return pd.concat(frames, ignore_index=True)
-
-    @staticmethod
-    def _merge_reviews(webmd: Optional[pd.DataFrame], uci: Optional[pd.DataFrame]) -> Optional[pd.DataFrame]:
-        frames = [f for f in (webmd, uci) if f is not None and not f.empty]
-        if not frames:
-            return None
-        all_cols = set()
-        for f in frames:
-            all_cols.update(f.columns)
-        aligned = []
-        for f in frames:
-            f = f.copy()
-            for c in all_cols:
-                if c not in f.columns:
-                    f[c] = None
-            aligned.append(f[sorted(all_cols)])
-        return pd.concat(aligned, ignore_index=True)
-
     # ---------- sample-mode ingestion ----------
 
     def ingest_sample(self) -> dict:
@@ -124,8 +88,7 @@ class Ingester:
 
         Merges:
           interactions = twosides sample ∪ ddinter sample
-          side_effects = sider sample ∪ ade sample
-          reviews      = webmd sample  ∪ uci sample
+          side_effects = sider sample
         """
         sample = self.cfg.paths.sample_dir
         report = {}
@@ -152,27 +115,12 @@ class Ingester:
             by_src = interactions.groupby("source").size().to_dict() if "source" in interactions.columns else {}
             report["interactions"] = {"rows": len(interactions), "by_source": by_src, "path": str(out)}
 
-        # 3. side_effects = sider ∪ ade
-        sider = _read("side_effects")
-        ade = _read("ade_corpus")
-        if ade is not None:
-            ade = ade.rename(columns={"adverse_effect": "side_effect_name"})
-            if "umls_cui" not in ade.columns:
-                ade["umls_cui"] = None
-        se = self._canonical(self._merge_side_effects(sider, ade), SIDE_EFFECT_NAME_COLS, alias_map)
+        # 3. side_effects = sider sample
+        se = self._canonical(_read("side_effects"), SIDE_EFFECT_NAME_COLS, alias_map)
         if se is not None:
             out = write_table(se, self.cfg.paths.processed_dir / "side_effects.parquet")
             by_src = se.groupby("source").size().to_dict() if "source" in se.columns else {}
             report["side_effects"] = {"rows": len(se), "by_source": by_src, "path": str(out)}
-
-        # 4. reviews = webmd ∪ uci
-        webmd = _read("reviews")
-        uci = _read("uci_reviews")
-        reviews = self._canonical(self._merge_reviews(webmd, uci), REVIEW_NAME_COLS, alias_map)
-        if reviews is not None:
-            out = write_table(reviews, self.cfg.paths.processed_dir / "reviews.parquet")
-            by_src = reviews.groupby("source").size().to_dict() if "source" in reviews.columns else {}
-            report["reviews"] = {"rows": len(reviews), "by_source": by_src, "path": str(out)}
 
         report["join_integrity"] = self._join_integrity(interactions, se, alias_map)
         report["provenance"] = str(write_provenance(self.cfg.paths.processed_dir, "sample", report))

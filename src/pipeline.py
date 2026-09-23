@@ -19,7 +19,6 @@ from src.agents.generator import Generator
 from src.input_validation import clean_drug_names
 from src.retrieval.interaction_retriever import InteractionRetriever
 from src.retrieval.side_effect_retriever import SideEffectRetriever
-from src.retrieval.vector_store import VectorStore
 from src.verification import Evidence, build_evidence, validate_report
 
 
@@ -61,15 +60,14 @@ class PharmGuardPipeline:
     # ---------- factory ----------
 
     @classmethod
-    def from_config(cls, cfg: Optional[Config] = None, load_vectors: bool = False) -> "PharmGuardPipeline":
+    def from_config(cls, cfg: Optional[Config] = None) -> "PharmGuardPipeline":
         cfg = cfg or default_config
         normalizer = DrugNormalizer(cfg).load()
         interaction_retriever = InteractionRetriever(cfg).load()
         side_effect_retriever = SideEffectRetriever(cfg).load()
-        vs = VectorStore(cfg=cfg) if load_vectors else None
         from src.retrieval.faers_retriever import FaersRetriever
         faers = FaersRetriever(enabled=cfg.retrieval.faers_enabled)
-        retriever = Retriever(interaction_retriever, side_effect_retriever, vs, faers_retriever=faers)
+        retriever = Retriever(interaction_retriever, side_effect_retriever, faers_retriever=faers)
         return cls(
             normalizer=normalizer,
             planner=Planner(),
@@ -88,7 +86,6 @@ class PharmGuardPipeline:
         self,
         drug_names: List[str],
         use_llm: bool = True,
-        with_reviews: bool = False,
     ) -> PipelineResult:
         if not drug_names:
             raise ValueError("At least one drug must be provided.")
@@ -112,7 +109,7 @@ class PharmGuardPipeline:
 
         # 3. Retrieve
         t0 = time.perf_counter()
-        retrieval_result = self.retriever.execute(plan, with_reviews=with_reviews)
+        retrieval_result = self.retriever.execute(plan)
         trace["retrieve_ms"] = int((time.perf_counter() - t0) * 1000)
         trace["total_interactions"] = retrieval_result.total_interactions
         trace["no_data_pairs"] = len(retrieval_result.no_data_pairs)
