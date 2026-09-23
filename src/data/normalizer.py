@@ -61,7 +61,9 @@ class ResolvedDrug:
     drugbank_id: Optional[str]    # DrugBank ID if available
     confidence: float             # 0-100 for local matches; raw RxNorm score for "rxnorm_api"
     resolved: bool                # True if confidence ≥ threshold
-    method: str                   # "exact" | "fuzzy" | "rxnorm_api" | "rxnorm_not_in_local_vocab" | "unresolved"
+    method: str                   # "exact" | "fuzzy" | "rxnorm_api" | "rxnorm_not_in_local_vocab" |
+                                  # "combination_product" | "unresolved"
+    note: Optional[str] = None    # shown with an unresolved input, e.g. a combination's ingredients
 
 
 class DrugNormalizer:
@@ -83,6 +85,7 @@ class DrugNormalizer:
         # name -> (generic_name, rxcui, drugbank_id)
         self._lookup: Dict[str, tuple] = {}
         self._all_names: List[str] = []
+        self._combinations: Dict[str, str] = {}   # combination product name -> "a + b"
         self._loaded = False
         self._api_resolver = None  # lazy — only built if enabled
 
@@ -102,13 +105,15 @@ class DrugNormalizer:
                 "Run `python scripts/ingest_data.py` first."
             )
         df = read_table(path)
-        self._build_lookup(df)
-        self._loaded = True
-        return self
+        combos_path = self.cfg.paths.processed_dir / "combination_products.parquet"
+        combos = read_table(combos_path) if table_exists(combos_path) else None
+        return self.load_from_dataframe(df, combos)
 
-    def load_from_dataframe(self, df: pd.DataFrame) -> "DrugNormalizer":
-        """Load directly from an in-memory dataframe (used in tests/sample mode)."""
+    def load_from_dataframe(self, df: pd.DataFrame, combinations: Optional[pd.DataFrame] = None) -> "DrugNormalizer":
+        """Load directly from in-memory dataframes (tests, sample mode)."""
         self._build_lookup(df)
+        if combinations is not None:
+            self._combinations = dict(zip(combinations["name_lower"], combinations["ingredients"]))
         self._loaded = True
         return self
 
@@ -150,6 +155,11 @@ class DrugNormalizer:
         if q in self._lookup:
             generic, rxcui, dbid = self._lookup[q]
             return ResolvedDrug(query, generic, rxcui, dbid, 100.0, True, "exact")
+
+        # Combination products stay unresolved: name the ingredients instead of picking one.
+        if q in self._combinations:
+            return ResolvedDrug(query, None, None, None, 0.0, False, "combination_product",
+                                note=f"combination product: {self._combinations[q]}; enter them separately")
 
         # 2. Fuzzy match against local vocabulary
         match = process.extractOne(

@@ -141,7 +141,7 @@ class Generator:
         if plan.unresolved:
             lines.append("### Unresolved Inputs")
             lines.append("These inputs could not be matched to a drug in the local vocabulary and were excluded:")
-            lines.extend(f"- {u.query}" for u in plan.unresolved)
+            lines.extend(f"- {u.query}" + (f" — {u.note}" if u.note else "") for u in plan.unresolved)
             lines.append("")
         if result.no_data_pairs:
             lines.append("### No Curated Interaction Data")
@@ -228,6 +228,9 @@ class Generator:
             blocks.append("\n=== UNRESOLVED INPUTS ===")
             blocks.append("These inputs could not be matched to a known drug and were excluded:")
             blocks.append(_tagged("unresolved_inputs", [u.query for u in plan.unresolved]))
+            for i, u in enumerate(plan.unresolved, start=1):
+                if u.note:   # vocabulary-derived text, outside the user-data tag
+                    blocks.append(f"  Note for input #{i}: {u.note}")
 
         return "\n".join(blocks)
 

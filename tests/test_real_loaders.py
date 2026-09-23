@@ -118,3 +118,24 @@ def test_sider_joins_drug_names_keeps_pt_and_dedupes():
     assert sorted(aspirin.side_effect_name) == ["headache", "nausea"]    # LLT dropped, stereo duplicate merged
     assert set(df.drug_name) == {"aspirin", "simvastatin"}
     assert df.record_id.is_unique
+
+
+# ------------------------------------------------------- combination products
+
+def test_combination_product_stays_unresolved_and_names_ingredients(vocab, sample_pipeline):
+    from src.agents.generator import Generator
+    from src.agents.planner import Planner
+    from src.agents.retriever import RetrievalResult
+    from src.config import Config
+    from src.data.normalizer import DrugNormalizer
+
+    cfg = Config()
+    cfg.retrieval.rxnorm_api_enabled = False
+    n = DrugNormalizer(cfg).load_from_dataframe(vocab.aliases, combinations=vocab.combinations)
+    r = n.resolve("Percocet")
+    assert (r.resolved, r.generic_name, r.method) == (False, None, "combination_product")
+    assert r.note == "combination product: acetaminophen + oxycodone; enter them separately"
+    assert n.resolve("lipitor").generic_name == "atorvastatin"
+    plan = Planner().plan(n.resolve_many(["Percocet", "warfarin"]))
+    report = Generator(sample_pipeline.cfg).generate_deterministic(plan, RetrievalResult())
+    assert "- Percocet — combination product: acetaminophen + oxycodone; enter them separately" in report
