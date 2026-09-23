@@ -47,10 +47,21 @@ except ImportError:
                 return None
             return (best, best_score, 0)
 
+        @staticmethod
+        def extract(query, choices, scorer=None, score_cutoff=0, limit=5):
+            scored = [(c, (scorer or _FuzzShim.WRatio)(query, c), i) for i, c in enumerate(choices)]
+            scored = [x for x in scored if x[1] >= score_cutoff]
+            return sorted(scored, key=lambda x: -x[1])[:limit]
+
     fuzz = _FuzzShim()
     process = _ProcessShim()
 
 from src.config import Config, config as default_config
+
+# A fuzzy match is accepted only if the next *different* drug scores at least this
+# much lower (WRatio points). Real misspellings clear it easily (metfromin -> metformin
+# leads the next drug by 11); "insulin" (inulin 92 vs insulin products 90) doesn't.
+FUZZY_AMBIGUITY_MARGIN = 5.0
 
 
 @dataclass
@@ -161,14 +172,25 @@ class DrugNormalizer:
             return ResolvedDrug(query, None, None, None, 0.0, False, "combination_product",
                                 note=f"combination product: {self._combinations[q]}; enter them separately")
 
-        # 2. Fuzzy match against local vocabulary
-        match = process.extractOne(
-            q, self._all_names, scorer=fuzz.WRatio, score_cutoff=self.cfg.retrieval.name_match_threshold
-        )
-        if match:
-            name, score, _ = match
-            generic, rxcui, dbid = self._lookup[name]
-            return ResolvedDrug(query, generic, rxcui, dbid, float(score), True, "fuzzy")
+        # 2. Fuzzy match against local vocabulary. If a *different* drug scores within
+        # FUZZY_AMBIGUITY_MARGIN of the best, don't guess: with the real vocabulary,
+        # "insulin" scored 92 for inulin and 90 for several insulins.
+        hits = process.extract(q, self._all_names, scorer=fuzz.WRatio,
+                               score_cutoff=self.cfg.retrieval.name_match_threshold, limit=10)
+        best_by_generic: Dict[str, float] = {}
+        for name, score, _ in hits:
+            generic = self._lookup[name][0]
+            best_by_generic[generic] = max(best_by_generic.get(generic, 0.0), float(score))
+        ranked = sorted(best_by_generic.items(), key=lambda x: -x[1])
+        if len(ranked) >= 2 and ranked[0][1] - ranked[1][1] < FUZZY_AMBIGUITY_MARGIN:
+            names = " / ".join(g for g, _ in ranked[:4])   # RxNorm names can contain commas
+            return ResolvedDrug(query, None, None, None, ranked[0][1], False, "fuzzy_ambiguous",
+                                note=f"ambiguous name; closest matches: {names}; enter the specific drug")
+        if ranked:
+            generic = ranked[0][0]
+            name = next(n for n, _, _ in hits if self._lookup[n][0] == generic)
+            _, rxcui, dbid = self._lookup[name]
+            return ResolvedDrug(query, generic, rxcui, dbid, ranked[0][1], True, "fuzzy")
 
         # 3. RxNorm REST API fallback, mapped back through the local vocabulary
         api = self._ensure_api_resolver()
