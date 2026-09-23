@@ -216,3 +216,21 @@ def test_mermaid_diagram_in_docs_is_current(settings, components):
     doc = (Path(__file__).resolve().parent.parent / "docs" / "graph.md").read_text()
     mermaid = graph(settings, components).compiled.get_graph().draw_mermaid()
     assert f"```mermaid\n{mermaid.strip()}\n```" in doc
+
+
+def test_llm_run_summary(settings, components, good_draft, bad_draft):
+    from src.evaluation.llm_runs import summarize_llm_states
+
+    states = [
+        graph(settings, components, FakeLLM(good_draft)).run(DRUGS),                      # first-draft pass
+        graph(settings, components, FakeLLM(bad_draft, good_draft)).run(DRUGS),           # recovered
+        graph(settings, components, FakeLLM(bad_draft, RuntimeError("x"))).run(DRUGS),    # fallback
+        graph(settings, components, FakeLLM()).run(["metformin"]),                        # not eligible
+    ]
+    s = summarize_llm_states(states)
+    assert (s["llm_eligible_cases"], s["not_eligible_insufficient_input"]) == (3, 1)
+    assert (s["first_draft_pass_rate"], s["recovery_on_retry"], s["fallback_rate"]) == (0.3333, 0.5, 0.3333)
+    assert s["top_finding_codes"] == [("UNSUPPORTED_MECHANISM", 2)]
+    assert s["llm_errors"] == {"RuntimeError": 1}
+    # An attempt that raised records no usage (a failed SDK call returns none).
+    assert s["tokens_per_report"] == round((1201 + (1201 + 1202) + 1201) / 3, 1)

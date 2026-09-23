@@ -6,11 +6,14 @@ Retrieval checks:
      construction. It only catches bugs in pair enumeration/lookup plumbing.
   2. Hand labels: retrieval scored against known_interaction_pairs in
      src/evaluation/test_cases.py (partial labels; precision is a lower bound).
-Report checks (src/verification, the same checker as the runtime guardrail):
+Report checks (src/verification, the same checker as the runtime guardrail),
+run through the LangGraph orchestration (src/graph); --legacy uses the old
+pipeline instead:
   3. Template path: every case's deterministic report.
-  4. LLM path: only if an API key for the configured provider is set (costs one
-     LLM call per case). Metrics are on the raw LLM reports, before fallback.
-     Without a key these cells are "—".
+  4. LLM path: only if an API key for the configured provider is set (costs up
+     to max_llm_attempts LLM calls per case). Reports first-draft semantic
+     metrics, first-draft pass rate, recovery on retry, fallback rate, tokens
+     per report and the most common finding codes. Without a key: "—".
 The semantic checks are lexicon-based and therefore a lower bound.
 All current data is synthetic sample data.
 
@@ -26,6 +29,7 @@ import json
 import os
 import sys
 from pathlib import Path
+from typing import Optional
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
@@ -41,6 +45,8 @@ from src.data.canonical import build_alias_map
 from src.evaluation.hand_labels import score_hand_labels
 from src.evaluation.metrics import Evaluator
 from src.evaluation.test_cases import TEST_CASES
+from src.evaluation.llm_runs import summarize_llm_states
+from src.graph import PharmGuardGraph, Settings
 from src.pipeline import PharmGuardPipeline
 from src.verification import aggregate_stats, validate_report
 
@@ -54,11 +60,58 @@ def _fmt(v) -> str:
     return "—" if v is None else f"{v:.3f}"
 
 
+def _llm_skip_reason(provider: str, skip: bool) -> Optional[str]:
+    key_var = KEY_VARS.get(provider)
+    if skip:
+        return "--skip-llm"
+    if not (key_var and os.getenv(key_var)):
+        return f"no {key_var or 'API key'} configured"
+    return None
+
+
+def graph_report_checks(cases, skip_llm: bool) -> dict:
+    settings = Settings.from_env(mode="deterministic")
+    graph = PharmGuardGraph(settings)
+    template = [graph.run(c.input_drugs)["final_validation"]["stats"] for c in cases]
+    checks = {"orchestration": "langgraph", "template": aggregate_stats(template), "llm": None,
+              "llm_fallback_rate": None, "llm_runs": None, "llm_model": None,
+              "llm_skipped_reason": _llm_skip_reason(settings.llm_provider, skip_llm)}
+    if checks["llm_skipped_reason"] is None:
+        llm_graph = graph.with_mode("llm")
+        runs = summarize_llm_states([llm_graph.run(c.input_drugs) for c in cases])
+        checks.update(llm=runs["first_draft_checks"], llm_fallback_rate=runs["fallback_rate"], llm_runs=runs,
+                      llm_model=f"{settings.llm_provider}:{settings.model_id}")
+    return checks
+
+
+def legacy_report_checks(cases, skip_llm: bool) -> dict:
+    pipeline = PharmGuardPipeline.from_config()
+    template_stats = []
+    for case in cases:
+        r = pipeline.run(case.input_drugs, use_llm=False)
+        template_stats.append(validate_report(r.report, pipeline.evidence(r.plan, r.retrieval)).stats)
+    checks = {"orchestration": "legacy", "template": aggregate_stats(template_stats), "llm": None,
+              "llm_fallback_rate": None, "llm_runs": None, "llm_model": None,
+              "llm_skipped_reason": _llm_skip_reason(config.llm.provider, skip_llm)}
+    if checks["llm_skipped_reason"] is None:
+        llm_stats, fallbacks = [], 0
+        for case in cases:
+            r = pipeline.run(case.input_drugs, use_llm=True)
+            fallbacks += r.trace["report_source"] != "llm"
+            if "llm_validation" in r.trace:
+                llm_stats.append(r.trace["llm_validation"]["stats"])
+        checks.update(llm=aggregate_stats(llm_stats) if llm_stats else None,
+                      llm_fallback_rate=round(fallbacks / len(cases), 4),
+                      llm_model=f"{config.llm.provider}:{config.llm.resolved_model()}")
+    return checks
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--output", type=str, default=None, help="Path to save JSON report.")
     ap.add_argument("--subset", type=str, default=None, help="Filter case IDs by prefix.")
     ap.add_argument("--skip-llm", action="store_true", help="Don't run the LLM path even if a key is set.")
+    ap.add_argument("--legacy", action="store_true", help="Use the pre-LangGraph pipeline for report checks.")
     args = ap.parse_args()
 
     normalizer = DrugNormalizer().load()
@@ -85,30 +138,7 @@ def main():
     vocab = read_table(config.paths.processed_dir / "drug_vocabulary.parquet")
     hand = score_hand_labels(cases, retrieve_pairs, build_alias_map(vocab))
 
-    pipeline = PharmGuardPipeline.from_config()
-    template_stats = []
-    for case in cases:
-        r = pipeline.run(case.input_drugs, use_llm=False)
-        template_stats.append(validate_report(r.report, pipeline.evidence(r.plan, r.retrieval)).stats)
-    checks = {"template": aggregate_stats(template_stats), "llm": None, "llm_fallback_rate": None,
-              "llm_model": None, "llm_skipped_reason": None}
-
-    key_var = KEY_VARS.get(config.llm.provider)
-    if args.skip_llm:
-        checks["llm_skipped_reason"] = "--skip-llm"
-    elif not (key_var and os.getenv(key_var)):
-        checks["llm_skipped_reason"] = f"no {key_var or 'API key'} configured"
-    else:
-        llm_stats, fallbacks = [], 0
-        for case in cases:
-            r = pipeline.run(case.input_drugs, use_llm=True)
-            fallbacks += r.trace["report_source"] != "llm"
-            if "llm_validation" in r.trace:
-                llm_stats.append(r.trace["llm_validation"]["stats"])
-        checks.update(llm=aggregate_stats(llm_stats) if llm_stats else None,
-                      llm_fallback_rate=round(fallbacks / len(cases), 4),
-                      llm_model=f"{config.llm.provider}:{config.llm.resolved_model()}")
-
+    checks = (legacy_report_checks if args.legacy else graph_report_checks)(cases, args.skip_llm)
     report = {"internal_consistency": internal, "hand_labels": hand, "report_checks": checks}
 
     print("\n=== Internal consistency (1.0 by construction: same normalizer + table) ===")
@@ -126,6 +156,11 @@ def main():
     for key in REPORT_METRICS:
         print(f"{key:32s} {_fmt(tmpl.get(key)):>10s} {_fmt(llm.get(key)):>10s}")
     print(f"{'llm_fallback_rate':32s} {'':>10s} {_fmt(checks['llm_fallback_rate']):>10s}")
+    runs = checks.get("llm_runs") or {}
+    for key in ("first_draft_pass_rate", "recovery_on_retry", "tokens_per_report"):
+        print(f"{key:32s} {'':>10s} {_fmt(runs.get(key)):>10s}")
+    print(f"{'top_finding_codes':32s} {'':>10s} {runs.get('top_finding_codes') or '—'}")
+    print(f"orchestration: {checks['orchestration']}")
     if checks["llm_skipped_reason"]:
         print(f"LLM path not run: {checks['llm_skipped_reason']}")
     print(f"Cases evaluated: {internal['num_cases']}")
