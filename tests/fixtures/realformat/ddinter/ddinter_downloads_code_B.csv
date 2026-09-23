@@ -1,0 +1,4 @@
+DDInterID_A,Drug_A,DDInterID_B,Drug_B,Level
+DDInter2,Warfarin,DDInter1,Acetylsalicylic acid,Major
+DDInter5,Lithium carbonate,DDInter6,Hydrochlorothiazide,Major
+DDInter8,Lithium citrate,DDInter6,Hydrochlorothiazide,Unknown

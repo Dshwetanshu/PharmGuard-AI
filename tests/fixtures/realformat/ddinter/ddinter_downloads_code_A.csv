@@ -1,0 +1,5 @@
+DDInterID_A,Drug_A,DDInterID_B,Drug_B,Level
+DDInter1,Acetylsalicylic acid,DDInter2,Warfarin,Major
+DDInter3,Salbutamol,DDInter4,Propranolol,Moderate
+DDInter5,Lithium carbonate,DDInter6,Hydrochlorothiazide,Major
+DDInter7,Acyclovir (topical),DDInter2,Warfarin,Minor

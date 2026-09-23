@@ -1,0 +1,12 @@
+drug_1_rxnorn_id,drug_1_concept_name,drug_2_rxnorm_id,drug_2_concept_name,condition_meddra_id,condition_concept_name,A,B,C,D,PRR,PRR_error,mean_reporting_frequency
+1191,Aspirin,11289,Warfarin,10019021,Haemorrhage,50,100,10,1000,18.7,0.3,0.05
+1191,Aspirin,11289,Warfarin,10017955,Gastrointestinal haemorrhage,20,100,10,1000,12.0,0.3,0.05
+1191,Aspirin,11289,Warfarin,10013709,Drug ineffective,30,100,10,1000,9.0,0.3,0.05
+1191,Aspirin,11289,Warfarin,10028813,Nausea,40,100,10,1000,1.5,0.3,0.05
+1191,Aspirin,11289,Warfarin,10015090,Epistaxis,3,100,10,1000,6.0,0.3,0.05
+1191,Aspirin,11289,Warfarin,10002034,Anaemia,9,100,10,1000,5.0,0.3,0.05
+1191,Aspirin,11289,Warfarin,10027141,Melaena,8,100,10,1000,4.0,0.3,0.05
+1191,Aspirin,11289,Warfarin,10050584,Contusion,7,100,10,1000,3.0,0.3,0.05
+11289,Warfarin,1191,Aspirin,10018852,Haematoma,10,100,10,1000,20.0,0.3,0.05
+999999,Zzzdrug,1191,Aspirin,10019211,Headache,10,100,10,1000,5.0,0.3,0.05
+114194,warfarin sodium,29046,Lisinopril,10013573,Dizziness,5,100,10,1000,3.0,0.3,0.05
