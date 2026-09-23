@@ -10,6 +10,9 @@ chromadb>=0.4.22
 rapidfuzz>=3.5.0      # Drug name fuzzy matching
 rank_bm25>=0.2.2      # Sparse retrieval fallback
 
+# Orchestration (src/graph)
+langgraph>=1.0
+
 # LLM clients (install whichever you'll use)
 anthropic>=0.40.0
 openai>=1.40.0

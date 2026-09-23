@@ -23,6 +23,15 @@ from src.retrieval.vector_store import VectorStore
 from src.verification import Evidence, build_evidence, validate_report
 
 
+def request_evidence(normalizer: DrugNormalizer, disclaimer: str,
+                     plan: RetrievalPlan, retrieval: RetrievalResult) -> Evidence:
+    """Evidence bundle for one request, with vocabulary aliases for its drugs.
+    Shared by the legacy pipeline and the LangGraph version."""
+    names = [d.generic_name for d in plan.resolved]
+    names += [x for recs in retrieval.interactions.values() for r in recs for x in (r.drug_a, r.drug_b)]
+    return build_evidence(plan, retrieval, normalizer.aliases_for(names), disclaimer)
+
+
 @dataclass
 class PipelineResult:
     input_drugs: List[str]
@@ -71,9 +80,7 @@ class PharmGuardPipeline:
 
     def evidence(self, plan: RetrievalPlan, retrieval: RetrievalResult) -> Evidence:
         """Flat, JSON-serializable evidence bundle for report validation."""
-        names = [d.generic_name for d in plan.resolved]
-        names += [x for recs in retrieval.interactions.values() for r in recs for x in (r.drug_a, r.drug_b)]
-        return build_evidence(plan, retrieval, self.normalizer.aliases_for(names), self.cfg.disclaimer)
+        return request_evidence(self.normalizer, self.cfg.disclaimer, plan, retrieval)
 
     # ---------- main entry point ----------
 
