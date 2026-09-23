@@ -43,7 +43,7 @@ SALT_GROUPS: Dict[str, str] = {
 
 
 # Reviewed name aliases (source name -> US name already in the vocabulary). Only names
-# the integrity report showed unmatched in an interaction source, whose target was
+# the integrity report showed unmatched in a source (DDInter unless noted), whose target was
 # verified in RxNorm Current Prescribable 2026-09-08. The target is resolved through
 # the vocabulary at build time; an entry whose target is missing is reported, not applied.
 REVIEWED_ALIASES: Dict[str, str] = {
@@ -63,6 +63,9 @@ REVIEWED_ALIASES: Dict[str, str] = {
     "somatotropin": "somatropin",
     "nicotinamide": "niacinamide",
     "clofedanol": "chlophedianol",
+    "leuprorelin": "leuprolide",           # INN; surfaced by SIDER (568 rows)
+    "deprenyl": "selegiline",              # older name; surfaced by SIDER (383 rows)
+    "vitamin d3": "cholecalciferol",       # common name; surfaced by TWOSIDES (7,660 rows)
     # spelling / hydrate forms of the same substance
     "ethinylestradiol": "ethinyl estradiol",
     "ferrous sulfate anhydrous": "ferrous sulfate",
