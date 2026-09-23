@@ -1,6 +1,7 @@
-"""Data ingestion: raw → processed.
+"""Synthetic-sample ingestion: data/sample/ -> data/processed/.
 
-Runs once after datasets are placed in data/raw/. Produces:
+Real data (RxNorm, DDInter, SIDER, TWOSIDES) is ingested by src/data/real_ingest.py.
+The sample ingest produces:
   data/processed/drug_vocabulary.parquet     (for normalizer)
   data/processed/interactions.parquet        (for interaction retrieval)
   data/processed/side_effects.parquet        (for SIDER retrieval)
@@ -23,108 +24,16 @@ from src.data.canonical import (
     ensure_self_aliases,
     find_join_integrity_issues,
 )
-from src.data.loaders import (
-    load_twosides,
-    load_ddinter,
-    load_drugbank_vocabulary,
-    load_sider_side_effects,
-    load_rxnorm,
-    load_webmd_reviews,
-    load_uci_reviews,
-    load_ade_corpus,
-)
 
 
 INTERACTION_NAME_COLS = ("drug_a_name", "drug_b_name")
 SIDE_EFFECT_NAME_COLS = ("drug_name",)
 REVIEW_NAME_COLS = ("drug_name",)
 
-RAW_FILE_HINTS = {
-    "twosides": "twosides.csv",
-    "ddinter": "ddinter.csv",
-    "drugbank": "drugbank_vocabulary.csv",
-    "sider_se": "meddra_all_se.tsv",
-    "rxnorm": "rxnorm_RXNCONSO.RRF",
-    "webmd": "webmd.csv",
-    "uci": "uci_drug_reviews.csv",
-    "ade": "ade_corpus.csv",
-}
-
-
 class Ingester:
     def __init__(self, cfg: Optional[Config] = None):
         self.cfg = cfg or default_config
         self.cfg.paths.processed_dir.mkdir(parents=True, exist_ok=True)
-
-    # ---------- full-mode ingestion ----------
-
-    def ingest_full(self) -> dict:
-        """Ingest all datasets from data/raw/. Missing files are skipped with a note."""
-        report = {}
-        raw = self.cfg.paths.raw_dir
-
-        # 1. RxNorm + DrugBank → drug_vocabulary
-        rxnorm_df = self._maybe_load(raw / RAW_FILE_HINTS["rxnorm"], load_rxnorm)
-        drugbank_df = self._maybe_load(raw / RAW_FILE_HINTS["drugbank"], load_drugbank_vocabulary)
-        vocab = self._build_vocabulary(rxnorm_df, drugbank_df)
-        if vocab is not None:
-            vocab = ensure_self_aliases(vocab)
-            out = write_table(vocab, self.cfg.paths.processed_dir / "drug_vocabulary.parquet")
-            report["drug_vocabulary"] = {"rows": len(vocab), "path": str(out)}
-        alias_map = build_alias_map(vocab) if vocab is not None else None
-
-        # 2. TWOSIDES + DDInter → unified interactions
-        tw = self._maybe_load(
-            raw / RAW_FILE_HINTS["twosides"],
-            lambda p: load_twosides(p, min_prr=self.cfg.retrieval.twosides_min_prr),
-        )
-        ddi = self._maybe_load(raw / RAW_FILE_HINTS["ddinter"], load_ddinter)
-        merged_interactions = self._canonical(self._merge_interactions(tw, ddi), INTERACTION_NAME_COLS, alias_map)
-        if merged_interactions is not None:
-            out = write_table(
-                merged_interactions,
-                self.cfg.paths.processed_dir / "interactions.parquet",
-            )
-            by_src = merged_interactions.groupby("source").size().to_dict() if "source" in merged_interactions.columns else {}
-            report["interactions"] = {
-                "rows": len(merged_interactions),
-                "by_source": by_src,
-                "path": str(out),
-            }
-
-        # 3. SIDER + ADE → side_effects
-        sider = self._maybe_load(raw / RAW_FILE_HINTS["sider_se"], load_sider_side_effects)
-        ade = self._maybe_load(raw / RAW_FILE_HINTS["ade"], load_ade_corpus)
-        merged_se = self._canonical(self._merge_side_effects(sider, ade), SIDE_EFFECT_NAME_COLS, alias_map)
-        if merged_se is not None:
-            out = write_table(merged_se, self.cfg.paths.processed_dir / "side_effects.parquet")
-            by_src = merged_se.groupby("source").size().to_dict() if "source" in merged_se.columns else {}
-            report["side_effects"] = {
-                "rows": len(merged_se),
-                "by_source": by_src,
-                "path": str(out),
-            }
-
-        # 4. WebMD + UCI → reviews
-        webmd = self._maybe_load(
-            raw / RAW_FILE_HINTS["webmd"], lambda p: load_webmd_reviews(p, max_rows=50_000)
-        )
-        uci = self._maybe_load(
-            raw / RAW_FILE_HINTS["uci"], lambda p: load_uci_reviews(p, max_rows=30_000)
-        )
-        merged_reviews = self._canonical(self._merge_reviews(webmd, uci), REVIEW_NAME_COLS, alias_map)
-        if merged_reviews is not None:
-            out = write_table(merged_reviews, self.cfg.paths.processed_dir / "reviews.parquet")
-            by_src = merged_reviews.groupby("source").size().to_dict() if "source" in merged_reviews.columns else {}
-            report["reviews"] = {
-                "rows": len(merged_reviews),
-                "by_source": by_src,
-                "path": str(out),
-            }
-
-        report["join_integrity"] = self._join_integrity(merged_interactions, merged_se, alias_map)
-        report["provenance"] = str(write_provenance(self.cfg.paths.processed_dir, "full", report))
-        return report
 
     # ---------- canonical keys ----------
 
@@ -270,53 +179,3 @@ class Ingester:
         return report
 
     # ---------- helpers ----------
-
-    def _maybe_load(self, path: Path, loader):
-        if not path.exists():
-            print(f"  [skip] {path.name} not found in {path.parent}")
-            return None
-        print(f"  [load] {path.name}")
-        return loader(path)
-
-    def _build_vocabulary(
-        self, rxnorm_df: Optional[pd.DataFrame], drugbank_df: Optional[pd.DataFrame]
-    ) -> Optional[pd.DataFrame]:
-        frames = []
-
-        if rxnorm_df is not None:
-            rx = rxnorm_df.copy()
-            # Pick the canonical generic (TTY=IN) per RXCUI when available
-            ingredients = rx[rx["tty"].isin(["IN", "PIN"])].groupby("rxcui")["name_lower"].first()
-            rx["generic_name"] = rx["rxcui"].map(ingredients)
-            rx["generic_name"] = rx["generic_name"].fillna(rx["name_lower"])
-            rx["drugbank_id"] = None
-            frames.append(rx[["name_lower", "generic_name", "rxcui", "drugbank_id"]])
-
-        if drugbank_df is not None:
-            rows = []
-            for _, r in drugbank_df.iterrows():
-                gn = r.get("generic_name")
-                db_id = r.get("drugbank_id")
-                if gn:
-                    rows.append({"name_lower": gn, "generic_name": gn, "rxcui": None, "drugbank_id": db_id})
-                for syn in r.get("synonyms") or []:
-                    rows.append({"name_lower": syn, "generic_name": gn, "rxcui": None, "drugbank_id": db_id})
-            frames.append(pd.DataFrame(rows))
-
-        if not frames:
-            return None
-
-        combined = pd.concat(frames, ignore_index=True)
-        combined = combined.dropna(subset=["name_lower"])
-        combined["name_lower"] = combined["name_lower"].astype(str).str.lower().str.strip()
-        combined = combined[combined["name_lower"] != ""]
-
-        # Keep the row with the most information per name
-        combined["_score"] = combined[["rxcui", "drugbank_id"]].notna().sum(axis=1)
-        combined = (
-            combined.sort_values("_score", ascending=False)
-            .drop_duplicates(subset=["name_lower"], keep="first")
-            .drop(columns=["_score"])
-            .reset_index(drop=True)
-        )
-        return combined

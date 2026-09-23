@@ -5,9 +5,10 @@ report can't claim a data source that wasn't loaded.
 """
 from __future__ import annotations
 
+import datetime as dt
 import json
 from pathlib import Path
-from typing import Optional
+from typing import Dict, Optional
 
 PROVENANCE_FILE = "provenance.json"
 
@@ -27,6 +28,48 @@ def write_provenance(processed_dir: Path, mode: str, report: dict) -> Path:
     return path
 
 
+SOURCE_LABELS = {
+    "ddinter": "DDInter 2.0",
+    "sider": "SIDER 4.1",
+    "rxnorm": "RxNorm Current Prescribable",
+    "drugbank": "DrugBank vocabulary",
+    "twosides": "TWOSIDES (research only; not for redistribution)",
+}
+
+
+def write_real_provenance(processed_dir: Path, profile: str, manifest: Dict, report: Dict) -> Path:
+    """Record a real-data build: per source URL, version, license, download date, sha256,
+    row counts, filters and unmatched counts, plus the profile and vocabulary stats."""
+    used = ["rxnorm", "ddinter", "sider"] + (["twosides"] if profile == "research" else [])
+    if report["vocabulary"].get("drugbank") == "merged":
+        used.insert(1, "drugbank")
+    sources = {}
+    for key in used:
+        m = manifest.get(key, {})
+        sources[key] = {
+            "title": m.get("title"), "version": m.get("version"), "license": m.get("license"),
+            "homepage": m.get("homepage"),
+            "files": [{k: f.get(k) for k in ("name", "url", "sha256", "bytes", "downloaded_at")}
+                      for f in m.get("files", [])] or "no manifest entry (files not fetched by fetch_data.py)",
+            **report.get("sources", {}).get(key, {}),
+        }
+    data = {
+        "mode": "full", "profile": profile, "synthetic": False, "built_at": dt.date.today().isoformat(),
+        "interaction_records": int(report["interactions"]["rows"]),
+        "interactions_by_source": {k: int(v) for k, v in report["interactions"]["by_source"].items()},
+        "side_effect_records": int(report["side_effects"]["rows"]),
+        "vocabulary": {k: v for k, v in report["vocabulary"].items()},
+        "vocabulary_version": manifest.get("rxnorm", {}).get("version"),
+        "join_integrity_issues": len(report["join_integrity"]["issues"]),
+        "sources": sources,
+        "source_order": used,
+        "not_for_redistribution": profile == "research",
+    }
+    path = Path(processed_dir) / PROVENANCE_FILE
+    path.write_text(json.dumps(data, indent=2, sort_keys=True, default=str) + "\n")
+    return path
+
+
 def read_provenance(processed_dir: Path) -> Optional[dict]:
     path = Path(processed_dir) / PROVENANCE_FILE
     return json.loads(path.read_text()) if path.exists() else None
@@ -37,6 +80,14 @@ def provenance_line(processed_dir: Path) -> str:
     if data is None:
         return "Data: no ingestion record found; data provenance unknown."
     n = data["interaction_records"]
+    if data.get("mode") == "full":
+        labels = []
+        for key in data.get("source_order", sorted(data["sources"])):
+            label = SOURCE_LABELS.get(key, key)
+            version = data["sources"][key].get("version")
+            labels.append(f"{label} {version}" if key == "rxnorm" and version else label)
+        return (f"Data: {data['profile']} build from " + ", ".join(labels)
+                + f"; {n:,} interaction records; not synthetic.")
     if data.get("synthetic"):
         return f"Data: synthetic sample dataset ({n} interaction records), not real clinical data."
     sources = ", ".join(f"{k} {v}" for k, v in sorted(data["interactions_by_source"].items())) or "no sources"

@@ -116,6 +116,7 @@ def load_twosides_filtered(path: Path, name_to_generic: Dict[str, str], rxcui_to
     """
     stats = Counter()
     unmatched: Counter = Counter()
+    names_seen: set = set()
     kept = []
     for chunk in pd.read_csv(path, chunksize=chunksize, dtype=str, compression="infer"):
         present = {src: dst for src, dst in TWOSIDES_COLUMN_MAP.items() if src in chunk.columns}
@@ -138,6 +139,8 @@ def load_twosides_filtered(path: Path, name_to_generic: Dict[str, str], rxcui_to
             return by_id.fillna(by_name)
 
         ga, gb = canon("a"), canon("b")
+        for side in ("a", "b"):
+            names_seen.update(c[f"drug_{side}_name"].astype(str).str.strip().str.lower().unique())
         miss = ga.isna() | gb.isna()
         for side, g in (("a", ga), ("b", gb)):
             for name, n in c.loc[g.isna(), f"drug_{side}_name"].astype(str).str.strip().str.lower().value_counts().items():
@@ -181,6 +184,8 @@ def load_twosides_filtered(path: Path, name_to_generic: Dict[str, str], rxcui_to
     stats["pairs_kept"] = int(df.groupby(["drug_a_name", "drug_b_name"]).ngroups) if len(df) else 0
     out = dict(stats)
     out["unmatched_names"] = dict(unmatched)
+    out["distinct_names_seen"] = len(names_seen)          # after the PRR / A / administrative filters
+    out["distinct_names_matched"] = len(names_seen - set(unmatched))
     out["filters"] = {"min_prr": min_prr, "min_reports": min_reports, "top_events_per_pair": top_events,
                       "excluded_terms": sorted(exclude_terms)}
     return df.reset_index(drop=True), out
@@ -288,8 +293,6 @@ def load_sider_side_effects(path: Path) -> pd.DataFrame:
     return out.reset_index(drop=True)
 
 
-# ============================================================
-# RxNorm — drug name normalization backbone
 # ============================================================
 # RXNCONSO.RRF is pipe-delimited with a fixed 18-column schema.
 # Columns of interest:
