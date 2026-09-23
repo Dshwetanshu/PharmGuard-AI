@@ -85,9 +85,12 @@ class RxNormApiResolver:
     # ---------- HTTP helpers ----------
 
     def _fetch(self, url: str) -> dict:
+        from src.observability import active
         req = urllib_request.Request(url, headers={"User-Agent": "PharmGuard/1.0"})
-        with urllib_request.urlopen(req, timeout=self.timeout_s) as resp:
-            return json.loads(resp.read().decode("utf-8"))
+        with active().http("rxnorm.http", url) as record:   # child span; query hidden when redacting
+            with urllib_request.urlopen(req, timeout=self.timeout_s) as resp:
+                record({"http.response.status_code": getattr(resp, "status", 200)})
+                return json.loads(resp.read().decode("utf-8"))
 
     def _best_candidate(self, name: str) -> Optional[tuple]:
         """Return (rxcui, rxnorm_name, score) for the highest-scoring candidate that

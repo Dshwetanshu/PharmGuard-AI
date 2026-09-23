@@ -128,15 +128,19 @@ class FaersRetriever:
         # Search for reports mentioning BOTH drugs, count by reaction term.
         url = self._query_url(drug_a, drug_b, limit=10)
 
+        from src.observability import active
         req = urllib_request.Request(url, headers={"User-Agent": "PharmGuard/1.0"})
-        try:
-            with urllib_request.urlopen(req, timeout=self.timeout_s) as resp:
-                payload = json.loads(resp.read().decode("utf-8"))
-        except HTTPError as e:
-            # 404 from OpenFDA just means "no matching reports" — not an error
-            if e.code == 404:
-                return []
-            raise
+        with active().http("faers.http", url) as record:   # child span; query hidden when redacting
+            try:
+                with urllib_request.urlopen(req, timeout=self.timeout_s) as resp:
+                    record({"http.response.status_code": getattr(resp, "status", 200)})
+                    payload = json.loads(resp.read().decode("utf-8"))
+            except HTTPError as e:
+                record({"http.response.status_code": e.code})
+                # 404 from OpenFDA just means "no matching reports" — not an error
+                if e.code == 404:
+                    return []
+                raise
 
         results = payload.get("results") or []
         return [(r.get("term", "").lower(), int(r.get("count", 0))) for r in results]

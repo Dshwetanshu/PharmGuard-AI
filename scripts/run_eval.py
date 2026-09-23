@@ -140,6 +140,8 @@ def main():
 
     checks = (legacy_report_checks if args.legacy else graph_report_checks)(cases, args.skip_llm)
     report = {"internal_consistency": internal, "hand_labels": hand, "report_checks": checks}
+    from src.observability import active
+    active().flush()   # send any buffered trace spans before exit
 
     print("\n=== Internal consistency (1.0 by construction: same normalizer + table) ===")
     print(f"Mean recall:    {internal['mean_recall']}")

@@ -1,0 +1,13 @@
+# Optional tracing backends (PHARMGUARD_TRACING=langsmith|phoenix). Install on top of requirements.txt:
+#   pip install -r requirements.txt -r requirements-tracing.txt
+# See docs/OBSERVABILITY.md.
+
+# LangSmith (hosted). langchain-core already pulls this in; the floor is for wrap_anthropic/hide options.
+langsmith>=0.3
+
+# Phoenix / OpenTelemetry (can run locally)
+arize-phoenix-otel>=0.10
+openinference-instrumentation-langchain>=0.1.30
+openinference-instrumentation-anthropic>=0.1.17
+openinference-instrumentation-openai>=0.1.20
+opentelemetry-sdk>=1.30

@@ -1,0 +1,16 @@
+# Local Phoenix for tracing (docs/OBSERVABILITY.md). Traces stay on this machine.
+#   docker compose up -d phoenix
+#   PHARMGUARD_TRACING=phoenix python scripts/demo.py lisinopril spironolactone aspirin
+#   open http://localhost:6006
+services:
+  phoenix:
+    image: arizephoenix/phoenix:latest
+    ports:
+      - "6006:6006"     # UI and OTLP/HTTP collector (http://localhost:6006/v1/traces)
+      - "4317:4317"     # OTLP/gRPC collector
+    environment:
+      - PHOENIX_WORKING_DIR=/mnt/data
+    volumes:
+      - phoenix_data:/mnt/data
+volumes:
+  phoenix_data:

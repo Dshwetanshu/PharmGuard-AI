@@ -34,7 +34,8 @@ from src.data.normalizer import DrugNormalizer, ResolvedDrug
 from src.graph.serde import empty_result, jsonable, plan_from_dict, plan_to_dict, result_from_dict, result_to_dict
 from src.graph.settings import Settings
 from src.input_validation import clean_drug_names
-from src.llm import is_transient_llm_error
+from src.llm import LLMClient, is_transient_llm_error
+from src.observability import Tracing, new_request_id, safe_node_attributes, setup_tracing
 from src.pipeline import request_evidence
 from src.retrieval.faers_retriever import FaersRetriever
 from src.retrieval.interaction_retriever import InteractionRetriever
@@ -81,6 +82,7 @@ class Components:
     faers: FaersRetriever
     generator: Generator
     llm_available: bool
+    llm_label: str = "none"                 # recorded in trace metadata, e.g. "anthropic:claude-sonnet-5"
 
 
 def build_components(settings: Settings, llm=None) -> Components:
@@ -94,6 +96,8 @@ def build_components(settings: Settings, llm=None) -> Components:
         faers=FaersRetriever(enabled=settings.faers_enabled),
         generator=Generator(cfg, llm=llm),
         llm_available=settings.llm_configured or llm is not None,
+        llm_label=("injected" if llm is not None
+                   else f"{settings.llm_provider}:{settings.model_id}" if settings.llm_configured else "none"),
     )
 
 
@@ -111,15 +115,19 @@ def _normalizer_method(d: ResolvedDrug) -> str:
     return {"rxnorm_api": "rxnorm", "rxnorm_not_in_local_vocab": "rxnorm_no_local_match"}.get(d.method, d.method)
 
 
-def build_graph(settings: Settings, c: Components):
+def build_graph(settings: Settings, c: Components, tracing: Optional[Tracing] = None):
     """Define the topology and compile the graph. The only place edges are declared."""
+    tracing = tracing or Tracing()
 
     def timed(name: str, fn: Callable[[GraphState], Tuple[Dict[str, Any], str, Dict[str, Any]]]):
         def node(state: GraphState) -> Dict[str, Any]:
-            t0 = time.perf_counter()
-            update, status, detail = fn(state)
-            ms = round((time.perf_counter() - t0) * 1000, 2)
-            update["trajectory"] = [{"node": name, "status": status, "ms": ms, "detail": jsonable(detail)}]
+            with tracing.node(name) as record:
+                t0 = time.perf_counter()
+                update, status, detail = fn(state)
+                ms = round((time.perf_counter() - t0) * 1000, 2)
+                detail = jsonable(detail)
+                update["trajectory"] = [{"node": name, "status": status, "ms": ms, "detail": detail}]
+                record({"status": status, "ms": ms, **safe_node_attributes(detail, tracing.redact)})
             return update
         return node
 
@@ -280,28 +288,67 @@ def build_graph(settings: Settings, c: Components):
     return g.compile()
 
 
+def run_outcome(state: Dict[str, Any]) -> Dict[str, Any]:
+    """What a trace records about a finished run, for filtering (no health data)."""
+    source = state["report_source"]
+    drafts = state.get("drafts") or []
+    reason = {"deterministic_no_llm": "no_llm_configured",
+              "deterministic_insufficient_input": "insufficient_input"}.get(source, "")
+    if source == "deterministic_fallback":
+        last = drafts[-1] if drafts else {}
+        reason = f"llm_error:{last['error_class']}" if last.get("error_class") else "validation_failed"
+    codes = sorted({c for d in drafts for c in d.get("finding_codes", [])}
+                   | {f["code"] for f in state["final_validation"]["findings"]})
+    return {"report_source": source, "llm_attempts": state.get("llm_attempts", 0), "fallback_reason": reason,
+            "finding_codes": codes, "final_validation_passed": state["final_validation"]["passed"]}
+
+
 class PharmGuardGraph:
     """A compiled graph plus the components it runs on."""
 
-    def __init__(self, settings: Settings, components: Optional[Components] = None):
+    def __init__(self, settings: Settings, components: Optional[Components] = None,
+                 tracing: Optional[Tracing] = None):
         self.settings = settings
         self.components = components or build_components(settings)
-        self.compiled = build_graph(settings, self.components)
+        self.tracing = tracing if tracing is not None else setup_tracing(settings)
+        self._wrap_llm_sdk()
+        self.compiled = build_graph(settings, self.components, self.tracing)
+
+    def _wrap_llm_sdk(self) -> None:
+        """LangSmith: trace the LLM SDK call itself (prompts, tokens, latency)."""
+        if self.tracing.backend != "langsmith" or not self.settings.llm_configured:
+            return
+        gen = self.components.generator
+        if gen.llm is None:
+            gen.llm = LLMClient(gen.cfg)
+        if isinstance(gen.llm, LLMClient):
+            gen.llm.wrap_sdk_client(lambda sdk: self.tracing.wrap_llm_sdk(sdk, gen.llm.provider))
 
     def with_mode(self, mode: str) -> "PharmGuardGraph":
-        """Same components (data loaded once), different mode."""
-        return PharmGuardGraph(self.settings.with_mode(mode), self.components)
+        """Same components (data loaded once) and tracing, different mode."""
+        return PharmGuardGraph(self.settings.with_mode(mode), self.components, self.tracing)
 
-    def run(self, drug_names: List[str]) -> Dict[str, Any]:
+    def run(self, drug_names: List[str], tags: Optional[List[str]] = None,
+            metadata: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """Validate the input list, run the graph, return the final (JSON-serializable) state."""
         if not drug_names:
             raise ValueError("At least one drug must be provided.")
         if len(drug_names) > MAX_DRUGS:
             raise ValueError("MVP supports up to %d drugs. Got %d." % (MAX_DRUGS, len(drug_names)))
         names = clean_drug_names(drug_names)  # raises InvalidDrugNameError
+        request_id = new_request_id()
+        run_tags = [f"mode:{self.settings.mode}", "pipeline:langgraph", f"llm:{self.components.llm_label}",
+                    *(tags or [])]
+        run_meta = {"request_id": request_id, "n_drugs": len(names), "mode": self.settings.mode,
+                    "pipeline": "langgraph", "llm": self.components.llm_label,
+                    "data_provenance": self.components.generator.provenance,
+                    "trace_redacted": self.tracing.redact, **(metadata or {})}
         t0 = time.perf_counter()
-        state = self.compiled.invoke({"input_drugs": names, "trajectory": []},
-                                     {"recursion_limit": 12 + 2 * self.settings.max_llm_attempts})
-        state = dict(state)
+        with self.tracing.request("pharmguard.request", run_tags, run_meta, {"drugs": names}) as req:
+            config = {"recursion_limit": 12 + 2 * self.settings.max_llm_attempts, "run_name": "pharmguard_graph",
+                      "tags": run_tags, "metadata": run_meta, **self.tracing.graph_config()}
+            state = dict(self.compiled.invoke({"input_drugs": names, "trajectory": []}, config))
+            req.finish(run_outcome(state), outputs={"report": state["report"]})
         state["latency_seconds"] = round(time.perf_counter() - t0, 4)
+        state["request_id"] = request_id
         return state

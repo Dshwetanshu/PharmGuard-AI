@@ -6,6 +6,7 @@ import time.
 """
 from __future__ import annotations
 
+import logging
 import os
 from dataclasses import dataclass, replace
 from pathlib import Path
@@ -15,6 +16,8 @@ from src.config import DEFAULT_MODELS, PROJECT_ROOT, Config
 
 KEY_VARS = {"anthropic": "ANTHROPIC_API_KEY", "openai": "OPENAI_API_KEY", "gemini": "GOOGLE_API_KEY"}
 MODES = ("llm", "deterministic")
+TRACING_BACKENDS = ("none", "langsmith", "phoenix")
+log = logging.getLogger("pharmguard.tracing")
 
 
 @dataclass(frozen=True)
@@ -29,12 +32,21 @@ class Settings:
     rxnorm_min_score: float = 10.0
     faers_enabled: bool = False
     top_k: int = 5
+    # Tracing (docs/OBSERVABILITY.md). Credentials are only recorded as present/absent here;
+    # the SDKs read the values themselves.
+    tracing: str = "none"                # "none" | "langsmith" | "phoenix"
+    trace_redact: bool = True            # hide inputs/outputs (medication lists are health data)
+    trace_project: str = "pharmguard"
+    langsmith_key_present: bool = False
+    phoenix_endpoint: str = "http://localhost:6006"
 
     def __post_init__(self):
         if self.mode not in MODES:
             raise ValueError(f"mode must be one of {MODES}, got {self.mode!r}")
         if self.max_llm_attempts < 1:
             raise ValueError("max_llm_attempts must be >= 1")
+        if self.tracing not in TRACING_BACKENDS:
+            raise ValueError(f"tracing must be one of {TRACING_BACKENDS}, got {self.tracing!r}")
 
     @property
     def model_id(self) -> str:
@@ -73,6 +85,20 @@ class Settings:
             rxnorm_min_score=float(env.get("PHARMGUARD_MIN_CONFIDENCE", "10.0")),
             faers_enabled=env.get("PHARMGUARD_FAERS_ENABLED", "false").lower() == "true",
             top_k=int(env.get("PHARMGUARD_TOP_K", "5")),
+            tracing=_tracing_backend(env.get("PHARMGUARD_TRACING", "none")),
+            trace_redact=env.get("PHARMGUARD_TRACE_REDACT", "true").lower() != "false",
+            trace_project=env.get("LANGSMITH_PROJECT" if env.get("PHARMGUARD_TRACING", "").lower() == "langsmith"
+                                  else "PHOENIX_PROJECT_NAME") or "pharmguard",
+            langsmith_key_present=bool(env.get("LANGSMITH_API_KEY")),
+            phoenix_endpoint=env.get("PHOENIX_COLLECTOR_ENDPOINT", "http://localhost:6006"),
         )
         values.update(overrides)
         return cls(**values)
+
+
+def _tracing_backend(value: str) -> str:
+    v = (value or "none").strip().lower()
+    if v not in TRACING_BACKENDS:
+        log.warning("PHARMGUARD_TRACING=%r is not one of %s; running untraced.", value, TRACING_BACKENDS)
+        return "none"
+    return v
