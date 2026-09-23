@@ -79,6 +79,16 @@ From `python scripts/run_eval.py` (48 cases). The LLM column requires an API key
 
 The template's zeros are expected: the template only restates record fields, and the checker was validated against it (the false-positive check above). Those zeros say nothing about LLM output.
 
+## Trajectory evaluation (orchestration)
+
+`python scripts/eval_trajectory.py --fault-suite --seeded-bugs --min-invariant-pass 1.0` writes `results/trajectory.{json,md}` and exits non-zero below the threshold, so CI can use it as a gate. It runs offline with no API keys; every LLM in it is a scripted fake.
+
+- **Step scoring:** each case is scored per step (normalize, plan, retrieve, route, finalize); task completion means every step is correct. Edge-case inputs have explicit `expected_resolved` / `expected_unresolved` in `test_cases.py`. The already-flagged EDG-03 label is counted separately.
+- **Fault suite:** scripted drafts derived from each case's deterministic report. Scenarios: clean; transient error once or always; non-transient error once; hallucinated mechanism once or always; omitted Major; absence stated as safety; phantom citation; severity flip; uncited claim; a different fault on the retry; the retry repeating the rejected draft. Each scenario has an expected node path and report_source.
+- **Invariants:** 11, checked on every run and computed independently of the graph's own claims.
+- **Seeded bugs:** six orchestration bugs (`src/evaluation/seeded_bugs.py`) are checked to break at least one invariant each.
+- **Latency:** with fake LLMs it measures orchestration overhead only.
+
 ## Running the evaluation
 
 ```bash

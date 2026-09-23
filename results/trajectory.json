@@ -1,0 +1,528 @@
+{
+  "command": "python scripts/eval_trajectory.py --fault-suite --seeded-bugs --min-invariant-pass 1.0",
+  "fault_suite": {
+    "skipped": {
+      "absence_safe_once": 29,
+      "different_fault_on_retry": 10,
+      "mechanism_always": 10,
+      "mechanism_once": 10,
+      "omit_major_once": 24,
+      "phantom_citation_once": 10,
+      "retry_repeats_rejected_draft": 10,
+      "severity_flip_once": 10,
+      "uncited_claim_once": 10
+    },
+    "summary": {
+      "invariant_pass_rate": {
+        "ends_at_finalize": 1.0,
+        "every_node_timed": 1.0,
+        "exhausted_fallback_matches_deterministic": 1.0,
+        "faers_only_when_needed": 1.0,
+        "final_report_valid": 1.0,
+        "llm_attempts_within_budget": 1.0,
+        "no_unvalidated_llm_text": 1.0,
+        "non_transient_never_retried": 1.0,
+        "partition_holds": 1.0,
+        "plan_complete": 1.0,
+        "state_json_serializable": 1.0
+      },
+      "invariant_runs": 549,
+      "latency_label": "orchestration overhead only (fake LLMs, synthetic sample data, no network)",
+      "latency_ms_end_to_end": {
+        "p50": 9.7,
+        "p95": 60.0
+      },
+      "latency_ms_per_node": {
+        "faers": {
+          "p50": 0.19,
+          "p95": 0.93
+        },
+        "finalize": {
+          "p50": 1.53,
+          "p95": 25.52
+        },
+        "generate_llm": {
+          "p50": 0.03,
+          "p95": 0.09
+        },
+        "normalize": {
+          "p50": 0.02,
+          "p95": 0.09
+        },
+        "plan": {
+          "p50": 0.03,
+          "p95": 0.13
+        },
+        "retrieve": {
+          "p50": 2.88,
+          "p95": 26.38
+        },
+        "template": {
+          "p50": 0.02,
+          "p95": 0.07
+        },
+        "validate": {
+          "p50": 1.58,
+          "p95": 25.65
+        }
+      },
+      "llm_calls_per_case": 1.712,
+      "mismatches": [],
+      "path_match_rate": 1.0,
+      "per_scenario": {
+        "absence_safe_once": {
+          "expected_source": "llm_retry",
+          "invariants_all_pass": 1.0,
+          "llm_calls_mean": 2,
+          "path_match": 1.0,
+          "runs": 19,
+          "source_match": 1.0
+        },
+        "clean": {
+          "expected_source": "llm",
+          "invariants_all_pass": 1.0,
+          "llm_calls_mean": 0.958,
+          "path_match": 1.0,
+          "runs": 48,
+          "source_match": 1.0
+        },
+        "clean+faers": {
+          "expected_source": "llm",
+          "invariants_all_pass": 1.0,
+          "llm_calls_mean": 0.958,
+          "path_match": 1.0,
+          "runs": 48,
+          "source_match": 1.0
+        },
+        "different_fault_on_retry": {
+          "expected_source": "deterministic_fallback",
+          "invariants_all_pass": 1.0,
+          "llm_calls_mean": 2,
+          "path_match": 1.0,
+          "runs": 38,
+          "source_match": 1.0
+        },
+        "mechanism_always": {
+          "expected_source": "deterministic_fallback",
+          "invariants_all_pass": 1.0,
+          "llm_calls_mean": 2,
+          "path_match": 1.0,
+          "runs": 38,
+          "source_match": 1.0
+        },
+        "mechanism_once": {
+          "expected_source": "llm_retry",
+          "invariants_all_pass": 1.0,
+          "llm_calls_mean": 2,
+          "path_match": 1.0,
+          "runs": 38,
+          "source_match": 1.0
+        },
+        "non_transient_error_once": {
+          "expected_source": "deterministic_fallback",
+          "invariants_all_pass": 1.0,
+          "llm_calls_mean": 0.958,
+          "path_match": 1.0,
+          "runs": 48,
+          "source_match": 1.0
+        },
+        "omit_major_once": {
+          "expected_source": "llm_retry",
+          "invariants_all_pass": 1.0,
+          "llm_calls_mean": 2,
+          "path_match": 1.0,
+          "runs": 24,
+          "source_match": 1.0
+        },
+        "phantom_citation_once": {
+          "expected_source": "llm_retry",
+          "invariants_all_pass": 1.0,
+          "llm_calls_mean": 2,
+          "path_match": 1.0,
+          "runs": 38,
+          "source_match": 1.0
+        },
+        "retry_repeats_rejected_draft": {
+          "expected_source": "deterministic_fallback",
+          "invariants_all_pass": 1.0,
+          "llm_calls_mean": 2,
+          "path_match": 1.0,
+          "runs": 38,
+          "source_match": 1.0
+        },
+        "severity_flip_once": {
+          "expected_source": "llm_retry",
+          "invariants_all_pass": 1.0,
+          "llm_calls_mean": 2,
+          "path_match": 1.0,
+          "runs": 38,
+          "source_match": 1.0
+        },
+        "transient_error_always": {
+          "expected_source": "deterministic_fallback",
+          "invariants_all_pass": 1.0,
+          "llm_calls_mean": 1.917,
+          "path_match": 1.0,
+          "runs": 48,
+          "source_match": 1.0
+        },
+        "transient_error_once": {
+          "expected_source": "llm_retry",
+          "invariants_all_pass": 1.0,
+          "llm_calls_mean": 1.917,
+          "path_match": 1.0,
+          "runs": 48,
+          "source_match": 1.0
+        },
+        "uncited_claim_once": {
+          "expected_source": "llm_retry",
+          "invariants_all_pass": 1.0,
+          "llm_calls_mean": 2,
+          "path_match": 1.0,
+          "runs": 38,
+          "source_match": 1.0
+        }
+      },
+      "recovery_rate": 1.0,
+      "runs": 549,
+      "source_match_rate": 1.0
+    }
+  },
+  "gate": {
+    "min_invariant_pass": 1.0,
+    "passed": true,
+    "seeded_bugs_all_caught": true,
+    "threshold": 1.0
+  },
+  "invariants": {
+    "pass_rate": {
+      "ends_at_finalize": 1.0,
+      "every_node_timed": 1.0,
+      "exhausted_fallback_matches_deterministic": 1.0,
+      "faers_only_when_needed": 1.0,
+      "final_report_valid": 1.0,
+      "llm_attempts_within_budget": 1.0,
+      "no_unvalidated_llm_text": 1.0,
+      "non_transient_never_retried": 1.0,
+      "partition_holds": 1.0,
+      "plan_complete": 1.0,
+      "state_json_serializable": 1.0
+    },
+    "runs": 645
+  },
+  "seeded_bugs": {
+    "faers_always_consulted": {
+      "broken": {
+        "faers_only_when_needed": 0.0528
+      },
+      "caught": true,
+      "path_match": 0.0528
+    },
+    "fallback_returns_rejected_draft": {
+      "broken": {
+        "exhausted_fallback_matches_deterministic": 0.7923,
+        "final_report_valid": 0.7923,
+        "no_unvalidated_llm_text": 0.7923
+      },
+      "caught": true,
+      "path_match": 1.0
+    },
+    "non_transient_errors_retried": {
+      "broken": {
+        "non_transient_never_retried": 0.9162
+      },
+      "caught": true,
+      "path_match": 0.9162
+    },
+    "plan_drops_a_pair": {
+      "broken": {
+        "exhausted_fallback_matches_deterministic": 0.1894,
+        "plan_complete": 0.0182
+      },
+      "caught": true,
+      "path_match": 0.5082
+    },
+    "retry_limit_off_by_one": {
+      "broken": {
+        "llm_attempts_within_budget": 0.7086
+      },
+      "caught": true,
+      "path_match": 0.7086
+    },
+    "validate_always_passes": {
+      "broken": {
+        "final_report_valid": 0.4372,
+        "no_unvalidated_llm_text": 0.4372
+      },
+      "caught": true,
+      "path_match": 0.4372
+    }
+  },
+  "step_scoring": {
+    "deterministic": {
+      "summary": {
+        "failing": [],
+        "overall": {
+          "cases": 48,
+          "completion": 1.0,
+          "finalize": 1.0,
+          "normalize": 1.0,
+          "plan": 1.0,
+          "retrieve": 1.0,
+          "route": 1.0
+        },
+        "per_subset": {
+          "CV": {
+            "cases": 5,
+            "completion": 1.0,
+            "finalize": 1.0,
+            "normalize": 1.0,
+            "plan": 1.0,
+            "retrieve": 1.0,
+            "route": 1.0
+          },
+          "EDG": {
+            "cases": 7,
+            "completion": 1.0,
+            "finalize": 1.0,
+            "normalize": 1.0,
+            "plan": 1.0,
+            "retrieve": 1.0,
+            "route": 1.0
+          },
+          "END": {
+            "cases": 3,
+            "completion": 1.0,
+            "finalize": 1.0,
+            "normalize": 1.0,
+            "plan": 1.0,
+            "retrieve": 1.0,
+            "route": 1.0
+          },
+          "GER": {
+            "cases": 4,
+            "completion": 1.0,
+            "finalize": 1.0,
+            "normalize": 1.0,
+            "plan": 1.0,
+            "retrieve": 1.0,
+            "route": 1.0
+          },
+          "GI": {
+            "cases": 2,
+            "completion": 1.0,
+            "finalize": 1.0,
+            "normalize": 1.0,
+            "plan": 1.0,
+            "retrieve": 1.0,
+            "route": 1.0
+          },
+          "ID": {
+            "cases": 4,
+            "completion": 1.0,
+            "finalize": 1.0,
+            "normalize": 1.0,
+            "plan": 1.0,
+            "retrieve": 1.0,
+            "route": 1.0
+          },
+          "MH": {
+            "cases": 5,
+            "completion": 1.0,
+            "finalize": 1.0,
+            "normalize": 1.0,
+            "plan": 1.0,
+            "retrieve": 1.0,
+            "route": 1.0
+          },
+          "ONC": {
+            "cases": 2,
+            "completion": 1.0,
+            "finalize": 1.0,
+            "normalize": 1.0,
+            "plan": 1.0,
+            "retrieve": 1.0,
+            "route": 1.0
+          },
+          "PAIN": {
+            "cases": 3,
+            "completion": 1.0,
+            "finalize": 1.0,
+            "normalize": 1.0,
+            "plan": 1.0,
+            "retrieve": 1.0,
+            "route": 1.0
+          },
+          "REAL": {
+            "cases": 1,
+            "completion": 1.0,
+            "finalize": 1.0,
+            "normalize": 1.0,
+            "plan": 1.0,
+            "retrieve": 1.0,
+            "route": 1.0
+          },
+          "RSP": {
+            "cases": 2,
+            "completion": 1.0,
+            "finalize": 1.0,
+            "normalize": 1.0,
+            "plan": 1.0,
+            "retrieve": 1.0,
+            "route": 1.0
+          },
+          "TXT": {
+            "cases": 10,
+            "completion": 1.0,
+            "finalize": 1.0,
+            "normalize": 1.0,
+            "plan": 1.0,
+            "retrieve": 1.0,
+            "route": 1.0
+          }
+        },
+        "suspected_label_misses": {
+          "EDG-03": [
+            [
+              "atorvastatin",
+              "lisinopril"
+            ]
+          ]
+        }
+      }
+    },
+    "llm_mode_with_key": null,
+    "llm_mode_without_key": {
+      "summary": {
+        "failing": [],
+        "overall": {
+          "cases": 48,
+          "completion": 1.0,
+          "finalize": 1.0,
+          "normalize": 1.0,
+          "plan": 1.0,
+          "retrieve": 1.0,
+          "route": 1.0
+        },
+        "per_subset": {
+          "CV": {
+            "cases": 5,
+            "completion": 1.0,
+            "finalize": 1.0,
+            "normalize": 1.0,
+            "plan": 1.0,
+            "retrieve": 1.0,
+            "route": 1.0
+          },
+          "EDG": {
+            "cases": 7,
+            "completion": 1.0,
+            "finalize": 1.0,
+            "normalize": 1.0,
+            "plan": 1.0,
+            "retrieve": 1.0,
+            "route": 1.0
+          },
+          "END": {
+            "cases": 3,
+            "completion": 1.0,
+            "finalize": 1.0,
+            "normalize": 1.0,
+            "plan": 1.0,
+            "retrieve": 1.0,
+            "route": 1.0
+          },
+          "GER": {
+            "cases": 4,
+            "completion": 1.0,
+            "finalize": 1.0,
+            "normalize": 1.0,
+            "plan": 1.0,
+            "retrieve": 1.0,
+            "route": 1.0
+          },
+          "GI": {
+            "cases": 2,
+            "completion": 1.0,
+            "finalize": 1.0,
+            "normalize": 1.0,
+            "plan": 1.0,
+            "retrieve": 1.0,
+            "route": 1.0
+          },
+          "ID": {
+            "cases": 4,
+            "completion": 1.0,
+            "finalize": 1.0,
+            "normalize": 1.0,
+            "plan": 1.0,
+            "retrieve": 1.0,
+            "route": 1.0
+          },
+          "MH": {
+            "cases": 5,
+            "completion": 1.0,
+            "finalize": 1.0,
+            "normalize": 1.0,
+            "plan": 1.0,
+            "retrieve": 1.0,
+            "route": 1.0
+          },
+          "ONC": {
+            "cases": 2,
+            "completion": 1.0,
+            "finalize": 1.0,
+            "normalize": 1.0,
+            "plan": 1.0,
+            "retrieve": 1.0,
+            "route": 1.0
+          },
+          "PAIN": {
+            "cases": 3,
+            "completion": 1.0,
+            "finalize": 1.0,
+            "normalize": 1.0,
+            "plan": 1.0,
+            "retrieve": 1.0,
+            "route": 1.0
+          },
+          "REAL": {
+            "cases": 1,
+            "completion": 1.0,
+            "finalize": 1.0,
+            "normalize": 1.0,
+            "plan": 1.0,
+            "retrieve": 1.0,
+            "route": 1.0
+          },
+          "RSP": {
+            "cases": 2,
+            "completion": 1.0,
+            "finalize": 1.0,
+            "normalize": 1.0,
+            "plan": 1.0,
+            "retrieve": 1.0,
+            "route": 1.0
+          },
+          "TXT": {
+            "cases": 10,
+            "completion": 1.0,
+            "finalize": 1.0,
+            "normalize": 1.0,
+            "plan": 1.0,
+            "retrieve": 1.0,
+            "route": 1.0
+          }
+        },
+        "suspected_label_misses": {
+          "EDG-03": [
+            [
+              "atorvastatin",
+              "lisinopril"
+            ]
+          ]
+        }
+      }
+    }
+  }
+}
