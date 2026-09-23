@@ -84,14 +84,14 @@ def test_happy_path(settings, components, good_draft):
 
 
 def test_llm_error_once_then_success(settings, components, good_draft):
-    s = graph(settings, components, FakeLLM(RuntimeError("503"), good_draft)).run(DRUGS)
+    s = graph(settings, components, FakeLLM(TimeoutError("503"), good_draft)).run(DRUGS)
     assert s["report_source"] == "llm_retry" and s["llm_attempts"] == 2
     assert [t["status"] for t in s["trajectory"] if t["node"] == "generate_llm"] == ["error", "ok"]
-    assert s["drafts"][0]["error"].startswith("RuntimeError")
+    assert s["drafts"][0]["error"].startswith("TimeoutError")
 
 
 def test_llm_error_always_falls_back(settings, components, sample_pipeline):
-    s = graph(settings, components, FakeLLM(RuntimeError("down"), RuntimeError("down"))).run(DRUGS)
+    s = graph(settings, components, FakeLLM(TimeoutError("down"), TimeoutError("down"))).run(DRUGS)
     assert s["report_source"] == "deterministic_fallback" and s["llm_attempts"] == 2
     assert s["report"] == sample_pipeline.run(DRUGS, use_llm=False).report
 
@@ -224,13 +224,37 @@ def test_llm_run_summary(settings, components, good_draft, bad_draft):
     states = [
         graph(settings, components, FakeLLM(good_draft)).run(DRUGS),                      # first-draft pass
         graph(settings, components, FakeLLM(bad_draft, good_draft)).run(DRUGS),           # recovered
-        graph(settings, components, FakeLLM(bad_draft, RuntimeError("x"))).run(DRUGS),    # fallback
+        graph(settings, components, FakeLLM(bad_draft, TimeoutError("x"))).run(DRUGS),    # fallback
         graph(settings, components, FakeLLM()).run(["metformin"]),                        # not eligible
     ]
     s = summarize_llm_states(states)
     assert (s["llm_eligible_cases"], s["not_eligible_insufficient_input"]) == (3, 1)
     assert (s["first_draft_pass_rate"], s["recovery_on_retry"], s["fallback_rate"]) == (0.3333, 0.5, 0.3333)
     assert s["top_finding_codes"] == [("UNSUPPORTED_MECHANISM", 2)]
-    assert s["llm_errors"] == {"RuntimeError": 1}
+    assert s["llm_errors"] == {"TimeoutError": 1}
     # An attempt that raised records no usage (a failed SDK call returns none).
     assert s["tokens_per_report"] == round((1201 + (1201 + 1202) + 1201) / 3, 1)
+
+
+# ------------------------------------------------------ error classification
+
+def test_non_retryable_error_goes_straight_to_template(settings, components, good_draft):
+    import anthropic
+    import httpx2
+
+    req = httpx2.Request("POST", "https://api.anthropic.com/v1/messages")
+    bad_request = anthropic.BadRequestError("temperature is not supported", body=None,
+                                            response=httpx2.Response(400, request=req))
+    llm = FakeLLM(bad_request, good_draft)
+    s = graph(settings, components, llm).run(DRUGS)
+    assert s["report_source"] == "deterministic_fallback" and s["llm_attempts"] == 1 and len(llm.calls) == 1
+    gen = s["trajectory"][nodes(s).index("generate_llm")]["detail"]
+    assert (gen["error_class"], gen["retryable"]) == ("BadRequestError", False)
+    assert gen["route"] == "template"
+
+
+def test_transient_error_class_is_recorded(settings, components, good_draft):
+    s = graph(settings, components, FakeLLM(TimeoutError("slow"), good_draft)).run(DRUGS)
+    gen = [t["detail"] for t in s["trajectory"] if t["node"] == "generate_llm"]
+    assert (gen[0]["error_class"], gen[0]["retryable"], gen[0]["route"]) == ("TimeoutError", True, "generate_llm")
+    assert s["report_source"] == "llm_retry"

@@ -12,7 +12,26 @@ from src.config import Config, config as default_config
 
 
 class LLMError(RuntimeError):
-    pass
+    """Configuration or response problems (missing key, refusal, truncation). Not transient."""
+
+
+# Transient failures by SDK class name (Anthropic and OpenAI share these names),
+# matched against the exception's MRO so SDK subclasses count too.
+_TRANSIENT_CLASSES = {
+    "APITimeoutError", "APIConnectionError", "RateLimitError", "InternalServerError",
+    "OverloadedError", "ServiceUnavailableError", "TimeoutError", "ConnectionError",
+}
+
+
+def is_transient_llm_error(exc: BaseException) -> bool:
+    """True for errors worth retrying: timeouts, connection errors, rate limits,
+    overloaded / 5xx. Auth, invalid-request (4xx) and LLMError are not."""
+    if isinstance(exc, LLMError):
+        return False
+    status = getattr(exc, "status_code", None)
+    if isinstance(status, int):
+        return status in (408, 409, 429) or status >= 500
+    return any(cls.__name__ in _TRANSIENT_CLASSES for cls in type(exc).__mro__)
 
 
 class LLMClient:

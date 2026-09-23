@@ -34,6 +34,7 @@ from src.data.normalizer import DrugNormalizer, ResolvedDrug
 from src.graph.serde import empty_result, jsonable, plan_from_dict, plan_to_dict, result_from_dict, result_to_dict
 from src.graph.settings import Settings
 from src.input_validation import clean_drug_names
+from src.llm import is_transient_llm_error
 from src.pipeline import request_evidence
 from src.retrieval.faers_retriever import FaersRetriever
 from src.retrieval.interaction_retriever import InteractionRetriever
@@ -62,6 +63,7 @@ class GraphState(TypedDict, total=False):
     evidence: Dict[str, Any]                # Evidence.to_dict() (normalized records, for validation)
     llm_attempts: int
     llm_error: Optional[str]                # error of the latest attempt, if it raised
+    llm_error_retryable: bool               # transient (timeout, rate limit, 5xx) vs permanent
     draft: Optional[str]                    # latest LLM draft
     feedback: Optional[str]                 # checker findings for the next attempt
     drafts: List[Dict[str, Any]]            # per attempt: passed, finding codes, stats, usage, error
@@ -139,7 +141,10 @@ def build_graph(settings: Settings, c: Components):
     def route_after_generate(state: GraphState) -> str:
         if state.get("llm_error") is None:
             return "validate"
-        return "generate_llm" if state["llm_attempts"] < settings.max_llm_attempts else "template"
+        # Only transient errors are retried; auth / invalid-request errors won't fix themselves.
+        if state.get("llm_error_retryable") and state["llm_attempts"] < settings.max_llm_attempts:
+            return "generate_llm"
+        return "template"
 
     def route_after_validate(state: GraphState) -> str:
         if state.get("report_source") in ("llm", "llm_retry"):
@@ -200,15 +205,22 @@ def build_graph(settings: Settings, c: Components):
         try:
             text = c.generator.generate(p, result, prior_draft=state.get("draft") if feedback else None,
                                         feedback=feedback)
-        except Exception as exc:  # any LLM failure consumes an attempt
+        except Exception as exc:  # consumes an attempt; retried only if transient
             err = f"{type(exc).__name__}: {str(exc)[:200]}"
-            drafts.append({"attempt": attempt, "error": err, "passed": False})
-            detail.update(error=err, usage=getattr(c.generator.llm, "last_usage", None))
-            return {"llm_attempts": attempt, "llm_error": err, "drafts": drafts}, "error", detail
+            retryable = is_transient_llm_error(exc)
+            drafts.append({"attempt": attempt, "error": err, "error_class": type(exc).__name__,
+                           "retryable": retryable, "passed": False})
+            update = {"llm_attempts": attempt, "llm_error": err, "llm_error_retryable": retryable, "drafts": drafts}
+            detail.update(error=err, error_class=type(exc).__name__, retryable=retryable,
+                          route=route_after_generate({**state, **update}))
+            return update, "error", detail
         usage = getattr(c.generator.llm, "last_usage", None)
         drafts.append({"attempt": attempt, "usage": usage})
         detail["usage"] = usage
-        return {"llm_attempts": attempt, "llm_error": None, "draft": text, "drafts": drafts}, "ok", detail
+        update = {"llm_attempts": attempt, "llm_error": None, "llm_error_retryable": False,
+                  "draft": text, "drafts": drafts}
+        detail["route"] = route_after_generate({**state, **update})
+        return update, "ok", detail
 
     def validate(state):
         attempt = state["llm_attempts"]
