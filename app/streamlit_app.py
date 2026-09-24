@@ -17,9 +17,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import streamlit as st
 
+from src.data.attribution import notices_for_dir, notices_markdown
+from src.data.provenance import provenance_line
 from src.graph import REPORT_SOURCES, PharmGuardGraph, Settings
 from src.graph.settings import KEY_VARS
-from src.input_validation import InvalidDrugNameError
+from src.input_validation import InvalidDrugNameError, split_drug_input
 
 LEGACY = os.getenv("PHARMGUARD_PIPELINE", "graph").lower() == "legacy"
 
@@ -57,6 +59,7 @@ def load_legacy_pipeline():
 
 
 settings = load_settings()
+processed_dir = settings.to_config().paths.processed_dir
 
 # ---------- sidebar ----------
 with st.sidebar:
@@ -78,9 +81,12 @@ with st.sidebar:
     st.markdown("---")
     st.markdown(
         "**About.** PharmGuard is a decision-support prototype, not a substitute for "
-        "professional medical judgment. It reports only what its loaded data contains; "
-        "the data currently loaded is a small synthetic sample."
+        "professional medical judgment. It reports only what its loaded data contains."
     )
+    st.caption(provenance_line(processed_dir))
+    # Generated from the build's provenance (src/data/attribution.py): one notice per loaded source.
+    with st.expander("Data sources and attribution", expanded=False):
+        st.markdown(notices_markdown(notices_for_dir(processed_dir)))
 
 
 # ---------- main input ----------
@@ -108,7 +114,8 @@ col_input, col_examples = st.columns([3, 1])
 
 with col_input:
     raw = st.text_area(
-        "Enter medications (one per line, or comma-separated):",
+        "Enter medications (one per line, or comma-separated on one line; "
+        "names that contain commas need one per line):",
         height=140,
         placeholder="lisinopril\nspironolactone\nmetformin\naspirin",
         key="drug_input",
@@ -126,12 +133,7 @@ with col_examples:
         )
 
 # Parse input
-drugs = []
-if raw.strip():
-    for line in raw.replace(",", "\n").splitlines():
-        name = line.strip()
-        if name:
-            drugs.append(name)
+drugs = split_drug_input(raw)
 
 go = st.button("Analyze interactions", type="primary", disabled=not drugs)
 
