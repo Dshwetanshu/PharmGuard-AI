@@ -77,6 +77,13 @@ class InteractionRetriever:
         self._build_index()
         return self
 
+    @property
+    def table(self) -> pd.DataFrame:
+        """The loaded interactions table (all sources, all records)."""
+        if self._df is None:
+            raise RuntimeError("InteractionRetriever.load() must be called first.")
+        return self._df
+
     def _build_index(self) -> None:
         """Pair key -> row positions, built once with vectorized string ops.
 

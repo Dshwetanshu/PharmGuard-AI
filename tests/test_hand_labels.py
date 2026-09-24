@@ -41,3 +41,25 @@ def test_eval_output_has_no_hard_coded_metrics():
     out = AggregateMetrics().as_dict()
     assert "completeness_flagging" not in out
     assert "1.0 by construction" in out["note"]
+
+
+def test_misses_are_split_into_source_gaps_and_pipeline_misses():
+    import pandas as pd
+    from src.evaluation.hand_labels import pair_sources
+
+    table = pd.DataFrame({"drug_a_name": ["Warfarin", "lithium"], "drug_b_name": ["aspirin", "ibuprofen"],
+                          "source": ["DDInter", "DDInter"]})
+    sources = pair_sources(table)
+    assert sources == {("aspirin", "warfarin"): ["DDInter"], ("ibuprofen", "lithium"): ["DDInter"]}
+
+    class C:
+        def __init__(self, cid, drugs, pairs):
+            self.case_id, self.input_drugs, self.known_interaction_pairs = cid, drugs, pairs
+
+    cases = [C("A", ["warfarin", "aspirin"], [("warfarin", "aspirin")]),          # in a table, not retrieved
+             C("B", ["lithium", "hctz"], [("lithium", "hydrochlorothiazide")])]   # in no table
+    out = score_hand_labels(cases, lambda drugs: set(), {"hctz": "hydrochlorothiazide"}, sources)
+    assert (out["source_gaps"], out["pipeline_misses"]) == (1, 1)
+    assert out["missed_source_gap"] == [("B", ["hydrochlorothiazide", "lithium"])]
+    assert out["missed_pipeline"] == [("A", ["aspirin", "warfarin"], ["DDInter"])]
+    assert out["pipeline_recall"] == 0.0

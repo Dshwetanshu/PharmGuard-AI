@@ -1,5 +1,10 @@
 {
   "command": "python scripts/eval_trajectory.py --fault-suite --seeded-bugs --min-invariant-pass 1.0",
+  "data": {
+    "data": "Data: synthetic sample dataset (85 interaction records), not real clinical data.",
+    "profile": "sample",
+    "provenance_sha256": "28d02174d104970c84783c43b9264e0424e6ce364c3223695f41749ca49a7506"
+  },
   "fault_suite": {
     "skipped": {
       "absence_safe_once": 29,
@@ -30,21 +35,21 @@
       "invariant_runs": 580,
       "latency_label": "orchestration overhead only (fake LLMs, synthetic sample data, no network)",
       "latency_ms_end_to_end": {
-        "p50": 10.2,
-        "p95": 61.8
+        "p50": 9.8,
+        "p95": 61.9
       },
       "latency_ms_per_node": {
         "faers": {
           "p50": 0.16,
-          "p95": 0.82
+          "p95": 0.84
         },
         "finalize": {
-          "p50": 1.79,
-          "p95": 25.97
+          "p50": 1.78,
+          "p95": 26.1
         },
         "generate_llm": {
           "p50": 0.04,
-          "p95": 0.14
+          "p95": 0.12
         },
         "normalize": {
           "p50": 0.03,
@@ -55,16 +60,16 @@
           "p95": 0.14
         },
         "retrieve": {
-          "p50": 2.44,
-          "p95": 11.22
+          "p50": 2.12,
+          "p95": 11.14
         },
         "template": {
           "p50": 0.03,
-          "p95": 0.1
+          "p95": 0.08
         },
         "validate": {
-          "p50": 1.84,
-          "p95": 26.22
+          "p50": 1.83,
+          "p95": 26.31
         }
       },
       "llm_calls_per_case": 1.728,
@@ -390,6 +395,7 @@
             "route": 1.0
           }
         },
+        "source_gap_misses": {},
         "suspected_label_misses": {
           "EDG-03": [
             [
@@ -523,6 +529,7 @@
             "route": 1.0
           }
         },
+        "source_gap_misses": {},
         "suspected_label_misses": {
           "EDG-03": [
             [

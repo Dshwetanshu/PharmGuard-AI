@@ -5,10 +5,14 @@ Usage:
     python scripts/eval_trajectory.py --fault-suite                     # + scripted fake-LLM fault suite
     python scripts/eval_trajectory.py --fault-suite --seeded-bugs --min-invariant-pass 1.0   # CI gate
 
-Offline, no API keys: the sample data is ingested into a temp dir, RxNorm and
-FAERS are off (FAERS is a counting stub in the FAERS pass), and every LLM is a
-scripted fake. Exit status 1 if any invariant's pass rate is below
---min-invariant-pass, or (with --seeded-bugs) if a seeded bug breaks no invariant.
+    python scripts/eval_trajectory.py --fault-suite --profile public    # on a real build -> results/trajectory_public.*
+
+Offline, no API keys: the sample data is ingested into a temp dir (or a real
+build is read from data/profiles/<profile>), RxNorm and FAERS are off (FAERS is
+a counting stub in the FAERS pass), and every LLM is a scripted fake. Exit
+status 1 if any invariant's pass rate is below --min-invariant-pass, or (with
+--seeded-bugs) if a seeded bug breaks no invariant. Labelled pairs that no
+loaded table contains are reported as source gaps, not retrieval failures.
 """
 from __future__ import annotations
 
@@ -24,6 +28,7 @@ sys.path.insert(0, str(ROOT))
 
 from src.config import Config  # noqa: E402
 from src.data.ingestion import Ingester  # noqa: E402
+from src.data.provenance import data_stamp  # noqa: E402
 from src.data.storage import read_table  # noqa: E402
 from src.evaluation import trajectory as T  # noqa: E402
 from src.evaluation.seeded_bugs import SEEDED_BUGS  # noqa: E402
@@ -33,14 +38,16 @@ from src.graph import Settings, build_components  # noqa: E402
 COMMAND = "python scripts/eval_trajectory.py --fault-suite --seeded-bugs --min-invariant-pass 1.0"
 
 
-def build_harness(data_dir: Path) -> T.Harness:
+def build_harness(data_dir: Path, profile: str = "sample") -> T.Harness:
     cfg = Config()
     cfg.paths.data_dir = data_dir
-    shutil.copytree(ROOT / "data" / "sample", data_dir / "sample")
-    Ingester(cfg).ingest_sample()
+    if profile == "sample":
+        shutil.copytree(ROOT / "data" / "sample", data_dir / "sample")
+        Ingester(cfg).ingest_sample()
     settings = Settings(data_dir=data_dir, mode="deterministic", rxnorm_enabled=False, faers_enabled=False)
     components = build_components(settings)
-    return T.Harness.build(settings, components, read_table(cfg.paths.processed_dir / "drug_vocabulary.parquet"))
+    return T.Harness.build(settings, components, read_table(cfg.paths.processed_dir / "drug_vocabulary.parquet"),
+                           profile=profile)
 
 
 def _f(v, pct=True):
@@ -48,8 +55,12 @@ def _f(v, pct=True):
 
 
 def to_markdown(res: dict) -> str:
-    L = ["# Trajectory evaluation", "",
-         f"Regenerate with `{COMMAND}`. Offline, no API keys, synthetic sample data (48 cases). "
+    stamp = res["data"]
+    what = ("synthetic sample data" if stamp["profile"] == "sample"
+            else f"the real **{stamp['profile']}** build ({stamp['data']}; provenance sha256 "
+                 f"`{stamp['provenance_sha256']}`)")
+    L = ["# Trajectory evaluation" + ("" if stamp["profile"] == "sample" else f" ({stamp['profile']} build)"), "",
+         f"Regenerate with `{res['command']}`. Offline, no API keys, {what}, 48 cases. "
          "LLM mode with a real model: **—** (no API key); LLM behaviour is exercised with scripted fake LLMs.", ""]
     for name, block in res["step_scoring"].items():
         if block is None:
@@ -66,7 +77,9 @@ def to_markdown(res: dict) -> str:
         L += ["", "Failing cases: " + (", ".join(f"{f['case_id']} ({'/'.join(f['failed_steps'])}: {f['reasons']})"
                                                 for f in sm["failing"]) or "none"),
               "", "Suspected label errors, counted separately (not failures): "
-              + (", ".join(f"{k} {v}" for k, v in sm["suspected_label_misses"].items()) or "none"), ""]
+              + (", ".join(f"{k} {v}" for k, v in sm["suspected_label_misses"].items()) or "none"),
+              "", "Source gaps (labelled pair in no loaded table; not retrieval failures): "
+              + (", ".join(f"{k} {v}" for k, v in sm.get("source_gap_misses", {}).items()) or "none"), ""]
     L += ["## Normalizer expectations added (for review)", "", "| Case | Input | Expected |", "|---|---|---|"]
     for c in TEST_CASES:
         for q, g in c.expected_resolved.items():
@@ -119,13 +132,23 @@ def main() -> int:
     ap.add_argument("--fault-suite", action="store_true", help="Run the scripted fake-LLM fault suite.")
     ap.add_argument("--seeded-bugs", action="store_true", help="Also check each seeded bug breaks an invariant.")
     ap.add_argument("--min-invariant-pass", type=float, default=1.0, help="Gate threshold (0-1).")
+    ap.add_argument("--profile", choices=["sample", "public", "research"], default="sample",
+                    help="sample (default, CI) or a real build in data/profiles/<profile>.")
     ap.add_argument("--output-dir", default=str(ROOT / "results"))
     args = ap.parse_args()
+    command = COMMAND if args.profile == "sample" else (
+        "python scripts/eval_trajectory.py" + (" --fault-suite" if args.fault_suite else "")
+        + (" --seeded-bugs" if args.seeded_bugs else "") + f" --profile {args.profile}")
+    suffix = "" if args.profile == "sample" else f"_{args.profile}"
 
     with tempfile.TemporaryDirectory() as tmp:
-        h = build_harness(Path(tmp) / "data")
+        data_dir = Path(tmp) / "data" if args.profile == "sample" else ROOT / "data" / "profiles" / args.profile
+        h = build_harness(data_dir, args.profile)
+        stamp = data_stamp(h.settings.to_config().paths.processed_dir)
+        if args.profile != "sample":
+            stamp["data_dir"] = f"data/profiles/{args.profile}"
         a = T.run_step_scoring(h)
-        res = {"command": COMMAND,
+        res = {"command": command, "data": stamp,
                "step_scoring": {k: (None if v is None else {"summary": v["summary"]})
                                 for k, v in a["step_scoring"].items()}}
         invariant_rows = [{k: v[0] for k, v in x.items()} for x in a["invariant_runs"]]
@@ -153,8 +176,8 @@ def main() -> int:
 
     out = Path(args.output_dir)
     out.mkdir(parents=True, exist_ok=True)
-    (out / "trajectory.json").write_text(json.dumps(res, indent=2, sort_keys=True) + "\n")
-    (out / "trajectory.md").write_text(to_markdown(res))
+    (out / f"trajectory{suffix}.json").write_text(json.dumps(res, indent=2, sort_keys=True) + "\n")
+    (out / f"trajectory{suffix}.md").write_text(to_markdown(res))
     det = res["step_scoring"]["deterministic"]["summary"]["overall"]
     print(f"Step scoring (deterministic): completion {det['completion']:.1%} over {det['cases']} cases")
     if args.fault_suite:
@@ -164,7 +187,7 @@ def main() -> int:
     if args.seeded_bugs:
         print("Seeded bugs caught: " + ", ".join(f"{k}={'yes' if v['caught'] else 'NO'}"
                                                  for k, v in res["seeded_bugs"].items()))
-    print(f"Wrote {out / 'trajectory.json'} and {out / 'trajectory.md'}")
+    print(f"Wrote {out / f'trajectory{suffix}.json'} and {out / f'trajectory{suffix}.md'}")
     print("GATE PASS" if res["gate"]["passed"] else "GATE FAIL")
     return 0 if res["gate"]["passed"] else 1
 

@@ -15,12 +15,18 @@ pipeline instead:
      metrics, first-draft pass rate, recovery on retry, fallback rate, tokens
      per report and the most common finding codes. Without a key: "—".
 The semantic checks are lexicon-based and therefore a lower bound.
-All current data is synthetic sample data.
+Data: whatever PHARMGUARD_DATA_DIR points at (default: the synthetic sample).
+The output names the build (profile, data line, sha256 of provenance.json).
+Hand-label misses are split into source gaps (pair in no loaded table) and
+pipeline misses (pair in a table but not retrieved).
 
 Usage:
     python scripts/run_eval.py
     python scripts/run_eval.py --output reports/eval.json
     python scripts/run_eval.py --subset GER   # only cases whose id starts with GER
+    PHARMGUARD_DATA_DIR=data/profiles/public python scripts/run_eval.py --skip-llm --output results/eval_public.json
+    # research build: numbers only, no per-case pairs (TWOSIDES-derived content stays local)
+    PHARMGUARD_DATA_DIR=data/profiles/research python scripts/run_eval.py --skip-llm --aggregate-only --output ...
 """
 from __future__ import annotations
 
@@ -42,7 +48,8 @@ from src.retrieval.side_effect_retriever import SideEffectRetriever
 from src.agents.retriever import Retriever
 from src.agents.planner import Planner
 from src.data.canonical import build_alias_map
-from src.evaluation.hand_labels import score_hand_labels
+from src.data.provenance import data_stamp
+from src.evaluation.hand_labels import pair_sources, score_hand_labels
 from src.evaluation.metrics import Evaluator
 from src.evaluation.test_cases import TEST_CASES
 from src.evaluation.llm_runs import summarize_llm_states
@@ -112,6 +119,8 @@ def main():
     ap.add_argument("--subset", type=str, default=None, help="Filter case IDs by prefix.")
     ap.add_argument("--skip-llm", action="store_true", help="Don't run the LLM path even if a key is set.")
     ap.add_argument("--legacy", action="store_true", help="Use the pre-LangGraph pipeline for report checks.")
+    ap.add_argument("--aggregate-only", action="store_true",
+                    help="Write aggregate numbers only (no per-case pairs or findings); use for the research build.")
     args = ap.parse_args()
 
     normalizer = DrugNormalizer().load()
@@ -125,8 +134,9 @@ def main():
     if args.subset:
         cases = [c for c in cases if c.case_id.startswith(args.subset)]
 
+    stamp = data_stamp(config.paths.processed_dir)
     evaluator = Evaluator(normalizer, retriever, interactions_df)
-    print(f"Evaluating {len(cases)} case(s) (retrieval only; synthetic sample data)...")
+    print(f"Evaluating {len(cases)} case(s) on {stamp['data']}")
     internal = evaluator.evaluate_all(cases).as_dict()
 
     planner = Planner()
@@ -136,10 +146,10 @@ def main():
         return set(retriever.execute(plan).interactions)
 
     vocab = read_table(config.paths.processed_dir / "drug_vocabulary.parquet")
-    hand = score_hand_labels(cases, retrieve_pairs, build_alias_map(vocab))
+    hand = score_hand_labels(cases, retrieve_pairs, build_alias_map(vocab), pair_sources(interactions_df))
 
     checks = (legacy_report_checks if args.legacy else graph_report_checks)(cases, args.skip_llm)
-    report = {"internal_consistency": internal, "hand_labels": hand, "report_checks": checks}
+    report = {"data": stamp, "internal_consistency": internal, "hand_labels": hand, "report_checks": checks}
     from src.observability import active
     active().flush()   # send any buffered trace spans before exit
 
@@ -150,8 +160,13 @@ def main():
     print(f"Recall:                  {hand['recall']}  ({hand['hits']}/{hand['labelled_pairs']} labelled pairs retrieved)")
     print(f"Precision (lower bound): {hand['precision_lower_bound']}  "
           f"({hand['hits']}/{hand['retrieved_pairs']} retrieved pairs are labelled)")
-    for case_id, pair in hand["missed"]:
-        print(f"  missed: {case_id} {pair[0]} + {pair[1]}")
+    print(f"Misses: {hand['source_gaps']} source gap(s) (pair in no loaded table), "
+          f"{hand['pipeline_misses']} pipeline miss(es) (in a table, not retrieved); "
+          f"pipeline recall {hand['pipeline_recall']}")
+    for case_id, pair in hand["missed_source_gap"]:
+        print(f"  source gap:    {case_id} {pair[0]} + {pair[1]}")
+    for case_id, pair, sources in hand["missed_pipeline"]:
+        print(f"  pipeline miss: {case_id} {pair[0]} + {pair[1]} (in {', '.join(sources)})")
     print("\n=== Report checks (lexicon-based: a lower bound) ===")
     tmpl, llm = checks["template"], checks["llm"] or {}
     print(f"{'metric':32s} {'template':>10s} {'llm':>10s}")
@@ -167,6 +182,10 @@ def main():
         print(f"LLM path not run: {checks['llm_skipped_reason']}")
     print(f"Cases evaluated: {internal['num_cases']}")
 
+    if args.aggregate_only:
+        report["hand_labels"] = {k: v for k, v in hand.items() if not isinstance(v, list)}
+        report["internal_consistency"] = {k: v for k, v in internal.items() if not isinstance(v, (list, dict))}
+        report["aggregate_only"] = True
     if args.output:
         out = Path(args.output)
         out.parent.mkdir(parents=True, exist_ok=True)

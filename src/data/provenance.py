@@ -6,6 +6,7 @@ report can't claim a data source that wasn't loaded.
 from __future__ import annotations
 
 import datetime as dt
+import hashlib
 import json
 from pathlib import Path
 from typing import Dict, Optional
@@ -73,6 +74,17 @@ def write_real_provenance(processed_dir: Path, profile: str, manifest: Dict, rep
 def read_provenance(processed_dir: Path) -> Optional[dict]:
     path = Path(processed_dir) / PROVENANCE_FILE
     return json.loads(path.read_text()) if path.exists() else None
+
+
+def data_stamp(processed_dir: Path) -> Dict[str, Optional[str]]:
+    """Which build a result came from: profile, data line and sha256 of provenance.json."""
+    path = Path(processed_dir) / PROVENANCE_FILE
+    data = read_provenance(processed_dir)
+    profile = None
+    if data is not None:
+        profile = data.get("profile") or ("sample" if data.get("synthetic") else data.get("mode"))
+    return {"profile": profile, "data": provenance_line(processed_dir),
+            "provenance_sha256": hashlib.sha256(path.read_bytes()).hexdigest() if path.exists() else None}
 
 
 def provenance_line(processed_dir: Path) -> str:

@@ -1,6 +1,6 @@
 # Trajectory evaluation
 
-Regenerate with `python scripts/eval_trajectory.py --fault-suite --seeded-bugs --min-invariant-pass 1.0`. Offline, no API keys, synthetic sample data (48 cases). LLM mode with a real model: **—** (no API key); LLM behaviour is exercised with scripted fake LLMs.
+Regenerate with `python scripts/eval_trajectory.py --fault-suite --seeded-bugs --min-invariant-pass 1.0`. Offline, no API keys, synthetic sample data, 48 cases. LLM mode with a real model: **—** (no API key); LLM behaviour is exercised with scripted fake LLMs.
 
 ## Step scoring: deterministic
 
@@ -24,6 +24,8 @@ Failing cases: none
 
 Suspected label errors, counted separately (not failures): EDG-03 [['atorvastatin', 'lisinopril']]
 
+Source gaps (labelled pair in no loaded table; not retrieval failures): none
+
 ## Step scoring: llm_mode_without_key
 
 | Subset | Cases | normalize | plan | retrieve | route | finalize | **completion** |
@@ -45,6 +47,8 @@ Suspected label errors, counted separately (not failures): EDG-03 [['atorvastati
 Failing cases: none
 
 Suspected label errors, counted separately (not failures): EDG-03 [['atorvastatin', 'lisinopril']]
+
+Source gaps (labelled pair in no loaded table; not retrieval failures): none
 
 ## Step scoring: llm_mode_with_key
 
@@ -76,8 +80,8 @@ All other inputs are expected to resolve. Suspected label errors (unchanged, for
 
 | Scenario | Runs | Expected report_source | Path match | Source match | All invariants | LLM calls/run |
 |---|---:|---|---:|---:|---:|---:|
-| clean | 48 | llm | 100.0% | 100.0% | 100.0% | 0.958 |
 | clean+faers | 48 | llm | 100.0% | 100.0% | 100.0% | 0.958 |
+| clean | 48 | llm | 100.0% | 100.0% | 100.0% | 0.958 |
 | transient_error_once | 48 | llm_retry | 100.0% | 100.0% | 100.0% | 1.917 |
 | transient_error_always | 48 | deterministic_fallback | 100.0% | 100.0% | 100.0% | 1.917 |
 | non_transient_error_once | 48 | deterministic_fallback | 100.0% | 100.0% | 100.0% | 0.958 |
@@ -114,15 +118,15 @@ Path match 100.0% · report_source match 100.0% · recovery within the retry bud
 
 | Node | p50 ms | p95 ms |
 |---|---:|---:|
-| faers | 0.16 | 0.82 |
-| finalize | 1.79 | 25.97 |
-| generate_llm | 0.04 | 0.14 |
+| faers | 0.16 | 0.84 |
+| finalize | 1.78 | 26.1 |
+| generate_llm | 0.04 | 0.12 |
 | normalize | 0.03 | 0.1 |
 | plan | 0.03 | 0.14 |
-| retrieve | 2.44 | 11.22 |
-| template | 0.03 | 0.1 |
-| validate | 1.84 | 26.22 |
-| **end to end** | 10.2 | 61.8 |
+| retrieve | 2.12 | 11.14 |
+| template | 0.03 | 0.08 |
+| validate | 1.83 | 26.31 |
+| **end to end** | 9.8 | 61.9 |
 
 ## Seeded orchestration bugs (validating the evaluation)
 

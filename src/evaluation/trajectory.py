@@ -28,7 +28,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from src.agents.generator import STATISTICAL_HEADING, Generator
 from src.data.canonical import build_alias_map
-from src.evaluation.hand_labels import canonical_pair
+from src.evaluation.hand_labels import canonical_pair, classify_miss, pair_sources
 from src.evaluation.test_cases import SUSPECTED_LABEL_ERRORS, TEST_CASES, TestCase
 from src.graph.simulated import inject_cyp3a4
 from src.llm import is_transient_llm_error
@@ -61,7 +61,7 @@ def expected_route(case_resolved_unique: int, mode: str, llm_available: bool) ->
 
 def score_steps(case: TestCase, state: Dict[str, Any], *, mode: str, llm_available: bool,
                 alias_map: Dict[str, str], disclaimer: str, provenance: str,
-                profile: str = "sample") -> Dict[str, Any]:
+                profile: str = "sample", sources_by_pair: Optional[Dict] = None) -> Dict[str, Any]:
     out: Dict[str, Any] = {"case_id": case.case_id, "subset": case.case_id.split("-")[0]}
     reasons: Dict[str, str] = {}
 
@@ -108,8 +108,12 @@ def score_steps(case: TestCase, state: Dict[str, Any], *, mode: str, llm_availab
         part_ok = with_records.isdisjoint(no_data) and with_records | no_data == planned
         missed = sorted(labelled - with_records)
     missed_real = [p for p in missed if p not in suspected]
+    # A labelled pair that no loaded table contains is a source gap, not a retrieval failure.
+    gaps = [p for p in missed_real if sources_by_pair is not None and classify_miss(p, sources_by_pair) == "source_gap"]
+    missed_real = [p for p in missed_real if p not in gaps]
     out["retrieve"] = part_ok and not missed_real
     out["suspected_label_misses"] = [list(p) for p in missed if p in suspected]
+    out["source_gap_misses"] = [list(p) for p in gaps]
     if not out["retrieve"]:
         reasons["retrieve"] = ("partition broken; " if not part_ok else "") + (
             f"missed labelled {missed_real}" if missed_real else "")
@@ -148,6 +152,7 @@ def summarize_steps(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
                     for r in rows if not r["completed"]],
         "suspected_label_misses": {r["case_id"]: r["suspected_label_misses"] for r in rows
                                    if r["suspected_label_misses"]},
+        "source_gap_misses": {r["case_id"]: r["source_gap_misses"] for r in rows if r.get("source_gap_misses")},
     }
 
 
@@ -433,6 +438,7 @@ class Harness:
     components: Any
     alias_map: Dict[str, str]
     profile: str = "sample"
+    sources_by_pair: Dict = field(default_factory=dict)
     baselines: Dict[str, str] = field(default_factory=dict)
     eligible: Dict[str, bool] = field(default_factory=dict)
     has_no_data: Dict[str, bool] = field(default_factory=dict)
@@ -440,7 +446,8 @@ class Harness:
     @classmethod
     def build(cls, settings, components, vocab_df, profile: str = "sample"):
         from src.graph import PharmGuardGraph
-        h = cls(PharmGuardGraph, settings, components, build_alias_map(vocab_df), profile)
+        h = cls(PharmGuardGraph, settings, components, build_alias_map(vocab_df), profile,
+                pair_sources(components.retriever.interactions.table))
         det = PharmGuardGraph(replace(settings, mode="deterministic"), components, Tracing())
         for case in TEST_CASES:
             s = det.run(case.input_drugs)
@@ -469,7 +476,8 @@ def run_step_scoring(h: Harness) -> Dict[str, Any]:
             state = g.run(case.input_drugs)
             rows.append(score_steps(case, state, mode=kw["mode"], llm_available=False, alias_map=h.alias_map,
                                     disclaimer=g.components.generator.cfg.disclaimer,
-                                    provenance=g.components.generator.provenance, profile=h.profile))
+                                    provenance=g.components.generator.provenance, profile=h.profile,
+                                    sources_by_pair=h.sources_by_pair))
             invariant_runs.append(check_invariants(RunContext(state, h.baselines[case.case_id],
                                                               h.settings.max_llm_attempts, False,
                                                               g.components.generator)))
