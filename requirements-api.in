@@ -1,0 +1,17 @@
+# Direct dependencies of the API container (api/ + src/ runtime). Locked, with hashes, in
+# requirements-api.lock:
+#   uv pip compile requirements-api.in -o requirements-api.lock --python-version 3.11 \
+#       --python-platform linux --generate-hashes
+# No Streamlit (the API doesn't import it), no OpenAI/Gemini SDKs (the Space uses Anthropic),
+# no tracing packages (tracing is off in the API).
+fastapi
+uvicorn
+pydantic
+python-dotenv
+pandas
+numpy
+pyarrow
+rapidfuzz
+langgraph
+anthropic
+huggingface_hub

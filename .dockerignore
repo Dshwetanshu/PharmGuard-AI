@@ -1,0 +1,29 @@
+# Only requirements-api.lock, src/ and api/ are copied into the image; everything else stays out
+# of the build context (secrets, local notes, data, environments, caches).
+.env
+.env*
+notes/
+CLAUDE.md
+data/raw/
+data/profiles/
+data/processed/
+.venv/
+venv/
+**/__pycache__/
+**/*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+.mypy_cache/
+.ruff_cache/
+.git/
+.github/
+results/
+reports/
+docs/
+website/
+website.html
+notebooks/
+examples/
+tests/
+*.pdf
+.DS_Store
