@@ -2,21 +2,32 @@
 
 Names end up in RxNorm/FAERS query strings and in the LLM prompt, so only a
 conservative character set is accepted: ASCII letters and digits, space, and
-the punctuation that appears in real drug names (- . ' ( ) / _). Anything else
-(newlines, quotes, brackets, angle brackets, colons, ...) is rejected rather
-than silently stripped, so the user sees exactly what was not analysed.
+the punctuation that appears in real drug names (- . ' ( ) / _ ,). Commas and
+the length limit come from RxNorm's own ingredient names ("insulin, regular,
+human" is 23 characters; the longest RxNorm Current Prescribable ingredient
+name is 148). Anything else (newlines, quotes, brackets, angle brackets,
+colons, ...) is rejected rather than silently stripped, so the user sees
+exactly what was not analysed.
 """
 from __future__ import annotations
 
 import re
 from typing import List, Sequence
 
-MAX_NAME_LENGTH = 60
-_ALLOWED = re.compile(r"[A-Za-z0-9][A-Za-z0-9 .'()/_-]*")
+MAX_NAME_LENGTH = 150
+_ALLOWED = re.compile(r"[A-Za-z0-9][A-Za-z0-9 .'()/_,-]*")
 
 
 class InvalidDrugNameError(ValueError):
     pass
+
+
+def split_drug_input(raw: str) -> List[str]:
+    """Split free-text input into names: one per line if there are several lines
+    (so a name like "insulin, regular, human" stays whole), else comma-separated."""
+    lines = [ln.strip() for ln in raw.splitlines() if ln.strip()]
+    parts = lines if len(lines) > 1 else [p.strip() for p in raw.split(",")]
+    return [p for p in parts if p]
 
 
 def clean_drug_names(names: Sequence[str]) -> List[str]:
@@ -43,7 +54,7 @@ def clean_drug_names(names: Sequence[str]) -> List[str]:
         elif len(name) > MAX_NAME_LENGTH:
             problems.append(f"{name[:20]!r}...: longer than {MAX_NAME_LENGTH} characters")
         elif not _ALLOWED.fullmatch(name):
-            problems.append(f"{name!r}: only letters, digits, spaces and - . ' ( ) / _ are allowed, "
+            problems.append(f"{name!r}: only letters, digits, spaces and - . ' ( ) / _ , are allowed, "
                             "starting with a letter or digit")
         else:
             cleaned.append(name)

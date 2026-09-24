@@ -66,12 +66,19 @@ def _mask(text: str, phrases: List[str]) -> str:
     return t
 
 
-def _is_clinical(u: Unit, evidence_events: List[str]) -> bool:
+def _drug_names(ev: Evidence) -> List[str]:
+    """Every alias of the analysed drugs, to mask before population/mechanism word checks
+    (a drug named "calcium lactate" is not a claim about lactation)."""
+    return list(ev.aliases)
+
+
+def _is_clinical(u: Unit, evidence_events: List[str], drug_names: List[str] = ()) -> bool:
     if u.section in ("title", "disclaimer") or not u.context_drugs:
         return False
     t = lexicon.norm(u.text)
-    specific = bool(lexicon.find_events(t, evidence_events) or lexicon.mechanism_terms(t)
-                    or lexicon.populations(t) or lexicon.PRR_RE.search(t) or lexicon.claimed_tiers(t))
+    t_nodrugs = _mask(t, drug_names)
+    specific = bool(lexicon.find_events(t, evidence_events) or lexicon.mechanism_terms(t_nodrugs)
+                    or lexicon.populations(t_nodrugs) or lexicon.PRR_RE.search(t) or lexicon.claimed_tiers(t))
     if u.section in DECLARATION_SECTIONS:
         return specific
     if u.section in FINDING_SECTIONS or u.section in ("faers", STATISTICAL_SECTION):
@@ -162,9 +169,12 @@ def _check_claim(u: Unit, ev: Evidence, evidence_events: List[str], out: List[Fi
                 out.append(Finding("EVENT_MISATTRIBUTION", u.line,
                                    f"'{e}' is not what {' '.join(r.citation for r in support_recs[:3])} records"))
 
-    for term in lexicon.unsupported_mechanisms(text, support):
+    # Mechanism and population words are checked with drug names masked; the record's
+    # own event text is masked too ("drug exposure during pregnancy" names no population claim).
+    no_drugs = _mask(text, _drug_names(ev))
+    for term in lexicon.unsupported_mechanisms(no_drugs, support):
         out.append(Finding("UNSUPPORTED_MECHANISM", u.line, f"'{term}' is not in the cited record's mechanism"))
-    for pop in sorted(lexicon.populations(text) - lexicon.populations(support)):
+    for pop in sorted(lexicon.populations(no_drugs) - lexicon.populations(support)):
         out.append(Finding("UNSUPPORTED_POPULATION", u.line, f"population '{pop}' is not in the cited record"))
 
 
@@ -176,13 +186,14 @@ def validate_report(report: str, evidence: Evidence, final: bool = True) -> Vali
     """
     parsed: ParsedReport = parse_report(report, evidence.aliases)
     ev_events = sorted({r.event for r in evidence.records.values() if r.event})
+    drug_names = _drug_names(evidence)
     findings: List[Finding] = []
     clinical = fabricated = uncited = 0
     n_cites = n_valid = 0
     cited_keys: Set[str] = set()
 
     for u in parsed.units:
-        is_clin = _is_clinical(u, ev_events)
+        is_clin = _is_clinical(u, ev_events, drug_names)
         if not (is_clin or u.citations) or u.section == "disclaimer":
             continue
         unit_findings: List[Finding] = []

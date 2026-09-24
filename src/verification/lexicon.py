@@ -14,10 +14,19 @@ from typing import Dict, Iterable, List, Optional, Set, Tuple
 def norm(text: str) -> str:
     """Lowercase and fold British spellings / punctuation variants."""
     t = (text or "").lower()
-    for a, b in (("haem", "hem"), ("aemia", "emia"), ("oedema", "edema"), ("oesophag", "esophag"),
-                 ("paediatr", "pediatr"), ("normalised", "normalized"), ("–", "-"), ("—", "-")):
-        t = t.replace(a, b)
+    for a, b in _FOLDS:
+        t = a.sub(b, t)
     return re.sub(r"\s+", " ", t).strip()
+
+
+# Idempotent folds: norm(norm(x)) == norm(x). The US form "gastroesophageal" itself
+# contains "oesophag", so that fold applies only at a word start or after a doubled "o"
+# ("gastrooesophageal" -> "gastroesophageal").
+_FOLDS = [(re.compile(a), b) for a, b in (
+    (r"haem", "hem"), (r"aemia", "emia"), (r"(?<![a-z])oedema|(?<=o)oedema|(?<=ph)oedema|(?<=x)oedema", "edema"),
+    (r"(?<![a-z])oesophag|(?<=o)oesophag", "esophag"), (r"paediatr", "pediatr"),
+    (r"normalised", "normalized"), (r"–", "-"), (r"—", "-"),
+)]
 
 
 def phrase_re(phrase: str) -> "re.Pattern[str]":

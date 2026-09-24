@@ -223,3 +223,46 @@ def test_omitted_major_counts_curated_records_only():
     ev = evidence_for(s)
     r = validate_report(template(s), ev)
     assert r.passed and r.stats["major_pairs"] == 1     # ibuprofen + lithium (curated) only
+
+
+# ------------------------------------------------ real-name regressions (research build stress set)
+
+def test_norm_is_idempotent_on_british_spellings():
+    from src.verification.lexicon import norm
+    for w in ("gastrooesophageal reflux disease", "gastroesophageal reflux disease", "oesophagitis",
+              "angioedema", "angiooedema", "lymphoedema", "myxoedema", "haemorrhage", "anaemia"):
+        assert norm(norm(w)) == norm(w), w
+    assert norm("gastrooesophageal") == "gastroesophageal" and norm("angioedema") == "angioedema"
+
+
+def _one_pair_evidence(drug_a, drug_b, event, source="TWOSIDES", severity="Moderate", prr=3.0, no_data=()):
+    from src.agents.planner import Planner
+    from src.agents.retriever import RetrievalResult, select_pair_records
+    from src.agents.generator import Generator
+    from src.config import Config
+    from src.data.normalizer import ResolvedDrug
+    from src.retrieval.interaction_retriever import InteractionRecord
+    drugs = sorted({drug_a, drug_b} | {d for p in no_data for d in p})
+    plan = Planner().plan([ResolvedDrug(d, d, None, None, 100.0, True, "exact") for d in drugs])
+    a, b = sorted((drug_a, drug_b))
+    result = RetrievalResult()
+    result.interactions[(a, b)], _ = select_pair_records(
+        [InteractionRecord("TS-1", a, b, None, None, event, severity, prr, None, source)])
+    result.no_data_pairs = [p for p in plan.pairs if p != (a, b)]
+    report = Generator(Config(), provenance="Data: test.").generate_deterministic(plan, result)
+    return report, build_evidence(plan, result, {}, Config().disclaimer)
+
+
+def test_event_with_british_spelling_is_supported_by_its_own_record():
+    report, ev = _one_pair_evidence("cefazolin", "omeprazole", "gastrooesophageal reflux disease")
+    assert validate_report(report, ev).passed, validate_report(report, ev).findings
+
+
+def test_drug_name_containing_a_population_word_is_not_a_population_claim():
+    # "calcium lactate" contains "lactat" (the lactation pattern); on a no-data line it is just a name.
+    report, ev = _one_pair_evidence("cefazolin", "omeprazole", "nausea", no_data=[("calcium lactate", "cefazolin")])
+    assert "- calcium lactate + cefazolin" in report
+    v = validate_report(report, ev)
+    assert v.passed, v.findings
+    bad = report.replace("[TWOSIDES:TS-1]", "in pregnancy [TWOSIDES:TS-1]")
+    assert "UNSUPPORTED_POPULATION" in validate_report(bad, ev).codes()
