@@ -6,10 +6,11 @@
       "different_fault_on_retry": 10,
       "mechanism_always": 10,
       "mechanism_once": 10,
-      "omit_major_once": 24,
+      "omit_major_once": 27,
       "phantom_citation_once": 10,
       "retry_repeats_rejected_draft": 10,
-      "severity_flip_once": 10,
+      "severity_flip_once": 14,
+      "signal_severity_once": 10,
       "uncited_claim_once": 10
     },
     "summary": {
@@ -26,47 +27,47 @@
         "plan_complete": 1.0,
         "state_json_serializable": 1.0
       },
-      "invariant_runs": 549,
+      "invariant_runs": 580,
       "latency_label": "orchestration overhead only (fake LLMs, synthetic sample data, no network)",
       "latency_ms_end_to_end": {
-        "p50": 8.8,
-        "p95": 51.8
+        "p50": 10.2,
+        "p95": 61.8
       },
       "latency_ms_per_node": {
         "faers": {
           "p50": 0.16,
-          "p95": 0.8
+          "p95": 0.82
         },
         "finalize": {
-          "p50": 1.52,
-          "p95": 24.93
+          "p50": 1.79,
+          "p95": 25.97
         },
         "generate_llm": {
-          "p50": 0.03,
-          "p95": 0.09
+          "p50": 0.04,
+          "p95": 0.14
         },
         "normalize": {
-          "p50": 0.02,
-          "p95": 0.09
+          "p50": 0.03,
+          "p95": 0.1
         },
         "plan": {
           "p50": 0.03,
-          "p95": 0.13
+          "p95": 0.14
         },
         "retrieve": {
-          "p50": 1.98,
-          "p95": 10.87
+          "p50": 2.44,
+          "p95": 11.22
         },
         "template": {
-          "p50": 0.02,
-          "p95": 0.05
+          "p50": 0.03,
+          "p95": 0.1
         },
         "validate": {
-          "p50": 1.56,
-          "p95": 25.07
+          "p50": 1.84,
+          "p95": 26.22
         }
       },
-      "llm_calls_per_case": 1.712,
+      "llm_calls_per_case": 1.728,
       "mismatches": [],
       "path_match_rate": 1.0,
       "per_scenario": {
@@ -131,7 +132,7 @@
           "invariants_all_pass": 1.0,
           "llm_calls_mean": 2,
           "path_match": 1.0,
-          "runs": 24,
+          "runs": 21,
           "source_match": 1.0
         },
         "phantom_citation_once": {
@@ -151,6 +152,14 @@
           "source_match": 1.0
         },
         "severity_flip_once": {
+          "expected_source": "llm_retry",
+          "invariants_all_pass": 1.0,
+          "llm_calls_mean": 2,
+          "path_match": 1.0,
+          "runs": 34,
+          "source_match": 1.0
+        },
+        "signal_severity_once": {
           "expected_source": "llm_retry",
           "invariants_all_pass": 1.0,
           "llm_calls_mean": 2,
@@ -184,7 +193,7 @@
         }
       },
       "recovery_rate": 1.0,
-      "runs": 549,
+      "runs": 580,
       "source_match_rate": 1.0
     }
   },
@@ -208,54 +217,54 @@
       "plan_complete": 1.0,
       "state_json_serializable": 1.0
     },
-    "runs": 645
+    "runs": 676
   },
   "seeded_bugs": {
     "faers_always_consulted": {
       "broken": {
-        "faers_only_when_needed": 0.0528
+        "faers_only_when_needed": 0.05
       },
       "caught": true,
-      "path_match": 0.0528
+      "path_match": 0.05
     },
     "fallback_returns_rejected_draft": {
       "broken": {
-        "exhausted_fallback_matches_deterministic": 0.7923,
-        "final_report_valid": 0.7923,
-        "no_unvalidated_llm_text": 0.7923
+        "exhausted_fallback_matches_deterministic": 0.8034,
+        "final_report_valid": 0.8034,
+        "no_unvalidated_llm_text": 0.8034
       },
       "caught": true,
       "path_match": 1.0
     },
     "non_transient_errors_retried": {
       "broken": {
-        "non_transient_never_retried": 0.9162
+        "non_transient_never_retried": 0.9207
       },
       "caught": true,
-      "path_match": 0.9162
+      "path_match": 0.9207
     },
     "plan_drops_a_pair": {
       "broken": {
-        "exhausted_fallback_matches_deterministic": 0.1894,
-        "plan_complete": 0.0182
+        "exhausted_fallback_matches_deterministic": 0.1828,
+        "plan_complete": 0.0172
       },
       "caught": true,
-      "path_match": 0.5082
+      "path_match": 0.4879
     },
     "retry_limit_off_by_one": {
       "broken": {
-        "llm_attempts_within_budget": 0.7086
+        "llm_attempts_within_budget": 0.7241
       },
       "caught": true,
-      "path_match": 0.7086
+      "path_match": 0.7241
     },
     "validate_always_passes": {
       "broken": {
-        "final_report_valid": 0.4372,
-        "no_unvalidated_llm_text": 0.4372
+        "final_report_valid": 0.4138,
+        "no_unvalidated_llm_text": 0.4138
       },
       "caught": true,
-      "path_match": 0.4372
+      "path_match": 0.4138
     }
   },
   "step_scoring": {

@@ -33,6 +33,14 @@ class InteractionRecord:
     frequency: Optional[float]
     source: str
     mechanism: Optional[str] = None   # source-provided mechanism prose (DDInter), if any
+    reports: Optional[int] = None     # co-report count (TWOSIDES "A"), if the source has one
+
+    @property
+    def is_statistical(self) -> bool:
+        """A disproportionality signal (TWOSIDES and TWOSIDES-shaped sample rows), not a
+        curated interaction. Its `severity` is a PRR tier kept for internal use only;
+        reports never show it as a clinical severity."""
+        return self.source.strip().upper() in STATISTICAL_SOURCES
 
     def citation(self) -> str:
         return f"[{self.source}:{self.record_id}]"
@@ -42,6 +50,7 @@ class InteractionRecord:
 
 
 SEVERITY_RANK = {"Major": 0, "Moderate": 1, "Minor": 2, "Unknown": 3}
+STATISTICAL_SOURCES = {"TWOSIDES"}
 
 
 class InteractionRetriever:
@@ -93,7 +102,12 @@ class InteractionRetriever:
 
     # ---------- public API ----------
 
+    def retrieve_all(self, drug_a: str, drug_b: str) -> List[InteractionRecord]:
+        """Every record for the pair, in severity / PRR order (the report selects from these)."""
+        return self.retrieve_pair(drug_a, drug_b, top_k=0)
+
     def retrieve_pair(self, drug_a: str, drug_b: str, top_k: Optional[int] = None) -> List[InteractionRecord]:
+        """Top records for the pair; top_k=None uses the configured top_k, 0 means all."""
         if self._df is None:
             raise RuntimeError("InteractionRetriever.load() must be called first.")
 
@@ -101,8 +115,8 @@ class InteractionRetriever:
         if positions is None:
             return []
         # Positions are already in severity / PRR order (see _build_index).
-        k = top_k or self.cfg.retrieval.top_k
-        hits = self._df.iloc[positions[:k]]
+        k = self.cfg.retrieval.top_k if top_k is None else top_k
+        hits = self._df.iloc[positions[:k] if k else positions]
         records: List[InteractionRecord] = []
         for r in hits.to_dict("records"):
             records.append(
@@ -118,6 +132,7 @@ class InteractionRetriever:
                     frequency=_opt_float(r.get("frequency")),
                     source=str(r.get("source") or "TWOSIDES"),
                     mechanism=_opt_str(r.get("mechanism")),
+                    reports=_opt_int(r.get("reports")),
                 )
             )
         return records
@@ -127,6 +142,11 @@ def _opt_str(x):
     if x is None or (isinstance(x, float) and pd.isna(x)):
         return None
     return str(x)
+
+
+def _opt_int(x):
+    f = _opt_float(x)
+    return None if f is None else int(f)
 
 
 def _opt_float(x):

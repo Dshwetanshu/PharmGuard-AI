@@ -54,6 +54,7 @@ def result_to_dict(result: RetrievalResult) -> Dict[str, Any]:
         "side_effects": [{"drug": d, "records": recs} for d, recs in result.side_effects.items()],
         "faers": [{"pair": list(p), "records": recs} for p, recs in result.faers_signals.items()],
         "no_data_pairs": [list(p) for p in result.no_data_pairs],
+        "hidden_signals": [{"pair": list(p), "count": n} for p, n in result.hidden_signals.items()],
     })
 
 
@@ -63,6 +64,7 @@ def result_from_dict(d: Dict[str, Any]) -> RetrievalResult:
         side_effects={x["drug"]: [SideEffectRecord(**r) for r in x["records"]] for x in d["side_effects"]},
         faers_signals={tuple(x["pair"]): [FaersRecord(**r) for r in x["records"]] for x in d["faers"]},
         no_data_pairs=[tuple(p) for p in d["no_data_pairs"]],
+        hidden_signals={tuple(x["pair"]): int(x["count"]) for x in d.get("hidden_signals", [])},
     )
 
 

@@ -59,7 +59,7 @@
   "false_positives": {
     "fixture_clean_reports": {
       "prose/anticoagulation": {
-        "clinical_claims": 8,
+        "clinical_claims": 10,
         "findings": []
       },
       "prose/cardiac": {
@@ -71,7 +71,7 @@
         "findings": []
       },
       "template/anticoagulation": {
-        "clinical_claims": 6,
+        "clinical_claims": 8,
         "findings": []
       },
       "template/cardiac": {
@@ -112,18 +112,18 @@
       },
       "citation_swap": {
         "any_finding_rate": 1.0,
-        "detected": 14,
+        "detected": 15,
         "detection_rate": 1.0,
         "expected_code": "MISATTRIBUTED_CITATION",
-        "injected": 14,
+        "injected": 15,
         "missed": []
       },
       "event_swap": {
         "any_finding_rate": 1.0,
-        "detected": 14,
+        "detected": 16,
         "detection_rate": 1.0,
         "expected_code": "EVENT_MISATTRIBUTION",
-        "injected": 14,
+        "injected": 16,
         "missed": []
       },
       "faers_as_curated": {
@@ -136,58 +136,74 @@
       },
       "mechanism_injection": {
         "any_finding_rate": 1.0,
-        "detected": 14,
+        "detected": 16,
         "detection_rate": 1.0,
         "expected_code": "UNSUPPORTED_MECHANISM",
-        "injected": 14,
+        "injected": 16,
+        "missed": []
+      },
+      "missing_hidden_count": {
+        "any_finding_rate": 1.0,
+        "detected": 2,
+        "detection_rate": 1.0,
+        "expected_code": "MISSING_HIDDEN_COUNT",
+        "injected": 2,
         "missed": []
       },
       "omitted_major": {
         "any_finding_rate": 1.0,
-        "detected": 6,
+        "detected": 3,
         "detection_rate": 1.0,
         "expected_code": "OMITTED_MAJOR",
-        "injected": 6,
+        "injected": 3,
         "missed": []
       },
       "phantom_citation": {
         "any_finding_rate": 1.0,
-        "detected": 14,
+        "detected": 16,
         "detection_rate": 1.0,
         "expected_code": "PHANTOM_CITATION",
-        "injected": 14,
+        "injected": 16,
         "missed": []
       },
       "population_injection": {
         "any_finding_rate": 1.0,
-        "detected": 14,
+        "detected": 16,
         "detection_rate": 1.0,
         "expected_code": "UNSUPPORTED_POPULATION",
-        "injected": 14,
+        "injected": 16,
         "missed": []
       },
       "prr_distortion": {
         "any_finding_rate": 1.0,
-        "detected": 9,
+        "detected": 11,
         "detection_rate": 1.0,
         "expected_code": "NUMERIC_MISMATCH",
-        "injected": 9,
+        "injected": 11,
         "missed": []
       },
       "severity_flip": {
         "any_finding_rate": 1.0,
-        "detected": 14,
+        "detected": 5,
         "detection_rate": 1.0,
         "expected_code": "SEVERITY_MISMATCH",
+        "injected": 5,
+        "missed": []
+      },
+      "severity_on_signal": {
+        "any_finding_rate": 1.0,
+        "detected": 14,
+        "detection_rate": 1.0,
+        "expected_code": "SEVERITY_ON_STATISTICAL_SIGNAL",
         "injected": 14,
         "missed": []
       },
       "uncited_claim": {
         "any_finding_rate": 1.0,
-        "detected": 14,
+        "detected": 16,
         "detection_rate": 1.0,
         "expected_code": "UNCITED_CLAIM",
-        "injected": 14,
+        "injected": 16,
         "missed": []
       }
     },
@@ -210,18 +226,18 @@
       },
       "citation_swap": {
         "any_finding_rate": 1.0,
-        "detected": 14,
+        "detected": 15,
         "detection_rate": 1.0,
         "expected_code": "MISATTRIBUTED_CITATION",
-        "injected": 14,
+        "injected": 15,
         "missed": []
       },
       "event_swap": {
         "any_finding_rate": 1.0,
-        "detected": 14,
+        "detected": 16,
         "detection_rate": 1.0,
         "expected_code": "EVENT_MISATTRIBUTION",
-        "injected": 14,
+        "injected": 16,
         "missed": []
       },
       "faers_as_curated": {
@@ -234,58 +250,74 @@
       },
       "mechanism_injection": {
         "any_finding_rate": 1.0,
-        "detected": 14,
+        "detected": 16,
         "detection_rate": 1.0,
         "expected_code": "UNSUPPORTED_MECHANISM",
-        "injected": 14,
+        "injected": 16,
+        "missed": []
+      },
+      "missing_hidden_count": {
+        "any_finding_rate": 1.0,
+        "detected": 2,
+        "detection_rate": 1.0,
+        "expected_code": "MISSING_HIDDEN_COUNT",
+        "injected": 2,
         "missed": []
       },
       "omitted_major": {
         "any_finding_rate": 1.0,
-        "detected": 6,
+        "detected": 3,
         "detection_rate": 1.0,
         "expected_code": "OMITTED_MAJOR",
-        "injected": 6,
+        "injected": 3,
         "missed": []
       },
       "phantom_citation": {
         "any_finding_rate": 1.0,
-        "detected": 14,
+        "detected": 16,
         "detection_rate": 1.0,
         "expected_code": "PHANTOM_CITATION",
-        "injected": 14,
+        "injected": 16,
         "missed": []
       },
       "population_injection": {
         "any_finding_rate": 1.0,
-        "detected": 14,
+        "detected": 16,
         "detection_rate": 1.0,
         "expected_code": "UNSUPPORTED_POPULATION",
-        "injected": 14,
+        "injected": 16,
         "missed": []
       },
       "prr_distortion": {
         "any_finding_rate": 1.0,
-        "detected": 9,
+        "detected": 11,
         "detection_rate": 1.0,
         "expected_code": "NUMERIC_MISMATCH",
-        "injected": 9,
+        "injected": 11,
         "missed": []
       },
       "severity_flip": {
         "any_finding_rate": 1.0,
-        "detected": 14,
+        "detected": 5,
         "detection_rate": 1.0,
         "expected_code": "SEVERITY_MISMATCH",
+        "injected": 5,
+        "missed": []
+      },
+      "severity_on_signal": {
+        "any_finding_rate": 1.0,
+        "detected": 14,
+        "detection_rate": 1.0,
+        "expected_code": "SEVERITY_ON_STATISTICAL_SIGNAL",
         "injected": 14,
         "missed": []
       },
       "uncited_claim": {
         "any_finding_rate": 1.0,
-        "detected": 14,
+        "detected": 16,
         "detection_rate": 1.0,
         "expected_code": "UNCITED_CLAIM",
-        "injected": 14,
+        "injected": 16,
         "missed": []
       }
     }

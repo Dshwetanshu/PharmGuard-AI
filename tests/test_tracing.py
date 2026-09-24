@@ -145,7 +145,7 @@ def test_one_span_per_node_with_attributes(traced):
 def test_fallback_and_findings_are_filterable(traced, base):
     graph, exporter = traced()
     bad = graph.with_mode("deterministic").run(DRUGS)["report"].split("\n---\n")[0].replace(
-        "hyperkalemia (PRR=14.20)", "hyperkalemia via CYP3A4 inhibition (PRR=14.20)")
+        "hyperkalemia: PRR 14.20", "hyperkalemia via CYP3A4 inhibition: PRR 14.20")
 
     class Bad:
         last_usage = None

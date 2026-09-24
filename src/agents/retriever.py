@@ -10,7 +10,7 @@ Returns a RetrievalResult bundle that the Generator consumes.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 from src.agents.planner import RetrievalPlan
 from src.retrieval.interaction_retriever import InteractionRetriever, InteractionRecord
@@ -26,6 +26,8 @@ class RetrievalResult:
     faers_signals: Dict[tuple, List[FaersRecord]] = field(default_factory=dict)
     # Pairs that returned zero interaction records — surfaced, not silenced
     no_data_pairs: List[tuple] = field(default_factory=list)
+    # pair -> statistical signals retrieved but not selected (the report states "+N more not shown")
+    hidden_signals: Dict[tuple, int] = field(default_factory=dict)
 
     @property
     def total_interactions(self) -> int:
@@ -34,6 +36,32 @@ class RetrievalResult:
     @property
     def total_faers_signals(self) -> int:
         return sum(len(v) for v in self.faers_signals.values())
+
+    @property
+    def curated_records(self) -> List[InteractionRecord]:
+        return [r for recs in self.interactions.values() for r in recs if not r.is_statistical]
+
+    @property
+    def statistical_signals(self) -> List[InteractionRecord]:
+        return [r for recs in self.interactions.values() for r in recs if r.is_statistical]
+
+    @property
+    def total_hidden_signals(self) -> int:
+        return sum(self.hidden_signals.values())
+
+
+# At most this many statistical signals per pair are shown; curated records are never hidden.
+MAX_SIGNALS_PER_PAIR = 3
+
+
+def select_pair_records(records: List[InteractionRecord],
+                        max_signals: int = MAX_SIGNALS_PER_PAIR) -> Tuple[List[InteractionRecord], int]:
+    """(selected, hidden count): every curated record (in retrieval order), then the
+    top `max_signals` statistical signals by PRR. The hidden count is stated in the report."""
+    curated = [r for r in records if not r.is_statistical]
+    signals = sorted((r for r in records if r.is_statistical),
+                     key=lambda r: -(r.prr if r.prr is not None else float("-inf")))
+    return curated + signals[:max_signals], max(0, len(signals) - max_signals)
 
 
 class Retriever:
@@ -53,9 +81,11 @@ class Retriever:
         # 1. Pairwise interactions from local index (TWOSIDES + DDInter)
         for pair in plan.pairs:
             a, b = pair
-            records = self.interactions.retrieve_pair(a, b)
+            records, hidden = select_pair_records(self.interactions.retrieve_all(a, b))
             if records:
                 result.interactions[pair] = records
+                if hidden:
+                    result.hidden_signals[pair] = hidden
             else:
                 result.no_data_pairs.append(pair)
 

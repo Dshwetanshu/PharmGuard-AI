@@ -2,10 +2,11 @@
 from __future__ import annotations
 
 import json
+import re
 
 import pytest
 
-from src.evaluation.checker_fixtures import FAULTS, SCENARIOS, STYLES, evidence_for, render
+from src.evaluation.checker_fixtures import FAULTS, SCENARIOS, STYLES, evidence_for, render, template
 from src.verification import Evidence, build_evidence, validate_report
 from src.verification.lexicon import claimed_tiers, unsupported_mechanisms
 from src.verification.parser import parse_report
@@ -20,7 +21,7 @@ def test_evidence_is_json_serializable_and_round_trips():
     blob = json.dumps(ev.to_dict())           # no tuple keys, no dataclass objects
     back = Evidence.from_dict(json.loads(blob))
     assert back.to_dict() == ev.to_dict()
-    assert {r.kind for r in ev.records.values()} == {"interaction", "faers"}
+    assert {r.kind for r in ev.records.values()} == {"interaction", "signal", "faers"}
     assert ev.records["ddinter:FX-0001"].mechanism.startswith("Verapamil inhibits P-glycoprotein")
 
 
@@ -159,3 +160,66 @@ def test_committed_checker_validation_results_are_current():
     assert committed["sensitivity"] == mod.sensitivity()
     assert committed["false_positives"]["fixture_clean_reports"] == mod.false_positives_on_fixtures()
     assert committed["false_positives"]["sample_template_reports"]["findings"] == 0
+
+
+# ------------------------------------------------ statistical signals and hidden counts
+
+def _anticoag_base():
+    from src.evaluation.checker_fixtures import SCENARIOS
+    s = SCENARIOS[1]
+    return s, template(s), evidence_for(s)
+
+
+def test_signals_are_listed_without_severity_and_hidden_count_is_stated():
+    s, base, ev = _anticoag_base()
+    assert "## Statistical reporting signals (not graded for clinical severity)" in base
+    assert "- **amiodarone + warfarin** — +1 more not shown" in base
+    assert "FX-0108" not in base and ev.hidden_signals == [["amiodarone", "warfarin", 1]]
+    # FX-0104's event is literally "minor bleeding"; the checker masks event text, this test skips it.
+    signal_lines = [ln for ln in base.splitlines() if "[TWOSIDES:" in ln and "FX-0104" not in ln]
+    assert signal_lines and not any(re.search(r"\b(major|moderate|minor|severe|serious)\b", ln, re.I)
+                                    for ln in signal_lines)
+    assert validate_report(base, ev).passed
+
+
+def test_curated_placeholder_event_is_not_shown():
+    _, base, _ = _anticoag_base()
+    line = next(ln for ln in base.splitlines() if "FX-0105" in ln)
+    assert line.startswith("- **ciprofloxacin + warfarin** — curated severity: not graded (DDInter); source mechanism")
+    assert "interaction;" not in line and "— interaction" not in line
+
+
+@pytest.mark.parametrize("edit,code", [
+    (lambda b: b.replace("- **amiodarone + warfarin** — +1 more not shown\n", ""), "MISSING_HIDDEN_COUNT"),
+    (lambda b: b.replace("+1 more not shown", "+3 more not shown"), "MISSING_HIDDEN_COUNT"),
+    (lambda b: b.replace("prolonged prothrombin time: PRR", "prolonged prothrombin time (major): PRR"),
+     "SEVERITY_ON_STATISTICAL_SIGNAL"),
+    (lambda b: b.replace("QT prolongation: PRR 11.80", "QT prolongation, potentially life-threatening: PRR 11.80"),
+     "SEVERITY_ON_STATISTICAL_SIGNAL"),
+    (lambda b: b.replace("## Major Findings\n", "## Major Findings\n- **amiodarone + ciprofloxacin** — QT "
+                         "prolongation: PRR 11.80, co-reports n/a [TWOSIDES:FX-0103]\n"), "SEVERITY_ON_STATISTICAL_SIGNAL"),
+    (lambda b: b.replace("curated severity: Major (DDInter)", "curated severity: Moderate (DDInter)"), "SEVERITY_MISMATCH"),
+    (lambda b: b.replace("## Major Findings", "## Minor Findings"), "SEVERITY_MISMATCH"),
+    (lambda b: b.replace("QT prolongation: PRR 11.80, co-reports n/a", "QT prolongation: PRR 11.80, 40 co-reports"),
+     "NUMERIC_MISMATCH"),
+])
+def test_signal_and_hidden_count_rules(edit, code):
+    _, base, ev = _anticoag_base()
+    bad = edit(base)
+    assert bad != base
+    assert code in validate_report(bad, ev).codes()
+
+
+def test_signal_heading_and_negated_severity_are_not_flagged():
+    _, base, ev = _anticoag_base()
+    ok = base.replace("QT prolongation: PRR 11.80, co-reports n/a",
+                      "QT prolongation: PRR 11.80, co-reports n/a (not graded for clinical severity)")
+    assert ok != base and validate_report(ok, ev).passed
+
+
+def test_omitted_major_counts_curated_records_only():
+    from src.evaluation.checker_fixtures import SCENARIOS
+    s = SCENARIOS[2]      # renal: hydrochlorothiazide + lithium has only a TWOSIDES signal (PRR tier "Major")
+    ev = evidence_for(s)
+    r = validate_report(template(s), ev)
+    assert r.passed and r.stats["major_pairs"] == 1     # ibuprofen + lithium (curated) only

@@ -14,6 +14,7 @@ from typing import List, Mapping, Optional, Tuple
 from src.verification import lexicon
 
 FINDING_SECTIONS = {"major": "Major", "moderate": "Moderate", "minor": "Minor", "not_graded": "not graded"}
+STATISTICAL_SECTION = "statistical"   # "Statistical reporting signals (not graded for clinical severity)"
 DECLARATION_SECTIONS = {"no_data", "unresolved", "coverage"}
 
 _HEADING = re.compile(r"^\s{0,3}(#{1,6})\s+(.*?)\s*#*\s*$")
@@ -58,6 +59,8 @@ def classify_heading(title: str) -> str:
     t = lexicon.norm(title)
     if "faers" in t or "spontaneous" in t:
         return "faers"
+    if "statistical" in t or "reporting signal" in t:   # before "not graded": it's in this heading too
+        return STATISTICAL_SECTION
     if "not graded" in t or "ungraded" in t:
         return "not_graded"
     if "no curated" in t or "no data" in t or "no interaction data" in t:

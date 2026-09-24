@@ -11,9 +11,9 @@ import re
 from dataclasses import dataclass
 from typing import Callable, Dict, List, Tuple
 
-from src.agents.generator import Generator
+from src.agents.generator import STATISTICAL_HEADING, Generator, hidden_notice
 from src.agents.planner import Planner
-from src.agents.retriever import RetrievalResult
+from src.agents.retriever import RetrievalResult, select_pair_records
 from src.config import Config
 from src.data.normalizer import ResolvedDrug
 from src.retrieval.faers_retriever import FaersRecord
@@ -67,6 +67,10 @@ SCENARIOS: List[Scenario] = [
             _ix("FX-0104", "TWOSIDES", "sertraline", "warfarin", "minor bleeding", "Moderate", 4.2),
             _ix("FX-0105", "DDInter", "ciprofloxacin", "warfarin", "interaction", "Unknown",
                 mech="Ciprofloxacin may increase INR"),
+            # Four signals for one pair: three are shown, one is counted as "+1 more not shown".
+            _ix("FX-0106", "TWOSIDES", "amiodarone", "warfarin", "INR increased", "Moderate", 9.4),
+            _ix("FX-0107", "TWOSIDES", "amiodarone", "warfarin", "haematoma", "Moderate", 7.2),
+            _ix("FX-0108", "TWOSIDES", "amiodarone", "warfarin", "epistaxis", "Minor", 3.1),
         ],
         [FaersRecord("FX-F101", "amiodarone", "sertraline", "dizziness", 7, "Minor")],
         {"coumadin": "warfarin", "cipro": "ciprofloxacin"},
@@ -93,8 +97,13 @@ def build(s: Scenario, records=None) -> Tuple[object, RetrievalResult]:
     resolved += [ResolvedDrug(q, None, None, None, 0.0, False, "unresolved") for q in s.unresolved]
     plan = Planner().plan(resolved)
     result = RetrievalResult()
+    by_pair: Dict[tuple, List[InteractionRecord]] = {}
     for r in records:
-        result.interactions.setdefault(tuple(sorted((r.drug_a, r.drug_b))), []).append(r)
+        by_pair.setdefault(tuple(sorted((r.drug_a, r.drug_b))), []).append(r)
+    for pair, recs in by_pair.items():   # the same selection the Retriever applies
+        result.interactions[pair], hidden = select_pair_records(recs)
+        if hidden:
+            result.hidden_signals[pair] = hidden
     result.no_data_pairs = [p for p in plan.pairs if p not in result.interactions]
     for f in s.faers:
         key = tuple(sorted((f.drug_a, f.drug_b)))
@@ -121,7 +130,7 @@ def render_prose(s: Scenario, plan, result) -> str:
                 "Minor": "Minor Findings", "Unknown": "Severity Not Graded"}
     n = 0
     for tier, heading in headings.items():
-        recs = [r for rs in result.interactions.values() for r in rs
+        recs = [r for r in result.curated_records
                 if (r.severity if r.severity in ("Major", "Moderate", "Minor") else "Unknown") == tier]
         if not recs:
             continue
@@ -145,6 +154,22 @@ def render_prose(s: Scenario, plan, result) -> str:
                     text += f' Source mechanism: "{r.mechanism}" {cite}.'
             lines += [text, ""]
             n += 1
+    if result.statistical_signals:
+        lines.append(f"## {STATISTICAL_HEADING}")
+        for pair, rs in result.interactions.items():
+            for r in (r for r in rs if r.is_statistical):
+                cite = r.citation()
+                a = f"{brand[r.drug_a].title()} ({r.drug_a})" if r.drug_a in brand else r.drug_a.capitalize()
+                prr = f"PRR {r.prr:.1f}" if r.prr is not None else "no PRR given"
+                if n % 2 == 0:
+                    text = f"{a} with {r.drug_b}: reporting signal for {r.condition}, {prr} {cite}."
+                else:
+                    text = (f"Co-reports of {a} and {r.drug_b} show a disproportionality signal for "
+                            f"{r.condition} ({prr}) {cite}.")
+                lines += [text, ""]
+                n += 1
+            if result.hidden_signals.get(pair):
+                lines += [f"For {pair[0]} and {pair[1]}, {hidden_notice(result.hidden_signals[pair])}.", ""]
     lines.append("## Coverage Notes")
     if plan.unresolved:
         lines += ["### Unresolved Inputs",
@@ -174,13 +199,15 @@ def template(s: Scenario, records=None) -> str:
 # ------------------------------------------------------------ fault injectors
 Injection = Tuple[str, str]          # (site description, mutated report)
 FINDING_HEADINGS = ("## Major Findings", "## Moderate Findings", "## Minor Findings", "## Severity Not Graded")
+SIGNAL_HEADING = f"## {STATISTICAL_HEADING}"
 
 
-def _finding_lines(report: str) -> List[Tuple[int, str]]:
+def _finding_lines(report: str, headings=FINDING_HEADINGS + (SIGNAL_HEADING,)) -> List[Tuple[int, str]]:
+    """Cited claim lines under the given headings (default: curated findings and signals)."""
     out, in_findings = [], False
     for i, line in enumerate(report.splitlines()):
         if line.startswith("## "):
-            in_findings = line in FINDING_HEADINGS
+            in_findings = line in headings
         elif in_findings and "[" in line:
             out.append((i, line))
     return out
@@ -196,6 +223,13 @@ def _before_citation(line: str, insert: str) -> str:
     """Insert text before the line's first citation (prose lines may have two)."""
     j = line.find(" [")
     return line[:j] + insert + line[j:]
+
+
+def _shown(s: Scenario) -> List[int]:
+    """Indices of s.records that the report shows (hidden signals can't be mutated visibly)."""
+    _, result = build(s)
+    ids = {r.record_id for rs in result.interactions.values() for r in rs}
+    return [k for k, r in enumerate(s.records) if r.record_id in ids]
 
 
 def _record_for(line: str, s: Scenario) -> InteractionRecord:
@@ -224,7 +258,10 @@ def canonical_pgp_to_cyp3a4(s: Scenario, style: str = 'template') -> List[Inject
 def severity_flip(s: Scenario, style: str = 'template') -> List[Injection]:
     flip = {"Major": "Minor", "Moderate": "Major", "Minor": "Major", "Unknown": "Major"}
     out = []
-    for k, r in enumerate(s.records):
+    for k in _shown(s):
+        r = s.records[k]
+        if r.is_statistical:   # a signal's PRR tier is never shown, so flipping it changes nothing
+            continue
         recs = copy.deepcopy(s.records)
         recs[k].severity = flip[r.severity]
         out.append((f"{r.record_id} {r.severity}->{flip[r.severity]}", render(s, recs, style)))
@@ -233,8 +270,12 @@ def severity_flip(s: Scenario, style: str = 'template') -> List[Injection]:
 
 def citation_swap(s: Scenario, style: str = 'template') -> List[Injection]:
     out = []
-    for k, r in enumerate(s.records):
-        other = next((o for o in s.records if {o.drug_a, o.drug_b} != {r.drug_a, r.drug_b}), None)
+    for k in _shown(s):
+        r = s.records[k]
+        # Same kind (curated vs signal): taking a TWOSIDES source would turn a curated record
+        # into a PRR-less signal, which the selection could hide instead of mis-citing.
+        other = next((o for o in s.records if {o.drug_a, o.drug_b} != {r.drug_a, r.drug_b}
+                      and o.is_statistical == r.is_statistical), None)
         if other is None:
             continue
         recs = copy.deepcopy(s.records)
@@ -245,7 +286,8 @@ def citation_swap(s: Scenario, style: str = 'template') -> List[Injection]:
 
 def phantom_citation(s: Scenario, style: str = 'template') -> List[Injection]:
     out = []
-    for k, r in enumerate(s.records):
+    for k in _shown(s):
+        r = s.records[k]
         recs = copy.deepcopy(s.records)
         recs[k].record_id = f"FX-9{k:03d}"
         out.append((f"{r.record_id} -> FX-9{k:03d}", render(s, recs, style)))
@@ -254,7 +296,8 @@ def phantom_citation(s: Scenario, style: str = 'template') -> List[Injection]:
 
 def prr_distortion(s: Scenario, style: str = 'template') -> List[Injection]:
     out = []
-    for k, r in enumerate(s.records):
+    for k in _shown(s):   # PRR x1.5 keeps a shown signal among the top ones
+        r = s.records[k]
         if r.prr is None:
             continue
         recs = copy.deepcopy(s.records)
@@ -265,7 +308,8 @@ def prr_distortion(s: Scenario, style: str = 'template') -> List[Injection]:
 
 def omitted_major(s: Scenario, style: str = 'template') -> List[Injection]:
     out = []
-    for pair in sorted({tuple(sorted((r.drug_a, r.drug_b))) for r in s.records if r.severity == "Major"}):
+    for pair in sorted({tuple(sorted((r.drug_a, r.drug_b))) for r in s.records
+                        if r.severity == "Major" and not r.is_statistical}):   # curated Major only
         recs = [r for r in s.records if tuple(sorted((r.drug_a, r.drug_b))) != pair]
         out.append((" + ".join(pair), render(s, recs, style)))
     return out
@@ -285,7 +329,8 @@ def absence_as_safety(s: Scenario, style: str = 'template') -> List[Injection]:
 def event_swap(s: Scenario, style: str = 'template') -> List[Injection]:
     events = [r.condition for r in s.records] + ["rhabdomyolysis", "serotonin syndrome", "bradycardia"]
     out = []
-    for k, r in enumerate(s.records):
+    for k in _shown(s):
+        r = s.records[k]
         support = f"{r.condition} {r.mechanism or ''}"
         new = next(e for e in events if e != r.condition and not event_supported(e, support))
         recs = copy.deepcopy(s.records)
@@ -327,6 +372,40 @@ def faers_as_curated(s: Scenario, style: str = 'template') -> List[Injection]:
     return out
 
 
+SIGNAL_SEVERITY_PHRASES = ["; Major severity", ", a serious risk", ", clinically significant",
+                           " (moderate interaction)", ", potentially life-threatening"]
+
+
+def severity_on_signal(s: Scenario, style: str = 'template') -> List[Injection]:
+    """A severity word attached to a statistical signal, or the signal moved under a severity heading."""
+    base, out = render(s, style=style), []
+    lines = base.splitlines()
+    for n, (i, line) in enumerate(_finding_lines(base, (SIGNAL_HEADING,))):
+        rid = _record_for(line, s).record_id
+        phrase = SIGNAL_SEVERITY_PHRASES[n % len(SIGNAL_SEVERITY_PHRASES)]
+        out.append((f"{rid} + {phrase.strip(' ,;()')!r}", _with_line(base, i, _before_citation(line, phrase))))
+        head = next((j for j, ln in enumerate(lines) if ln in FINDING_HEADINGS), None)
+        if head is not None and n == 0:
+            moved = lines[:i] + lines[i + 1:]
+            moved.insert(head + 1, line)
+            out.append((f"{rid} moved under {lines[head][3:]}", "\n".join(moved)))
+    return out
+
+
+def missing_hidden_count(s: Scenario, style: str = 'template') -> List[Injection]:
+    """The "+N more not shown" statement is dropped or states the wrong N."""
+    base, out = render(s, style=style), []
+    lines = base.splitlines()
+    for i, line in enumerate(lines):
+        m = re.search(r"\+(\d+) more not shown", line)
+        if not m:
+            continue
+        out.append((f"drop '{m.group(0)}'", "\n".join(lines[:i] + lines[i + 1:])))
+        wrong = line.replace(m.group(0), hidden_notice(int(m.group(1)) + 1))
+        out.append((f"'{m.group(0)}' -> +{int(m.group(1)) + 1}", _with_line(base, i, wrong)))
+    return out
+
+
 FAULTS: Dict[str, Tuple[Callable[[Scenario], List[Injection]], str]] = {
     "mechanism_injection": (mechanism_injection, "UNSUPPORTED_MECHANISM"),
     "canonical_pgp_to_cyp3a4": (canonical_pgp_to_cyp3a4, "UNSUPPORTED_MECHANISM"),
@@ -340,6 +419,8 @@ FAULTS: Dict[str, Tuple[Callable[[Scenario], List[Injection]], str]] = {
     "population_injection": (population_injection, "UNSUPPORTED_POPULATION"),
     "uncited_claim": (uncited_claim, "UNCITED_CLAIM"),
     "faers_as_curated": (faers_as_curated, "FAERS_AS_CURATED"),
+    "severity_on_signal": (severity_on_signal, "SEVERITY_ON_STATISTICAL_SIGNAL"),
+    "missing_hidden_count": (missing_hidden_count, "MISSING_HIDDEN_COUNT"),
 }
 
 

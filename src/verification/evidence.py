@@ -21,14 +21,14 @@ def citation_key(source: str, record_id: str) -> str:
 class NormalizedRecord:
     record_id: str
     source: str
-    kind: str                      # "interaction" | "faers" | "side_effect"
+    kind: str                      # "interaction" (curated) | "signal" (statistical) | "faers" | "side_effect"
     drug_a: str
     drug_b: Optional[str]          # None for single-drug side-effect records
     event: str
-    severity: Optional[str]        # Major/Moderate/Minor/"not graded"; None for FAERS and side effects
+    severity: Optional[str]        # curated Major/Moderate/Minor/"not graded"; None for signals, FAERS, side effects
     prr: Optional[float]
     mechanism: Optional[str]
-    detail: Dict[str, Any] = field(default_factory=dict)   # e.g. {"report_count": 600}
+    detail: Dict[str, Any] = field(default_factory=dict)   # e.g. {"report_count": 600}, {"reports": 12}
 
     @property
     def citation(self) -> str:
@@ -52,6 +52,7 @@ class Evidence:
     unresolved_inputs: List[str]
     aliases: Dict[str, str]                       # lowercase alias -> canonical name
     disclaimer: Optional[str] = None
+    hidden_signals: List[List[Any]] = field(default_factory=list)   # [drug_a, drug_b, count not shown]
 
     def get(self, source: str, record_id: str) -> Optional[NormalizedRecord]:
         return self.records.get(citation_key(source, record_id))
@@ -88,8 +89,14 @@ def build_evidence(plan, result, aliases: Optional[Mapping[str, str]] = None,
     for (a, b), recs in result.interactions.items():
         for r in recs:
             detail = {"frequency": r.frequency} if r.frequency is not None else {}
-            add(NormalizedRecord(r.record_id, r.source, "interaction", a, b, r.condition,
-                                 _severity(r.severity), r.prr, r.mechanism, detail))
+            if r.is_statistical:
+                # The PRR tier is kept for internal use only; a signal has no clinical severity.
+                detail.update(reports=r.reports, prr_tier=r.severity)
+                add(NormalizedRecord(r.record_id, r.source, "signal", a, b, r.condition,
+                                     None, r.prr, r.mechanism, detail))
+            else:
+                add(NormalizedRecord(r.record_id, r.source, "interaction", a, b, r.condition,
+                                     _severity(r.severity), r.prr, r.mechanism, detail))
     for (a, b), sigs in result.faers_signals.items():
         for s in sigs:
             add(NormalizedRecord(s.record_id, s.source, "faers", a, b, s.condition, None, None, None,
@@ -114,6 +121,7 @@ def build_evidence(plan, result, aliases: Optional[Mapping[str, str]] = None,
         unresolved_inputs=[u.query for u in plan.unresolved],
         aliases=alias_map,
         disclaimer=disclaimer,
+        hidden_signals=[[a, b, int(n)] for (a, b), n in sorted(getattr(result, "hidden_signals", {}).items())],
     )
 
 

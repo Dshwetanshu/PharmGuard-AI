@@ -26,7 +26,7 @@ from dataclasses import dataclass, field, replace
 from itertools import combinations
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
-from src.agents.generator import Generator
+from src.agents.generator import STATISTICAL_HEADING, Generator
 from src.data.canonical import build_alias_map
 from src.evaluation.hand_labels import canonical_pair
 from src.evaluation.test_cases import SUSPECTED_LABEL_ERRORS, TEST_CASES, TestCase
@@ -186,11 +186,15 @@ class CountingFaers:
         return []   # consulted, but no signals, so the report text is unchanged
 
 
+CLAIM_HEADINGS = FINDING_HEADINGS + (f"## {STATISTICAL_HEADING}",)
+
+
 def _finding_line_indices(lines: List[str]) -> List[int]:
+    """Cited claim lines: curated findings and statistical signals."""
     out, in_findings = [], False
     for i, ln in enumerate(lines):
         if ln.startswith("## "):
-            in_findings = ln in FINDING_HEADINGS
+            in_findings = ln in CLAIM_HEADINGS
         elif in_findings and ln.startswith("- ") and " [" in ln:
             out.append(i)
     return out
@@ -263,6 +267,18 @@ def fault_severity_flip(body: str) -> Optional[str]:
     return None
 
 
+def fault_signal_severity(body: str) -> Optional[str]:
+    """Attach a severity word to the first statistical signal (signals have no severity)."""
+    lines, in_signals = body.splitlines(), False
+    for i, ln in enumerate(lines):
+        if ln.startswith("## "):
+            in_signals = ln == f"## {STATISTICAL_HEADING}"
+        elif in_signals and ln.startswith("- ") and ": PRR " in ln:
+            lines[i] = ln.replace(": PRR ", " (major risk): PRR ", 1)
+            return "\n".join(lines)
+    return None
+
+
 def fault_uncited(body: str) -> Optional[str]:
     lines = body.splitlines()
     idx = _finding_line_indices(lines)
@@ -299,6 +315,7 @@ SCENARIOS: List[Scenario] = [
     Scenario("phantom_citation_once", _two(fault_phantom), ("fail", "pass")),
     Scenario("severity_flip_once", _two(fault_severity_flip), ("fail", "pass")),
     Scenario("uncited_claim_once", _two(fault_uncited), ("fail", "pass")),
+    Scenario("signal_severity_once", _two(fault_signal_severity), ("fail", "pass")),
     Scenario("different_fault_on_retry", _two(fault_mechanism, fault_uncited), ("fail", "fail")),
     Scenario("retry_repeats_rejected_draft", _two(fault_mechanism, fault_mechanism), ("fail", "fail")),
 ]

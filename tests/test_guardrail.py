@@ -40,7 +40,7 @@ def test_valid_llm_report_is_returned(sample_pipeline):
 
 def test_fabricated_mechanism_falls_back_to_template(sample_pipeline):
     text = _faithful_llm_text(sample_pipeline).replace(
-        "hyperkalemia (PRR=14.20)", "hyperkalemia via CYP3A4 inhibition (PRR=14.20)")
+        "hyperkalemia: PRR 14.20", "hyperkalemia via CYP3A4 inhibition: PRR 14.20")
     result = _pipeline(sample_pipeline, text).run(DRUGS, use_llm=True)
     assert result.trace["report_source"] == "deterministic_fallback"
     assert result.trace["fallback_reason"] == "validation_failed"

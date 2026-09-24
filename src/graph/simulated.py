@@ -11,9 +11,12 @@ from __future__ import annotations
 from dataclasses import replace
 from typing import List, Optional
 
+from src.agents.generator import STATISTICAL_HEADING
+
 SIMULATED_LABEL = "simulated LLM"
 FABRICATION = " via CYP3A4 inhibition"
-FINDING_HEADINGS = ("## Major Findings", "## Moderate Findings", "## Minor Findings", "## Severity Not Graded")
+FINDING_HEADINGS = ("## Major Findings", "## Moderate Findings", "## Minor Findings", "## Severity Not Graded",
+                    f"## {STATISTICAL_HEADING}")   # claim sections: curated findings and statistical signals
 
 
 def inject_cyp3a4(report: str) -> Optional[str]:

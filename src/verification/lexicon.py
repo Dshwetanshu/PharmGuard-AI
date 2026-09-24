@@ -193,6 +193,25 @@ _TIER_CONTEXT = re.compile(
 _NOT_GRADED = re.compile(r"\bnot graded\b|\bungraded\b|\bseverity (?:is )?unknown\b")
 
 
+# Any wording that grades clinical severity. A statistical signal (PRR) has no
+# severity, so none of these may be attached to one. Negated forms ("not graded
+# for clinical severity") are removed first.
+_SEVERITY_WORD = re.compile(
+    r"\b(?:major|moderate|minor|mild|severe|severity|serious|dangerous|life-threatening|contraindicat\w*|"
+    r"clinically (?:significant|relevant|important)|high-risk|high risk|low-risk|low risk)\b"
+)
+_SEVERITY_NEGATED = re.compile(
+    r"\b(?:not|never) (?:graded|rated|classified|a grade|an? (?:clinical )?severity grade)"
+    r"(?: (?:for|of|by) (?:clinical )?severity)?\b|\bseverity (?:is )?not graded\b|"
+    r"\bno (?:clinical )?severity(?: grade)?\b|\bnot graded\b"
+)
+
+
+def severity_words(text: str) -> List[str]:
+    """Severity wording in text (callers mask the record's own event text first)."""
+    return [m.group(0) for m in _SEVERITY_WORD.finditer(_SEVERITY_NEGATED.sub(" ", norm(text)))]
+
+
 def claimed_tiers(text: str) -> Set[str]:
     """Severity tiers asserted in text. Bare words ("minor bleeding") are not
     tiers; a tier word needs severity context. Callers mask record event and
@@ -249,3 +268,7 @@ PRR_RE = re.compile(
     r"\b(?:prr|proportional reporting ratio)\b\s*(?:\(prr\)\s*)?(?:=|:|of|is|was|~|≈|at)?\s*(\d+(?:\.\d+)?)"
 )
 REPORT_COUNT_RE = re.compile(r"\b(\d[\d,]*)\s+(?:spontaneous\s+)?(?:faers\s+)?reports?\b")
+_COUNT = r"(?<![\d.,])(\d{1,3}(?:,\d{3})+|\d+)(?![\d.])"
+CO_REPORT_RE = re.compile(_COUNT + r"\s+co-?reports?\b|\bco-?reports?\s*(?:[:=]|of)?\s*" + _COUNT)
+# "+N more not shown": statistical signals retrieved for a pair but not selected.
+HIDDEN_COUNT_RE = re.compile(r"\+\s*(\d+)\s+more\b[^.;\n]{0,40}?\bnot shown\b")

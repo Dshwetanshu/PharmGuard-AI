@@ -67,7 +67,7 @@ def good_draft(sample_pipeline):
 
 @pytest.fixture(scope="module")
 def bad_draft(good_draft):
-    return good_draft.replace("hyperkalemia (PRR=14.20)", "hyperkalemia via CYP3A4 inhibition (PRR=14.20)")
+    return good_draft.replace("hyperkalemia: PRR 14.20", "hyperkalemia via CYP3A4 inhibition: PRR 14.20")
 
 
 # ---------------------------------------------------------------- LLM paths

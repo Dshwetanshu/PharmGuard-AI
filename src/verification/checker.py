@@ -17,17 +17,20 @@ from typing import Dict, List, Optional, Set
 from src.verification import lexicon
 from src.verification.evidence import Evidence, NormalizedRecord, citation_key, records_for
 from src.verification.parser import (
-    DECLARATION_SECTIONS, FINDING_SECTIONS, ParsedReport, Unit, parse_report,
+    DECLARATION_SECTIONS, FINDING_SECTIONS, STATISTICAL_SECTION, ParsedReport, Unit, parse_report,
 )
+
+PAIR_KINDS = ("interaction", "signal")   # records that belong to a drug pair
 
 # Claim-level codes that mean "the claim says something its evidence doesn't".
 FABRICATION_CODES = {
     "PHANTOM_CITATION", "MISATTRIBUTED_CITATION", "SEVERITY_MISMATCH", "NUMERIC_MISMATCH",
     "EVENT_MISATTRIBUTION", "UNSUPPORTED_MECHANISM", "UNSUPPORTED_POPULATION", "FAERS_AS_CURATED",
+    "SEVERITY_ON_STATISTICAL_SIGNAL",
 }
 REPORT_CODES = {
     "OMITTED_INTERACTION", "OMITTED_MAJOR", "MISSING_NO_DATA_DECLARATION", "CONFLATED_ABSENCE",
-    "MISSING_UNRESOLVED_DECLARATION", "MISSING_DISCLAIMER",
+    "MISSING_UNRESOLVED_DECLARATION", "MISSING_DISCLAIMER", "MISSING_HIDDEN_COUNT",
 }
 ALL_CODES = FABRICATION_CODES | REPORT_CODES | {"UNCITED_CLAIM"}
 
@@ -71,8 +74,9 @@ def _is_clinical(u: Unit, evidence_events: List[str]) -> bool:
                     or lexicon.populations(t) or lexicon.PRR_RE.search(t) or lexicon.claimed_tiers(t))
     if u.section in DECLARATION_SECTIONS:
         return specific
-    if u.section in FINDING_SECTIONS or u.section == "faers":
-        return True
+    if u.section in FINDING_SECTIONS or u.section in ("faers", STATISTICAL_SECTION):
+        # A bare "+N more not shown" line is a count, not a claim.
+        return specific or not lexicon.HIDDEN_COUNT_RE.search(t)
     return specific or bool(lexicon.CLINICAL_CUE.search(t))
 
 
@@ -101,15 +105,33 @@ def _check_claim(u: Unit, ev: Evidence, evidence_events: List[str], out: List[Fi
 
     # Severity: from the section heading, plus explicit tier words once the cited
     # records' own event/mechanism text is masked (so "minor bleeding" isn't a tier).
-    claimed = set()
-    if u.section in FINDING_SECTIONS:
-        claimed.add(FINDING_SECTIONS[u.section])
-    claimed |= lexicon.claimed_tiers(_mask(text, [r.event for r in cited] + [r.mechanism or "" for r in cited]))
+    heading_tier = FINDING_SECTIONS.get(u.section)
+    masked = _mask(text, [r.event for r in cited] + [r.mechanism or "" for r in cited])
+    text_tiers = lexicon.claimed_tiers(masked)
+    claimed = text_tiers | ({heading_tier} if heading_tier else set())
+    for rec in cited:
+        if rec.kind != "signal":
+            continue
+        if u.section in FINDING_SECTIONS:
+            out.append(Finding("SEVERITY_ON_STATISTICAL_SIGNAL", u.line,
+                               f"statistical signal {rec.citation} is listed under a severity heading"))
+        words = lexicon.severity_words(masked)
+        if words:
+            out.append(Finding("SEVERITY_ON_STATISTICAL_SIGNAL", u.line,
+                               f"statistical signal {rec.citation} is described with severity wording "
+                               f"{sorted(set(words))}; signals are not graded for clinical severity"))
+    curated = [r for r in cited if r.kind == "interaction"]
     if claimed:
-        for rec in cited:
-            if rec.kind == "interaction" and rec.severity not in claimed:
-                out.append(Finding("SEVERITY_MISMATCH", u.line,
-                                   f"claims {'/'.join(sorted(claimed))} but {rec.citation} is {rec.severity}"))
+        # A curated record under a severity heading must have that severity, even if the
+        # line also states its own tier ("curated severity: Major" under "Minor Findings").
+        wrong = [r for r in curated if r.severity not in claimed or (heading_tier and r.severity != heading_tier)]
+        for rec in wrong:
+            out.append(Finding("SEVERITY_MISMATCH", u.line,
+                               f"claims {'/'.join(sorted(claimed))} but {rec.citation} is {rec.severity}"))
+        extra = text_tiers - {r.severity for r in curated}
+        if curated and extra and not wrong:
+            out.append(Finding("SEVERITY_MISMATCH", u.line,
+                               f"claims {'/'.join(sorted(extra))} but no cited curated record has that severity"))
 
     # Numbers: PRR values and FAERS report counts must match a supporting record.
     for m in lexicon.PRR_RE.finditer(text):
@@ -120,6 +142,12 @@ def _check_claim(u: Unit, ev: Evidence, evidence_events: List[str], out: List[Fi
         if not any(abs(float(val_s) - p) <= tol for p in prrs):
             have = ", ".join(f"{p:g}" for p in prrs) or "none"
             out.append(Finding("NUMERIC_MISMATCH", u.line, f"PRR {val_s} not in cited record(s) (PRR: {have})"))
+    co_reports = [r.detail.get("reports") for r in support_recs if r.kind == "signal"]
+    for m in lexicon.CO_REPORT_RE.finditer(text):
+        n = int((m.group(1) or m.group(2)).replace(",", ""))
+        if n not in co_reports:
+            have = ", ".join(str(c) for c in co_reports if c is not None) or "none"
+            out.append(Finding("NUMERIC_MISMATCH", u.line, f"{n} co-reports not in cited record(s) ({have})"))
     counts = [r.detail.get("report_count") for r in support_recs if r.kind == "faers"]
     if counts:
         for m in lexicon.REPORT_COUNT_RE.finditer(text):
@@ -180,17 +208,28 @@ def validate_report(report: str, evidence: Evidence, final: bool = True) -> Vali
     cited = [evidence.records[k] for k in cited_keys]
     omitted = omitted_major = major_pairs = 0
     for a, b in evidence.pairs_with_records:
-        pair_recs = [r for r in evidence.records.values() if r.kind == "interaction" and set(r.drugs) == {a, b}]
-        pair_cited = [r for r in cited if r.kind == "interaction" and set(r.drugs) == {a, b}]
+        pair_recs = [r for r in evidence.records.values() if r.kind in PAIR_KINDS and set(r.drugs) == {a, b}]
+        pair_cited = [r for r in cited if r.kind in PAIR_KINDS and set(r.drugs) == {a, b}]
         if not pair_cited:
             omitted += 1
             findings.append(Finding("OMITTED_INTERACTION", None,
                                     f"{a} + {b} has {len(pair_recs)} record(s) but none is cited"))
-        if any(r.severity == "Major" for r in pair_recs):
+        # Curated records only: a statistical signal has no severity.
+        if any(r.kind == "interaction" and r.severity == "Major" for r in pair_recs):
             major_pairs += 1
-            if not any(r.severity == "Major" for r in pair_cited):
+            if not any(r.kind == "interaction" and r.severity == "Major" for r in pair_cited):
                 omitted_major += 1
                 findings.append(Finding("OMITTED_MAJOR", None, f"Major interaction {a} + {b} is never cited"))
+
+    # Hidden statistical signals must be stated as "+N more not shown" for their pair.
+    for a, b, n in evidence.hidden_signals:
+        stated = [int(m.group(1)) for u in parsed.units if {a, b} <= set(u.context_drugs)
+                  for m in lexicon.HIDDEN_COUNT_RE.finditer(lexicon.norm(u.text))]
+        if n not in stated:
+            findings.append(Finding("MISSING_HIDDEN_COUNT", None,
+                                    f"{a} + {b}: {n} statistical signal(s) are not shown, but the report "
+                                    + (f"states {stated}" if stated else "does not say so")
+                                    + f" (expected '+{n} more not shown')"))
 
     declared = 0
     for a, b in evidence.no_data_pairs:
