@@ -19,6 +19,16 @@ def client_ip(headers: Mapping[str, str], peer: Optional[str], trusted_proxy_hop
     return peer or "unknown"
 
 
+def proxy_summary(headers: Mapping[str, str], peer: Optional[str], trusted_proxy_hops: int) -> dict:
+    """Counts only, for checking the proxy set-up: how many X-Forwarded-For entries arrived,
+    how many hops are trusted, and whether the rate-limit key is the TCP peer (behind a proxy
+    that means it is keying on the proxy). No addresses are returned."""
+    xff = headers.get("x-forwarded-for") or ""
+    entries = len([p for p in xff.split(",") if p.strip()])
+    return {"forwarded_for_entries": entries, "trusted_proxy_hops": trusted_proxy_hops,
+            "client_key_is_tcp_peer": client_ip(headers, peer, trusted_proxy_hops) == (peer or "unknown")}
+
+
 class SlidingWindowLimiter:
     def __init__(self, limit: int, window_s: float, clock: Callable[[], float] = time.monotonic,
                  max_keys: int = 10_000):

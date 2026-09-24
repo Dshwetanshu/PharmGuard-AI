@@ -24,7 +24,7 @@ from pydantic import BaseModel, Field
 from starlette.concurrency import run_in_threadpool
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from api.ratelimit import SlidingWindowLimiter, client_ip
+from api.ratelimit import SlidingWindowLimiter, client_ip, proxy_summary
 from api.service import MAX_DRUGS, MIN_DRUGS, CheckService, ServiceError
 from api.settings import ApiSettings
 
@@ -161,7 +161,10 @@ def create_app(service: Optional[CheckService] = None, settings: Optional[ApiSet
 
     @app.get("/health", summary="Build, data and LLM status")
     async def health(request: Request):
-        body = {"request_id": request.state.request_id, **request.app.state.service.health()}
+        svc = request.app.state.service
+        body = {"request_id": request.state.request_id, **svc.health(),
+                "proxy": proxy_summary(request.headers, request.client.host if request.client else None,
+                                       svc.settings.trusted_proxy_hops)}
         return JSONResponse(body, status_code=200 if body["data_loaded"] else 503)
 
     @app.get("/v1/graph", summary="The LangGraph topology as Mermaid")

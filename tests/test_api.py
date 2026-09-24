@@ -245,6 +245,14 @@ def test_client_ip_uses_only_trusted_proxy_hops():
     assert [lim.check("a")[0], lim.check("a")[0], lim.check("a")[0], lim.check("b")[0]] == [True, True, False, True]
 
 
+def test_health_reports_proxy_counts_without_addresses(client):
+    h = client.get("/health", headers={"X-Forwarded-For": "198.51.100.7, 203.0.113.9"}).json()
+    assert h["proxy"] == {"forwarded_for_entries": 2, "trusted_proxy_hops": 0, "client_key_is_tcp_peer": True}
+    assert "198.51.100.7" not in json.dumps(h) and "203.0.113.9" not in json.dumps(h)
+    from api.ratelimit import proxy_summary
+    assert proxy_summary({"x-forwarded-for": "198.51.100.7"}, "10.0.0.1", 1)["client_key_is_tcp_peer"] is False
+
+
 def test_page_is_served_with_a_strict_csp_and_no_inline_script(client):
     r = client.get("/")
     assert r.status_code == 200 and "script-src 'self'" in r.headers["content-security-policy"]
