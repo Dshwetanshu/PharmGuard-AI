@@ -57,7 +57,7 @@ def _f(v, pct=True):
 def to_markdown(res: dict) -> str:
     stamp = res["data"]
     what = ("synthetic sample data" if stamp["profile"] == "sample"
-            else f"the real **{stamp['profile']}** build ({stamp['data']}; provenance sha256 "
+            else f"the real **{stamp['profile']}** build ({stamp['data'].rstrip('.')}; provenance sha256 "
                  f"`{stamp['provenance_sha256']}`)")
     L = ["# Trajectory evaluation" + ("" if stamp["profile"] == "sample" else f" ({stamp['profile']} build)"), "",
          f"Regenerate with `{res['command']}`. Offline, no API keys, {what}, 48 cases. "
@@ -74,12 +74,16 @@ def to_markdown(res: dict) -> str:
         for sub, a in rows:
             L.append(f"| {sub} | {a['cases']} | " + " | ".join(_f(a[s]) for s in T.STEPS)
                      + f" | **{_f(a['completion'])}** |")
-        L += ["", "Failing cases: " + (", ".join(f"{f['case_id']} ({'/'.join(f['failed_steps'])}: {f['reasons']})"
-                                                for f in sm["failing"]) or "none"),
+        def listed(v, fmt):
+            if isinstance(v, int):   # research build: counts only
+                return f"{v} (details kept local)"
+            return ", ".join(fmt(x) for x in (v.items() if isinstance(v, dict) else v)) or "none"
+        L += ["", "Failing cases: " + listed(sm["failing"], lambda f: f"{f['case_id']} "
+                                             f"({'/'.join(f['failed_steps'])}: {f['reasons']})"),
               "", "Suspected label errors, counted separately (not failures): "
-              + (", ".join(f"{k} {v}" for k, v in sm["suspected_label_misses"].items()) or "none"),
+              + listed(sm["suspected_label_misses"], lambda kv: f"{kv[0]} {kv[1]}"),
               "", "Source gaps (labelled pair in no loaded table; not retrieval failures): "
-              + (", ".join(f"{k} {v}" for k, v in sm.get("source_gap_misses", {}).items()) or "none"), ""]
+              + listed(sm.get("source_gap_misses", {}), lambda kv: f"{kv[0]} {kv[1]}"), ""]
     L += ["## Normalizer expectations added (for review)", "", "| Case | Input | Expected |", "|---|---|---|"]
     for c in TEST_CASES:
         for q, g in c.expected_resolved.items():
@@ -156,6 +160,9 @@ def main() -> int:
             b = T.run_fault_suite(h)
             summary = T.summarize_faults(b["runs"])
             # Per-run details stay out of the file (it would be ~1 MB); mismatches are in the summary.
+            if args.profile != "sample":
+                summary["latency_label"] = summary["latency_label"].replace("synthetic sample data",
+                                                                            f"{args.profile} build")
             res["fault_suite"] = {"summary": summary, "skipped": b["skipped"]}
             invariant_rows += [r["invariants"] for r in b["runs"]]
         if args.seeded_bugs:
@@ -174,6 +181,14 @@ def main() -> int:
                    "seeded_bugs_all_caught": bugs_ok if args.seeded_bugs else None,
                    "passed": min_pass >= args.min_invariant_pass and bugs_ok}
 
+    if args.profile == "research":
+        # Numbers only: per-case reasons can quote record content, and research data stays local.
+        for block in res["step_scoring"].values():
+            if block:
+                sm = block["summary"]
+                for k in ("failing", "suspected_label_misses", "source_gap_misses"):
+                    sm[k] = len(sm.get(k) or [])
+        res["aggregate_only"] = True
     out = Path(args.output_dir)
     out.mkdir(parents=True, exist_ok=True)
     (out / f"trajectory{suffix}.json").write_text(json.dumps(res, indent=2, sort_keys=True) + "\n")

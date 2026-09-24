@@ -2,7 +2,7 @@
 
 > If you cannot describe the failure mode that keeps you up at night, you have not thought hard enough about your system.
 
-This doc says how PharmGuard is evaluated, what is actually measured today, and what is not. All numbers below come from running the code in this repository on the **synthetic sample data** (85 interaction records). None come from the real TWOSIDES, DDInter or SIDER releases, which have not been ingested. Unmeasured values are shown as "—".
+This doc says how PharmGuard is evaluated, what is actually measured today, and what is not. All numbers below come from running the code in this repository. Each one names its data build: the **synthetic sample** (85 interaction records; what CI checks), the real **public** build (RxNorm Current Prescribable 2026-09-08 + DDInter 2.0 + SIDER 4.1) or the real **research** build (public + TWOSIDES; aggregate numbers only). See docs/DATASETS.md for the builds. Unmeasured values are shown as "—".
 
 ## The silent-failure scenario
 
@@ -20,7 +20,7 @@ Counting citations can't catch this: the fabricated sentence can carry a real ci
 
 ### Internal consistency (recall / precision)
 
-Ground truth = every input pair present in the loaded interaction table, derived with **the same normalizer and table the retriever uses**. Recall and precision are therefore 1.0 **by construction**. This only catches bugs in pair enumeration and lookup plumbing. It scored 1.0 while lithium + hydrochlorothiazide (Major) was reported as "no data" because of a lithium / lithium carbonate key mismatch.
+Ground truth = every input pair present in the loaded interaction table, derived with **the same normalizer and table the retriever uses**. Recall and precision are therefore 1.0 **by construction**. This only catches bugs in pair enumeration and lookup plumbing. It scored 1.0 while lithium + hydrochlorothiazide (Major) was reported as "no data" because of a lithium / lithium carbonate key mismatch (since fixed: both builds use the RxNorm ingredient "lithium").
 
 ### Hand labels
 
@@ -58,7 +58,13 @@ Metrics (micro-averaged over reports):
 
 `python scripts/validate_checker.py` writes `results/checker_validation.{json,md}`:
 - **False positives:** the template reports for all 48 cases, plus clean synthetic `FX-` fixture reports in template and LLM-style prose, give 0 findings.
-- **Sensitivity:** 12 fault types are injected into the fixtures, including the canonical case above (a record saying P-glycoprotein, a report claiming CYP3A4). Each fault's expected code is raised on every injected instance. This shows each check works on the fault it targets. It is not an estimate of how often real LLM errors are caught: the injected terms come from the checker's own lexicons, and the fixtures are small.
+- **Sensitivity:** 14 fault types are injected into the fixtures, including the canonical case above (a record saying P-glycoprotein, a report claiming CYP3A4). Each fault's expected code is raised on every injected instance. The two newest: a severity word attached to a statistical signal (or a signal listed under a severity heading), and hidden signals not stated as "+N more not shown". This shows each check works on the fault it targets. It is not an estimate of how often real LLM errors are caught: the injected terms come from the checker's own lexicons, and the fixtures are small.
+
+## Report format the checks assume
+
+- **Curated records** (DDInter) appear under their curated severity heading as "curated severity: X (source)", with every curated record kept.
+- **Statistical signals** (TWOSIDES, and the TWOSIDES-shaped sample rows) appear only in "Statistical reporting signals (not graded for clinical severity)", with PRR and co-report count, never with a severity word. At most 3 are shown per pair (highest PRR); the rest are stated as "+N more not shown". `OMITTED_MAJOR` counts curated records only.
+- The checker judges only the records the report selected.
 
 ## Results (synthetic sample data)
 
@@ -78,6 +84,30 @@ From `python scripts/run_eval.py` (48 cases). The LLM column requires an API key
 | Faithfulness (LLM judge) | — (not implemented) | — |
 
 The template's zeros are expected: the template only restates record fields, and the checker was validated against it (the false-positive check above). Those zeros say nothing about LLM output.
+
+## Results on the real builds (deterministic template; no API key)
+
+Same scripts, pointed at a real build. Every result file names the build and the sha256 of its `provenance.json`. Research-build files hold aggregate numbers only.
+
+| | sample | public | research |
+|---|---:|---:|---:|
+| Hand-label recall | 0.974 (37/38) | 0.974 (37/38) | 0.974 (37/38) |
+| Hand-label precision (lower bound) | 0.587 (37/63) | 0.160 (37/231) | 0.160 (37/231) |
+| Misses: source gap / pipeline miss | 1 / 0 (EDG-03) | 1 / 0 (END-02) | 1 / 0 |
+| Pairs with no curated record (48 cases) | see completeness | 0 of 231 | 0 of 231 |
+| Checker false positives, 48 template reports | 0 (122 claims) | 0 (231 claims) | 0 (902 claims) |
+| Checker false positives, 200 random 4-drug lists | n/a | 0 (227 claims) | 0 (376 claims) |
+| Checker false positives, hard names (comma, parenthesis, > 30 chars) | n/a | 0 (26 reports, 147 claims) | 0 (44 reports, 730 claims) |
+| Step completion (trajectory) | 100% | 100% | 100% |
+| Fault-suite runs / invariant runs / min invariant pass rate | 580 / 676 / 100% | 586 / 682 / 100% | 629 / 725 / 100% |
+| Seeded orchestration bugs caught | 6 / 6 | 6 / 6 | 6 / 6 |
+| LLM path | — | — | — |
+
+Notes:
+- **Precision** falls on real data because DDInter has a record for every pair in the 48 cases (98 of 231 are "not graded"), while the hand labels list only the headline interactions. It is a lower bound.
+- **EDG-03** (atorvastatin + lisinopril), a suspected label error on the sample, is a DDInter record on the real builds (not graded). **END-02**'s labelled pair can't match on real data: plain "insulin" is ambiguous in RxNorm and stays unresolved by design.
+- The real-build stress sets found three checker/input bugs, now fixed with regression tests: comma names rejected by input validation, a non-idempotent British-spelling fold (a TWOSIDES "gastrooesophageal" event flagged against its own record), and a population word matched inside a drug name ("calcium lactate").
+- Before all 14 DDInter ATC files were ingested, the public build's hand-label recall was 0.553 (21/38), with 17 "source gaps" that were really our incomplete download.
 
 ## Trajectory evaluation (orchestration)
 
@@ -102,7 +132,7 @@ With an API key in `.env`, `run_eval.py` also runs every case through the LLM pa
 
 ## What the evaluation does not measure
 
-- **Real-data performance.** Only synthetic sample data has been evaluated.
+- **LLM output on any build.** No API key has been configured, so every LLM-path number is "—".
 - **Clinical appropriateness.** PharmGuard reports what its sources record; whether to act on it is the clinician's call.
 - **Coverage of drugs outside the loaded data.** Reported via unresolved inputs and no-data pairs, not scored.
 - **Clinical outcomes.** That would need a prospective study, not a retrieval benchmark.

@@ -1,22 +1,24 @@
 {
-  "command": "python scripts/eval_trajectory.py --fault-suite --seeded-bugs --min-invariant-pass 1.0",
+  "aggregate_only": true,
+  "command": "python scripts/eval_trajectory.py --fault-suite --seeded-bugs --profile research",
   "data": {
-    "data": "Data: synthetic sample dataset (85 interaction records), not real clinical data.",
-    "profile": "sample",
-    "provenance_sha256": "28d02174d104970c84783c43b9264e0424e6ce364c3223695f41749ca49a7506"
+    "data": "Data: research build from RxNorm Current Prescribable 2026-09-08, DDInter 2.0, SIDER 4.1, TWOSIDES (research only; not for redistribution); 634,582 interaction records; not synthetic.",
+    "data_dir": "data/profiles/research",
+    "profile": "research",
+    "provenance_sha256": "070bf71c28c706bbf53cc4e260e4f62591dd3ed396565d817a743ef755b8a2b3"
   },
   "fault_suite": {
     "skipped": {
-      "absence_safe_once": 29,
-      "different_fault_on_retry": 10,
-      "mechanism_always": 10,
-      "mechanism_once": 10,
-      "omit_major_once": 27,
-      "phantom_citation_once": 10,
-      "retry_repeats_rejected_draft": 10,
-      "severity_flip_once": 14,
-      "signal_severity_once": 10,
-      "uncited_claim_once": 10
+      "absence_safe_once": 48,
+      "different_fault_on_retry": 3,
+      "mechanism_always": 3,
+      "mechanism_once": 3,
+      "omit_major_once": 17,
+      "phantom_citation_once": 3,
+      "retry_repeats_rejected_draft": 3,
+      "severity_flip_once": 3,
+      "signal_severity_once": 5,
+      "uncited_claim_once": 3
     },
     "summary": {
       "invariant_pass_rate": {
@@ -32,62 +34,50 @@
         "plan_complete": 1.0,
         "state_json_serializable": 1.0
       },
-      "invariant_runs": 580,
-      "latency_label": "orchestration overhead only (fake LLMs, synthetic sample data, no network)",
+      "invariant_runs": 629,
+      "latency_label": "orchestration overhead only (fake LLMs, research build, no network)",
       "latency_ms_end_to_end": {
-        "p50": 5.9,
-        "p95": 20.1
+        "p50": 15.7,
+        "p95": 94.3
       },
       "latency_ms_per_node": {
-        "faers": {
-          "p50": 0.16,
-          "p95": 0.84
-        },
         "finalize": {
-          "p50": 0.43,
-          "p95": 2.98
+          "p50": 0.64,
+          "p95": 12.66
         },
         "generate_llm": {
+          "p50": 0.05,
+          "p95": 0.33
+        },
+        "normalize": {
           "p50": 0.03,
           "p95": 0.1
         },
-        "normalize": {
-          "p50": 0.02,
-          "p95": 0.09
-        },
         "plan": {
           "p50": 0.03,
-          "p95": 0.13
+          "p95": 0.1
         },
         "retrieve": {
-          "p50": 2.01,
-          "p95": 11.25
+          "p50": 10.97,
+          "p95": 49.59
         },
         "template": {
-          "p50": 0.03,
-          "p95": 0.07
+          "p50": 0.04,
+          "p95": 1.52
         },
         "validate": {
-          "p50": 0.49,
-          "p95": 3.05
+          "p50": 0.78,
+          "p95": 14.68
         }
       },
-      "llm_calls_per_case": 1.728,
+      "llm_calls_per_case": 1.738,
       "mismatches": [],
       "path_match_rate": 1.0,
       "per_scenario": {
-        "absence_safe_once": {
-          "expected_source": "llm_retry",
-          "invariants_all_pass": 1.0,
-          "llm_calls_mean": 2,
-          "path_match": 1.0,
-          "runs": 19,
-          "source_match": 1.0
-        },
         "clean": {
           "expected_source": "llm",
           "invariants_all_pass": 1.0,
-          "llm_calls_mean": 0.958,
+          "llm_calls_mean": 0.938,
           "path_match": 1.0,
           "runs": 48,
           "source_match": 1.0
@@ -95,7 +85,7 @@
         "clean+faers": {
           "expected_source": "llm",
           "invariants_all_pass": 1.0,
-          "llm_calls_mean": 0.958,
+          "llm_calls_mean": 0.938,
           "path_match": 1.0,
           "runs": 48,
           "source_match": 1.0
@@ -105,7 +95,7 @@
           "invariants_all_pass": 1.0,
           "llm_calls_mean": 2,
           "path_match": 1.0,
-          "runs": 38,
+          "runs": 45,
           "source_match": 1.0
         },
         "mechanism_always": {
@@ -113,7 +103,7 @@
           "invariants_all_pass": 1.0,
           "llm_calls_mean": 2,
           "path_match": 1.0,
-          "runs": 38,
+          "runs": 45,
           "source_match": 1.0
         },
         "mechanism_once": {
@@ -121,13 +111,13 @@
           "invariants_all_pass": 1.0,
           "llm_calls_mean": 2,
           "path_match": 1.0,
-          "runs": 38,
+          "runs": 45,
           "source_match": 1.0
         },
         "non_transient_error_once": {
           "expected_source": "deterministic_fallback",
           "invariants_all_pass": 1.0,
-          "llm_calls_mean": 0.958,
+          "llm_calls_mean": 0.938,
           "path_match": 1.0,
           "runs": 48,
           "source_match": 1.0
@@ -137,7 +127,7 @@
           "invariants_all_pass": 1.0,
           "llm_calls_mean": 2,
           "path_match": 1.0,
-          "runs": 21,
+          "runs": 31,
           "source_match": 1.0
         },
         "phantom_citation_once": {
@@ -145,7 +135,7 @@
           "invariants_all_pass": 1.0,
           "llm_calls_mean": 2,
           "path_match": 1.0,
-          "runs": 38,
+          "runs": 45,
           "source_match": 1.0
         },
         "retry_repeats_rejected_draft": {
@@ -153,7 +143,7 @@
           "invariants_all_pass": 1.0,
           "llm_calls_mean": 2,
           "path_match": 1.0,
-          "runs": 38,
+          "runs": 45,
           "source_match": 1.0
         },
         "severity_flip_once": {
@@ -161,7 +151,7 @@
           "invariants_all_pass": 1.0,
           "llm_calls_mean": 2,
           "path_match": 1.0,
-          "runs": 34,
+          "runs": 45,
           "source_match": 1.0
         },
         "signal_severity_once": {
@@ -169,13 +159,13 @@
           "invariants_all_pass": 1.0,
           "llm_calls_mean": 2,
           "path_match": 1.0,
-          "runs": 38,
+          "runs": 43,
           "source_match": 1.0
         },
         "transient_error_always": {
           "expected_source": "deterministic_fallback",
           "invariants_all_pass": 1.0,
-          "llm_calls_mean": 1.917,
+          "llm_calls_mean": 1.875,
           "path_match": 1.0,
           "runs": 48,
           "source_match": 1.0
@@ -183,7 +173,7 @@
         "transient_error_once": {
           "expected_source": "llm_retry",
           "invariants_all_pass": 1.0,
-          "llm_calls_mean": 1.917,
+          "llm_calls_mean": 1.875,
           "path_match": 1.0,
           "runs": 48,
           "source_match": 1.0
@@ -193,12 +183,12 @@
           "invariants_all_pass": 1.0,
           "llm_calls_mean": 2,
           "path_match": 1.0,
-          "runs": 38,
+          "runs": 45,
           "source_match": 1.0
         }
       },
       "recovery_rate": 1.0,
-      "runs": 580,
+      "runs": 629,
       "source_match_rate": 1.0
     }
   },
@@ -222,60 +212,60 @@
       "plan_complete": 1.0,
       "state_json_serializable": 1.0
     },
-    "runs": 676
+    "runs": 725
   },
   "seeded_bugs": {
     "faers_always_consulted": {
       "broken": {
-        "faers_only_when_needed": 0.05
+        "faers_only_when_needed": 0.0238
       },
       "caught": true,
-      "path_match": 0.05
+      "path_match": 0.0238
     },
     "fallback_returns_rejected_draft": {
       "broken": {
-        "exhausted_fallback_matches_deterministic": 0.8034,
-        "final_report_valid": 0.8034,
-        "no_unvalidated_llm_text": 0.8034
+        "exhausted_fallback_matches_deterministic": 0.7854,
+        "final_report_valid": 0.7854,
+        "no_unvalidated_llm_text": 0.7854
       },
       "caught": true,
       "path_match": 1.0
     },
     "non_transient_errors_retried": {
       "broken": {
-        "non_transient_never_retried": 0.9207
+        "non_transient_never_retried": 0.9285
       },
       "caught": true,
-      "path_match": 0.9207
+      "path_match": 0.9285
     },
     "plan_drops_a_pair": {
       "broken": {
-        "exhausted_fallback_matches_deterministic": 0.1828,
-        "plan_complete": 0.0172
+        "exhausted_fallback_matches_deterministic": 0.0636,
+        "plan_complete": 0.0238
       },
       "caught": true,
-      "path_match": 0.4879
+      "path_match": 0.3816
     },
     "retry_limit_off_by_one": {
       "broken": {
-        "llm_attempts_within_budget": 0.7241
+        "llm_attempts_within_budget": 0.7138
       },
       "caught": true,
-      "path_match": 0.7241
+      "path_match": 0.7138
     },
     "validate_always_passes": {
       "broken": {
-        "final_report_valid": 0.4138,
-        "no_unvalidated_llm_text": 0.4138
+        "final_report_valid": 0.3816,
+        "no_unvalidated_llm_text": 0.3816
       },
       "caught": true,
-      "path_match": 0.4138
+      "path_match": 0.3816
     }
   },
   "step_scoring": {
     "deterministic": {
       "summary": {
-        "failing": [],
+        "failing": 0,
         "overall": {
           "cases": 48,
           "completion": 1.0,
@@ -395,21 +385,14 @@
             "route": 1.0
           }
         },
-        "source_gap_misses": {},
-        "suspected_label_misses": {
-          "EDG-03": [
-            [
-              "atorvastatin",
-              "lisinopril"
-            ]
-          ]
-        }
+        "source_gap_misses": 1,
+        "suspected_label_misses": 0
       }
     },
     "llm_mode_with_key": null,
     "llm_mode_without_key": {
       "summary": {
-        "failing": [],
+        "failing": 0,
         "overall": {
           "cases": 48,
           "completion": 1.0,
@@ -529,15 +512,8 @@
             "route": 1.0
           }
         },
-        "source_gap_misses": {},
-        "suspected_label_misses": {
-          "EDG-03": [
-            [
-              "atorvastatin",
-              "lisinopril"
-            ]
-          ]
-        }
+        "source_gap_misses": 1,
+        "suspected_label_misses": 0
       }
     }
   }

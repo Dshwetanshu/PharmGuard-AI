@@ -84,3 +84,40 @@ def test_insulin_is_ambiguous_but_a_specific_insulin_resolves(public_graph):
 def test_inn_names_from_ddinter_reach_the_report(public_graph):
     s = public_graph.run(["albuterol", "propranolol"])      # DDInter says "Salbutamol"
     assert "[DDInter:DDI-" in s["report"] and s["final_validation"]["passed"]
+
+
+def test_public_build_has_all_14_ddinter_atc_files():
+    prov = json.loads((_processed("public") / "provenance.json").read_text())
+    names = sorted(f["name"] for f in prov["sources"]["ddinter"]["files"])
+    assert names == [f"ddinter_downloads_code_{c}.csv" for c in "ABCDGHJLMNPRSV"]
+
+
+@pytest.mark.parametrize("pair", [("lisinopril", "spironolactone"), ("aspirin", "warfarin"),
+                                  ("hydrochlorothiazide", "lithium")])
+def test_well_known_curated_pairs_are_present(public_graph, pair):
+    s = public_graph.run(list(pair))
+    assert s["retrieval"]["interactions"], pair
+    assert "curated severity:" in s["report"] and s["final_validation"]["passed"]
+
+
+def test_research_report_separates_signals_and_counts_hidden_ones():
+    from src.graph import PharmGuardGraph, Settings
+    g = PharmGuardGraph(Settings(data_dir=_processed("research").parent, mode="deterministic"))
+    s = g.run(["warfarin", "aspirin", "simvastatin", "clarithromycin"])
+    report = s["report"]
+    assert "## Statistical reporting signals (not graded for clinical severity)" in report
+    assert s["final_validation"]["passed"], s["final_validation"]["findings"]
+    for x in s["retrieval"]["interactions"]:
+        signals = [r for r in x["records"] if r["source"] == "TWOSIDES"]
+        assert len(signals) <= 3
+    hidden = s["retrieval"]["hidden_signals"]
+    for h in hidden:
+        assert f"+{h['count']} more not shown" in report
+
+
+def test_attribution_notices_follow_the_build():
+    from src.data.attribution import notices_for_dir
+    pub = [n.key for n in notices_for_dir(_processed("public"))]
+    res = [n.key for n in notices_for_dir(_processed("research"))]
+    assert "twosides" not in pub and "twosides" in res
+    assert {"ddinter", "sider", "rxnorm", "openfda", "noncommercial"} <= set(pub)

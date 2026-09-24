@@ -1,0 +1,53 @@
+{
+  "data": {
+    "profile": "research",
+    "data": "Data: research build from RxNorm Current Prescribable 2026-09-08, DDInter 2.0, SIDER 4.1, TWOSIDES (research only; not for redistribution); 634,582 interaction records; not synthetic.",
+    "provenance_sha256": "070bf71c28c706bbf53cc4e260e4f62591dd3ed396565d817a743ef755b8a2b3"
+  },
+  "internal_consistency": {
+    "note": "internal consistency: ground truth uses the same normalizer and table as retrieval, so recall/precision are 1.0 by construction",
+    "num_cases": 48,
+    "mean_recall": 1.0,
+    "mean_precision": 1.0
+  },
+  "hand_labels": {
+    "num_cases": 48,
+    "labelled_pairs": 38,
+    "retrieved_pairs": 231,
+    "hits": 37,
+    "recall": 0.974,
+    "precision_lower_bound": 0.16,
+    "source_gaps": 1,
+    "pipeline_misses": 0,
+    "pipeline_recall": 1.0
+  },
+  "report_checks": {
+    "orchestration": "langgraph",
+    "template": {
+      "reports": 48,
+      "clinical_claims": 902,
+      "fabricated_claims": 0,
+      "uncited_claims": 0,
+      "citations": 902,
+      "valid_citations": 902,
+      "pairs_with_records": 231,
+      "omitted_pairs": 0,
+      "major_pairs": 35,
+      "omitted_major_pairs": 0,
+      "no_data_pairs": 0,
+      "declared_no_data_pairs": 0,
+      "semantic_hallucination_rate": 0.0,
+      "uncited_claim_rate": 0.0,
+      "citation_validity": 1.0,
+      "pair_omission_rate": 0.0,
+      "major_omission_rate": 0.0,
+      "completeness": null
+    },
+    "llm": null,
+    "llm_fallback_rate": null,
+    "llm_runs": null,
+    "llm_model": null,
+    "llm_skipped_reason": "--skip-llm"
+  },
+  "aggregate_only": true
+}

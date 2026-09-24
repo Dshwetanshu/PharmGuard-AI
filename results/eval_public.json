@@ -1,0 +1,4771 @@
+{
+  "data": {
+    "profile": "public",
+    "data": "Data: public build from RxNorm Current Prescribable 2026-09-08, DDInter 2.0, SIDER 4.1; 169,534 interaction records; not synthetic.",
+    "provenance_sha256": "cb876eb26160eaaba912cf42aa278f75bc47a2696116f0f07387ab4f9dcc3277"
+  },
+  "internal_consistency": {
+    "note": "internal consistency: ground truth uses the same normalizer and table as retrieval, so recall/precision are 1.0 by construction",
+    "num_cases": 48,
+    "mean_recall": 1.0,
+    "mean_precision": 1.0,
+    "cases": [
+      {
+        "case_id": "GER-01",
+        "num_drugs": 7,
+        "num_pairs": 21,
+        "ground_truth_pairs": 21,
+        "retrieved_pairs": 21,
+        "true_positives": 21,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "GER-02",
+        "num_drugs": 6,
+        "num_pairs": 15,
+        "ground_truth_pairs": 15,
+        "retrieved_pairs": 15,
+        "true_positives": 15,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "GER-03",
+        "num_drugs": 6,
+        "num_pairs": 15,
+        "ground_truth_pairs": 15,
+        "retrieved_pairs": 15,
+        "true_positives": 15,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "GER-04",
+        "num_drugs": 5,
+        "num_pairs": 10,
+        "ground_truth_pairs": 10,
+        "retrieved_pairs": 10,
+        "true_positives": 10,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "TXT-01",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "TXT-02",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "TXT-03",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "TXT-04",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "TXT-05",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "TXT-06",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "TXT-07",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "TXT-08",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "TXT-09",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "TXT-10",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "EDG-01",
+        "num_drugs": 1,
+        "num_pairs": 0,
+        "ground_truth_pairs": 0,
+        "retrieved_pairs": 0,
+        "true_positives": 0,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "EDG-02",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "EDG-03",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "EDG-04",
+        "num_drugs": 3,
+        "num_pairs": 3,
+        "ground_truth_pairs": 3,
+        "retrieved_pairs": 3,
+        "true_positives": 3,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "EDG-05",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "EDG-06",
+        "num_drugs": 1,
+        "num_pairs": 0,
+        "ground_truth_pairs": 0,
+        "retrieved_pairs": 0,
+        "true_positives": 0,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 1,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "EDG-07",
+        "num_drugs": 12,
+        "num_pairs": 66,
+        "ground_truth_pairs": 66,
+        "retrieved_pairs": 66,
+        "true_positives": 66,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "MH-01",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "MH-02",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "MH-03",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "MH-04",
+        "num_drugs": 3,
+        "num_pairs": 3,
+        "ground_truth_pairs": 3,
+        "retrieved_pairs": 3,
+        "true_positives": 3,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "MH-05",
+        "num_drugs": 3,
+        "num_pairs": 3,
+        "ground_truth_pairs": 3,
+        "retrieved_pairs": 3,
+        "true_positives": 3,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "CV-01",
+        "num_drugs": 4,
+        "num_pairs": 6,
+        "ground_truth_pairs": 6,
+        "retrieved_pairs": 6,
+        "true_positives": 6,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "CV-02",
+        "num_drugs": 3,
+        "num_pairs": 3,
+        "ground_truth_pairs": 3,
+        "retrieved_pairs": 3,
+        "true_positives": 3,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "CV-03",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "CV-04",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "CV-05",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "END-01",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "END-02",
+        "num_drugs": 1,
+        "num_pairs": 0,
+        "ground_truth_pairs": 0,
+        "retrieved_pairs": 0,
+        "true_positives": 0,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 1,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "END-03",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "ID-01",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "ID-02",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "ID-03",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "ID-04",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "ONC-01",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "ONC-02",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "PAIN-01",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "PAIN-02",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "PAIN-03",
+        "num_drugs": 4,
+        "num_pairs": 6,
+        "ground_truth_pairs": 6,
+        "retrieved_pairs": 6,
+        "true_positives": 6,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "RSP-01",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "RSP-02",
+        "num_drugs": 3,
+        "num_pairs": 3,
+        "ground_truth_pairs": 3,
+        "retrieved_pairs": 3,
+        "true_positives": 3,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "GI-01",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "GI-02",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "REAL-01",
+        "num_drugs": 10,
+        "num_pairs": 45,
+        "ground_truth_pairs": 45,
+        "retrieved_pairs": 45,
+        "true_positives": 45,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      }
+    ]
+  },
+  "hand_labels": {
+    "num_cases": 48,
+    "labelled_pairs": 38,
+    "retrieved_pairs": 231,
+    "hits": 37,
+    "recall": 0.974,
+    "precision_lower_bound": 0.16,
+    "missed": [
+      [
+        "END-02",
+        [
+          "insulin",
+          "metoprolol"
+        ]
+      ]
+    ],
+    "source_gaps": 1,
+    "pipeline_misses": 0,
+    "missed_source_gap": [
+      [
+        "END-02",
+        [
+          "insulin",
+          "metoprolol"
+        ]
+      ]
+    ],
+    "missed_pipeline": [],
+    "pipeline_recall": 1.0,
+    "unlabelled_retrieved": [
+      [
+        "GER-01",
+        [
+          "aspirin",
+          "atorvastatin"
+        ]
+      ],
+      [
+        "GER-01",
+        [
+          "aspirin",
+          "lisinopril"
+        ]
+      ],
+      [
+        "GER-01",
+        [
+          "aspirin",
+          "metformin"
+        ]
+      ],
+      [
+        "GER-01",
+        [
+          "aspirin",
+          "sertraline"
+        ]
+      ],
+      [
+        "GER-01",
+        [
+          "aspirin",
+          "spironolactone"
+        ]
+      ],
+      [
+        "GER-01",
+        [
+          "atorvastatin",
+          "lisinopril"
+        ]
+      ],
+      [
+        "GER-01",
+        [
+          "atorvastatin",
+          "metformin"
+        ]
+      ],
+      [
+        "GER-01",
+        [
+          "atorvastatin",
+          "omeprazole"
+        ]
+      ],
+      [
+        "GER-01",
+        [
+          "atorvastatin",
+          "sertraline"
+        ]
+      ],
+      [
+        "GER-01",
+        [
+          "atorvastatin",
+          "spironolactone"
+        ]
+      ],
+      [
+        "GER-01",
+        [
+          "lisinopril",
+          "metformin"
+        ]
+      ],
+      [
+        "GER-01",
+        [
+          "lisinopril",
+          "omeprazole"
+        ]
+      ],
+      [
+        "GER-01",
+        [
+          "lisinopril",
+          "sertraline"
+        ]
+      ],
+      [
+        "GER-01",
+        [
+          "metformin",
+          "omeprazole"
+        ]
+      ],
+      [
+        "GER-01",
+        [
+          "metformin",
+          "sertraline"
+        ]
+      ],
+      [
+        "GER-01",
+        [
+          "metformin",
+          "spironolactone"
+        ]
+      ],
+      [
+        "GER-01",
+        [
+          "omeprazole",
+          "sertraline"
+        ]
+      ],
+      [
+        "GER-01",
+        [
+          "omeprazole",
+          "spironolactone"
+        ]
+      ],
+      [
+        "GER-01",
+        [
+          "sertraline",
+          "spironolactone"
+        ]
+      ],
+      [
+        "GER-02",
+        [
+          "aspirin",
+          "atorvastatin"
+        ]
+      ],
+      [
+        "GER-02",
+        [
+          "aspirin",
+          "ibuprofen"
+        ]
+      ],
+      [
+        "GER-02",
+        [
+          "aspirin",
+          "levothyroxine"
+        ]
+      ],
+      [
+        "GER-02",
+        [
+          "aspirin",
+          "lisinopril"
+        ]
+      ],
+      [
+        "GER-02",
+        [
+          "aspirin",
+          "metformin"
+        ]
+      ],
+      [
+        "GER-02",
+        [
+          "atorvastatin",
+          "ibuprofen"
+        ]
+      ],
+      [
+        "GER-02",
+        [
+          "atorvastatin",
+          "levothyroxine"
+        ]
+      ],
+      [
+        "GER-02",
+        [
+          "atorvastatin",
+          "lisinopril"
+        ]
+      ],
+      [
+        "GER-02",
+        [
+          "atorvastatin",
+          "metformin"
+        ]
+      ],
+      [
+        "GER-02",
+        [
+          "ibuprofen",
+          "levothyroxine"
+        ]
+      ],
+      [
+        "GER-02",
+        [
+          "ibuprofen",
+          "metformin"
+        ]
+      ],
+      [
+        "GER-02",
+        [
+          "levothyroxine",
+          "lisinopril"
+        ]
+      ],
+      [
+        "GER-02",
+        [
+          "levothyroxine",
+          "metformin"
+        ]
+      ],
+      [
+        "GER-02",
+        [
+          "lisinopril",
+          "metformin"
+        ]
+      ],
+      [
+        "GER-03",
+        [
+          "aspirin",
+          "atorvastatin"
+        ]
+      ],
+      [
+        "GER-03",
+        [
+          "aspirin",
+          "clopidogrel"
+        ]
+      ],
+      [
+        "GER-03",
+        [
+          "aspirin",
+          "lisinopril"
+        ]
+      ],
+      [
+        "GER-03",
+        [
+          "aspirin",
+          "metoprolol"
+        ]
+      ],
+      [
+        "GER-03",
+        [
+          "aspirin",
+          "omeprazole"
+        ]
+      ],
+      [
+        "GER-03",
+        [
+          "atorvastatin",
+          "clopidogrel"
+        ]
+      ],
+      [
+        "GER-03",
+        [
+          "atorvastatin",
+          "lisinopril"
+        ]
+      ],
+      [
+        "GER-03",
+        [
+          "atorvastatin",
+          "metoprolol"
+        ]
+      ],
+      [
+        "GER-03",
+        [
+          "atorvastatin",
+          "omeprazole"
+        ]
+      ],
+      [
+        "GER-03",
+        [
+          "clopidogrel",
+          "lisinopril"
+        ]
+      ],
+      [
+        "GER-03",
+        [
+          "clopidogrel",
+          "metoprolol"
+        ]
+      ],
+      [
+        "GER-03",
+        [
+          "lisinopril",
+          "metoprolol"
+        ]
+      ],
+      [
+        "GER-03",
+        [
+          "lisinopril",
+          "omeprazole"
+        ]
+      ],
+      [
+        "GER-03",
+        [
+          "metoprolol",
+          "omeprazole"
+        ]
+      ],
+      [
+        "GER-04",
+        [
+          "amiodarone",
+          "atorvastatin"
+        ]
+      ],
+      [
+        "GER-04",
+        [
+          "amiodarone",
+          "lisinopril"
+        ]
+      ],
+      [
+        "GER-04",
+        [
+          "atorvastatin",
+          "digoxin"
+        ]
+      ],
+      [
+        "GER-04",
+        [
+          "atorvastatin",
+          "lisinopril"
+        ]
+      ],
+      [
+        "GER-04",
+        [
+          "atorvastatin",
+          "warfarin"
+        ]
+      ],
+      [
+        "GER-04",
+        [
+          "digoxin",
+          "lisinopril"
+        ]
+      ],
+      [
+        "GER-04",
+        [
+          "digoxin",
+          "warfarin"
+        ]
+      ],
+      [
+        "GER-04",
+        [
+          "lisinopril",
+          "warfarin"
+        ]
+      ],
+      [
+        "EDG-02",
+        [
+          "acetaminophen",
+          "levothyroxine"
+        ]
+      ],
+      [
+        "EDG-04",
+        [
+          "aspirin",
+          "lisinopril"
+        ]
+      ],
+      [
+        "EDG-04",
+        [
+          "aspirin",
+          "metformin"
+        ]
+      ],
+      [
+        "EDG-04",
+        [
+          "lisinopril",
+          "metformin"
+        ]
+      ],
+      [
+        "EDG-05",
+        [
+          "lisinopril",
+          "metformin"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "amlodipine",
+          "aspirin"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "amlodipine",
+          "atorvastatin"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "amlodipine",
+          "digoxin"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "amlodipine",
+          "ibuprofen"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "amlodipine",
+          "levothyroxine"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "amlodipine",
+          "lisinopril"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "amlodipine",
+          "metformin"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "amlodipine",
+          "omeprazole"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "amlodipine",
+          "sertraline"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "amlodipine",
+          "simvastatin"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "amlodipine",
+          "warfarin"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "aspirin",
+          "atorvastatin"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "aspirin",
+          "digoxin"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "aspirin",
+          "ibuprofen"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "aspirin",
+          "levothyroxine"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "aspirin",
+          "lisinopril"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "aspirin",
+          "metformin"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "aspirin",
+          "omeprazole"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "aspirin",
+          "sertraline"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "aspirin",
+          "simvastatin"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "aspirin",
+          "warfarin"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "atorvastatin",
+          "digoxin"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "atorvastatin",
+          "ibuprofen"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "atorvastatin",
+          "levothyroxine"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "atorvastatin",
+          "lisinopril"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "atorvastatin",
+          "metformin"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "atorvastatin",
+          "omeprazole"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "atorvastatin",
+          "sertraline"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "atorvastatin",
+          "simvastatin"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "atorvastatin",
+          "warfarin"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "digoxin",
+          "ibuprofen"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "digoxin",
+          "levothyroxine"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "digoxin",
+          "lisinopril"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "digoxin",
+          "metformin"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "digoxin",
+          "omeprazole"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "digoxin",
+          "sertraline"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "digoxin",
+          "simvastatin"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "digoxin",
+          "warfarin"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "ibuprofen",
+          "levothyroxine"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "ibuprofen",
+          "lisinopril"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "ibuprofen",
+          "metformin"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "ibuprofen",
+          "omeprazole"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "ibuprofen",
+          "sertraline"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "ibuprofen",
+          "simvastatin"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "ibuprofen",
+          "warfarin"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "levothyroxine",
+          "lisinopril"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "levothyroxine",
+          "metformin"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "levothyroxine",
+          "omeprazole"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "levothyroxine",
+          "sertraline"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "levothyroxine",
+          "simvastatin"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "levothyroxine",
+          "warfarin"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "lisinopril",
+          "metformin"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "lisinopril",
+          "omeprazole"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "lisinopril",
+          "sertraline"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "lisinopril",
+          "simvastatin"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "lisinopril",
+          "warfarin"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "metformin",
+          "omeprazole"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "metformin",
+          "sertraline"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "metformin",
+          "simvastatin"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "metformin",
+          "warfarin"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "omeprazole",
+          "sertraline"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "omeprazole",
+          "simvastatin"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "omeprazole",
+          "warfarin"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "sertraline",
+          "simvastatin"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "sertraline",
+          "warfarin"
+        ]
+      ],
+      [
+        "EDG-07",
+        [
+          "simvastatin",
+          "warfarin"
+        ]
+      ],
+      [
+        "MH-03",
+        [
+          "haloperidol",
+          "quetiapine"
+        ]
+      ],
+      [
+        "MH-04",
+        [
+          "alprazolam",
+          "trazodone"
+        ]
+      ],
+      [
+        "MH-04",
+        [
+          "alprazolam",
+          "zolpidem"
+        ]
+      ],
+      [
+        "MH-04",
+        [
+          "trazodone",
+          "zolpidem"
+        ]
+      ],
+      [
+        "MH-05",
+        [
+          "lithium",
+          "quetiapine"
+        ]
+      ],
+      [
+        "MH-05",
+        [
+          "lithium",
+          "valproate"
+        ]
+      ],
+      [
+        "MH-05",
+        [
+          "quetiapine",
+          "valproate"
+        ]
+      ],
+      [
+        "CV-01",
+        [
+          "carvedilol",
+          "furosemide"
+        ]
+      ],
+      [
+        "CV-01",
+        [
+          "carvedilol",
+          "lisinopril"
+        ]
+      ],
+      [
+        "CV-01",
+        [
+          "carvedilol",
+          "spironolactone"
+        ]
+      ],
+      [
+        "CV-01",
+        [
+          "furosemide",
+          "lisinopril"
+        ]
+      ],
+      [
+        "CV-01",
+        [
+          "furosemide",
+          "spironolactone"
+        ]
+      ],
+      [
+        "CV-02",
+        [
+          "aspirin",
+          "atorvastatin"
+        ]
+      ],
+      [
+        "CV-02",
+        [
+          "aspirin",
+          "clopidogrel"
+        ]
+      ],
+      [
+        "CV-02",
+        [
+          "atorvastatin",
+          "clopidogrel"
+        ]
+      ],
+      [
+        "END-01",
+        [
+          "levothyroxine",
+          "metformin"
+        ]
+      ],
+      [
+        "END-03",
+        [
+          "metformin",
+          "prednisone"
+        ]
+      ],
+      [
+        "PAIN-03",
+        [
+          "acetaminophen",
+          "duloxetine"
+        ]
+      ],
+      [
+        "PAIN-03",
+        [
+          "acetaminophen",
+          "gabapentin"
+        ]
+      ],
+      [
+        "PAIN-03",
+        [
+          "acetaminophen",
+          "oxycodone"
+        ]
+      ],
+      [
+        "PAIN-03",
+        [
+          "duloxetine",
+          "gabapentin"
+        ]
+      ],
+      [
+        "PAIN-03",
+        [
+          "duloxetine",
+          "oxycodone"
+        ]
+      ],
+      [
+        "PAIN-03",
+        [
+          "gabapentin",
+          "oxycodone"
+        ]
+      ],
+      [
+        "RSP-02",
+        [
+          "albuterol",
+          "ciprofloxacin"
+        ]
+      ],
+      [
+        "RSP-02",
+        [
+          "albuterol",
+          "theophylline"
+        ]
+      ],
+      [
+        "GI-02",
+        [
+          "calcium carbonate",
+          "ferrous sulfate"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "amlodipine",
+          "aspirin"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "amlodipine",
+          "atorvastatin"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "amlodipine",
+          "furosemide"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "amlodipine",
+          "levothyroxine"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "amlodipine",
+          "lisinopril"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "amlodipine",
+          "metformin"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "amlodipine",
+          "omeprazole"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "amlodipine",
+          "sertraline"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "amlodipine",
+          "warfarin"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "aspirin",
+          "atorvastatin"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "aspirin",
+          "furosemide"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "aspirin",
+          "levothyroxine"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "aspirin",
+          "lisinopril"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "aspirin",
+          "metformin"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "aspirin",
+          "omeprazole"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "atorvastatin",
+          "furosemide"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "atorvastatin",
+          "levothyroxine"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "atorvastatin",
+          "lisinopril"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "atorvastatin",
+          "metformin"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "atorvastatin",
+          "omeprazole"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "atorvastatin",
+          "sertraline"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "atorvastatin",
+          "warfarin"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "furosemide",
+          "levothyroxine"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "furosemide",
+          "lisinopril"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "furosemide",
+          "metformin"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "furosemide",
+          "omeprazole"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "furosemide",
+          "sertraline"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "furosemide",
+          "warfarin"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "levothyroxine",
+          "lisinopril"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "levothyroxine",
+          "metformin"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "levothyroxine",
+          "omeprazole"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "levothyroxine",
+          "sertraline"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "levothyroxine",
+          "warfarin"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "lisinopril",
+          "metformin"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "lisinopril",
+          "omeprazole"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "lisinopril",
+          "sertraline"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "lisinopril",
+          "warfarin"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "metformin",
+          "omeprazole"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "metformin",
+          "sertraline"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "metformin",
+          "warfarin"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "omeprazole",
+          "sertraline"
+        ]
+      ],
+      [
+        "REAL-01",
+        [
+          "omeprazole",
+          "warfarin"
+        ]
+      ]
+    ],
+    "cases": [
+      {
+        "case_id": "GER-01",
+        "labelled": [
+          [
+            "aspirin",
+            "omeprazole"
+          ],
+          [
+            "lisinopril",
+            "spironolactone"
+          ]
+        ],
+        "retrieved": [
+          [
+            "aspirin",
+            "atorvastatin"
+          ],
+          [
+            "aspirin",
+            "lisinopril"
+          ],
+          [
+            "aspirin",
+            "metformin"
+          ],
+          [
+            "aspirin",
+            "omeprazole"
+          ],
+          [
+            "aspirin",
+            "sertraline"
+          ],
+          [
+            "aspirin",
+            "spironolactone"
+          ],
+          [
+            "atorvastatin",
+            "lisinopril"
+          ],
+          [
+            "atorvastatin",
+            "metformin"
+          ],
+          [
+            "atorvastatin",
+            "omeprazole"
+          ],
+          [
+            "atorvastatin",
+            "sertraline"
+          ],
+          [
+            "atorvastatin",
+            "spironolactone"
+          ],
+          [
+            "lisinopril",
+            "metformin"
+          ],
+          [
+            "lisinopril",
+            "omeprazole"
+          ],
+          [
+            "lisinopril",
+            "sertraline"
+          ],
+          [
+            "lisinopril",
+            "spironolactone"
+          ],
+          [
+            "metformin",
+            "omeprazole"
+          ],
+          [
+            "metformin",
+            "sertraline"
+          ],
+          [
+            "metformin",
+            "spironolactone"
+          ],
+          [
+            "omeprazole",
+            "sertraline"
+          ],
+          [
+            "omeprazole",
+            "spironolactone"
+          ],
+          [
+            "sertraline",
+            "spironolactone"
+          ]
+        ],
+        "hits": [
+          [
+            "aspirin",
+            "omeprazole"
+          ],
+          [
+            "lisinopril",
+            "spironolactone"
+          ]
+        ],
+        "missed": [],
+        "unlabelled_retrieved": [
+          [
+            "aspirin",
+            "atorvastatin"
+          ],
+          [
+            "aspirin",
+            "lisinopril"
+          ],
+          [
+            "aspirin",
+            "metformin"
+          ],
+          [
+            "aspirin",
+            "sertraline"
+          ],
+          [
+            "aspirin",
+            "spironolactone"
+          ],
+          [
+            "atorvastatin",
+            "lisinopril"
+          ],
+          [
+            "atorvastatin",
+            "metformin"
+          ],
+          [
+            "atorvastatin",
+            "omeprazole"
+          ],
+          [
+            "atorvastatin",
+            "sertraline"
+          ],
+          [
+            "atorvastatin",
+            "spironolactone"
+          ],
+          [
+            "lisinopril",
+            "metformin"
+          ],
+          [
+            "lisinopril",
+            "omeprazole"
+          ],
+          [
+            "lisinopril",
+            "sertraline"
+          ],
+          [
+            "metformin",
+            "omeprazole"
+          ],
+          [
+            "metformin",
+            "sertraline"
+          ],
+          [
+            "metformin",
+            "spironolactone"
+          ],
+          [
+            "omeprazole",
+            "sertraline"
+          ],
+          [
+            "omeprazole",
+            "spironolactone"
+          ],
+          [
+            "sertraline",
+            "spironolactone"
+          ]
+        ]
+      },
+      {
+        "case_id": "GER-02",
+        "labelled": [
+          [
+            "ibuprofen",
+            "lisinopril"
+          ]
+        ],
+        "retrieved": [
+          [
+            "aspirin",
+            "atorvastatin"
+          ],
+          [
+            "aspirin",
+            "ibuprofen"
+          ],
+          [
+            "aspirin",
+            "levothyroxine"
+          ],
+          [
+            "aspirin",
+            "lisinopril"
+          ],
+          [
+            "aspirin",
+            "metformin"
+          ],
+          [
+            "atorvastatin",
+            "ibuprofen"
+          ],
+          [
+            "atorvastatin",
+            "levothyroxine"
+          ],
+          [
+            "atorvastatin",
+            "lisinopril"
+          ],
+          [
+            "atorvastatin",
+            "metformin"
+          ],
+          [
+            "ibuprofen",
+            "levothyroxine"
+          ],
+          [
+            "ibuprofen",
+            "lisinopril"
+          ],
+          [
+            "ibuprofen",
+            "metformin"
+          ],
+          [
+            "levothyroxine",
+            "lisinopril"
+          ],
+          [
+            "levothyroxine",
+            "metformin"
+          ],
+          [
+            "lisinopril",
+            "metformin"
+          ]
+        ],
+        "hits": [
+          [
+            "ibuprofen",
+            "lisinopril"
+          ]
+        ],
+        "missed": [],
+        "unlabelled_retrieved": [
+          [
+            "aspirin",
+            "atorvastatin"
+          ],
+          [
+            "aspirin",
+            "ibuprofen"
+          ],
+          [
+            "aspirin",
+            "levothyroxine"
+          ],
+          [
+            "aspirin",
+            "lisinopril"
+          ],
+          [
+            "aspirin",
+            "metformin"
+          ],
+          [
+            "atorvastatin",
+            "ibuprofen"
+          ],
+          [
+            "atorvastatin",
+            "levothyroxine"
+          ],
+          [
+            "atorvastatin",
+            "lisinopril"
+          ],
+          [
+            "atorvastatin",
+            "metformin"
+          ],
+          [
+            "ibuprofen",
+            "levothyroxine"
+          ],
+          [
+            "ibuprofen",
+            "metformin"
+          ],
+          [
+            "levothyroxine",
+            "lisinopril"
+          ],
+          [
+            "levothyroxine",
+            "metformin"
+          ],
+          [
+            "lisinopril",
+            "metformin"
+          ]
+        ]
+      },
+      {
+        "case_id": "GER-03",
+        "labelled": [
+          [
+            "clopidogrel",
+            "omeprazole"
+          ]
+        ],
+        "retrieved": [
+          [
+            "aspirin",
+            "atorvastatin"
+          ],
+          [
+            "aspirin",
+            "clopidogrel"
+          ],
+          [
+            "aspirin",
+            "lisinopril"
+          ],
+          [
+            "aspirin",
+            "metoprolol"
+          ],
+          [
+            "aspirin",
+            "omeprazole"
+          ],
+          [
+            "atorvastatin",
+            "clopidogrel"
+          ],
+          [
+            "atorvastatin",
+            "lisinopril"
+          ],
+          [
+            "atorvastatin",
+            "metoprolol"
+          ],
+          [
+            "atorvastatin",
+            "omeprazole"
+          ],
+          [
+            "clopidogrel",
+            "lisinopril"
+          ],
+          [
+            "clopidogrel",
+            "metoprolol"
+          ],
+          [
+            "clopidogrel",
+            "omeprazole"
+          ],
+          [
+            "lisinopril",
+            "metoprolol"
+          ],
+          [
+            "lisinopril",
+            "omeprazole"
+          ],
+          [
+            "metoprolol",
+            "omeprazole"
+          ]
+        ],
+        "hits": [
+          [
+            "clopidogrel",
+            "omeprazole"
+          ]
+        ],
+        "missed": [],
+        "unlabelled_retrieved": [
+          [
+            "aspirin",
+            "atorvastatin"
+          ],
+          [
+            "aspirin",
+            "clopidogrel"
+          ],
+          [
+            "aspirin",
+            "lisinopril"
+          ],
+          [
+            "aspirin",
+            "metoprolol"
+          ],
+          [
+            "aspirin",
+            "omeprazole"
+          ],
+          [
+            "atorvastatin",
+            "clopidogrel"
+          ],
+          [
+            "atorvastatin",
+            "lisinopril"
+          ],
+          [
+            "atorvastatin",
+            "metoprolol"
+          ],
+          [
+            "atorvastatin",
+            "omeprazole"
+          ],
+          [
+            "clopidogrel",
+            "lisinopril"
+          ],
+          [
+            "clopidogrel",
+            "metoprolol"
+          ],
+          [
+            "lisinopril",
+            "metoprolol"
+          ],
+          [
+            "lisinopril",
+            "omeprazole"
+          ],
+          [
+            "metoprolol",
+            "omeprazole"
+          ]
+        ]
+      },
+      {
+        "case_id": "GER-04",
+        "labelled": [
+          [
+            "amiodarone",
+            "digoxin"
+          ],
+          [
+            "amiodarone",
+            "warfarin"
+          ]
+        ],
+        "retrieved": [
+          [
+            "amiodarone",
+            "atorvastatin"
+          ],
+          [
+            "amiodarone",
+            "digoxin"
+          ],
+          [
+            "amiodarone",
+            "lisinopril"
+          ],
+          [
+            "amiodarone",
+            "warfarin"
+          ],
+          [
+            "atorvastatin",
+            "digoxin"
+          ],
+          [
+            "atorvastatin",
+            "lisinopril"
+          ],
+          [
+            "atorvastatin",
+            "warfarin"
+          ],
+          [
+            "digoxin",
+            "lisinopril"
+          ],
+          [
+            "digoxin",
+            "warfarin"
+          ],
+          [
+            "lisinopril",
+            "warfarin"
+          ]
+        ],
+        "hits": [
+          [
+            "amiodarone",
+            "digoxin"
+          ],
+          [
+            "amiodarone",
+            "warfarin"
+          ]
+        ],
+        "missed": [],
+        "unlabelled_retrieved": [
+          [
+            "amiodarone",
+            "atorvastatin"
+          ],
+          [
+            "amiodarone",
+            "lisinopril"
+          ],
+          [
+            "atorvastatin",
+            "digoxin"
+          ],
+          [
+            "atorvastatin",
+            "lisinopril"
+          ],
+          [
+            "atorvastatin",
+            "warfarin"
+          ],
+          [
+            "digoxin",
+            "lisinopril"
+          ],
+          [
+            "digoxin",
+            "warfarin"
+          ],
+          [
+            "lisinopril",
+            "warfarin"
+          ]
+        ]
+      },
+      {
+        "case_id": "TXT-01",
+        "labelled": [
+          [
+            "ibuprofen",
+            "warfarin"
+          ]
+        ],
+        "retrieved": [
+          [
+            "ibuprofen",
+            "warfarin"
+          ]
+        ],
+        "hits": [
+          [
+            "ibuprofen",
+            "warfarin"
+          ]
+        ],
+        "missed": [],
+        "unlabelled_retrieved": []
+      },
+      {
+        "case_id": "TXT-02",
+        "labelled": [
+          [
+            "phenelzine",
+            "sertraline"
+          ]
+        ],
+        "retrieved": [
+          [
+            "phenelzine",
+            "sertraline"
+          ]
+        ],
+        "hits": [
+          [
+            "phenelzine",
+            "sertraline"
+          ]
+        ],
+        "missed": [],
+        "unlabelled_retrieved": []
+      },
+      {
+        "case_id": "TXT-03",
+        "labelled": [
+          [
+            "clarithromycin",
+            "simvastatin"
+          ]
+        ],
+        "retrieved": [
+          [
+            "clarithromycin",
+            "simvastatin"
+          ]
+        ],
+        "hits": [
+          [
+            "clarithromycin",
+            "simvastatin"
+          ]
+        ],
+        "missed": [],
+        "unlabelled_retrieved": []
+      },
+      {
+        "case_id": "TXT-04",
+        "labelled": [
+          [
+            "lisinopril",
+            "spironolactone"
+          ]
+        ],
+        "retrieved": [
+          [
+            "lisinopril",
+            "spironolactone"
+          ]
+        ],
+        "hits": [
+          [
+            "lisinopril",
+            "spironolactone"
+          ]
+        ],
+        "missed": [],
+        "unlabelled_retrieved": []
+      },
+      {
+        "case_id": "TXT-05",
+        "labelled": [
+          [
+            "amiodarone",
+            "ciprofloxacin"
+          ]
+        ],
+        "retrieved": [
+          [
+            "amiodarone",
+            "ciprofloxacin"
+          ]
+        ],
+        "hits": [
+          [
+            "amiodarone",
+            "ciprofloxacin"
+          ]
+        ],
+        "missed": [],
+        "unlabelled_retrieved": []
+      },
+      {
+        "case_id": "TXT-06",
+        "labelled": [
+          [
+            "alprazolam",
+            "oxycodone"
+          ]
+        ],
+        "retrieved": [
+          [
+            "alprazolam",
+            "oxycodone"
+          ]
+        ],
+        "hits": [
+          [
+            "alprazolam",
+            "oxycodone"
+          ]
+        ],
+        "missed": [],
+        "unlabelled_retrieved": []
+      },
+      {
+        "case_id": "TXT-07",
+        "labelled": [
+          [
+            "sertraline",
+            "tramadol"
+          ]
+        ],
+        "retrieved": [
+          [
+            "sertraline",
+            "tramadol"
+          ]
+        ],
+        "hits": [
+          [
+            "sertraline",
+            "tramadol"
+          ]
+        ],
+        "missed": [],
+        "unlabelled_retrieved": []
+      },
+      {
+        "case_id": "TXT-08",
+        "labelled": [
+          [
+            "digoxin",
+            "furosemide"
+          ]
+        ],
+        "retrieved": [
+          [
+            "digoxin",
+            "furosemide"
+          ]
+        ],
+        "hits": [
+          [
+            "digoxin",
+            "furosemide"
+          ]
+        ],
+        "missed": [],
+        "unlabelled_retrieved": []
+      },
+      {
+        "case_id": "TXT-09",
+        "labelled": [
+          [
+            "ibuprofen",
+            "methotrexate"
+          ]
+        ],
+        "retrieved": [
+          [
+            "ibuprofen",
+            "methotrexate"
+          ]
+        ],
+        "hits": [
+          [
+            "ibuprofen",
+            "methotrexate"
+          ]
+        ],
+        "missed": [],
+        "unlabelled_retrieved": []
+      },
+      {
+        "case_id": "TXT-10",
+        "labelled": [
+          [
+            "ciprofloxacin",
+            "theophylline"
+          ]
+        ],
+        "retrieved": [
+          [
+            "ciprofloxacin",
+            "theophylline"
+          ]
+        ],
+        "hits": [
+          [
+            "ciprofloxacin",
+            "theophylline"
+          ]
+        ],
+        "missed": [],
+        "unlabelled_retrieved": []
+      },
+      {
+        "case_id": "EDG-01",
+        "labelled": [],
+        "retrieved": [],
+        "hits": [],
+        "missed": [],
+        "unlabelled_retrieved": []
+      },
+      {
+        "case_id": "EDG-02",
+        "labelled": [],
+        "retrieved": [
+          [
+            "acetaminophen",
+            "levothyroxine"
+          ]
+        ],
+        "hits": [],
+        "missed": [],
+        "unlabelled_retrieved": [
+          [
+            "acetaminophen",
+            "levothyroxine"
+          ]
+        ]
+      },
+      {
+        "case_id": "EDG-03",
+        "labelled": [
+          [
+            "atorvastatin",
+            "lisinopril"
+          ]
+        ],
+        "retrieved": [
+          [
+            "atorvastatin",
+            "lisinopril"
+          ]
+        ],
+        "hits": [
+          [
+            "atorvastatin",
+            "lisinopril"
+          ]
+        ],
+        "missed": [],
+        "unlabelled_retrieved": []
+      },
+      {
+        "case_id": "EDG-04",
+        "labelled": [],
+        "retrieved": [
+          [
+            "aspirin",
+            "lisinopril"
+          ],
+          [
+            "aspirin",
+            "metformin"
+          ],
+          [
+            "lisinopril",
+            "metformin"
+          ]
+        ],
+        "hits": [],
+        "missed": [],
+        "unlabelled_retrieved": [
+          [
+            "aspirin",
+            "lisinopril"
+          ],
+          [
+            "aspirin",
+            "metformin"
+          ],
+          [
+            "lisinopril",
+            "metformin"
+          ]
+        ]
+      },
+      {
+        "case_id": "EDG-05",
+        "labelled": [],
+        "retrieved": [
+          [
+            "lisinopril",
+            "metformin"
+          ]
+        ],
+        "hits": [],
+        "missed": [],
+        "unlabelled_retrieved": [
+          [
+            "lisinopril",
+            "metformin"
+          ]
+        ]
+      },
+      {
+        "case_id": "EDG-06",
+        "labelled": [],
+        "retrieved": [],
+        "hits": [],
+        "missed": [],
+        "unlabelled_retrieved": []
+      },
+      {
+        "case_id": "EDG-07",
+        "labelled": [],
+        "retrieved": [
+          [
+            "amlodipine",
+            "aspirin"
+          ],
+          [
+            "amlodipine",
+            "atorvastatin"
+          ],
+          [
+            "amlodipine",
+            "digoxin"
+          ],
+          [
+            "amlodipine",
+            "ibuprofen"
+          ],
+          [
+            "amlodipine",
+            "levothyroxine"
+          ],
+          [
+            "amlodipine",
+            "lisinopril"
+          ],
+          [
+            "amlodipine",
+            "metformin"
+          ],
+          [
+            "amlodipine",
+            "omeprazole"
+          ],
+          [
+            "amlodipine",
+            "sertraline"
+          ],
+          [
+            "amlodipine",
+            "simvastatin"
+          ],
+          [
+            "amlodipine",
+            "warfarin"
+          ],
+          [
+            "aspirin",
+            "atorvastatin"
+          ],
+          [
+            "aspirin",
+            "digoxin"
+          ],
+          [
+            "aspirin",
+            "ibuprofen"
+          ],
+          [
+            "aspirin",
+            "levothyroxine"
+          ],
+          [
+            "aspirin",
+            "lisinopril"
+          ],
+          [
+            "aspirin",
+            "metformin"
+          ],
+          [
+            "aspirin",
+            "omeprazole"
+          ],
+          [
+            "aspirin",
+            "sertraline"
+          ],
+          [
+            "aspirin",
+            "simvastatin"
+          ],
+          [
+            "aspirin",
+            "warfarin"
+          ],
+          [
+            "atorvastatin",
+            "digoxin"
+          ],
+          [
+            "atorvastatin",
+            "ibuprofen"
+          ],
+          [
+            "atorvastatin",
+            "levothyroxine"
+          ],
+          [
+            "atorvastatin",
+            "lisinopril"
+          ],
+          [
+            "atorvastatin",
+            "metformin"
+          ],
+          [
+            "atorvastatin",
+            "omeprazole"
+          ],
+          [
+            "atorvastatin",
+            "sertraline"
+          ],
+          [
+            "atorvastatin",
+            "simvastatin"
+          ],
+          [
+            "atorvastatin",
+            "warfarin"
+          ],
+          [
+            "digoxin",
+            "ibuprofen"
+          ],
+          [
+            "digoxin",
+            "levothyroxine"
+          ],
+          [
+            "digoxin",
+            "lisinopril"
+          ],
+          [
+            "digoxin",
+            "metformin"
+          ],
+          [
+            "digoxin",
+            "omeprazole"
+          ],
+          [
+            "digoxin",
+            "sertraline"
+          ],
+          [
+            "digoxin",
+            "simvastatin"
+          ],
+          [
+            "digoxin",
+            "warfarin"
+          ],
+          [
+            "ibuprofen",
+            "levothyroxine"
+          ],
+          [
+            "ibuprofen",
+            "lisinopril"
+          ],
+          [
+            "ibuprofen",
+            "metformin"
+          ],
+          [
+            "ibuprofen",
+            "omeprazole"
+          ],
+          [
+            "ibuprofen",
+            "sertraline"
+          ],
+          [
+            "ibuprofen",
+            "simvastatin"
+          ],
+          [
+            "ibuprofen",
+            "warfarin"
+          ],
+          [
+            "levothyroxine",
+            "lisinopril"
+          ],
+          [
+            "levothyroxine",
+            "metformin"
+          ],
+          [
+            "levothyroxine",
+            "omeprazole"
+          ],
+          [
+            "levothyroxine",
+            "sertraline"
+          ],
+          [
+            "levothyroxine",
+            "simvastatin"
+          ],
+          [
+            "levothyroxine",
+            "warfarin"
+          ],
+          [
+            "lisinopril",
+            "metformin"
+          ],
+          [
+            "lisinopril",
+            "omeprazole"
+          ],
+          [
+            "lisinopril",
+            "sertraline"
+          ],
+          [
+            "lisinopril",
+            "simvastatin"
+          ],
+          [
+            "lisinopril",
+            "warfarin"
+          ],
+          [
+            "metformin",
+            "omeprazole"
+          ],
+          [
+            "metformin",
+            "sertraline"
+          ],
+          [
+            "metformin",
+            "simvastatin"
+          ],
+          [
+            "metformin",
+            "warfarin"
+          ],
+          [
+            "omeprazole",
+            "sertraline"
+          ],
+          [
+            "omeprazole",
+            "simvastatin"
+          ],
+          [
+            "omeprazole",
+            "warfarin"
+          ],
+          [
+            "sertraline",
+            "simvastatin"
+          ],
+          [
+            "sertraline",
+            "warfarin"
+          ],
+          [
+            "simvastatin",
+            "warfarin"
+          ]
+        ],
+        "hits": [],
+        "missed": [],
+        "unlabelled_retrieved": [
+          [
+            "amlodipine",
+            "aspirin"
+          ],
+          [
+            "amlodipine",
+            "atorvastatin"
+          ],
+          [
+            "amlodipine",
+            "digoxin"
+          ],
+          [
+            "amlodipine",
+            "ibuprofen"
+          ],
+          [
+            "amlodipine",
+            "levothyroxine"
+          ],
+          [
+            "amlodipine",
+            "lisinopril"
+          ],
+          [
+            "amlodipine",
+            "metformin"
+          ],
+          [
+            "amlodipine",
+            "omeprazole"
+          ],
+          [
+            "amlodipine",
+            "sertraline"
+          ],
+          [
+            "amlodipine",
+            "simvastatin"
+          ],
+          [
+            "amlodipine",
+            "warfarin"
+          ],
+          [
+            "aspirin",
+            "atorvastatin"
+          ],
+          [
+            "aspirin",
+            "digoxin"
+          ],
+          [
+            "aspirin",
+            "ibuprofen"
+          ],
+          [
+            "aspirin",
+            "levothyroxine"
+          ],
+          [
+            "aspirin",
+            "lisinopril"
+          ],
+          [
+            "aspirin",
+            "metformin"
+          ],
+          [
+            "aspirin",
+            "omeprazole"
+          ],
+          [
+            "aspirin",
+            "sertraline"
+          ],
+          [
+            "aspirin",
+            "simvastatin"
+          ],
+          [
+            "aspirin",
+            "warfarin"
+          ],
+          [
+            "atorvastatin",
+            "digoxin"
+          ],
+          [
+            "atorvastatin",
+            "ibuprofen"
+          ],
+          [
+            "atorvastatin",
+            "levothyroxine"
+          ],
+          [
+            "atorvastatin",
+            "lisinopril"
+          ],
+          [
+            "atorvastatin",
+            "metformin"
+          ],
+          [
+            "atorvastatin",
+            "omeprazole"
+          ],
+          [
+            "atorvastatin",
+            "sertraline"
+          ],
+          [
+            "atorvastatin",
+            "simvastatin"
+          ],
+          [
+            "atorvastatin",
+            "warfarin"
+          ],
+          [
+            "digoxin",
+            "ibuprofen"
+          ],
+          [
+            "digoxin",
+            "levothyroxine"
+          ],
+          [
+            "digoxin",
+            "lisinopril"
+          ],
+          [
+            "digoxin",
+            "metformin"
+          ],
+          [
+            "digoxin",
+            "omeprazole"
+          ],
+          [
+            "digoxin",
+            "sertraline"
+          ],
+          [
+            "digoxin",
+            "simvastatin"
+          ],
+          [
+            "digoxin",
+            "warfarin"
+          ],
+          [
+            "ibuprofen",
+            "levothyroxine"
+          ],
+          [
+            "ibuprofen",
+            "lisinopril"
+          ],
+          [
+            "ibuprofen",
+            "metformin"
+          ],
+          [
+            "ibuprofen",
+            "omeprazole"
+          ],
+          [
+            "ibuprofen",
+            "sertraline"
+          ],
+          [
+            "ibuprofen",
+            "simvastatin"
+          ],
+          [
+            "ibuprofen",
+            "warfarin"
+          ],
+          [
+            "levothyroxine",
+            "lisinopril"
+          ],
+          [
+            "levothyroxine",
+            "metformin"
+          ],
+          [
+            "levothyroxine",
+            "omeprazole"
+          ],
+          [
+            "levothyroxine",
+            "sertraline"
+          ],
+          [
+            "levothyroxine",
+            "simvastatin"
+          ],
+          [
+            "levothyroxine",
+            "warfarin"
+          ],
+          [
+            "lisinopril",
+            "metformin"
+          ],
+          [
+            "lisinopril",
+            "omeprazole"
+          ],
+          [
+            "lisinopril",
+            "sertraline"
+          ],
+          [
+            "lisinopril",
+            "simvastatin"
+          ],
+          [
+            "lisinopril",
+            "warfarin"
+          ],
+          [
+            "metformin",
+            "omeprazole"
+          ],
+          [
+            "metformin",
+            "sertraline"
+          ],
+          [
+            "metformin",
+            "simvastatin"
+          ],
+          [
+            "metformin",
+            "warfarin"
+          ],
+          [
+            "omeprazole",
+            "sertraline"
+          ],
+          [
+            "omeprazole",
+            "simvastatin"
+          ],
+          [
+            "omeprazole",
+            "warfarin"
+          ],
+          [
+            "sertraline",
+            "simvastatin"
+          ],
+          [
+            "sertraline",
+            "warfarin"
+          ],
+          [
+            "simvastatin",
+            "warfarin"
+          ]
+        ]
+      },
+      {
+        "case_id": "MH-01",
+        "labelled": [
+          [
+            "ibuprofen",
+            "sertraline"
+          ]
+        ],
+        "retrieved": [
+          [
+            "ibuprofen",
+            "sertraline"
+          ]
+        ],
+        "hits": [
+          [
+            "ibuprofen",
+            "sertraline"
+          ]
+        ],
+        "missed": [],
+        "unlabelled_retrieved": []
+      },
+      {
+        "case_id": "MH-02",
+        "labelled": [
+          [
+            "hydrochlorothiazide",
+            "lithium"
+          ]
+        ],
+        "retrieved": [
+          [
+            "hydrochlorothiazide",
+            "lithium"
+          ]
+        ],
+        "hits": [
+          [
+            "hydrochlorothiazide",
+            "lithium"
+          ]
+        ],
+        "missed": [],
+        "unlabelled_retrieved": []
+      },
+      {
+        "case_id": "MH-03",
+        "labelled": [],
+        "retrieved": [
+          [
+            "haloperidol",
+            "quetiapine"
+          ]
+        ],
+        "hits": [],
+        "missed": [],
+        "unlabelled_retrieved": [
+          [
+            "haloperidol",
+            "quetiapine"
+          ]
+        ]
+      },
+      {
+        "case_id": "MH-04",
+        "labelled": [],
+        "retrieved": [
+          [
+            "alprazolam",
+            "trazodone"
+          ],
+          [
+            "alprazolam",
+            "zolpidem"
+          ],
+          [
+            "trazodone",
+            "zolpidem"
+          ]
+        ],
+        "hits": [],
+        "missed": [],
+        "unlabelled_retrieved": [
+          [
+            "alprazolam",
+            "trazodone"
+          ],
+          [
+            "alprazolam",
+            "zolpidem"
+          ],
+          [
+            "trazodone",
+            "zolpidem"
+          ]
+        ]
+      },
+      {
+        "case_id": "MH-05",
+        "labelled": [],
+        "retrieved": [
+          [
+            "lithium",
+            "quetiapine"
+          ],
+          [
+            "lithium",
+            "valproate"
+          ],
+          [
+            "quetiapine",
+            "valproate"
+          ]
+        ],
+        "hits": [],
+        "missed": [],
+        "unlabelled_retrieved": [
+          [
+            "lithium",
+            "quetiapine"
+          ],
+          [
+            "lithium",
+            "valproate"
+          ],
+          [
+            "quetiapine",
+            "valproate"
+          ]
+        ]
+      },
+      {
+        "case_id": "CV-01",
+        "labelled": [
+          [
+            "lisinopril",
+            "spironolactone"
+          ]
+        ],
+        "retrieved": [
+          [
+            "carvedilol",
+            "furosemide"
+          ],
+          [
+            "carvedilol",
+            "lisinopril"
+          ],
+          [
+            "carvedilol",
+            "spironolactone"
+          ],
+          [
+            "furosemide",
+            "lisinopril"
+          ],
+          [
+            "furosemide",
+            "spironolactone"
+          ],
+          [
+            "lisinopril",
+            "spironolactone"
+          ]
+        ],
+        "hits": [
+          [
+            "lisinopril",
+            "spironolactone"
+          ]
+        ],
+        "missed": [],
+        "unlabelled_retrieved": [
+          [
+            "carvedilol",
+            "furosemide"
+          ],
+          [
+            "carvedilol",
+            "lisinopril"
+          ],
+          [
+            "carvedilol",
+            "spironolactone"
+          ],
+          [
+            "furosemide",
+            "lisinopril"
+          ],
+          [
+            "furosemide",
+            "spironolactone"
+          ]
+        ]
+      },
+      {
+        "case_id": "CV-02",
+        "labelled": [],
+        "retrieved": [
+          [
+            "aspirin",
+            "atorvastatin"
+          ],
+          [
+            "aspirin",
+            "clopidogrel"
+          ],
+          [
+            "atorvastatin",
+            "clopidogrel"
+          ]
+        ],
+        "hits": [],
+        "missed": [],
+        "unlabelled_retrieved": [
+          [
+            "aspirin",
+            "atorvastatin"
+          ],
+          [
+            "aspirin",
+            "clopidogrel"
+          ],
+          [
+            "atorvastatin",
+            "clopidogrel"
+          ]
+        ]
+      },
+      {
+        "case_id": "CV-03",
+        "labelled": [
+          [
+            "trimethoprim",
+            "warfarin"
+          ]
+        ],
+        "retrieved": [
+          [
+            "trimethoprim",
+            "warfarin"
+          ]
+        ],
+        "hits": [
+          [
+            "trimethoprim",
+            "warfarin"
+          ]
+        ],
+        "missed": [],
+        "unlabelled_retrieved": []
+      },
+      {
+        "case_id": "CV-04",
+        "labelled": [
+          [
+            "metoprolol",
+            "verapamil"
+          ]
+        ],
+        "retrieved": [
+          [
+            "metoprolol",
+            "verapamil"
+          ]
+        ],
+        "hits": [
+          [
+            "metoprolol",
+            "verapamil"
+          ]
+        ],
+        "missed": [],
+        "unlabelled_retrieved": []
+      },
+      {
+        "case_id": "CV-05",
+        "labelled": [
+          [
+            "atorvastatin",
+            "gemfibrozil"
+          ]
+        ],
+        "retrieved": [
+          [
+            "atorvastatin",
+            "gemfibrozil"
+          ]
+        ],
+        "hits": [
+          [
+            "atorvastatin",
+            "gemfibrozil"
+          ]
+        ],
+        "missed": [],
+        "unlabelled_retrieved": []
+      },
+      {
+        "case_id": "END-01",
+        "labelled": [],
+        "retrieved": [
+          [
+            "levothyroxine",
+            "metformin"
+          ]
+        ],
+        "hits": [],
+        "missed": [],
+        "unlabelled_retrieved": [
+          [
+            "levothyroxine",
+            "metformin"
+          ]
+        ]
+      },
+      {
+        "case_id": "END-02",
+        "labelled": [
+          [
+            "insulin",
+            "metoprolol"
+          ]
+        ],
+        "retrieved": [],
+        "hits": [],
+        "missed": [
+          [
+            "insulin",
+            "metoprolol"
+          ]
+        ],
+        "unlabelled_retrieved": []
+      },
+      {
+        "case_id": "END-03",
+        "labelled": [],
+        "retrieved": [
+          [
+            "metformin",
+            "prednisone"
+          ]
+        ],
+        "hits": [],
+        "missed": [],
+        "unlabelled_retrieved": [
+          [
+            "metformin",
+            "prednisone"
+          ]
+        ]
+      },
+      {
+        "case_id": "ID-01",
+        "labelled": [
+          [
+            "azithromycin",
+            "sotalol"
+          ]
+        ],
+        "retrieved": [
+          [
+            "azithromycin",
+            "sotalol"
+          ]
+        ],
+        "hits": [
+          [
+            "azithromycin",
+            "sotalol"
+          ]
+        ],
+        "missed": [],
+        "unlabelled_retrieved": []
+      },
+      {
+        "case_id": "ID-02",
+        "labelled": [
+          [
+            "calcium carbonate",
+            "ciprofloxacin"
+          ]
+        ],
+        "retrieved": [
+          [
+            "calcium carbonate",
+            "ciprofloxacin"
+          ]
+        ],
+        "hits": [
+          [
+            "calcium carbonate",
+            "ciprofloxacin"
+          ]
+        ],
+        "missed": [],
+        "unlabelled_retrieved": []
+      },
+      {
+        "case_id": "ID-03",
+        "labelled": [
+          [
+            "ethinyl estradiol",
+            "rifampin"
+          ]
+        ],
+        "retrieved": [
+          [
+            "ethinyl estradiol",
+            "rifampin"
+          ]
+        ],
+        "hits": [
+          [
+            "ethinyl estradiol",
+            "rifampin"
+          ]
+        ],
+        "missed": [],
+        "unlabelled_retrieved": []
+      },
+      {
+        "case_id": "ID-04",
+        "labelled": [
+          [
+            "ritonavir",
+            "simvastatin"
+          ]
+        ],
+        "retrieved": [
+          [
+            "ritonavir",
+            "simvastatin"
+          ]
+        ],
+        "hits": [
+          [
+            "ritonavir",
+            "simvastatin"
+          ]
+        ],
+        "missed": [],
+        "unlabelled_retrieved": []
+      },
+      {
+        "case_id": "ONC-01",
+        "labelled": [
+          [
+            "methotrexate",
+            "omeprazole"
+          ]
+        ],
+        "retrieved": [
+          [
+            "methotrexate",
+            "omeprazole"
+          ]
+        ],
+        "hits": [
+          [
+            "methotrexate",
+            "omeprazole"
+          ]
+        ],
+        "missed": [],
+        "unlabelled_retrieved": []
+      },
+      {
+        "case_id": "ONC-02",
+        "labelled": [
+          [
+            "paroxetine",
+            "tamoxifen"
+          ]
+        ],
+        "retrieved": [
+          [
+            "paroxetine",
+            "tamoxifen"
+          ]
+        ],
+        "hits": [
+          [
+            "paroxetine",
+            "tamoxifen"
+          ]
+        ],
+        "missed": [],
+        "unlabelled_retrieved": []
+      },
+      {
+        "case_id": "PAIN-01",
+        "labelled": [
+          [
+            "alprazolam",
+            "oxycodone"
+          ]
+        ],
+        "retrieved": [
+          [
+            "alprazolam",
+            "oxycodone"
+          ]
+        ],
+        "hits": [
+          [
+            "alprazolam",
+            "oxycodone"
+          ]
+        ],
+        "missed": [],
+        "unlabelled_retrieved": []
+      },
+      {
+        "case_id": "PAIN-02",
+        "labelled": [
+          [
+            "fluoxetine",
+            "tramadol"
+          ]
+        ],
+        "retrieved": [
+          [
+            "fluoxetine",
+            "tramadol"
+          ]
+        ],
+        "hits": [
+          [
+            "fluoxetine",
+            "tramadol"
+          ]
+        ],
+        "missed": [],
+        "unlabelled_retrieved": []
+      },
+      {
+        "case_id": "PAIN-03",
+        "labelled": [],
+        "retrieved": [
+          [
+            "acetaminophen",
+            "duloxetine"
+          ],
+          [
+            "acetaminophen",
+            "gabapentin"
+          ],
+          [
+            "acetaminophen",
+            "oxycodone"
+          ],
+          [
+            "duloxetine",
+            "gabapentin"
+          ],
+          [
+            "duloxetine",
+            "oxycodone"
+          ],
+          [
+            "gabapentin",
+            "oxycodone"
+          ]
+        ],
+        "hits": [],
+        "missed": [],
+        "unlabelled_retrieved": [
+          [
+            "acetaminophen",
+            "duloxetine"
+          ],
+          [
+            "acetaminophen",
+            "gabapentin"
+          ],
+          [
+            "acetaminophen",
+            "oxycodone"
+          ],
+          [
+            "duloxetine",
+            "gabapentin"
+          ],
+          [
+            "duloxetine",
+            "oxycodone"
+          ],
+          [
+            "gabapentin",
+            "oxycodone"
+          ]
+        ]
+      },
+      {
+        "case_id": "RSP-01",
+        "labelled": [
+          [
+            "albuterol",
+            "propranolol"
+          ]
+        ],
+        "retrieved": [
+          [
+            "albuterol",
+            "propranolol"
+          ]
+        ],
+        "hits": [
+          [
+            "albuterol",
+            "propranolol"
+          ]
+        ],
+        "missed": [],
+        "unlabelled_retrieved": []
+      },
+      {
+        "case_id": "RSP-02",
+        "labelled": [
+          [
+            "ciprofloxacin",
+            "theophylline"
+          ]
+        ],
+        "retrieved": [
+          [
+            "albuterol",
+            "ciprofloxacin"
+          ],
+          [
+            "albuterol",
+            "theophylline"
+          ],
+          [
+            "ciprofloxacin",
+            "theophylline"
+          ]
+        ],
+        "hits": [
+          [
+            "ciprofloxacin",
+            "theophylline"
+          ]
+        ],
+        "missed": [],
+        "unlabelled_retrieved": [
+          [
+            "albuterol",
+            "ciprofloxacin"
+          ],
+          [
+            "albuterol",
+            "theophylline"
+          ]
+        ]
+      },
+      {
+        "case_id": "GI-01",
+        "labelled": [
+          [
+            "clopidogrel",
+            "omeprazole"
+          ]
+        ],
+        "retrieved": [
+          [
+            "clopidogrel",
+            "omeprazole"
+          ]
+        ],
+        "hits": [
+          [
+            "clopidogrel",
+            "omeprazole"
+          ]
+        ],
+        "missed": [],
+        "unlabelled_retrieved": []
+      },
+      {
+        "case_id": "GI-02",
+        "labelled": [],
+        "retrieved": [
+          [
+            "calcium carbonate",
+            "ferrous sulfate"
+          ]
+        ],
+        "hits": [],
+        "missed": [],
+        "unlabelled_retrieved": [
+          [
+            "calcium carbonate",
+            "ferrous sulfate"
+          ]
+        ]
+      },
+      {
+        "case_id": "REAL-01",
+        "labelled": [
+          [
+            "aspirin",
+            "sertraline"
+          ],
+          [
+            "aspirin",
+            "warfarin"
+          ],
+          [
+            "sertraline",
+            "warfarin"
+          ]
+        ],
+        "retrieved": [
+          [
+            "amlodipine",
+            "aspirin"
+          ],
+          [
+            "amlodipine",
+            "atorvastatin"
+          ],
+          [
+            "amlodipine",
+            "furosemide"
+          ],
+          [
+            "amlodipine",
+            "levothyroxine"
+          ],
+          [
+            "amlodipine",
+            "lisinopril"
+          ],
+          [
+            "amlodipine",
+            "metformin"
+          ],
+          [
+            "amlodipine",
+            "omeprazole"
+          ],
+          [
+            "amlodipine",
+            "sertraline"
+          ],
+          [
+            "amlodipine",
+            "warfarin"
+          ],
+          [
+            "aspirin",
+            "atorvastatin"
+          ],
+          [
+            "aspirin",
+            "furosemide"
+          ],
+          [
+            "aspirin",
+            "levothyroxine"
+          ],
+          [
+            "aspirin",
+            "lisinopril"
+          ],
+          [
+            "aspirin",
+            "metformin"
+          ],
+          [
+            "aspirin",
+            "omeprazole"
+          ],
+          [
+            "aspirin",
+            "sertraline"
+          ],
+          [
+            "aspirin",
+            "warfarin"
+          ],
+          [
+            "atorvastatin",
+            "furosemide"
+          ],
+          [
+            "atorvastatin",
+            "levothyroxine"
+          ],
+          [
+            "atorvastatin",
+            "lisinopril"
+          ],
+          [
+            "atorvastatin",
+            "metformin"
+          ],
+          [
+            "atorvastatin",
+            "omeprazole"
+          ],
+          [
+            "atorvastatin",
+            "sertraline"
+          ],
+          [
+            "atorvastatin",
+            "warfarin"
+          ],
+          [
+            "furosemide",
+            "levothyroxine"
+          ],
+          [
+            "furosemide",
+            "lisinopril"
+          ],
+          [
+            "furosemide",
+            "metformin"
+          ],
+          [
+            "furosemide",
+            "omeprazole"
+          ],
+          [
+            "furosemide",
+            "sertraline"
+          ],
+          [
+            "furosemide",
+            "warfarin"
+          ],
+          [
+            "levothyroxine",
+            "lisinopril"
+          ],
+          [
+            "levothyroxine",
+            "metformin"
+          ],
+          [
+            "levothyroxine",
+            "omeprazole"
+          ],
+          [
+            "levothyroxine",
+            "sertraline"
+          ],
+          [
+            "levothyroxine",
+            "warfarin"
+          ],
+          [
+            "lisinopril",
+            "metformin"
+          ],
+          [
+            "lisinopril",
+            "omeprazole"
+          ],
+          [
+            "lisinopril",
+            "sertraline"
+          ],
+          [
+            "lisinopril",
+            "warfarin"
+          ],
+          [
+            "metformin",
+            "omeprazole"
+          ],
+          [
+            "metformin",
+            "sertraline"
+          ],
+          [
+            "metformin",
+            "warfarin"
+          ],
+          [
+            "omeprazole",
+            "sertraline"
+          ],
+          [
+            "omeprazole",
+            "warfarin"
+          ],
+          [
+            "sertraline",
+            "warfarin"
+          ]
+        ],
+        "hits": [
+          [
+            "aspirin",
+            "sertraline"
+          ],
+          [
+            "aspirin",
+            "warfarin"
+          ],
+          [
+            "sertraline",
+            "warfarin"
+          ]
+        ],
+        "missed": [],
+        "unlabelled_retrieved": [
+          [
+            "amlodipine",
+            "aspirin"
+          ],
+          [
+            "amlodipine",
+            "atorvastatin"
+          ],
+          [
+            "amlodipine",
+            "furosemide"
+          ],
+          [
+            "amlodipine",
+            "levothyroxine"
+          ],
+          [
+            "amlodipine",
+            "lisinopril"
+          ],
+          [
+            "amlodipine",
+            "metformin"
+          ],
+          [
+            "amlodipine",
+            "omeprazole"
+          ],
+          [
+            "amlodipine",
+            "sertraline"
+          ],
+          [
+            "amlodipine",
+            "warfarin"
+          ],
+          [
+            "aspirin",
+            "atorvastatin"
+          ],
+          [
+            "aspirin",
+            "furosemide"
+          ],
+          [
+            "aspirin",
+            "levothyroxine"
+          ],
+          [
+            "aspirin",
+            "lisinopril"
+          ],
+          [
+            "aspirin",
+            "metformin"
+          ],
+          [
+            "aspirin",
+            "omeprazole"
+          ],
+          [
+            "atorvastatin",
+            "furosemide"
+          ],
+          [
+            "atorvastatin",
+            "levothyroxine"
+          ],
+          [
+            "atorvastatin",
+            "lisinopril"
+          ],
+          [
+            "atorvastatin",
+            "metformin"
+          ],
+          [
+            "atorvastatin",
+            "omeprazole"
+          ],
+          [
+            "atorvastatin",
+            "sertraline"
+          ],
+          [
+            "atorvastatin",
+            "warfarin"
+          ],
+          [
+            "furosemide",
+            "levothyroxine"
+          ],
+          [
+            "furosemide",
+            "lisinopril"
+          ],
+          [
+            "furosemide",
+            "metformin"
+          ],
+          [
+            "furosemide",
+            "omeprazole"
+          ],
+          [
+            "furosemide",
+            "sertraline"
+          ],
+          [
+            "furosemide",
+            "warfarin"
+          ],
+          [
+            "levothyroxine",
+            "lisinopril"
+          ],
+          [
+            "levothyroxine",
+            "metformin"
+          ],
+          [
+            "levothyroxine",
+            "omeprazole"
+          ],
+          [
+            "levothyroxine",
+            "sertraline"
+          ],
+          [
+            "levothyroxine",
+            "warfarin"
+          ],
+          [
+            "lisinopril",
+            "metformin"
+          ],
+          [
+            "lisinopril",
+            "omeprazole"
+          ],
+          [
+            "lisinopril",
+            "sertraline"
+          ],
+          [
+            "lisinopril",
+            "warfarin"
+          ],
+          [
+            "metformin",
+            "omeprazole"
+          ],
+          [
+            "metformin",
+            "sertraline"
+          ],
+          [
+            "metformin",
+            "warfarin"
+          ],
+          [
+            "omeprazole",
+            "sertraline"
+          ],
+          [
+            "omeprazole",
+            "warfarin"
+          ]
+        ]
+      }
+    ]
+  },
+  "report_checks": {
+    "orchestration": "langgraph",
+    "template": {
+      "reports": 48,
+      "clinical_claims": 231,
+      "fabricated_claims": 0,
+      "uncited_claims": 0,
+      "citations": 231,
+      "valid_citations": 231,
+      "pairs_with_records": 231,
+      "omitted_pairs": 0,
+      "major_pairs": 35,
+      "omitted_major_pairs": 0,
+      "no_data_pairs": 0,
+      "declared_no_data_pairs": 0,
+      "semantic_hallucination_rate": 0.0,
+      "uncited_claim_rate": 0.0,
+      "citation_validity": 1.0,
+      "pair_omission_rate": 0.0,
+      "major_omission_rate": 0.0,
+      "completeness": null
+    },
+    "llm": null,
+    "llm_fallback_rate": null,
+    "llm_runs": null,
+    "llm_model": null,
+    "llm_skipped_reason": "--skip-llm"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "aggregate_only": true,
+  "data": {
+    "data": "Data: research build from RxNorm Current Prescribable 2026-09-08, DDInter 2.0, SIDER 4.1, TWOSIDES (research only; not for redistribution); 634,582 interaction records; not synthetic.",
+    "data_dir": "data/profiles/research",
+    "profile": "research",
+    "provenance_sha256": "070bf71c28c706bbf53cc4e260e4f62591dd3ed396565d817a743ef755b8a2b3"
+  },
+  "evaluation_cases": {
+    "by_code": {},
+    "clinical_claims_checked": 902,
+    "failing_cases": [],
+    "findings": 0,
+    "reports": 48,
+    "reports_with_findings": 0
+  },
+  "hard_names": {
+    "by_code": {},
+    "clinical_claims_checked": 730,
+    "failing_cases": [],
+    "findings": 0,
+    "names": 44,
+    "reports": 44,
+    "reports_with_findings": 0,
+    "rule": "name has a comma, a parenthesis or > 30 characters; listed with its 3 most-connected interaction partners"
+  },
+  "stress": {
+    "by_code": {},
+    "clinical_claims_checked": 376,
+    "drawn_from": "1,681 drugs with interaction records",
+    "drugs_per_list": 4,
+    "failing_cases": [],
+    "findings": 0,
+    "reports": 200,
+    "reports_with_findings": 0,
+    "seed": 7
+  }
+}

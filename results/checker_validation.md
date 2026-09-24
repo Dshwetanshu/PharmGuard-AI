@@ -14,7 +14,7 @@ The mechanism, event and population checks use hand-written lexicons, so detecti
 
 ## Sensitivity (injected faults on FX- fixtures)
 
-Detection = the expected finding code is raised. These rates show each check works on the fault it targets. They are **not** an estimate of how many real LLM errors are caught: the injected faults use terms from the checker's own lexicons by construction, and the fixtures are small (3 scenarios, 14 records).
+Detection = the expected finding code is raised. These rates show each check works on the fault it targets. They are **not** an estimate of how many real LLM errors are caught: the injected faults use terms from the checker's own lexicons by construction, and the fixtures are small (3 scenarios, 17 records).
 
 | Fault | Expected code | template: detected / injected | prose: detected / injected |
 |---|---|---:|---:|
