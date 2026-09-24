@@ -11,8 +11,10 @@ unsupported statement; an LLM judge is planned as a later layer.
 """
 from __future__ import annotations
 
+import re
 from dataclasses import asdict, dataclass, field
-from typing import Dict, List, Optional, Set
+from functools import lru_cache
+from typing import Dict, List, Optional, Set, Tuple
 
 from src.verification import lexicon
 from src.verification.evidence import Evidence, NormalizedRecord, citation_key, records_for
@@ -60,10 +62,19 @@ def _rate(num: int, den: int) -> Optional[float]:
 
 
 def _mask(text: str, phrases: List[str]) -> str:
+    """Normalized text with every phrase blanked out (longest first)."""
+    rx = _mask_re(tuple(sorted({lexicon.norm(x) for x in phrases if x}, key=lambda p: (-len(p), p))))
     t = lexicon.norm(text)
-    for p in sorted({lexicon.norm(x) for x in phrases if x}, key=len, reverse=True):
-        t = lexicon.phrase_re(p).sub(" ", t)
-    return t
+    return rx.sub(" ", t) if rx else t
+
+
+@lru_cache(maxsize=4096)
+def _mask_re(phrases: Tuple[str, ...]) -> Optional["re.Pattern[str]"]:
+    # One alternation, longest phrase first: the same result as masking phrases one by one
+    # longest-first, compiled once per phrase set instead of once per phrase per claim.
+    if not phrases:
+        return None
+    return re.compile(r"(?<![a-z0-9])(?:" + "|".join(re.escape(p) for p in phrases) + r")(?![a-z0-9])")
 
 
 def _drug_names(ev: Evidence) -> List[str]:

@@ -8,11 +8,13 @@ later, complementary layer; it does not replace these deterministic checks.
 from __future__ import annotations
 
 import re
+from functools import lru_cache
 from typing import Dict, Iterable, List, Optional, Set, Tuple
 
 
+@lru_cache(maxsize=65536)
 def norm(text: str) -> str:
-    """Lowercase and fold British spellings / punctuation variants."""
+    """Lowercase and fold British spellings / punctuation variants (cached: pure)."""
     t = (text or "").lower()
     for a, b in _FOLDS:
         t = a.sub(b, t)
@@ -29,6 +31,7 @@ _FOLDS = [(re.compile(a), b) for a, b in (
 )]
 
 
+@lru_cache(maxsize=65536)
 def phrase_re(phrase: str) -> "re.Pattern[str]":
     """Whole-phrase matcher on normalized text."""
     return re.compile(r"(?<![a-z0-9])" + re.escape(norm(phrase)) + r"(?![a-z0-9])")
@@ -160,10 +163,10 @@ GENERIC_EVENTS = {"interaction", "interactions", "drug interaction", "adverse ev
 def find_events(text: str, extra_phrases: Iterable[str] = ()) -> List[str]:
     """Event phrases in text (lexicon + evidence events), longest match wins."""
     t = norm(text)
-    phrases = {norm(p) for p in _GROUP_OF} | {norm(p) for p in extra_phrases if p}
-    phrases -= GENERIC_EVENTS
     spans = []
-    for p in phrases:
+    for p in _event_phrases(tuple(extra_phrases)):
+        if p not in t:            # cheap substring filter before the boundary-aware regex
+            continue
         for m in phrase_re(p).finditer(t):
             spans.append((m.start(), m.end(), p))
     spans.sort(key=lambda s: (s[0], -(s[1] - s[0])))
@@ -173,6 +176,12 @@ def find_events(text: str, extra_phrases: Iterable[str] = ()) -> List[str]:
             continue
         kept.append(s)
     return [p for _, _, p in kept]
+
+
+@lru_cache(maxsize=1024)
+def _event_phrases(extra_phrases: Tuple[str, ...]) -> Tuple[str, ...]:
+    phrases = {norm(p) for p in _GROUP_OF} | {norm(p) for p in extra_phrases if p}
+    return tuple(sorted(phrases - GENERIC_EVENTS))
 
 
 def event_supported(event: str, support: str) -> bool:
