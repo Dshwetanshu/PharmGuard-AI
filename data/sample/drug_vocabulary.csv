@@ -53,13 +53,15 @@ fluoxetine,fluoxetine,4493,DB00472
 prozac,fluoxetine,4493,DB00472
 paroxetine,paroxetine,32937,DB00715
 paxil,paroxetine,32937,DB00715
-lithium,lithium carbonate,42351,DB01356
+lithium,lithium,6448,DB01356
+lithium carbonate,lithium,6448,DB01356
 hydrochlorothiazide,hydrochlorothiazide,5487,DB00999
 haloperidol,haloperidol,5093,DB00502
 quetiapine,quetiapine,119663,DB01224
 zolpidem,zolpidem,39786,DB00425
 trazodone,trazodone,10737,DB00656
-valproic acid,valproic acid,11118,DB00313
+valproic acid,valproate,40254,DB00313
+valproate,valproate,40254,DB00313
 carvedilol,carvedilol,20352,DB01136
 trimethoprim,trimethoprim,10829,DB00440
 verapamil,verapamil,11170,DB00661

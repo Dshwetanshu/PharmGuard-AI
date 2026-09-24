@@ -60,14 +60,16 @@ def expected_route(case_resolved_unique: int, mode: str, llm_available: bool) ->
 
 
 def score_steps(case: TestCase, state: Dict[str, Any], *, mode: str, llm_available: bool,
-                alias_map: Dict[str, str], disclaimer: str, provenance: str) -> Dict[str, Any]:
+                alias_map: Dict[str, str], disclaimer: str, provenance: str,
+                profile: str = "sample") -> Dict[str, Any]:
     out: Dict[str, Any] = {"case_id": case.case_id, "subset": case.case_id.split("-")[0]}
     reasons: Dict[str, str] = {}
 
     # 1. normalize: every input resolves to its expected drug, or stays unresolved when it should.
     by_input = {_clean_name(r["query"]): r for r in state["resolved"]}
-    expected_res = {_clean_name(k): v for k, v in case.expected_resolved.items()}
-    expected_unres = {_clean_name(q) for q in case.expected_unresolved}
+    exp_resolved, exp_unresolved = case.expectations(profile)
+    expected_res = {_clean_name(k): v for k, v in exp_resolved.items()}
+    expected_unres = {_clean_name(q) for q in exp_unresolved}
     bad = []
     for q in (_clean_name(x) for x in case.input_drugs):
         r = by_input.get(q)
@@ -413,14 +415,15 @@ class Harness:
     settings: Any
     components: Any
     alias_map: Dict[str, str]
+    profile: str = "sample"
     baselines: Dict[str, str] = field(default_factory=dict)
     eligible: Dict[str, bool] = field(default_factory=dict)
     has_no_data: Dict[str, bool] = field(default_factory=dict)
 
     @classmethod
-    def build(cls, settings, components, vocab_df):
+    def build(cls, settings, components, vocab_df, profile: str = "sample"):
         from src.graph import PharmGuardGraph
-        h = cls(PharmGuardGraph, settings, components, build_alias_map(vocab_df))
+        h = cls(PharmGuardGraph, settings, components, build_alias_map(vocab_df), profile)
         det = PharmGuardGraph(replace(settings, mode="deterministic"), components, Tracing())
         for case in TEST_CASES:
             s = det.run(case.input_drugs)
@@ -449,7 +452,7 @@ def run_step_scoring(h: Harness) -> Dict[str, Any]:
             state = g.run(case.input_drugs)
             rows.append(score_steps(case, state, mode=kw["mode"], llm_available=False, alias_map=h.alias_map,
                                     disclaimer=g.components.generator.cfg.disclaimer,
-                                    provenance=g.components.generator.provenance))
+                                    provenance=g.components.generator.provenance, profile=h.profile))
             invariant_runs.append(check_invariants(RunContext(state, h.baselines[case.case_id],
                                                               h.settings.max_llm_attempts, False,
                                                               g.components.generator)))

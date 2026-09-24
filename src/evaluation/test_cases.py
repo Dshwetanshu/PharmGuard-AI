@@ -13,7 +13,7 @@ with realistic, clinically-motivated inputs.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 
 @dataclass
@@ -28,6 +28,21 @@ class TestCase:
     # simply resolve; these pin down the edge cases (input -> expected canonical name).
     expected_resolved: Dict[str, str] = field(default_factory=dict)
     expected_unresolved: List[str] = field(default_factory=list)
+    # Per-profile overrides ("sample", "public", "research"): input -> canonical name,
+    # or None for "must stay unresolved". Used where the synthetic sample and the real
+    # vocabulary legitimately differ (e.g. RxNorm has no plain "insulin").
+    expected_by_profile: Dict[str, Dict[str, Optional[str]]] = field(default_factory=dict)
+
+    def expectations(self, profile: str) -> Tuple[Dict[str, str], List[str]]:
+        """(expected_resolved, expected_unresolved) for a build profile."""
+        resolved, unresolved = dict(self.expected_resolved), list(self.expected_unresolved)
+        for q, g in self.expected_by_profile.get(profile, {}).items():
+            resolved.pop(q, None)
+            if g is None:
+                unresolved.append(q)
+            else:
+                resolved[q] = g
+        return resolved, unresolved
 
 
 # Hand labels suspected to be wrong (flagged for the user's review, NOT changed).
@@ -122,14 +137,14 @@ TEST_CASES: List[TestCase] = [
              ["sertraline", "ibuprofen"], [("sertraline", "ibuprofen")]),
     TestCase("MH-02", "Lithium + thiazide",
              ["lithium", "hydrochlorothiazide"], [("lithium", "hydrochlorothiazide")],
-             expected_resolved={"lithium": "lithium carbonate"}),   # canonical name in the vocabulary
+             expected_resolved={"lithium": "lithium"}),
     TestCase("MH-03", "Antipsychotic combination",
              ["haloperidol", "quetiapine"], []),
     TestCase("MH-04", "Anxiety + sleep combination",
              ["alprazolam", "zolpidem", "trazodone"], []),
     TestCase("MH-05", "Bipolar regimen",
              ["lithium", "valproic acid", "quetiapine"], [],
-             expected_resolved={"lithium": "lithium carbonate", "valproic acid": "valproic acid"}),
+             expected_resolved={"lithium": "lithium", "valproic acid": "valproate"}),
 
     # ---------- Cardiology ----------
     TestCase("CV-01", "Heart failure triple therapy",
@@ -148,7 +163,9 @@ TEST_CASES: List[TestCase] = [
     TestCase("END-01", "Diabetes + thyroid",
              ["metformin", "levothyroxine"], []),
     TestCase("END-02", "Insulin + beta-blocker masking",
-             ["insulin", "metoprolol"], [("insulin", "metoprolol")]),
+             ["insulin", "metoprolol"], [("insulin", "metoprolol")],
+             # Real RxNorm has only specific insulins: "insulin" must stay ambiguous there.
+             expected_by_profile={"public": {"insulin": None}, "research": {"insulin": None}}),
     TestCase("END-03", "Steroid + antidiabetic",
              ["prednisone", "metformin"], []),
 

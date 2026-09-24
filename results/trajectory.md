@@ -62,9 +62,11 @@ Suspected label errors, counted separately (not failures): EDG-03 [['atorvastati
 | EDG-05 | `lisonopril` | resolves to `lisinopril` |
 | EDG-06 | `lisinopril` | resolves to `lisinopril` |
 | EDG-06 | `fictional_drug_xyz` | stays unresolved |
-| MH-02 | `lithium` | resolves to `lithium carbonate` |
-| MH-05 | `lithium` | resolves to `lithium carbonate` |
-| MH-05 | `valproic acid` | resolves to `valproic acid` |
+| MH-02 | `lithium` | resolves to `lithium` |
+| MH-05 | `lithium` | resolves to `lithium` |
+| MH-05 | `valproic acid` | resolves to `valproate` |
+| END-02 | `insulin` | public profile: stays unresolved |
+| END-02 | `insulin` | research profile: stays unresolved |
 
 All other inputs are expected to resolve. Suspected label errors (unchanged, for review): EDG-03 [('atorvastatin', 'lisinopril')]
 
@@ -111,15 +113,15 @@ Path match 100.0% · report_source match 100.0% · recovery within the retry bud
 
 | Node | p50 ms | p95 ms |
 |---|---:|---:|
-| faers | 0.19 | 0.93 |
-| finalize | 1.53 | 25.52 |
+| faers | 0.16 | 0.8 |
+| finalize | 1.52 | 24.93 |
 | generate_llm | 0.03 | 0.09 |
 | normalize | 0.02 | 0.09 |
 | plan | 0.03 | 0.13 |
-| retrieve | 2.88 | 26.38 |
-| template | 0.02 | 0.07 |
-| validate | 1.58 | 25.65 |
-| **end to end** | 9.7 | 60.0 |
+| retrieve | 1.98 | 10.87 |
+| template | 0.02 | 0.05 |
+| validate | 1.56 | 25.07 |
+| **end to end** | 8.8 | 51.8 |
 
 ## Seeded orchestration bugs (validating the evaluation)
 

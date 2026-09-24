@@ -19,16 +19,6 @@ pytestmark = pytest.mark.realdata
 ROOT = Path(__file__).resolve().parent.parent
 PROFILES = ROOT / "data" / "profiles"
 
-# Evaluation inputs whose canonical name in the REAL vocabulary differs from the
-# synthetic sample's expectation (flagged for review; test_cases.py is unchanged).
-REAL_VOCAB_DIFFERENCES = {
-    ("MH-02", "lithium"): ("lithium", "exact"),              # sample: lithium carbonate
-    ("MH-05", "lithium"): ("lithium", "exact"),              # sample: lithium carbonate
-    ("MH-05", "valproic acid"): ("valproate", "exact"),      # RxNorm ingredient is valproate
-    ("END-02", "insulin"): (None, "fuzzy_ambiguous"),        # no plain "insulin" ingredient in RxNorm
-}
-
-
 def _processed(profile):
     p = PROFILES / profile / "processed"
     if not (p / "provenance.json").exists():
@@ -67,19 +57,28 @@ def test_every_evaluation_input_resolves_in_the_real_vocabulary(public_graph):
     n = public_graph.components.normalizer
     wrong = []
     for case in TEST_CASES:
+        resolved, unresolved = case.expectations("public")
         for q in case.input_drugs:
             r = n.resolve(q)
-            key = (case.case_id, " ".join(q.split()).lower())
-            if key in REAL_VOCAB_DIFFERENCES:
-                ok = (r.generic_name, r.method) == REAL_VOCAB_DIFFERENCES[key]
-            elif q in case.expected_unresolved:
+            if q in unresolved:
                 ok = not r.resolved
             else:
-                exp = case.expected_resolved.get(q, " ".join(q.split()).lower())
-                ok = r.resolved and r.generic_name == exp
+                ok = r.resolved and r.generic_name == resolved.get(q, " ".join(q.split()).lower())
             if not ok:
                 wrong.append((case.case_id, q, r.generic_name, r.method))
     assert wrong == []
+
+
+def test_insulin_is_ambiguous_but_a_specific_insulin_resolves(public_graph):
+    n = public_graph.components.normalizer
+    generic = n.resolve("insulin")
+    assert generic.method == "fuzzy_ambiguous" and "enter the specific drug" in generic.note
+    for q, expected in [("insulin glargine", "insulin glargine"), ("Lantus", "insulin glargine"),
+                        ("insulin lispro", "insulin lispro")]:
+        r = n.resolve(q)
+        assert (r.resolved, r.generic_name) == (True, expected), (q, r)
+    s = public_graph.run(["insulin", "metoprolol"])
+    assert "- insulin — ambiguous name; closest matches:" in s["report"]
 
 
 def test_inn_names_from_ddinter_reach_the_report(public_graph):

@@ -73,6 +73,10 @@ def to_markdown(res: dict) -> str:
             L.append(f"| {c.case_id} | `{q}` | resolves to `{g}` |")
         for q in c.expected_unresolved:
             L.append(f"| {c.case_id} | `{q}` | stays unresolved |")
+        for prof, over in c.expected_by_profile.items():
+            for q, g in over.items():
+                L.append(f"| {c.case_id} | `{q}` | {prof} profile: "
+                         + (f"resolves to `{g}` |" if g else "stays unresolved |"))
     L += ["", "All other inputs are expected to resolve. Suspected label errors (unchanged, for review): "
           + ", ".join(f"{k} {v}" for k, v in SUSPECTED_LABEL_ERRORS.items()), ""]
 
