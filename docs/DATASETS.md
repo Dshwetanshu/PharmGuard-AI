@@ -72,6 +72,17 @@ The numbers below come from the builds of 2026-09-23.
   (telithromycin, mesoridazine, sibutramine, rofecoxib, dextropropoxyphene, …), which the
   Current Prescribable subset leaves out, and route-qualified entries such as "doxepin (topical)".
 - **Severity:** Major 27,670 · Moderate 95,217 · Minor 6,081 · not graded 40,566.
+- **Record counts vs the paper** (checked 2026-09-24 against the full text, PMC11701621). The
+  paper reports 302,516 DDI records over 2,310 drugs (2,122 distinct) for DDInter 2.0. It
+  doesn't define a "record" relative to a drug pair and doesn't describe the download files.
+  Its own risk-level table sums to 303,658 (Minor 12,522, Moderate 195,776, Major 52,943,
+  unknown 42,417). The 14 files have 507,655 rows: 272,674 exact duplicates (the same pair
+  listed under more than one ATC group) and 234,981 unique DDInter-ID pairs, with no pair
+  given two levels. They cover 1,971 drugs, with Major 39,082, Moderate 143,748, Minor 9,736
+  and Unknown 42,415. These file counts are close to the paper's figures for **DDInter 1.0**
+  (236,834 records over 1,972 drugs: Major 39,480, Moderate 145,132, Minor 9,805, unknown
+  42,417), not its 2.0 figures. Why the files differ from the 2.0 counts is **unexplained**:
+  the paper doesn't say, and we haven't verified it with the authors.
 
 ### SIDER 4.1 (side effects)
 
