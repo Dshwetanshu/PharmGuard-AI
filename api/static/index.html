@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PharmGuard: drug-interaction check</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<main>
+  <h1>PharmGuard</h1>
+  <p class="lede">Drug-interaction reports from curated sources, with a citation for every finding.
+    Decision support only; not medical advice.</p>
+
+  <form id="check-form" autocomplete="off">
+    <label for="drugs">Medications, 2 to 12: one per line (use this for names that contain commas), or comma-separated on one line</label>
+    <textarea id="drugs" rows="6" placeholder="warfarin&#10;aspirin&#10;simvastatin&#10;clarithromycin"></textarea>
+    <label class="inline"><input type="checkbox" id="faers"> Also query openFDA FAERS for pairs with no curated record (slower; capped)</label>
+    <button type="submit" id="submit">Check interactions</button>
+  </form>
+
+  <p id="status" role="status" aria-live="polite"></p>
+  <section id="result" hidden>
+    <p id="meta" class="meta"></p>
+    <article id="report"></article>
+  </section>
+
+  <footer>
+    <p id="disclaimer" class="disclaimer"></p>
+    <p id="data-line" class="meta"></p>
+    <details id="attribution-box">
+      <summary>Data sources and attribution</summary>
+      <ul id="attribution"></ul>
+    </details>
+    <p class="meta"><a href="/docs">API documentation</a> · <a href="/health">health</a></p>
+  </footer>
+</main>
+<script src="/static/app.js"></script>
+</body>
+</html>
