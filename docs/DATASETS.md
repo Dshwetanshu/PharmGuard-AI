@@ -60,7 +60,11 @@ The numbers below come from the builds of 2026-09-23.
   musculo-skeletal, nervous system, sensory organs) are in the same download directory with
   the same date. An earlier build used only the 8 linked files and missed, for example,
   lisinopril + spironolactone, warfarin + aspirin and lithium + thiazides.
-- **License:** CC BY-NC-SA 4.0 (the NAR article is CC BY-NC; we follow the stricter license).
+- **License:** CC BY-NC-SA 4.0, as stated in the "Data licensing" section of
+  https://ddinter2.scbdd.com/terms/ (checked 2026-09-24). The NAR article itself is CC BY-NC.
+- **Links:** reports don't deep-link DDInter citations. The site's interaction pages use an
+  internal ID that isn't in the bulk files. Its drug pages use an `internalID` whose relation
+  to the files' `DDInterID` isn't documented, and checking would mean fetching those pages.
 - **Columns:** `DDInterID_A, Drug_A, DDInterID_B, Drug_B, Level`. There is **no mechanism or
   event text** in the bulk files: that is web-only, and PharmGuard doesn't scrape it. Reports
   therefore show the curated severity and source, and no mechanism.

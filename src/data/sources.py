@@ -81,7 +81,7 @@ SOURCES: Dict[str, Source] = {
     ),
     "ddinter": Source(
         "ddinter", "DDInter 2.0", "bulk files dated 2024-05-21",
-        "CC BY-NC-SA 4.0 (treated as; NAR article is CC BY-NC)", "https://ddinter2.scbdd.com/download/",
+        "CC BY-NC-SA 4.0 (stated at ddinter2.scbdd.com/terms/)", "https://ddinter2.scbdd.com/download/",
         [SourceFile(f"{DDINTER_BASE}/ddinter_downloads_code_{c}.csv", f"ddinter_downloads_code_{c}.csv",
                     sha256=DDINTER_SHA256.get(c)) for c in DDINTER_ATC_CODES],
     ),
