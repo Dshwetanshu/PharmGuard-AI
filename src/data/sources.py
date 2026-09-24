@@ -41,15 +41,26 @@ class Source:
 
 DDINTER_BASE = "https://ddinter2.scbdd.com/static/media/download"
 SIDER_BASE = "https://sideeffects.embl.de/media/download"
-# sha256 pinned from the verified download of 2026-09-23.
+# One file per ATC top-level group. The download page links only 8 of the 14 (A B D H L P R V);
+# the other 6 (C G J M N S: cardiovascular, genito-urinary, anti-infectives, musculo-skeletal,
+# nervous system, sensory organs) sit in the same directory with the same 2024-05-21 date.
+# Without them, e.g. lisinopril + spironolactone and warfarin + aspirin are missing.
+DDINTER_ATC_CODES = "ABCDGHJLMNPRSV"
+# sha256 pinned from the verified downloads of 2026-09-23.
 DDINTER_SHA256 = {
     "A": "a22ca451d2b755ca2331886f7e00540c86f555f9f55704a59a19c691251f52e0",
     "B": "76de5115a55587f0e822e1096b684fd3ddde058fbefcbb19896df58820ace130",
+    "C": "0885978959af84e183cfc86c8bcb48536f690a4c7e951eff06607a5616883aeb",
     "D": "c0627ec39965dbe27829e4934cd20d71eb079f4e373287678737bba9423a306a",
+    "G": "6a4d8d1eaac6da1ffc54bd23a625f9c5e28e3ca37bd26b3bca4d2cc26505fb99",
     "H": "f0f925f0ba1ee68c4668d3e7a6732719b34623b22a0f5d017f9090e59f63c88e",
+    "J": "e5dbb8e5cb3179905b426ee4a2ee5c93756c38cdd54215a55c5b8255a5b14e04",
     "L": "f54f4486cc00344f8c86508c31c2ca3fad6d1d37ec3af5bcf609b4bbda5507ef",
+    "M": "2a57eb78818803b4662116490023c20c8bbfe145e60c35680a0efb8ac635a0ad",
+    "N": "854733ff382210b030bcece135113f01ca3f6924d3803feca2ff71c1d939c797",
     "P": "83f8c0edb20d09ef29b8500b48f9623e208379525688ade9e70a7df2d8749d55",
     "R": "1c39c3d4a6e41659b7a988538d7f363867592abc6f41a815de8746f6e2150574",
+    "S": "c3888df996d97ebf1346b11a98df0b334cfa3c150a89a31150ffd354eebcbfe5",
     "V": "353973fb300453946aea95733e8fb52338e4b59426d2ce6ca318363d4f84f10a",
 }
 
@@ -72,7 +83,7 @@ SOURCES: Dict[str, Source] = {
         "ddinter", "DDInter 2.0", "bulk files dated 2024-05-21",
         "CC BY-NC-SA 4.0 (treated as; NAR article is CC BY-NC)", "https://ddinter2.scbdd.com/download/",
         [SourceFile(f"{DDINTER_BASE}/ddinter_downloads_code_{c}.csv", f"ddinter_downloads_code_{c}.csv",
-                    sha256=DDINTER_SHA256[c]) for c in "ABDHLPRV"],
+                    sha256=DDINTER_SHA256.get(c)) for c in DDINTER_ATC_CODES],
     ),
     "sider": Source(
         "sider", "SIDER", "4.1",

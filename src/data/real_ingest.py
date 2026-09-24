@@ -111,7 +111,7 @@ def ingest_real(raw_dir: Path, out_dir: Path, profile: str, drugbank_csv: Option
     sources["ddinter"] = {**_unmatched_report("ddinter", names, per_name, processed, len(dd), len(kept)),
                           "self_pairs_after_mapping": int(self_pairs.sum()),
                           "merged_duplicates_after_mapping": before - len(kept),
-                          "filters": {"dedupe": "DDInter ID pair across the 8 ATC files; then canonical pair + level"},
+                          "filters": {"dedupe": "DDInter ID pair across the 14 ATC files; then canonical pair + level"},
                           "mechanism_text": "none in the bulk files"}
     frames.append(kept.assign(reports=None))
     report["timings_s"]["ddinter"] = round(time.perf_counter() - t, 1)
