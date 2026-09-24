@@ -354,14 +354,15 @@ class PharmGuardGraph:
         return PharmGuardGraph(self.settings.with_mode(mode), self.components, self.tracing)
 
     def run(self, drug_names: List[str], tags: Optional[List[str]] = None,
-            metadata: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-        """Validate the input list, run the graph, return the final (JSON-serializable) state."""
+            metadata: Optional[Dict[str, Any]] = None, request_id: Optional[str] = None) -> Dict[str, Any]:
+        """Validate the input list, run the graph, return the final (JSON-serializable) state.
+        A caller (the API) may pass its own request_id so logs and the response share it."""
         if not drug_names:
             raise ValueError("At least one drug must be provided.")
         if len(drug_names) > MAX_DRUGS:
             raise ValueError("MVP supports up to %d drugs. Got %d." % (MAX_DRUGS, len(drug_names)))
         names = clean_drug_names(drug_names)  # raises InvalidDrugNameError
-        request_id = new_request_id()
+        request_id = request_id or new_request_id()
         run_tags = [f"mode:{self.settings.mode}", "pipeline:langgraph", f"llm:{self.components.llm_label}",
                     *(tags or [])]
         run_meta = {"request_id": request_id, "n_drugs": len(names), "mode": self.settings.mode,

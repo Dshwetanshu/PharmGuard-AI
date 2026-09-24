@@ -3,7 +3,7 @@
     "data": "Data: public build from RxNorm Current Prescribable 2026-09-08, DDInter 2.0, SIDER 4.1; 169,534 interaction records; not synthetic.",
     "data_dir": "data/profiles/public",
     "profile": "public",
-    "provenance_sha256": "cb876eb26160eaaba912cf42aa278f75bc47a2696116f0f07387ab4f9dcc3277"
+    "provenance_sha256": "9312529882f37a86552bcf909278f285411a2b7ccdbbec8d0876107c69b5a055"
   },
   "evaluation_cases": {
     "by_code": {},

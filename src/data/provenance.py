@@ -38,6 +38,21 @@ SOURCE_LABELS = {
 }
 
 
+def file_sha256(path: Path) -> str:
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def processed_file_hashes(processed_dir: Path) -> Dict[str, str]:
+    """sha256 of every file in the build except provenance.json itself. Recorded in
+    provenance so a downloaded copy of the build can be verified file by file."""
+    return {p.name: file_sha256(p) for p in sorted(Path(processed_dir).iterdir())
+            if p.is_file() and p.name != PROVENANCE_FILE}
+
+
 def write_real_provenance(processed_dir: Path, profile: str, manifest: Dict, report: Dict) -> Path:
     """Record a real-data build: per source URL, version, license, download date, sha256,
     row counts, filters and unmatched counts, plus the profile and vocabulary stats."""
@@ -65,6 +80,7 @@ def write_real_provenance(processed_dir: Path, profile: str, manifest: Dict, rep
         "sources": sources,
         "source_order": used,
         "not_for_redistribution": profile == "research",
+        "processed_files": processed_file_hashes(processed_dir),
     }
     path = Path(processed_dir) / PROVENANCE_FILE
     path.write_text(json.dumps(data, indent=2, sort_keys=True, default=str) + "\n")

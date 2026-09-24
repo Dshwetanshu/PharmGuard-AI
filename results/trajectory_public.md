@@ -1,6 +1,6 @@
 # Trajectory evaluation (public build)
 
-Regenerate with `python scripts/eval_trajectory.py --fault-suite --seeded-bugs --profile public`. Offline, no API keys, the real **public** build (Data: public build from RxNorm Current Prescribable 2026-09-08, DDInter 2.0, SIDER 4.1; 169,534 interaction records; not synthetic; provenance sha256 `cb876eb26160eaaba912cf42aa278f75bc47a2696116f0f07387ab4f9dcc3277`), 48 cases. LLM mode with a real model: **—** (no API key); LLM behaviour is exercised with scripted fake LLMs.
+Regenerate with `python scripts/eval_trajectory.py --fault-suite --seeded-bugs --profile public`. Offline, no API keys, the real **public** build (Data: public build from RxNorm Current Prescribable 2026-09-08, DDInter 2.0, SIDER 4.1; 169,534 interaction records; not synthetic; provenance sha256 `9312529882f37a86552bcf909278f285411a2b7ccdbbec8d0876107c69b5a055`), 48 cases. LLM mode with a real model: **—** (no API key); LLM behaviour is exercised with scripted fake LLMs.
 
 ## Step scoring: deterministic
 
@@ -80,8 +80,8 @@ All other inputs are expected to resolve. Suspected label errors (unchanged, for
 
 | Scenario | Runs | Expected report_source | Path match | Source match | All invariants | LLM calls/run |
 |---|---:|---|---:|---:|---:|---:|
-| clean | 48 | llm | 100.0% | 100.0% | 100.0% | 0.938 |
 | clean+faers | 48 | llm | 100.0% | 100.0% | 100.0% | 0.938 |
+| clean | 48 | llm | 100.0% | 100.0% | 100.0% | 0.938 |
 | transient_error_once | 48 | llm_retry | 100.0% | 100.0% | 100.0% | 1.875 |
 | transient_error_always | 48 | deterministic_fallback | 100.0% | 100.0% | 100.0% | 1.875 |
 | non_transient_error_once | 48 | deterministic_fallback | 100.0% | 100.0% | 100.0% | 0.938 |
@@ -116,14 +116,14 @@ Path match 100.0% · report_source match 100.0% · recovery within the retry bud
 
 | Node | p50 ms | p95 ms |
 |---|---:|---:|
-| finalize | 0.26 | 2.93 |
-| generate_llm | 0.04 | 0.13 |
+| finalize | 0.27 | 5.35 |
+| generate_llm | 0.04 | 0.17 |
 | normalize | 0.03 | 0.11 |
-| plan | 0.03 | 0.1 |
-| retrieve | 10.77 | 45.35 |
-| template | 0.03 | 1.5 |
-| validate | 0.35 | 3.48 |
-| **end to end** | 14.2 | 56.4 |
+| plan | 0.03 | 0.14 |
+| retrieve | 11.0 | 69.77 |
+| template | 0.03 | 1.52 |
+| validate | 0.38 | 5.92 |
+| **end to end** | 14.5 | 82.2 |
 
 ## Seeded orchestration bugs (validating the evaluation)
 
