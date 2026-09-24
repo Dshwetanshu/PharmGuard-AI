@@ -1,6 +1,6 @@
 # Trajectory evaluation (research build)
 
-Regenerate with `python scripts/eval_trajectory.py --fault-suite --seeded-bugs --profile research`. Offline, no API keys, the real **research** build (Data: research build from RxNorm Current Prescribable 2026-09-08, DDInter 2.0, SIDER 4.1, TWOSIDES (research only; not for redistribution); 634,582 interaction records; not synthetic; provenance sha256 `070bf71c28c706bbf53cc4e260e4f62591dd3ed396565d817a743ef755b8a2b3`), 48 cases. LLM mode with a real model: **—** (no API key); LLM behaviour is exercised with scripted fake LLMs.
+Regenerate with `python scripts/eval_trajectory.py --fault-suite --seeded-bugs --profile research`. Offline, no API keys, the real **research** build (Data: research build from RxNorm Current Prescribable 2026-09-08, DDInter bulk download (ddinter2.scbdd.com, 2024-05-21), SIDER 4.1, TWOSIDES (research only; not for redistribution); 634,582 interaction records; not synthetic; provenance sha256 `45feffc9cecccafcddd405722bbd0ea69775355ed7a33fb4bd0a73e81aeed0a5`), 48 cases. LLM mode with a real model: **—** (no API key); LLM behaviour is exercised with scripted fake LLMs.
 
 ## Step scoring: deterministic
 
@@ -117,14 +117,14 @@ Path match 100.0% · report_source match 100.0% · recovery within the retry bud
 
 | Node | p50 ms | p95 ms |
 |---|---:|---:|
-| finalize | 0.64 | 12.66 |
-| generate_llm | 0.05 | 0.33 |
+| finalize | 0.63 | 12.82 |
+| generate_llm | 0.05 | 0.28 |
 | normalize | 0.03 | 0.1 |
-| plan | 0.03 | 0.1 |
-| retrieve | 10.97 | 49.59 |
-| template | 0.04 | 1.52 |
-| validate | 0.78 | 14.68 |
-| **end to end** | 15.7 | 94.3 |
+| plan | 0.03 | 0.09 |
+| retrieve | 10.8 | 47.94 |
+| template | 0.04 | 1.53 |
+| validate | 0.75 | 14.65 |
+| **end to end** | 15.5 | 91.3 |
 
 ## Seeded orchestration bugs (validating the evaluation)
 

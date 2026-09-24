@@ -1,7 +1,7 @@
 # Report checker false positives: research build
 
 Regenerate with `python scripts/validate_checker.py --profile research`. Offline, no API key.
-Data: research build from RxNorm Current Prescribable 2026-09-08, DDInter 2.0, SIDER 4.1, TWOSIDES (research only; not for redistribution); 634,582 interaction records; not synthetic; provenance.json sha256 `070bf71c28c706bbf53cc4e260e4f62591dd3ed396565d817a743ef755b8a2b3`.
+Data: research build from RxNorm Current Prescribable 2026-09-08, DDInter bulk download (ddinter2.scbdd.com, 2024-05-21), SIDER 4.1, TWOSIDES (research only; not for redistribution); 634,582 interaction records; not synthetic; provenance.json sha256 `45feffc9cecccafcddd405722bbd0ea69775355ed7a33fb4bd0a73e81aeed0a5`.
 
 Template reports on real data; every finding on a clean template report is a false positive (target 0). Sensitivity is measured on the FX- fixtures (results/checker_validation.md).
 

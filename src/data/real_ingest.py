@@ -1,7 +1,7 @@
 """Real-data ingestion: data/raw/ -> data/profiles/<profile>/processed/.
 
 Profiles (src/data/sources.py):
-- "public":   RxNorm Current Prescribable + DrugBank vocabulary (if given) + DDInter 2.0 + SIDER 4.1
+- "public":   RxNorm Current Prescribable + DrugBank vocabulary (if given) + DDInter bulk download + SIDER 4.1
 - "research": public + TWOSIDES (no stated license; local evaluation only, never published)
 
 Every source's drug names are mapped onto the RxNorm canonical vocabulary by exact

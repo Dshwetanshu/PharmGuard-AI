@@ -2,7 +2,7 @@
 
 > If you cannot describe the failure mode that keeps you up at night, you have not thought hard enough about your system.
 
-This doc says how PharmGuard is evaluated, what is actually measured today, and what is not. All numbers below come from running the code in this repository. Each one names its data build: the **synthetic sample** (85 interaction records; what CI checks), the real **public** build (RxNorm Current Prescribable 2026-09-08 + DDInter 2.0 + SIDER 4.1) or the real **research** build (public + TWOSIDES; aggregate numbers only). See docs/DATASETS.md for the builds. Unmeasured values are shown as "—".
+This doc says how PharmGuard is evaluated, what is actually measured today, and what is not. All numbers below come from running the code in this repository. Each one names its data build: the **synthetic sample** (85 interaction records; what CI checks), the real **public** build (RxNorm Current Prescribable 2026-09-08 + the DDInter bulk download + SIDER 4.1) or the real **research** build (public + TWOSIDES; aggregate numbers only). See docs/DATASETS.md for the builds. Unmeasured values are shown as "—".
 
 ## The silent-failure scenario
 

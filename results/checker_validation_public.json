@@ -1,9 +1,9 @@
 {
   "data": {
-    "data": "Data: public build from RxNorm Current Prescribable 2026-09-08, DDInter 2.0, SIDER 4.1; 169,534 interaction records; not synthetic.",
+    "data": "Data: public build from RxNorm Current Prescribable 2026-09-08, DDInter bulk download (ddinter2.scbdd.com, 2024-05-21), SIDER 4.1; 169,534 interaction records; not synthetic.",
     "data_dir": "data/profiles/public",
     "profile": "public",
-    "provenance_sha256": "9312529882f37a86552bcf909278f285411a2b7ccdbbec8d0876107c69b5a055"
+    "provenance_sha256": "d459af5d62bc3110875ab7e30b8ef4a996bae79b2d5353eab0544ff521560d14"
   },
   "evaluation_cases": {
     "by_code": {},

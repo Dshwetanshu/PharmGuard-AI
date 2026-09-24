@@ -37,7 +37,7 @@ This build uses **all 7 datasets** from the proposal:
 | Dataset | Role | Source |
 |---|---|---|
 | **TWOSIDES** (Tatonetti Lab) | Primary drug-drug interaction data | [tatonettilab.org](https://tatonettilab.org/resources/tatonetti-stm.html) |
-| **DDInter 2.0** (Tian et al.) | Secondary interactions with severity labels | [ddinter2.scbdd.com](https://ddinter2.scbdd.com) |
+| **DDInter bulk download** (files dated 2024-05-21; cite Tian et al. 2025 and Xiong et al. 2022) | Curated interactions with severity labels | [ddinter2.scbdd.com](https://ddinter2.scbdd.com) |
 | **OpenFDA FAERS** | Live-query fallback for no-data pairs (opt-in) | [open.fda.gov](https://open.fda.gov/apis/drug/event/) |
 | **DrugBank 5.x** | Drug metadata, mechanisms, ATC codes, synonyms | [drugbank.com](https://go.drugbank.com/releases/latest) |
 | **SIDER** | Side-effect (adverse reaction) knowledge base | [sideeffects.embl.de](http://sideeffects.embl.de/download/) |

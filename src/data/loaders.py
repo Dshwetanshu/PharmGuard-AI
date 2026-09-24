@@ -311,7 +311,9 @@ def load_sider_side_effects(path: Path) -> pd.DataFrame:
 
 
 # ============================================================
-# DDInter 2.0 (Tian et al. 2025) — curated interactions with severity
+# DDInter bulk download from ddinter2.scbdd.com (files dated 2024-05-21) — curated interactions
+# with severity. The file counts match the DDInter 1.0 paper (Xiong et al. 2022), not the 2.0
+# paper (Tian et al. 2025); see docs/DATASETS.md.
 # ============================================================
 # Reference: https://ddinter2.scbdd.com
 # Public release columns (CSV, one file per ATC class merged):
@@ -333,7 +335,7 @@ DDINTER_COLUMN_MAP = {
 
 
 def load_ddinter(paths: Union[Path, Iterable[Path]]) -> pd.DataFrame:
-    """Load DDInter 2.0 bulk CSVs (one per ATC class) into one de-duplicated table.
+    """Load the DDInter bulk CSVs (one per ATC class) into one de-duplicated table.
 
     The 2024-05-21 bulk files have columns DDInterID_A, Drug_A, DDInterID_B,
     Drug_B, Level and NO mechanism text (mechanisms are only on the website).

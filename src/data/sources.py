@@ -6,7 +6,7 @@ Nothing here is data; only where to get it and what it must hash to.
 
 Profiles:
 - "public": RxNorm Current Prescribable, DrugBank vocabulary (when available),
-  DDInter 2.0, SIDER 4.1. Everything it builds may appear in the public demo.
+  the DDInter bulk download, SIDER 4.1. Everything it builds may appear in the public demo.
 - "research": public + TWOSIDES. TWOSIDES has no stated license, so it is for
   local evaluation only and must never enter the Hugging Face bundle, the demo
   or a commit.
@@ -80,7 +80,7 @@ SOURCES: Dict[str, Source] = {
         note="DrugBank has paused all downloads; the loader is ready for a manually obtained CSV.",
     ),
     "ddinter": Source(
-        "ddinter", "DDInter 2.0", "bulk files dated 2024-05-21",
+        "ddinter", "DDInter bulk download (ddinter2.scbdd.com)", "bulk files dated 2024-05-21",
         "CC BY-NC-SA 4.0 (stated at ddinter2.scbdd.com/terms/)", "https://ddinter2.scbdd.com/download/",
         [SourceFile(f"{DDINTER_BASE}/ddinter_downloads_code_{c}.csv", f"ddinter_downloads_code_{c}.csv",
                     sha256=DDINTER_SHA256.get(c)) for c in DDINTER_ATC_CODES],

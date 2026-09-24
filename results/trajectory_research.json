@@ -2,10 +2,10 @@
   "aggregate_only": true,
   "command": "python scripts/eval_trajectory.py --fault-suite --seeded-bugs --profile research",
   "data": {
-    "data": "Data: research build from RxNorm Current Prescribable 2026-09-08, DDInter 2.0, SIDER 4.1, TWOSIDES (research only; not for redistribution); 634,582 interaction records; not synthetic.",
+    "data": "Data: research build from RxNorm Current Prescribable 2026-09-08, DDInter bulk download (ddinter2.scbdd.com, 2024-05-21), SIDER 4.1, TWOSIDES (research only; not for redistribution); 634,582 interaction records; not synthetic.",
     "data_dir": "data/profiles/research",
     "profile": "research",
-    "provenance_sha256": "070bf71c28c706bbf53cc4e260e4f62591dd3ed396565d817a743ef755b8a2b3"
+    "provenance_sha256": "45feffc9cecccafcddd405722bbd0ea69775355ed7a33fb4bd0a73e81aeed0a5"
   },
   "fault_suite": {
     "skipped": {
@@ -37,17 +37,17 @@
       "invariant_runs": 629,
       "latency_label": "orchestration overhead only (fake LLMs, research build, no network)",
       "latency_ms_end_to_end": {
-        "p50": 15.7,
-        "p95": 94.3
+        "p50": 15.5,
+        "p95": 91.3
       },
       "latency_ms_per_node": {
         "finalize": {
-          "p50": 0.64,
-          "p95": 12.66
+          "p50": 0.63,
+          "p95": 12.82
         },
         "generate_llm": {
           "p50": 0.05,
-          "p95": 0.33
+          "p95": 0.28
         },
         "normalize": {
           "p50": 0.03,
@@ -55,19 +55,19 @@
         },
         "plan": {
           "p50": 0.03,
-          "p95": 0.1
+          "p95": 0.09
         },
         "retrieve": {
-          "p50": 10.97,
-          "p95": 49.59
+          "p50": 10.8,
+          "p95": 47.94
         },
         "template": {
           "p50": 0.04,
-          "p95": 1.52
+          "p95": 1.53
         },
         "validate": {
-          "p50": 0.78,
-          "p95": 14.68
+          "p50": 0.75,
+          "p95": 14.65
         }
       },
       "llm_calls_per_case": 1.738,

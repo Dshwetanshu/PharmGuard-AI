@@ -30,7 +30,7 @@ def write_provenance(processed_dir: Path, mode: str, report: dict) -> Path:
 
 
 SOURCE_LABELS = {
-    "ddinter": "DDInter 2.0",
+    "ddinter": "DDInter bulk download (ddinter2.scbdd.com, 2024-05-21)",
     "sider": "SIDER 4.1",
     "rxnorm": "RxNorm Current Prescribable",
     "drugbank": "DrugBank vocabulary",

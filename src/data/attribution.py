@@ -6,7 +6,7 @@ A notice is shown only for a source the build actually loaded (provenance
 "source_order"), except openFDA, which is queried at runtime when the optional
 FAERS lookup is on.
 
-Citations checked against PubMed on 2026-09-23 (PMID 39180399, 26481350).
+Citations checked against PubMed (PMID 39180399 and 26481350 on 2026-09-23, 34634800 on 2026-09-24).
 The RxNorm statement is NLM's required wording for Current Prescribable Content.
 """
 from __future__ import annotations
@@ -26,10 +26,18 @@ class Notice:
     text: str
 
 
-DDINTER_CITATION = (
+DDINTER_LABEL = "DDInter bulk download (ddinter2.scbdd.com, files dated 2024-05-21)"
+# Both papers are cited: the files come from the DDInter 2.0 site, but their counts match the
+# DDInter 1.0 paper's figures (docs/DATASETS.md), so we don't call the data "DDInter 2.0".
+DDINTER2_CITATION = (
     "Tian Y, Yi J, Wang N, Wu C, Peng J, Liu S, Yang G, Cao D. DDInter 2.0: an enhanced drug "
     "interaction resource with expanded data coverage, new interaction types, and improved user "
     "interface. Nucleic Acids Research. 2025;53(D1):D1356-D1362. doi:10.1093/nar/gkae726"
+)
+DDINTER1_CITATION = (
+    "Xiong G, Yang Z, Yi J, Wang N, Wang L, Zhu H, Wu C, Lu A, Chen X, Liu S, Hou T, Cao D. DDInter: an "
+    "online drug-drug interaction database towards improving clinical decision-making and patient "
+    "safety. Nucleic Acids Research. 2022;50(D1):D1200-D1207. doi:10.1093/nar/gkab880"
 )
 SIDER_CITATION = (
     "Kuhn M, Letunic I, Jensen LJ, Bork P. The SIDER database of drugs and side effects. "
@@ -43,7 +51,7 @@ RXNORM_STATEMENT = (
 OPENFDA_CREDIT = "Data provided by the U.S. Food and Drug Administration (https://open.fda.gov)"
 TWOSIDES_NOTICE = "TWOSIDES: research use only, not for redistribution"
 NONCOMMERCIAL_NOTICE = (
-    "This build contains data licensed CC BY-NC-SA 4.0 (DDInter 2.0, SIDER 4.1). Non-commercial use "
+    "This build contains data licensed CC BY-NC-SA 4.0 (DDInter, SIDER 4.1). Non-commercial use "
     "only; anything derived from that data must be shared under the same license, with the "
     "attributions above."
 )
@@ -59,10 +67,11 @@ def notices_for(source_keys: Iterable[str], rxnorm_version: Optional[str] = None
     if synthetic:
         out.append(Notice("synthetic", "Sample data", SYNTHETIC_NOTICE))
     if "ddinter" in keys:
-        out.append(Notice("ddinter", "DDInter 2.0",
-                          f"{DDINTER_CITATION}. Licensed CC BY-NC-SA 4.0 "
-                          "(https://creativecommons.org/licenses/by-nc-sa/4.0/). Interaction severities "
-                          "are from DDInter; PharmGuard mapped drug names to RxNorm and removed duplicates."))
+        out.append(Notice("ddinter", "DDInter",
+                          f"Interaction severities from the {DDINTER_LABEL}. Cite: {DDINTER2_CITATION}; and "
+                          f"{DDINTER1_CITATION}. Licensed CC BY-NC-SA 4.0 "
+                          "(https://creativecommons.org/licenses/by-nc-sa/4.0/). PharmGuard mapped drug names "
+                          "to RxNorm and removed duplicates."))
     if "sider" in keys:
         out.append(Notice("sider", "SIDER 4.1",
                           f"{SIDER_CITATION}. Licensed CC BY-NC-SA 4.0 "

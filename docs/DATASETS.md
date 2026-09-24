@@ -7,7 +7,7 @@ the build didn't load.
 | Build | Sources | Where | Used by |
 |---|---|---|---|
 | **sample** | 85 hand-written synthetic interaction records (`data/sample/`) | `data/processed/` | tests, CI, `results/*.md` without a suffix |
-| **public** | RxNorm Current Prescribable 2026-09-08 + DDInter 2.0 + SIDER 4.1 (+ DrugBank vocabulary when available) | `data/profiles/public/processed/` | the demo; `results/*_public.*` |
+| **public** | RxNorm Current Prescribable 2026-09-08 + the DDInter bulk download (ddinter2.scbdd.com, files dated 2024-05-21) + SIDER 4.1 (+ DrugBank vocabulary when available) | `data/profiles/public/processed/` | the demo; `results/*_public.*` |
 | **research** | public + TWOSIDES | `data/profiles/research/processed/` | local evaluation only; aggregate numbers only are committed |
 
 All raw and processed data is gitignored. Nothing below the sample is committed.
@@ -52,7 +52,13 @@ The numbers below come from the builds of 2026-09-23.
   specific drug. Example: plain "insulin" is ambiguous (RxNorm has only specific insulins),
   while "insulin glargine" and "Lantus" resolve.
 
-### DDInter 2.0 (curated interactions)
+### DDInter bulk download (curated interactions)
+
+The files come from the DDInter 2.0 site (ddinter2.scbdd.com), but their counts match the
+DDInter 1.0 paper, not the 2.0 paper (see "Record counts vs the papers" below). So PharmGuard
+calls this data "the DDInter bulk download (files dated 2024-05-21)", not "DDInter 2.0", and
+cites both papers: Tian et al., NAR 2025 (DDInter 2.0; PMID 39180399) and Xiong et al., NAR 2022
+(DDInter 1.0; PMID 34634800).
 
 - **Files:** 14 CSVs `ddinter_downloads_code_{A,B,C,D,G,H,J,L,M,N,P,R,S,V}.csv`, one per ATC
   top-level group, dated 2024-05-21. The download page links only 8 of them (A B D H L P R V).
@@ -76,7 +82,7 @@ The numbers below come from the builds of 2026-09-23.
   (telithromycin, mesoridazine, sibutramine, rofecoxib, dextropropoxyphene, …), which the
   Current Prescribable subset leaves out, and route-qualified entries such as "doxepin (topical)".
 - **Severity:** Major 27,670 · Moderate 95,217 · Minor 6,081 · not graded 40,566.
-- **Record counts vs the paper** (checked 2026-09-24 against the full text, PMC11701621). The
+- **Record counts vs the papers** (checked 2026-09-24 against the DDInter 2.0 full text, PMC11701621). The
   paper reports 302,516 DDI records over 2,310 drugs (2,122 distinct) for DDInter 2.0. It
   doesn't define a "record" relative to a drug pair and doesn't describe the download files.
   Its own risk-level table sums to 303,658 (Minor 12,522, Moderate 195,776, Major 52,943,
@@ -176,11 +182,11 @@ in sync.
 
 Public build (and the Streamlit app on it):
 
-- **DDInter 2.0.** Tian Y, Yi J, Wang N, Wu C, Peng J, Liu S, Yang G, Cao D. DDInter 2.0: an enhanced drug interaction resource with expanded data coverage, new interaction types, and improved user interface. Nucleic Acids Research. 2025;53(D1):D1356-D1362. doi:10.1093/nar/gkae726. Licensed CC BY-NC-SA 4.0 (https://creativecommons.org/licenses/by-nc-sa/4.0/). Interaction severities are from DDInter; PharmGuard mapped drug names to RxNorm and removed duplicates.
+- **DDInter.** Interaction severities from the DDInter bulk download (ddinter2.scbdd.com, files dated 2024-05-21). Cite: Tian Y, Yi J, Wang N, Wu C, Peng J, Liu S, Yang G, Cao D. DDInter 2.0: an enhanced drug interaction resource with expanded data coverage, new interaction types, and improved user interface. Nucleic Acids Research. 2025;53(D1):D1356-D1362. doi:10.1093/nar/gkae726; and Xiong G, Yang Z, Yi J, Wang N, Wang L, Zhu H, Wu C, Lu A, Chen X, Liu S, Hou T, Cao D. DDInter: an online drug-drug interaction database towards improving clinical decision-making and patient safety. Nucleic Acids Research. 2022;50(D1):D1200-D1207. doi:10.1093/nar/gkab880. Licensed CC BY-NC-SA 4.0 (https://creativecommons.org/licenses/by-nc-sa/4.0/). PharmGuard mapped drug names to RxNorm and removed duplicates.
 - **SIDER 4.1.** Kuhn M, Letunic I, Jensen LJ, Bork P. The SIDER database of drugs and side effects. Nucleic Acids Research. 2016;44(D1):D1075-D1079. doi:10.1093/nar/gkv1075. Licensed CC BY-NC-SA 4.0 (https://creativecommons.org/licenses/by-nc-sa/4.0/).
 - **RxNorm.** This product uses publicly available data courtesy of the U.S. National Library of Medicine (NLM), National Institutes of Health, Department of Health and Human Services; NLM is not responsible for the product and does not endorse or recommend this or any other product. Vocabulary: RxNorm Current Prescribable Content, release 2026-09-08; drug names may have changed since that release. NLM urges you to consult with a qualified physician for medical advice.
 - **openFDA.** Data provided by the U.S. Food and Drug Administration (https://open.fda.gov). Used only when the optional FAERS lookup is enabled; FAERS reports are unvalidated, and the FDA does not endorse this product.
-- **Non-commercial use.** This build contains data licensed CC BY-NC-SA 4.0 (DDInter 2.0, SIDER 4.1). Non-commercial use only; anything derived from that data must be shared under the same license, with the attributions above.
+- **Non-commercial use.** This build contains data licensed CC BY-NC-SA 4.0 (DDInter, SIDER 4.1). Non-commercial use only; anything derived from that data must be shared under the same license, with the attributions above.
 
 The research build adds:
 

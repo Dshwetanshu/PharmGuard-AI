@@ -18,7 +18,9 @@ def _prov(order):
 
 def test_public_build_notices():
     text = " ".join(n.text for n in notices_for_provenance(_prov(["rxnorm", "ddinter", "sider"])))
-    assert "DDInter 2.0" in text and "doi:10.1093/nar/gkae726" in text and "CC BY-NC-SA 4.0" in text
+    assert "DDInter bulk download (ddinter2.scbdd.com, files dated 2024-05-21)" in text
+    assert "doi:10.1093/nar/gkae726" in text and "doi:10.1093/nar/gkab880" in text and "CC BY-NC-SA 4.0" in text
+    assert "DDInter 2.0 data" not in text and "(DDInter 2.0" not in text
     assert "The SIDER database of drugs and side effects" in text and "doi:10.1093/nar/gkv1075" in text
     assert RXNORM_STATEMENT in text and "release 2026-09-08" in text
     assert "Data provided by the U.S. Food and Drug Administration (https://open.fda.gov)" in text
