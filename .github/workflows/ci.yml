@@ -1,0 +1,53 @@
+# Offline CI: no API keys, no network for tests (the conftest blocks sockets), synthetic
+# sample data only. Installs exactly the container's locked dependencies plus pytest.
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PHARMGUARD_RXNORM_API_ENABLED: "false"
+      PHARMGUARD_FAERS_ENABLED: "false"
+      PHARMGUARD_TRACING: "none"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install locked dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install --require-hashes --no-deps -r requirements-api.lock
+          pip install pytest vermin
+      - name: Python 3.11 compatibility
+        run: vermin --no-tips -t=3.11- --violations src app scripts tests api
+      - name: Ingest the synthetic sample
+        run: python scripts/ingest_data.py --sample
+      - name: Tests
+        run: python -m pytest -q
+      - name: Trajectory gate
+        run: python scripts/eval_trajectory.py --fault-suite --seeded-bugs --min-invariant-pass 1.0 --output-dir /tmp/trajectory
+
+  docker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the API image (not pushed)
+        run: docker build -t pharmguard-api:ci .
+      - name: Fails closed without data
+        run: |
+          docker run -d --name pg -p 7860:7860 pharmguard-api:ci
+          for i in $(seq 1 60); do curl -s -o /dev/null http://127.0.0.1:7860/health && break; sleep 1; done
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:7860/health)" = "503"
+          test "$(curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' \
+                 -d '{"drugs":["warfarin","aspirin"]}' http://127.0.0.1:7860/v1/check)" = "503"
+          docker rm -f pg
