@@ -148,3 +148,18 @@ def test_real_build_coumadin_report_finds_warfarin_and_flags_the_duplicate(publi
     assert "> **Same drug entered more than once:** Coumadin and warfarin both mean warfarin" in report
     assert "fluconazole + warfarin** — curated severity: Major" in report and "coumarin" not in report
     assert s["final_validation"]["passed"]
+
+
+def test_real_build_source_names_use_drugsatfda_aliases_only_when_reviewed():
+    from src.data.rxnorm import REVIEWED_SOURCE_BRAND_ALIASES, source_aliases
+    p = _processed("public")
+    vocab = pd.read_parquet(p / "drug_vocabulary.parquet")
+    table, missing = source_aliases(vocab)
+    assert missing == []
+    fda = set(vocab[vocab.kind == "DRUGSATFDA:BRAND"].name_lower)
+    assert set(table.name_lower) & fda == set(REVIEWED_SOURCE_BRAND_ALIASES) & fda
+    prov = json.loads((p / "provenance.json").read_text())
+    assert prov["vocabulary"]["reviewed_source_brand_aliases"] == REVIEWED_SOURCE_BRAND_ALIASES
+    se = pd.read_parquet(p / "side_effects.parquet", columns=["drug_name"])
+    assert (se.drug_name == "perflutren").any() and not (se.drug_name == "albumin human, usp").any()
+    assert "penicillin" in set(pd.read_csv(p / "unmatched_sider.csv").name)

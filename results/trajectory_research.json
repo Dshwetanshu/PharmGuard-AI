@@ -2,10 +2,10 @@
   "aggregate_only": true,
   "command": "python scripts/eval_trajectory.py --fault-suite --seeded-bugs --profile research",
   "data": {
-    "data": "Data: research build from RxNorm Current Prescribable 2026-09-08, Drugs@FDA brand names, DDInter bulk download (ddinter2.scbdd.com, 2024-05-21), SIDER 4.1, TWOSIDES (research only; not for redistribution); 635,607 interaction records; not synthetic.",
+    "data": "Data: research build from RxNorm Current Prescribable 2026-09-08, Drugs@FDA brand names, DDInter bulk download (ddinter2.scbdd.com, 2024-05-21), SIDER 4.1, TWOSIDES (research only; not for redistribution); 634,721 interaction records; not synthetic.",
     "data_dir": "data/profiles/research",
     "profile": "research",
-    "provenance_sha256": "8853ed268358af5fa668becbd7d1400653636f932a7a9b2e2b9d079c487043a0"
+    "provenance_sha256": "73a84f12af814416c14bfccf5c8f02b0cda98081fcbfd81aa2b9f3f64e2c0ddd"
   },
   "fault_suite": {
     "skipped": {
@@ -37,12 +37,12 @@
       "invariant_runs": 729,
       "latency_label": "orchestration overhead only (fake LLMs, research build, no network)",
       "latency_ms_end_to_end": {
-        "p50": 16.4,
-        "p95": 91.3
+        "p50": 16.3,
+        "p95": 91.8
       },
       "latency_ms_per_node": {
         "finalize": {
-          "p50": 0.73,
+          "p50": 0.74,
           "p95": 13.16
         },
         "generate_llm": {
@@ -51,23 +51,23 @@
         },
         "normalize": {
           "p50": 0.03,
-          "p95": 0.13
+          "p95": 0.12
         },
         "plan": {
           "p50": 0.05,
           "p95": 0.15
         },
         "retrieve": {
-          "p50": 11.25,
-          "p95": 48.34
+          "p50": 11.26,
+          "p95": 47.5
         },
         "template": {
           "p50": 0.05,
-          "p95": 1.75
+          "p95": 1.74
         },
         "validate": {
-          "p50": 0.99,
-          "p95": 13.7
+          "p50": 1.02,
+          "p95": 13.71
         }
       },
       "llm_calls_per_case": 1.731,

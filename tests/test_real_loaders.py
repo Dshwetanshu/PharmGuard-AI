@@ -139,3 +139,25 @@ def test_combination_product_stays_unresolved_and_names_ingredients(vocab, sampl
     plan = Planner().plan(n.resolve_many(["Percocet", "warfarin"]))
     report = Generator(sample_pipeline.cfg).generate_deterministic(plan, RetrievalResult())
     assert "- Percocet — combination product: acetaminophen + oxycodone; enter them separately" in report
+
+
+# ------------------------------------------------- Drugs@FDA aliases vs source tables
+
+def test_source_tables_map_through_drugsatfda_aliases_only_when_reviewed():
+    from src.data.rxnorm import REVIEWED_SOURCE_BRAND_ALIASES, source_aliases
+    aliases = pd.DataFrame([
+        ("warfarin", "warfarin", "11289", None, "RXNORM:IN"),
+        ("coumadin", "warfarin", "11289", None, "DRUGSATFDA:BRAND"),        # user input only
+        ("newbrand", "warfarin", "11289", None, "DRUGSATFDA:BRAND"),        # a future release
+        ("methoxsalen", "methoxsalen", "6854", None, "RXNORM:IN"),
+        ("8-mop", "methoxsalen", "6854", None, "DRUGSATFDA:BRAND"),         # reviewed
+        ("perflutren", "perflutren", "283753", None, "RXNORM:IN"),
+        ("optison", "albumin human, usp", "828529", None, "DRUGSATFDA:BRAND"),  # reviewed -> perflutren
+        ("penicillin", "penicillin g", "7980", None, "DRUGSATFDA:BRAND"),   # not reviewed
+    ], columns=["name_lower", "generic_name", "rxcui", "drugbank_id", "kind"])
+    table, missing = source_aliases(aliases)
+    m = dict(zip(table.name_lower, table.generic_name))
+    assert "coumadin" not in m and "newbrand" not in m and "penicillin" not in m
+    assert m["8-mop"] == "methoxsalen" and m["optison"] == "perflutren"
+    assert set(missing) == set(REVIEWED_SOURCE_BRAND_ALIASES) - {"8-mop", "optison"}   # targets absent here
+    assert set(table.kind) <= {"RXNORM:IN", "REVIEWED_SOURCE_ALIAS"}

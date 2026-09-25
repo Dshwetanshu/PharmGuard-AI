@@ -277,3 +277,39 @@ def merge_fda_brands(aliases: pd.DataFrame, combinations: pd.DataFrame, products
     combinations = pd.concat([combinations, pd.DataFrame(added_combos, columns=combinations.columns)],
                              ignore_index=True)
     return aliases, combinations, stats, pd.DataFrame(review, columns=["name", "issue", "fda_ingredients", "vocabulary"])
+
+
+# Source-table names (DDInter, SIDER, TWOSIDES) that may map through a Drugs@FDA brand alias.
+# Drugs@FDA aliases are for reading user input; a source name maps through one only if it's
+# listed here after review, so a new Drugs@FDA release can't silently change what the data
+# says. Reviewed 2026-09-25 (each target is the RxNorm ingredient named):
+REVIEWED_SOURCE_BRAND_ALIASES: Dict[str, str] = {
+    "8-mop": "methoxsalen",                               # SIDER
+    "implanon": "etonogestrel",                           # SIDER
+    "ogen": "estropipate",                                # SIDER
+    "zoledronic": "zoledronic acid",                      # SIDER
+    "esterified estrogens": "estrogens, esterified (usp)",  # DDInter
+    # SIDER's Optison compound is CID 6432 (perfluoropropane = perflutren), so it maps to
+    # perflutren, not to albumin human (Drugs@FDA's listed ingredient for the Optison product).
+    "optison": "perflutren",
+}
+# Considered and left unmatched: SIDER "penicillin" covers two compounds (CID 2349 benzyl-
+# penicillin without stereochemistry, and CID 4730 phenoxymethylpenicillin, penicillin V),
+# so it can't map to penicillin G alone.
+
+
+def source_aliases(aliases: pd.DataFrame) -> Tuple[pd.DataFrame, List[str]]:
+    """The alias table used to map source-table names: every alias except Drugs@FDA brand
+    aliases, plus REVIEWED_SOURCE_BRAND_ALIASES. Returns (table, reviewed entries whose
+    target is missing, which are reported and not applied)."""
+    base = aliases[aliases["kind"] != "DRUGSATFDA:BRAND"]
+    known = dict(zip(base.name_lower, base.generic_name))
+    extra, missing = [], []
+    for name, target in REVIEWED_SOURCE_BRAND_ALIASES.items():
+        hit = base[base.name_lower == target]
+        if hit.empty or known.get(target) != target:
+            missing.append(name)
+            continue
+        extra.append({**hit.iloc[0].to_dict(), "name_lower": name, "kind": "REVIEWED_SOURCE_ALIAS"})
+    base = base[~base.name_lower.isin([e["name_lower"] for e in extra])]
+    return pd.concat([base, pd.DataFrame(extra, columns=aliases.columns)], ignore_index=True), missing

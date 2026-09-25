@@ -4,7 +4,7 @@
     "data": "Data: public build from RxNorm Current Prescribable 2026-09-08, Drugs@FDA brand names, DDInter bulk download (ddinter2.scbdd.com, 2024-05-21), SIDER 4.1; 169,673 interaction records; not synthetic.",
     "data_dir": "data/profiles/public",
     "profile": "public",
-    "provenance_sha256": "688a8cee8a9c61abf456991240f7451859c723db6600122c203815ebd16ef578"
+    "provenance_sha256": "e629d4e816935b9c3149d44533837d7a8b5f0fbcbdfe9bd51d133ce78d5e3067"
   },
   "fault_suite": {
     "skipped": {
@@ -36,13 +36,13 @@
       "invariant_runs": 680,
       "latency_label": "orchestration overhead only (fake LLMs, public build, no network)",
       "latency_ms_end_to_end": {
-        "p50": 14.9,
-        "p95": 57.0
+        "p50": 14.8,
+        "p95": 57.3
       },
       "latency_ms_per_node": {
         "finalize": {
-          "p50": 0.35,
-          "p95": 3.21
+          "p50": 0.36,
+          "p95": 3.18
         },
         "generate_llm": {
           "p50": 0.05,
@@ -57,16 +57,16 @@
           "p95": 0.15
         },
         "retrieve": {
-          "p50": 11.09,
-          "p95": 43.82
+          "p50": 11.02,
+          "p95": 43.8
         },
         "template": {
           "p50": 0.04,
           "p95": 1.76
         },
         "validate": {
-          "p50": 0.52,
-          "p95": 3.65
+          "p50": 0.53,
+          "p95": 3.63
         }
       },
       "llm_calls_per_case": 1.712,

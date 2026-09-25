@@ -3,7 +3,7 @@
     "data": "Data: public build from RxNorm Current Prescribable 2026-09-08, Drugs@FDA brand names, DDInter bulk download (ddinter2.scbdd.com, 2024-05-21), SIDER 4.1; 169,673 interaction records; not synthetic.",
     "data_dir": "data/profiles/public",
     "profile": "public",
-    "provenance_sha256": "688a8cee8a9c61abf456991240f7451859c723db6600122c203815ebd16ef578"
+    "provenance_sha256": "e629d4e816935b9c3149d44533837d7a8b5f0fbcbdfe9bd51d133ce78d5e3067"
   },
   "evaluation_cases": {
     "by_code": {},

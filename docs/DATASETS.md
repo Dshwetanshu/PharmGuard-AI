@@ -82,9 +82,21 @@ The numbers below come from the builds of 2026-09-23.
   drug), 57 ambiguous names (products map to different ingredients) and 1,368 names with an
   ingredient not in the vocabulary. The collisions and ambiguous names are listed for review in
   `data/profiles/<profile>/review/fda_brand_review.csv`, which is not published.
-- **Side effect on source matching:** with the new aliases, 1 more DDInter name and 6 more SIDER
-  names match: DDInter "esterified estrogens"; SIDER "8-mop", "implanon", "ogen", "optison",
-  "penicillin" and "zoledronic". Listed here for review.
+- **For reading user input only.** Source tables (DDInter, SIDER, TWOSIDES) are mapped with a
+  separate alias table that leaves out Drugs@FDA brand aliases, except those reviewed in
+  `REVIEWED_SOURCE_BRAND_ALIASES` (`src/data/rxnorm.py`). So a new Drugs@FDA release can't
+  silently change what the data says; a test checks this. The reviewed list (2026-09-25) has six
+  entries:
+  - DDInter "esterified estrogens" → estrogens, esterified (usp);
+  - SIDER "8-mop" → methoxsalen, "implanon" → etonogestrel, "ogen" → estropipate and
+    "zoledronic" → zoledronic acid;
+  - SIDER "optison" → perflutren. SIDER's Optison compound is PubChem CID 6432,
+    perfluoropropane (= perflutren). Drugs@FDA lists the Optison product's ingredient as
+    albumin human, which would have attached a contrast agent's side effects to albumin.
+
+  SIDER "penicillin" stays unmatched: it covers two compounds, CID 2349 (benzylpenicillin
+  without stereochemistry) and CID 4730 (phenoxymethylpenicillin, penicillin V), so it can't
+  map to penicillin G alone. For user input, "Optison" still reads as Drugs@FDA lists it.
 
 ### DDInter bulk download (curated interactions)
 
@@ -136,7 +148,7 @@ cites both papers: Tian et al., NAR 2025 (DDInter 2.0; PMID 39180399) and Xiong 
 - **License:** CC BY-NC-SA 4.0.
 - **Processing:** MedDRA preferred terms (PT) only, names mapped to RxNorm, de-duplicated on
   drug + side effect.
-- **Match:** 951 of 1,344 names (70.8%); 110,325 of 145,321 PT rows kept (75.9%). Unmatched
+- **Match:** 950 of 1,344 names (70.7%); 110,186 of 145,321 PT rows kept (75.8%). Unmatched
   names include truncated or generic SIDER names ("insulin", "mycophenolate", "retinoic") and
   development codes. They are listed, not aliased: an alias would need review.
 
@@ -153,8 +165,9 @@ manually obtained copy. Neither current build includes it.
   and anything built from it stay out of commits, the Hugging Face bundle and the demo.
 - **Filters:** PRR ≥ 2 and at least 5 co-reports; 15 administrative MedDRA terms excluded
   ("drug ineffective", "off label use", …); the top 5 events per pair by PRR.
-- **Match:** 1,310 of 1,682 names (77.9%); 465,934 rows kept (1.1%) over 116,189 pairs
-  (284,448 rows dropped for an unmatched drug).
+- **Match:** 1,309 of 1,682 names (77.8%); 465,048 rows kept (1.1%) over 115,995 pairs.
+  Dropped: 28,036,229 with fewer than 5 co-reports, 9,145,035 below the PRR threshold,
+  4,929,834 beyond the top 5 per pair, 293,278 with an unmatched drug, 50,390 administrative terms.
 - **In reports:** TWOSIDES rows are statistical reporting signals, not curated interactions.
   They appear in their own section ("Statistical reporting signals (not graded for clinical
   severity)") with PRR and co-report count and never with a severity word. At most 3 per pair
@@ -172,8 +185,8 @@ evidence. openFDA data is CC0.
 
 | | sample | public | research |
 |---|---:|---:|---:|
-| Interaction records | 85 | 169,673 (DDInter) | 635,607 (DDInter 169,673 + TWOSIDES 465,934) |
-| Side-effect records | sample CSV | 110,325 | 110,325 |
+| Interaction records | 85 | 169,673 (DDInter) | 634,721 (DDInter 169,673 + TWOSIDES 465,048) |
+| Side-effect records | sample CSV | 110,186 | 110,186 |
 | Join-integrity issues | — | 0 | 0 |
 
 ## Known gaps

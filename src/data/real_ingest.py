@@ -25,7 +25,8 @@ from src.data.loaders import (
 )
 from src.data.provenance import write_real_provenance
 from src.data.rxnorm import (
-    REVIEWED_ALIASES, SALT_GROUPS, build_rxnorm_vocabulary, merge_drugbank_synonyms, merge_fda_brands,
+    REVIEWED_ALIASES, REVIEWED_SOURCE_BRAND_ALIASES, SALT_GROUPS, build_rxnorm_vocabulary,
+    merge_drugbank_synonyms, merge_fda_brands, source_aliases,
 )
 from src.data.sources import PROFILES
 from src.data.storage import write_table
@@ -97,8 +98,16 @@ def ingest_real(raw_dir: Path, out_dir: Path, profile: str, drugbank_csv: Option
         review.to_csv(out_dir / "review" / "fda_brand_review.csv", index=False)
     write_table(aliases, processed / "drug_vocabulary.parquet")
     write_table(combinations, processed / "combination_products.parquet")
-    alias = build_alias_map(aliases)
+    user_alias = build_alias_map(aliases)
+    # Source tables map through a separate alias table: no Drugs@FDA brand aliases except
+    # the reviewed ones (REVIEWED_SOURCE_BRAND_ALIASES).
+    src_table, src_missing = source_aliases(aliases)
+    alias = build_alias_map(src_table)
     report["vocabulary"] = {**vocab.stats, **extra, **fda_stats, "rows": len(aliases),
+                            "source_alias_rows": len(src_table),
+                            "reviewed_source_brand_aliases": dict(REVIEWED_SOURCE_BRAND_ALIASES),
+                            "reviewed_source_brand_aliases_missing_target": src_missing,
+                            "user_only_aliases": len(set(user_alias) - set(alias)),
                             "combination_products": len(combinations),
                             "salt_groups": dict(SALT_GROUPS), "reviewed_aliases": dict(REVIEWED_ALIASES),
                             "drugbank": "merged" if drugbank_csv else "not available (DrugBank downloads paused)"}

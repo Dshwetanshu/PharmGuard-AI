@@ -136,15 +136,15 @@ Path match 100.0% · report_source match 100.0% · recovery within the retry bud
 
 | Node | p50 ms | p95 ms |
 |---|---:|---:|
-| faers | 0.17 | 0.84 |
-| finalize | 0.48 | 2.07 |
-| generate_llm | 0.05 | 0.13 |
-| normalize | 0.03 | 0.08 |
-| plan | 0.05 | 0.14 |
-| retrieve | 2.16 | 11.27 |
+| faers | 0.17 | 0.89 |
+| finalize | 0.48 | 2.3 |
+| generate_llm | 0.05 | 0.15 |
+| normalize | 0.03 | 0.09 |
+| plan | 0.05 | 0.21 |
+| retrieve | 2.16 | 11.15 |
 | template | 0.04 | 0.09 |
-| validate | 0.6 | 3.28 |
-| **end to end** | 6.3 | 18.4 |
+| validate | 0.6 | 3.38 |
+| **end to end** | 6.2 | 20.7 |
 
 ## Seeded orchestration bugs (validating the evaluation)
 
