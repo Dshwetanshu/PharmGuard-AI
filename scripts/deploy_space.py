@@ -33,6 +33,7 @@ sys.path.insert(0, str(ROOT))
 from src.data.attribution import (  # noqa: E402
     DDINTER1_CITATION, DDINTER2_CITATION, DDINTER_LABEL, NONCOMMERCIAL_NOTICE, RXNORM_STATEMENT, SIDER_CITATION,
 )
+from src.data.sources import SOURCES  # noqa: E402
 from src.data.provenance import PROVENANCE_FILE, file_sha256, provenance_line  # noqa: E402
 
 BUILD = ROOT / "data" / "profiles" / "public" / "processed"
@@ -168,6 +169,11 @@ in the PharmGuard repository, built {prov.get('built_at')}.
 - **SIDER 4.1:** MedDRA preferred terms only, names mapped to RxNorm, de-duplicated.
   {se['matched_names']:,} of {se['distinct_names']:,} names matched ({_pct(se.get('name_match_rate'))});
   {se['rows_kept']:,} of {se['rows_in']:,} rows kept.
+- **Brand names (Drugs@FDA):** {voc.get('fda_brands_added', 0):,} brand names, including discontinued
+  products such as Coumadin, added from the FDA's Drugs@FDA data files ({SOURCES['drugsatfda'].version}, public
+  domain). A brand is added only when every product under it maps to the same single ingredient and the
+  name is new. {voc.get('fda_collisions', 0)} collisions and {voc.get('fda_ambiguous', 0)} ambiguous names were not
+  applied.
 - Unmatched names are listed in the `unmatched_*.csv` files, not dropped silently. They are mostly
   drugs that aren't in RxNorm Current Prescribable (withdrawn or non-US) and route-qualified entries.
 
@@ -181,6 +187,8 @@ this build is described as the DDInter bulk download and both papers are cited.
 - **DDInter** (CC BY-NC-SA 4.0, per https://ddinter2.scbdd.com/terms/). Cite: {DDINTER2_CITATION}; and
   {DDINTER1_CITATION}.
 - **SIDER 4.1** (CC BY-NC-SA 4.0). Cite: {SIDER_CITATION}.
+- **Drugs@FDA** (public domain, U.S. Food and Drug Administration): brand names. The FDA does not
+  endorse this product.
 - **RxNorm.** {RXNORM_STATEMENT} Vocabulary: RxNorm Current Prescribable Content, release
   {rx.get('version')}; drug names may have changed since. NLM urges you to consult with a qualified
   physician for medical advice.
@@ -234,9 +242,21 @@ why on `/health` and refuses to answer (HTTP 503).
 | RxNorm Current Prescribable Content (U.S. National Library of Medicine) | public domain, NLM attribution |
 | openFDA FAERS (only when a request asks for it) | CC0 |
 
+| Drugs@FDA brand names (U.S. FDA) | public domain |
+
 **Non-commercial use only.** The interaction and side-effect data are CC BY-NC-SA 4.0. The full
 citations, NLM's RxNorm statement and the openFDA credit are on the page ("Data sources and
 attribution") and in the dataset card.
+
+## Limitations
+
+- Each report starts with how every entry was read. Spelling matches are marked "check this", and
+  names close to two drugs are not guessed.
+- **Pairwise only.** Patterns involving three or more drugs at once (for example an NSAID + ACE
+  inhibitor + diuretic, the "triple whammy") aren't flagged as a combination.
+- **Supplements are thinly covered** (warfarin + ginkgo has no record). "No data" is not evidence of safety.
+- **Severities are DDInter's grades** and can differ from other references. Pairs DDInter lists
+  without a grade are shown separately; the data can't say whether they matter clinically.
 
 ## API
 

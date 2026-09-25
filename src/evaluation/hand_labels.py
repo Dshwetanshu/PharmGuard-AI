@@ -7,7 +7,7 @@ what a person wrote down in ``test_cases.py``.
 
 Caveats that belong next to any number this produces:
 - Labels are partial. Many cases list only the headline interaction, and 14
-  of 48 list none, so precision here is a lower bound: an "unlabelled
+  of the original 48 list none, nor do the 8 look-alike cases (LA-*), so precision here is a lower bound: an "unlabelled
   retrieved" pair is not necessarily wrong.
 - Labels are mapped to canonical keys through the local vocabulary (exact
   alias match only), e.g. "lithium carbonate" -> "lithium". A label name that

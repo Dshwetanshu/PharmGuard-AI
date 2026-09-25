@@ -84,14 +84,16 @@ Errors are always `{"request_id", "error": {"code", "message"}}`, never a stack 
 - **Page.** All user and server text is escaped before it reaches the DOM. The report
   markdown is escaped, then rendered by a small renderer (tested with Node in
   `tests/test_api.py`). The page has no inline script, and its CSP allows only same-origin
-  resources. "Severity Not Graded" is collapsed with its count, while the markdown report
-  stays complete. DDInter citations aren't deep-linked (docs/DATASETS.md explains why).
+  resources. "Listed by DDInter without a severity grade" is collapsed with its count, while
+  the markdown report stays complete. Every report starts with "How your entries were read"
+  (for example "Coumadin → warfarin (brand name, Drugs@FDA)" or "warfrin → warfarin (spelling
+  match: check this)"). A red notice appears when two entries are the same drug. DDInter citations aren't deep-linked (docs/DATASETS.md explains why).
 
 ## Build download (optional, for Hugging Face Spaces)
 
-Set `PHARMGUARD_HF_DATASET` (a private dataset repo), `PHARMGUARD_HF_REVISION` (a 40-character
-commit sha), `PHARMGUARD_HF_PROVENANCE_SHA256` and the Space secret `HF_TOKEN` (read-only). At
-start-up, `api/bootstrap.py` does the following:
+Set `PHARMGUARD_HF_DATASET` (the dataset repo; public for the demo), `PHARMGUARD_HF_REVISION`
+(a 40-character commit sha) and `PHARMGUARD_HF_PROVENANCE_SHA256`. `HF_TOKEN` (a read-only Space
+secret) is needed only for a private dataset. At start-up, `api/bootstrap.py` does the following:
 1. downloads `processed/*` at that revision into a staging directory;
 2. checks that `provenance.json` hashes to the pinned value;
 3. checks every file against the `processed_files` sha256 list in that provenance (a missing,
@@ -99,8 +101,7 @@ start-up, `api/bootstrap.py` does the following:
 4. only then moves the build into `PHARMGUARD_DATA_DIR`.
 
 Any failure is reported on `/health` and the server fails closed. The token is passed only to
-the downloader and never logged or echoed. Tested with a fake downloader; the real upload is
-step 8b.
+the downloader and never logged or echoed. Tested with a fake downloader.
 
 ## Measured locally (2026-09-24, OrbStack on Apple Silicon, public build mounted)
 
@@ -112,6 +113,7 @@ step 8b.
 | End-to-end latency, 47 cases × 5 rounds, deterministic | p50 22.7 ms, p95 125.5 ms (server-side p50 18.1, p95 121.0) |
 | Memory after the benchmark | 494 MiB |
 
-EDG-01 (a single drug) is rejected with 422 by design, so 47 of the 48 cases are timed.
+EDG-01 (a single drug) is rejected with 422 by design, so 47 of the 48 cases (the suite at
+the time) were timed.
 Measured with `python scripts/bench_api.py --rounds 5` against a container started with
 `PHARMGUARD_RATE_LIMIT=1000/60`. The amd64 image was only smoke-tested, under emulation.

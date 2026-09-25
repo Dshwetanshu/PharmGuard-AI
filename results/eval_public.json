@@ -1,12 +1,12 @@
 {
   "data": {
     "profile": "public",
-    "data": "Data: public build from RxNorm Current Prescribable 2026-09-08, DDInter bulk download (ddinter2.scbdd.com, 2024-05-21), SIDER 4.1; 169,534 interaction records; not synthetic.",
-    "provenance_sha256": "d459af5d62bc3110875ab7e30b8ef4a996bae79b2d5353eab0544ff521560d14"
+    "data": "Data: public build from RxNorm Current Prescribable 2026-09-08, Drugs@FDA brand names, DDInter bulk download (ddinter2.scbdd.com, 2024-05-21), SIDER 4.1; 169,673 interaction records; not synthetic.",
+    "provenance_sha256": "688a8cee8a9c61abf456991240f7451859c723db6600122c203815ebd16ef578"
   },
   "internal_consistency": {
     "note": "internal consistency: ground truth uses the same normalizer and table as retrieval, so recall/precision are 1.0 by construction",
-    "num_cases": 48,
+    "num_cases": 56,
     "mean_recall": 1.0,
     "mean_precision": 1.0,
     "cases": [
@@ -825,16 +825,152 @@
         "hallucination_count": null,
         "severity_correct": null,
         "severity_total": null
+      },
+      {
+        "case_id": "LA-01",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "LA-02",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "LA-03",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "LA-04",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "LA-05",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "LA-06",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "LA-07",
+        "num_drugs": 1,
+        "num_pairs": 0,
+        "ground_truth_pairs": 0,
+        "retrieved_pairs": 0,
+        "true_positives": 0,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 1,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
+      },
+      {
+        "case_id": "LA-08",
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 0,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
       }
     ]
   },
   "hand_labels": {
-    "num_cases": 48,
+    "num_cases": 56,
     "labelled_pairs": 38,
-    "retrieved_pairs": 231,
+    "retrieved_pairs": 238,
     "hits": 37,
     "recall": 0.974,
-    "precision_lower_bound": 0.16,
+    "precision_lower_bound": 0.155,
     "missed": [
       [
         "END-02",
@@ -2214,6 +2350,55 @@
         [
           "omeprazole",
           "warfarin"
+        ]
+      ],
+      [
+        "LA-01",
+        [
+          "fluconazole",
+          "warfarin"
+        ]
+      ],
+      [
+        "LA-02",
+        [
+          "amiodarone",
+          "digoxin"
+        ]
+      ],
+      [
+        "LA-03",
+        [
+          "celecoxib",
+          "warfarin"
+        ]
+      ],
+      [
+        "LA-04",
+        [
+          "fosphenytoin",
+          "warfarin"
+        ]
+      ],
+      [
+        "LA-05",
+        [
+          "clonazepam",
+          "oxycodone"
+        ]
+      ],
+      [
+        "LA-06",
+        [
+          "fluconazole",
+          "warfarin"
+        ]
+      ],
+      [
+        "LA-08",
+        [
+          "clarithromycin",
+          "simvastatin"
         ]
       ]
     ],
@@ -4737,21 +4922,155 @@
             "warfarin"
           ]
         ]
+      },
+      {
+        "case_id": "LA-01",
+        "labelled": [],
+        "retrieved": [
+          [
+            "fluconazole",
+            "warfarin"
+          ]
+        ],
+        "hits": [],
+        "missed": [],
+        "unlabelled_retrieved": [
+          [
+            "fluconazole",
+            "warfarin"
+          ]
+        ]
+      },
+      {
+        "case_id": "LA-02",
+        "labelled": [],
+        "retrieved": [
+          [
+            "amiodarone",
+            "digoxin"
+          ]
+        ],
+        "hits": [],
+        "missed": [],
+        "unlabelled_retrieved": [
+          [
+            "amiodarone",
+            "digoxin"
+          ]
+        ]
+      },
+      {
+        "case_id": "LA-03",
+        "labelled": [],
+        "retrieved": [
+          [
+            "celecoxib",
+            "warfarin"
+          ]
+        ],
+        "hits": [],
+        "missed": [],
+        "unlabelled_retrieved": [
+          [
+            "celecoxib",
+            "warfarin"
+          ]
+        ]
+      },
+      {
+        "case_id": "LA-04",
+        "labelled": [],
+        "retrieved": [
+          [
+            "fosphenytoin",
+            "warfarin"
+          ]
+        ],
+        "hits": [],
+        "missed": [],
+        "unlabelled_retrieved": [
+          [
+            "fosphenytoin",
+            "warfarin"
+          ]
+        ]
+      },
+      {
+        "case_id": "LA-05",
+        "labelled": [],
+        "retrieved": [
+          [
+            "clonazepam",
+            "oxycodone"
+          ]
+        ],
+        "hits": [],
+        "missed": [],
+        "unlabelled_retrieved": [
+          [
+            "clonazepam",
+            "oxycodone"
+          ]
+        ]
+      },
+      {
+        "case_id": "LA-06",
+        "labelled": [],
+        "retrieved": [
+          [
+            "fluconazole",
+            "warfarin"
+          ]
+        ],
+        "hits": [],
+        "missed": [],
+        "unlabelled_retrieved": [
+          [
+            "fluconazole",
+            "warfarin"
+          ]
+        ]
+      },
+      {
+        "case_id": "LA-07",
+        "labelled": [],
+        "retrieved": [],
+        "hits": [],
+        "missed": [],
+        "unlabelled_retrieved": []
+      },
+      {
+        "case_id": "LA-08",
+        "labelled": [],
+        "retrieved": [
+          [
+            "clarithromycin",
+            "simvastatin"
+          ]
+        ],
+        "hits": [],
+        "missed": [],
+        "unlabelled_retrieved": [
+          [
+            "clarithromycin",
+            "simvastatin"
+          ]
+        ]
       }
     ]
   },
   "report_checks": {
     "orchestration": "langgraph",
     "template": {
-      "reports": 48,
-      "clinical_claims": 231,
+      "reports": 56,
+      "clinical_claims": 238,
       "fabricated_claims": 0,
       "uncited_claims": 0,
-      "citations": 231,
-      "valid_citations": 231,
-      "pairs_with_records": 231,
+      "citations": 238,
+      "valid_citations": 238,
+      "pairs_with_records": 238,
       "omitted_pairs": 0,
-      "major_pairs": 35,
+      "major_pairs": 40,
       "omitted_major_pairs": 0,
       "no_data_pairs": 0,
       "declared_no_data_pairs": 0,

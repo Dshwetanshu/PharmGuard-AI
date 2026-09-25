@@ -4,7 +4,7 @@ Usage:
     python scripts/validate_checker.py                      # sample + fixtures -> results/checker_validation.*
     python scripts/validate_checker.py --profile public     # real build -> results/checker_validation_public.*
 
-1. False positives: the deterministic template report for all 48 evaluation
+1. False positives: the deterministic template report for every evaluation
    cases (synthetic sample data), plus clean fixture reports in two styles
    (template bullets and LLM-style prose), must produce zero findings.
 2. Sensitivity: known faults are injected into clean fixture reports
@@ -13,7 +13,7 @@ Usage:
    missed. They document that the lexicon checks are a lower bound.
 
 With --profile public|research, only false positives are measured, on the
-template reports of a real build (data/profiles/<profile>): the 48 evaluation
+template reports of a real build (data/profiles/<profile>): the evaluation
 cases plus a seeded stress set of random 4-drug lists drawn from drugs with
 interaction records (real names: commas, parentheses, long RxNorm names). For
 the research build only counts are written (finding messages quote TWOSIDES
@@ -122,7 +122,7 @@ def profile_markdown(profile: str, res: dict) -> str:
              "(target 0). Sensitivity is measured on the FX- fixtures (results/checker_validation.md).", "",
              "| Report set | Reports | Clinical claims checked | Reports with findings | Findings |",
              "|---|---:|---:|---:|---:|"]
-    for label, key in (("48 evaluation cases", "evaluation_cases"),
+    for label, key in ((f"{len(TEST_CASES)} evaluation cases", "evaluation_cases"),
                        (f"stress: random 4-drug lists (seed {res['stress']['seed']})", "stress"),
                        ("hard names (comma, parenthesis or > 30 chars) + 3 partners each", "hard_names")):
         r = res[key]
@@ -183,7 +183,7 @@ def to_markdown(res: dict) -> str:
         "# Report checker validation",
         "",
         f"Regenerate with `{COMMAND}`. Offline, no API key; all data is synthetic "
-        "(sample CSVs for the 48 cases, `FX-` fixture records for fault injection).",
+        f"(sample CSVs for the {len(TEST_CASES)} cases, `FX-` fixture records for fault injection).",
         "",
         "The mechanism, event and population checks use hand-written lexicons, so detection "
         "is a **lower bound**: the blind-spot probes below are fabrications the checker is known "
@@ -193,7 +193,7 @@ def to_markdown(res: dict) -> str:
         "",
         "| Report set | Reports | Clinical claims checked | Reports with findings | Findings |",
         "|---|---:|---:|---:|---:|",
-        f"| Template, 48 evaluation cases (sample data) | {fp['reports']} | {fp['clinical_claims_checked']} "
+        f"| Template, {len(TEST_CASES)} evaluation cases (sample data) | {fp['reports']} | {fp['clinical_claims_checked']} "
         f"| {fp['reports_with_findings']} | {fp['findings']} |",
     ]
     for style in STYLES:
@@ -256,7 +256,7 @@ def main():
     (out / "checker_validation.json").write_text(json.dumps(res, indent=2, sort_keys=True) + "\n")
     (out / "checker_validation.md").write_text(to_markdown(res))
     fp = res["false_positives"]["sample_template_reports"]
-    print(f"False positives on 48 template reports: {fp['findings']} finding(s)")
+    print(f"False positives on {len(TEST_CASES)} template reports: {fp['findings']} finding(s)")
     for style in STYLES:
         rates = {k: v["detection_rate"] for k, v in res["sensitivity"][style].items()}
         print(f"Sensitivity ({style}): {rates}")

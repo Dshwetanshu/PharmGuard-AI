@@ -1,17 +1,17 @@
 {
   "aggregate_only": true,
   "data": {
-    "data": "Data: research build from RxNorm Current Prescribable 2026-09-08, DDInter bulk download (ddinter2.scbdd.com, 2024-05-21), SIDER 4.1, TWOSIDES (research only; not for redistribution); 634,582 interaction records; not synthetic.",
+    "data": "Data: research build from RxNorm Current Prescribable 2026-09-08, Drugs@FDA brand names, DDInter bulk download (ddinter2.scbdd.com, 2024-05-21), SIDER 4.1, TWOSIDES (research only; not for redistribution); 635,607 interaction records; not synthetic.",
     "data_dir": "data/profiles/research",
     "profile": "research",
-    "provenance_sha256": "45feffc9cecccafcddd405722bbd0ea69775355ed7a33fb4bd0a73e81aeed0a5"
+    "provenance_sha256": "8853ed268358af5fa668becbd7d1400653636f932a7a9b2e2b9d079c487043a0"
   },
   "evaluation_cases": {
     "by_code": {},
-    "clinical_claims_checked": 902,
+    "clinical_claims_checked": 927,
     "failing_cases": [],
     "findings": 0,
-    "reports": 48,
+    "reports": 56,
     "reports_with_findings": 0
   },
   "hard_names": {

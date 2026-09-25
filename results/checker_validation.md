@@ -1,6 +1,6 @@
 # Report checker validation
 
-Regenerate with `python scripts/validate_checker.py`. Offline, no API key; all data is synthetic (sample CSVs for the 48 cases, `FX-` fixture records for fault injection).
+Regenerate with `python scripts/validate_checker.py`. Offline, no API key; all data is synthetic (sample CSVs for the 56 cases, `FX-` fixture records for fault injection).
 
 The mechanism, event and population checks use hand-written lexicons, so detection is a **lower bound**: the blind-spot probes below are fabrications the checker is known to miss. An LLM judge is planned as a later layer.
 
@@ -8,7 +8,7 @@ The mechanism, event and population checks use hand-written lexicons, so detecti
 
 | Report set | Reports | Clinical claims checked | Reports with findings | Findings |
 |---|---:|---:|---:|---:|
-| Template, 48 evaluation cases (sample data) | 48 | 122 | 0 | 0 |
+| Template, 56 evaluation cases (sample data) | 56 | 124 | 0 | 0 |
 | Fixtures, template style | 3 | 19 | 0 | 0 |
 | Fixtures, prose style | 3 | 24 | 0 | 0 |
 

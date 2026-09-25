@@ -60,7 +60,7 @@ def to_markdown(res: dict) -> str:
             else f"the real **{stamp['profile']}** build ({stamp['data'].rstrip('.')}; provenance sha256 "
                  f"`{stamp['provenance_sha256']}`)")
     L = ["# Trajectory evaluation" + ("" if stamp["profile"] == "sample" else f" ({stamp['profile']} build)"), "",
-         f"Regenerate with `{res['command']}`. Offline, no API keys, {what}, 48 cases. "
+         f"Regenerate with `{res['command']}`. Offline, no API keys, {what}, {len(TEST_CASES)} cases. "
          "LLM mode with a real model: **—** (no API key); LLM behaviour is exercised with scripted fake LLMs.", ""]
     for name, block in res["step_scoring"].items():
         if block is None:
@@ -101,7 +101,7 @@ def to_markdown(res: dict) -> str:
     if fs:
         s = fs["summary"]
         L += ["## Fault suite (scripted fake LLMs)", "",
-              f"{s['runs']} runs over 48 cases; scenarios skipped where the fault doesn't apply: {fs['skipped']}.", "",
+              f"{s['runs']} runs over {len(TEST_CASES)} cases; scenarios skipped where the fault doesn't apply: {fs['skipped']}.", "",
               "| Scenario | Runs | Expected report_source | Path match | Source match | All invariants | LLM calls/run |",
               "|---|---:|---|---:|---:|---:|---:|"]
         for name, p in s["per_scenario"].items():

@@ -1,18 +1,19 @@
 # Trajectory evaluation
 
-Regenerate with `python scripts/eval_trajectory.py --fault-suite --seeded-bugs --min-invariant-pass 1.0`. Offline, no API keys, synthetic sample data, 48 cases. LLM mode with a real model: **—** (no API key); LLM behaviour is exercised with scripted fake LLMs.
+Regenerate with `python scripts/eval_trajectory.py --fault-suite --seeded-bugs --min-invariant-pass 1.0`. Offline, no API keys, synthetic sample data, 56 cases. LLM mode with a real model: **—** (no API key); LLM behaviour is exercised with scripted fake LLMs.
 
 ## Step scoring: deterministic
 
 | Subset | Cases | normalize | plan | retrieve | route | finalize | **completion** |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| **all** | 48 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
+| **all** | 56 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | CV | 5 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | EDG | 7 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | END | 3 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | GER | 4 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | GI | 2 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | ID | 4 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
+| LA | 8 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | MH | 5 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | ONC | 2 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | PAIN | 3 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
@@ -30,13 +31,14 @@ Source gaps (labelled pair in no loaded table; not retrieval failures): none
 
 | Subset | Cases | normalize | plan | retrieve | route | finalize | **completion** |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| **all** | 48 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
+| **all** | 56 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | CV | 5 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | EDG | 7 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | END | 3 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | GER | 4 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | GI | 2 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | ID | 4 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
+| LA | 8 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | MH | 5 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | ONC | 2 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | PAIN | 3 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
@@ -71,34 +73,50 @@ Source gaps (labelled pair in no loaded table; not retrieval failures): none
 | MH-05 | `valproic acid` | resolves to `valproate` |
 | END-02 | `insulin` | public profile: stays unresolved |
 | END-02 | `insulin` | research profile: stays unresolved |
+| LA-01 | `Coumadin` | resolves to `warfarin` |
+| LA-01 | `Diflucan` | resolves to `fluconazole` |
+| LA-01 | `Diflucan` | sample profile: stays unresolved |
+| LA-02 | `Lanoxin` | resolves to `digoxin` |
+| LA-02 | `Lanoxin` | sample profile: stays unresolved |
+| LA-03 | `Celebrex` | resolves to `celecoxib` |
+| LA-03 | `Celebrex` | sample profile: stays unresolved |
+| LA-04 | `Cerebyx` | resolves to `fosphenytoin` |
+| LA-04 | `Cerebyx` | sample profile: stays unresolved |
+| LA-05 | `Klonopin` | resolves to `clonazepam` |
+| LA-05 | `Klonopin` | sample profile: stays unresolved |
+| LA-06 | `Coumadin` | resolves to `warfarin` |
+| LA-06 | `Diflucan` | resolves to `fluconazole` |
+| LA-06 | `Diflucan` | sample profile: stays unresolved |
+| LA-07 | `Celebyx` | stays unresolved |
+| LA-08 | `Biaxin` | resolves to `clarithromycin` |
 
 All other inputs are expected to resolve. Suspected label errors (unchanged, for review): EDG-03 [('atorvastatin', 'lisinopril')]
 
 ## Fault suite (scripted fake LLMs)
 
-580 runs over 48 cases; scenarios skipped where the fault doesn't apply: {'omit_major_once': 27, 'absence_safe_once': 29, 'severity_flip_once': 14, 'mechanism_once': 10, 'mechanism_always': 10, 'phantom_citation_once': 10, 'uncited_claim_once': 10, 'signal_severity_once': 10, 'different_fault_on_retry': 10, 'retry_repeats_rejected_draft': 10}.
+629 runs over 56 cases; scenarios skipped where the fault doesn't apply: {'omit_major_once': 34, 'absence_safe_once': 37, 'severity_flip_once': 21, 'mechanism_once': 17, 'mechanism_always': 17, 'phantom_citation_once': 17, 'uncited_claim_once': 17, 'signal_severity_once': 17, 'different_fault_on_retry': 17, 'retry_repeats_rejected_draft': 17}.
 
 | Scenario | Runs | Expected report_source | Path match | Source match | All invariants | LLM calls/run |
 |---|---:|---|---:|---:|---:|---:|
-| clean+faers | 48 | llm | 100.0% | 100.0% | 100.0% | 0.958 |
-| clean | 48 | llm | 100.0% | 100.0% | 100.0% | 0.958 |
-| transient_error_once | 48 | llm_retry | 100.0% | 100.0% | 100.0% | 1.917 |
-| transient_error_always | 48 | deterministic_fallback | 100.0% | 100.0% | 100.0% | 1.917 |
-| non_transient_error_once | 48 | deterministic_fallback | 100.0% | 100.0% | 100.0% | 0.958 |
-| mechanism_once | 38 | llm_retry | 100.0% | 100.0% | 100.0% | 2 |
-| mechanism_always | 38 | deterministic_fallback | 100.0% | 100.0% | 100.0% | 2 |
-| omit_major_once | 21 | llm_retry | 100.0% | 100.0% | 100.0% | 2 |
+| clean+faers | 56 | llm | 100.0% | 100.0% | 100.0% | 0.839 |
+| clean | 56 | llm | 100.0% | 100.0% | 100.0% | 0.839 |
+| transient_error_once | 56 | llm_retry | 100.0% | 100.0% | 100.0% | 1.679 |
+| transient_error_always | 56 | deterministic_fallback | 100.0% | 100.0% | 100.0% | 1.679 |
+| non_transient_error_once | 56 | deterministic_fallback | 100.0% | 100.0% | 100.0% | 0.839 |
+| mechanism_once | 39 | llm_retry | 100.0% | 100.0% | 100.0% | 2 |
+| mechanism_always | 39 | deterministic_fallback | 100.0% | 100.0% | 100.0% | 2 |
+| omit_major_once | 22 | llm_retry | 100.0% | 100.0% | 100.0% | 2 |
 | absence_safe_once | 19 | llm_retry | 100.0% | 100.0% | 100.0% | 2 |
-| phantom_citation_once | 38 | llm_retry | 100.0% | 100.0% | 100.0% | 2 |
-| severity_flip_once | 34 | llm_retry | 100.0% | 100.0% | 100.0% | 2 |
-| uncited_claim_once | 38 | llm_retry | 100.0% | 100.0% | 100.0% | 2 |
-| signal_severity_once | 38 | llm_retry | 100.0% | 100.0% | 100.0% | 2 |
-| different_fault_on_retry | 38 | deterministic_fallback | 100.0% | 100.0% | 100.0% | 2 |
-| retry_repeats_rejected_draft | 38 | deterministic_fallback | 100.0% | 100.0% | 100.0% | 2 |
+| phantom_citation_once | 39 | llm_retry | 100.0% | 100.0% | 100.0% | 2 |
+| severity_flip_once | 35 | llm_retry | 100.0% | 100.0% | 100.0% | 2 |
+| uncited_claim_once | 39 | llm_retry | 100.0% | 100.0% | 100.0% | 2 |
+| signal_severity_once | 39 | llm_retry | 100.0% | 100.0% | 100.0% | 2 |
+| different_fault_on_retry | 39 | deterministic_fallback | 100.0% | 100.0% | 100.0% | 2 |
+| retry_repeats_rejected_draft | 39 | deterministic_fallback | 100.0% | 100.0% | 100.0% | 2 |
 
-Path match 100.0% · report_source match 100.0% · recovery within the retry budget 100.0% · LLM calls per case 1.728
+Path match 100.0% · report_source match 100.0% · recovery within the retry budget 100.0% · LLM calls per case 1.633
 
-## Invariants (676 runs: step scoring + fault suite)
+## Invariants (741 runs: step scoring + fault suite)
 
 | Invariant | Pass rate |
 |---|---:|
@@ -118,25 +136,25 @@ Path match 100.0% · report_source match 100.0% · recovery within the retry bud
 
 | Node | p50 ms | p95 ms |
 |---|---:|---:|
-| faers | 0.16 | 0.84 |
-| finalize | 0.43 | 2.98 |
-| generate_llm | 0.03 | 0.1 |
-| normalize | 0.02 | 0.09 |
-| plan | 0.03 | 0.13 |
-| retrieve | 2.01 | 11.25 |
-| template | 0.03 | 0.07 |
-| validate | 0.49 | 3.05 |
-| **end to end** | 5.9 | 20.1 |
+| faers | 0.17 | 0.84 |
+| finalize | 0.48 | 2.07 |
+| generate_llm | 0.05 | 0.13 |
+| normalize | 0.03 | 0.08 |
+| plan | 0.05 | 0.14 |
+| retrieve | 2.16 | 11.27 |
+| template | 0.04 | 0.09 |
+| validate | 0.6 | 3.28 |
+| **end to end** | 6.3 | 18.4 |
 
 ## Seeded orchestration bugs (validating the evaluation)
 
 | Seeded bug | Caught | Invariants broken (pass rate under the bug) | Path match |
 |---|---|---|---:|
-| validate_always_passes | yes | `no_unvalidated_llm_text` (41.4%), `final_report_valid` (41.4%) | 41.4% |
-| retry_limit_off_by_one | yes | `llm_attempts_within_budget` (72.4%) | 72.4% |
-| fallback_returns_rejected_draft | yes | `no_unvalidated_llm_text` (80.3%), `exhausted_fallback_matches_deterministic` (80.3%), `final_report_valid` (80.3%) | 100.0% |
-| faers_always_consulted | yes | `faers_only_when_needed` (5.0%) | 5.0% |
-| plan_drops_a_pair | yes | `plan_complete` (1.7%), `exhausted_fallback_matches_deterministic` (18.3%) | 48.8% |
-| non_transient_errors_retried | yes | `non_transient_never_retried` (92.1%) | 92.1% |
+| validate_always_passes | yes | `no_unvalidated_llm_text` (44.5%), `final_report_valid` (44.5%) | 44.5% |
+| retry_limit_off_by_one | yes | `llm_attempts_within_budget` (73.9%) | 73.9% |
+| fallback_returns_rejected_draft | yes | `no_unvalidated_llm_text` (81.4%), `exhausted_fallback_matches_deterministic` (81.4%), `final_report_valid` (81.4%) | 100.0% |
+| faers_always_consulted | yes | `faers_only_when_needed` (10.2%) | 10.2% |
+| plan_drops_a_pair | yes | `plan_complete` (7.1%), `exhausted_fallback_matches_deterministic` (22.6%) | 51.3% |
+| non_transient_errors_retried | yes | `non_transient_never_retried` (92.5%) | 92.5% |
 
 Gate: min invariant pass rate 100.0% (threshold 100.0%) → **PASS**

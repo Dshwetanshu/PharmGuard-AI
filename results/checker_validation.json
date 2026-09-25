@@ -85,10 +85,10 @@
     },
     "sample_template_reports": {
       "by_code": {},
-      "clinical_claims_checked": 122,
+      "clinical_claims_checked": 124,
       "failing_cases": {},
       "findings": 0,
-      "reports": 48,
+      "reports": 56,
       "reports_with_findings": 0
     }
   },

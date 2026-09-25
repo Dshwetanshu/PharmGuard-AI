@@ -21,7 +21,7 @@ def harness(test_data_dir, sample_ingest_report):
     return T.Harness.build(s, c, read_table(s.to_config().paths.processed_dir / "drug_vocabulary.parquet"))
 
 
-def test_step_scoring_all_48_cases_complete(harness):
+def test_step_scoring_all_cases_complete(harness):
     out = T.run_step_scoring(harness)
     for config in ("deterministic", "llm_mode_without_key"):
         summary = out["step_scoring"][config]["summary"]

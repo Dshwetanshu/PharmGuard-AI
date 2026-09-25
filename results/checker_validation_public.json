@@ -1,32 +1,32 @@
 {
   "data": {
-    "data": "Data: public build from RxNorm Current Prescribable 2026-09-08, DDInter bulk download (ddinter2.scbdd.com, 2024-05-21), SIDER 4.1; 169,534 interaction records; not synthetic.",
+    "data": "Data: public build from RxNorm Current Prescribable 2026-09-08, Drugs@FDA brand names, DDInter bulk download (ddinter2.scbdd.com, 2024-05-21), SIDER 4.1; 169,673 interaction records; not synthetic.",
     "data_dir": "data/profiles/public",
     "profile": "public",
-    "provenance_sha256": "d459af5d62bc3110875ab7e30b8ef4a996bae79b2d5353eab0544ff521560d14"
+    "provenance_sha256": "688a8cee8a9c61abf456991240f7451859c723db6600122c203815ebd16ef578"
   },
   "evaluation_cases": {
     "by_code": {},
-    "clinical_claims_checked": 231,
+    "clinical_claims_checked": 238,
     "failing_cases": {},
     "findings": 0,
-    "reports": 48,
+    "reports": 56,
     "reports_with_findings": 0
   },
   "hard_names": {
     "by_code": {},
-    "clinical_claims_checked": 147,
+    "clinical_claims_checked": 153,
     "failing_cases": {},
     "findings": 0,
-    "names": 26,
-    "reports": 26,
+    "names": 27,
+    "reports": 27,
     "reports_with_findings": 0,
     "rule": "name has a comma, a parenthesis or > 30 characters; listed with its 3 most-connected interaction partners"
   },
   "stress": {
     "by_code": {},
-    "clinical_claims_checked": 227,
-    "drawn_from": "1,438 drugs with interaction records",
+    "clinical_claims_checked": 239,
+    "drawn_from": "1,439 drugs with interaction records",
     "drugs_per_list": 4,
     "failing_cases": {},
     "findings": 0,

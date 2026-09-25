@@ -14,7 +14,7 @@ Counting citations can't catch this: the fabricated sentence can carry a real ci
 
 ## Test cases
 
-`src/evaluation/test_cases.py` defines 48 cases across 12 groups (geriatric, textbook interactions, edge cases, mental health, cardiology, endocrine, infectious disease, oncology-adjacent, pain, respiratory, GI, a 10-drug profile). Each case has hand-written `known_interaction_pairs`. The labels are partial: 14 cases list none, and some labels are suspected to be wrong. Suspected errors are flagged for review, not edited.
+`src/evaluation/test_cases.py` defines 56 cases: 48 across 12 clinical groups, plus 8 brand-name and look-alike cases (LA-*, added after the step 8b blind trial) that check normalization only and have no interaction labels. The 48 cover (geriatric, textbook interactions, edge cases, mental health, cardiology, endocrine, infectious disease, oncology-adjacent, pain, respiratory, GI, a 10-drug profile). Each case has hand-written `known_interaction_pairs`. The labels are partial: 14 cases list none, and some labels are suspected to be wrong. Suspected errors are flagged for review, not edited.
 
 ## Retrieval metrics
 
@@ -57,7 +57,7 @@ Metrics (micro-averaged over reports):
 ### Validating the checker
 
 `python scripts/validate_checker.py` writes `results/checker_validation.{json,md}`:
-- **False positives:** the template reports for all 48 cases, plus clean synthetic `FX-` fixture reports in template and LLM-style prose, give 0 findings.
+- **False positives:** the template reports for all 56 cases, plus clean synthetic `FX-` fixture reports in template and LLM-style prose, give 0 findings.
 - **Sensitivity:** 14 fault types are injected into the fixtures, including the canonical case above (a record saying P-glycoprotein, a report claiming CYP3A4). Each fault's expected code is raised on every injected instance. The two newest: a severity word attached to a statistical signal (or a signal listed under a severity heading), and hidden signals not stated as "+N more not shown". This shows each check works on the fault it targets. It is not an estimate of how often real LLM errors are caught: the injected terms come from the checker's own lexicons, and the fixtures are small.
 
 ## Report format the checks assume
@@ -68,13 +68,13 @@ Metrics (micro-averaged over reports):
 
 ## Results (synthetic sample data)
 
-From `python scripts/run_eval.py` (48 cases). The LLM column requires an API key; none was configured when these numbers were produced.
+From `python scripts/run_eval.py` (56 cases). The LLM column requires an API key; none was configured when these numbers were produced.
 
 | Metric | Deterministic template | LLM path |
 |---|---:|---:|
 | Internal-consistency recall / precision | 1.000 / 1.000 (by construction) | n/a (retrieval only) |
 | Hand-label recall | 0.974 (37/38) | n/a |
-| Hand-label precision (lower bound) | 0.587 (37/63) | n/a |
+| Hand-label precision (lower bound) | 0.578 (37/64) | n/a |
 | uncited_claim_rate | 0.000 | — |
 | semantic_hallucination_rate | 0.000 | — |
 | citation_validity | 1.000 | — |
@@ -87,24 +87,26 @@ The template's zeros are expected: the template only restates record fields, and
 
 ## Results on the real builds (deterministic template; no API key)
 
+The 8 look-alike cases (LA-*) have no interaction labels, so hand-label recall is still over the original 38 labelled pairs.
+
 Same scripts, pointed at a real build. Every result file names the build and the sha256 of its `provenance.json`. Research-build files hold aggregate numbers only.
 
 | | sample | public | research |
 |---|---:|---:|---:|
 | Hand-label recall | 0.974 (37/38) | 0.974 (37/38) | 0.974 (37/38) |
-| Hand-label precision (lower bound) | 0.587 (37/63) | 0.160 (37/231) | 0.160 (37/231) |
+| Hand-label precision (lower bound) | 0.578 (37/64) | 0.155 (37/238) | 0.155 (37/238) |
 | Misses: source gap / pipeline miss | 1 / 0 (EDG-03) | 1 / 0 (END-02) | 1 / 0 |
-| Pairs with no curated record (48 cases) | see completeness | 0 of 231 | 0 of 231 |
-| Checker false positives, 48 template reports | 0 (122 claims) | 0 (231 claims) | 0 (902 claims) |
-| Checker false positives, 200 random 4-drug lists | n/a | 0 (227 claims) | 0 (376 claims) |
-| Checker false positives, hard names (comma, parenthesis, > 30 chars) | n/a | 0 (26 reports, 147 claims) | 0 (44 reports, 730 claims) |
+| Pairs with no curated record (56 cases) | 169 (completeness 1.000) | 0 of 238 | 0 of 238 |
+| Checker false positives, 56 template reports | 0 (124 claims) | 0 (238 claims) | 0 (927 claims) |
+| Checker false positives, 200 random 4-drug lists | n/a | 0 (239 claims) | 0 (376 claims) |
+| Checker false positives, hard names (comma, parenthesis, > 30 chars) | n/a | 0 (27 reports, 153 claims) | 0 (44 reports, 730 claims) |
 | Step completion (trajectory) | 100% | 100% | 100% |
-| Fault-suite runs / invariant runs / min invariant pass rate | 580 / 676 / 100% | 586 / 682 / 100% | 629 / 725 / 100% |
+| Fault-suite runs / invariant runs / min invariant pass rate | 629 / 741 / 100% | 680 / 792 / 100% | 729 / 841 / 100% |
 | Seeded orchestration bugs caught | 6 / 6 | 6 / 6 | 6 / 6 |
 | LLM path | — | — | — |
 
 Notes:
-- **Precision** falls on real data because DDInter has a record for every pair in the 48 cases (98 of 231 are "not graded"), while the hand labels list only the headline interactions. It is a lower bound.
+- **Precision** falls on real data because DDInter has a record for every pair in the 56 cases, many of them without a grade, while the hand labels list only the headline interactions. It is a lower bound.
 - **EDG-03** (atorvastatin + lisinopril), a suspected label error on the sample, is a DDInter record on the real builds (not graded). **END-02**'s labelled pair can't match on real data: plain "insulin" is ambiguous in RxNorm and stays unresolved by design.
 - The real-build stress sets found three checker/input bugs, now fixed with regression tests: comma names rejected by input validation, a non-idempotent British-spelling fold (a TWOSIDES "gastrooesophageal" event flagged against its own record), and a population word matched inside a drug name ("calcium lactate").
 - Before all 14 DDInter ATC files were ingested, the public build's hand-label recall was 0.553 (21/38), with 17 "source gaps" that were really our incomplete download.
@@ -123,7 +125,7 @@ Notes:
 
 ```bash
 python scripts/ingest_data.py --sample
-python scripts/run_eval.py --output /tmp/eval.json            # all 48 cases
+python scripts/run_eval.py --output /tmp/eval.json            # all 56 cases
 python scripts/run_eval.py --subset GER --skip-llm            # geriatric cases, no LLM calls
 python scripts/validate_checker.py                            # checker false positives / sensitivity
 ```

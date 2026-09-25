@@ -4,7 +4,7 @@ Usage:
     python scripts/bench_retriever.py --data-dir data/profiles/research [--pairs 200]
 
 Both methods are run on the same processed interactions table and the same
-pairs (every pair of drugs in the 48 evaluation cases that resolve, then random
+pairs (every pair of drugs in the evaluation cases that resolve, then random
 pairs up to --pairs), and their results are checked to be identical.
 """
 from __future__ import annotations

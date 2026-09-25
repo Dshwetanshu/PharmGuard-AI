@@ -1,4 +1,4 @@
-"""End-to-end latency of a running PharmGuard API over the 48 evaluation cases.
+"""End-to-end latency of a running PharmGuard API over the evaluation cases.
 
 Usage (the server's rate limit must allow the burst, e.g. PHARMGUARD_RATE_LIMIT=1000/60):
     python scripts/bench_api.py --url http://127.0.0.1:7860 --rounds 5

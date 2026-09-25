@@ -1,18 +1,19 @@
 # Trajectory evaluation (research build)
 
-Regenerate with `python scripts/eval_trajectory.py --fault-suite --seeded-bugs --profile research`. Offline, no API keys, the real **research** build (Data: research build from RxNorm Current Prescribable 2026-09-08, DDInter bulk download (ddinter2.scbdd.com, 2024-05-21), SIDER 4.1, TWOSIDES (research only; not for redistribution); 634,582 interaction records; not synthetic; provenance sha256 `45feffc9cecccafcddd405722bbd0ea69775355ed7a33fb4bd0a73e81aeed0a5`), 48 cases. LLM mode with a real model: **—** (no API key); LLM behaviour is exercised with scripted fake LLMs.
+Regenerate with `python scripts/eval_trajectory.py --fault-suite --seeded-bugs --profile research`. Offline, no API keys, the real **research** build (Data: research build from RxNorm Current Prescribable 2026-09-08, Drugs@FDA brand names, DDInter bulk download (ddinter2.scbdd.com, 2024-05-21), SIDER 4.1, TWOSIDES (research only; not for redistribution); 635,607 interaction records; not synthetic; provenance sha256 `8853ed268358af5fa668becbd7d1400653636f932a7a9b2e2b9d079c487043a0`), 56 cases. LLM mode with a real model: **—** (no API key); LLM behaviour is exercised with scripted fake LLMs.
 
 ## Step scoring: deterministic
 
 | Subset | Cases | normalize | plan | retrieve | route | finalize | **completion** |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| **all** | 48 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
+| **all** | 56 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | CV | 5 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | EDG | 7 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | END | 3 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | GER | 4 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | GI | 2 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | ID | 4 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
+| LA | 8 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | MH | 5 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | ONC | 2 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | PAIN | 3 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
@@ -30,13 +31,14 @@ Source gaps (labelled pair in no loaded table; not retrieval failures): 1 (detai
 
 | Subset | Cases | normalize | plan | retrieve | route | finalize | **completion** |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| **all** | 48 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
+| **all** | 56 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | CV | 5 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | EDG | 7 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | END | 3 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | GER | 4 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | GI | 2 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | ID | 4 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
+| LA | 8 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | MH | 5 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | ONC | 2 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
 | PAIN | 3 | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | **100.0%** |
@@ -71,33 +73,49 @@ Source gaps (labelled pair in no loaded table; not retrieval failures): 1 (detai
 | MH-05 | `valproic acid` | resolves to `valproate` |
 | END-02 | `insulin` | public profile: stays unresolved |
 | END-02 | `insulin` | research profile: stays unresolved |
+| LA-01 | `Coumadin` | resolves to `warfarin` |
+| LA-01 | `Diflucan` | resolves to `fluconazole` |
+| LA-01 | `Diflucan` | sample profile: stays unresolved |
+| LA-02 | `Lanoxin` | resolves to `digoxin` |
+| LA-02 | `Lanoxin` | sample profile: stays unresolved |
+| LA-03 | `Celebrex` | resolves to `celecoxib` |
+| LA-03 | `Celebrex` | sample profile: stays unresolved |
+| LA-04 | `Cerebyx` | resolves to `fosphenytoin` |
+| LA-04 | `Cerebyx` | sample profile: stays unresolved |
+| LA-05 | `Klonopin` | resolves to `clonazepam` |
+| LA-05 | `Klonopin` | sample profile: stays unresolved |
+| LA-06 | `Coumadin` | resolves to `warfarin` |
+| LA-06 | `Diflucan` | resolves to `fluconazole` |
+| LA-06 | `Diflucan` | sample profile: stays unresolved |
+| LA-07 | `Celebyx` | stays unresolved |
+| LA-08 | `Biaxin` | resolves to `clarithromycin` |
 
 All other inputs are expected to resolve. Suspected label errors (unchanged, for review): EDG-03 [('atorvastatin', 'lisinopril')]
 
 ## Fault suite (scripted fake LLMs)
 
-629 runs over 48 cases; scenarios skipped where the fault doesn't apply: {'absence_safe_once': 48, 'signal_severity_once': 5, 'omit_major_once': 17, 'mechanism_once': 3, 'mechanism_always': 3, 'phantom_citation_once': 3, 'severity_flip_once': 3, 'uncited_claim_once': 3, 'different_fault_on_retry': 3, 'retry_repeats_rejected_draft': 3}.
+729 runs over 56 cases; scenarios skipped where the fault doesn't apply: {'absence_safe_once': 56, 'signal_severity_once': 7, 'omit_major_once': 20, 'mechanism_once': 4, 'mechanism_always': 4, 'phantom_citation_once': 4, 'severity_flip_once': 4, 'uncited_claim_once': 4, 'different_fault_on_retry': 4, 'retry_repeats_rejected_draft': 4}.
 
 | Scenario | Runs | Expected report_source | Path match | Source match | All invariants | LLM calls/run |
 |---|---:|---|---:|---:|---:|---:|
-| clean | 48 | llm | 100.0% | 100.0% | 100.0% | 0.938 |
-| clean+faers | 48 | llm | 100.0% | 100.0% | 100.0% | 0.938 |
-| transient_error_once | 48 | llm_retry | 100.0% | 100.0% | 100.0% | 1.875 |
-| transient_error_always | 48 | deterministic_fallback | 100.0% | 100.0% | 100.0% | 1.875 |
-| non_transient_error_once | 48 | deterministic_fallback | 100.0% | 100.0% | 100.0% | 0.938 |
-| mechanism_once | 45 | llm_retry | 100.0% | 100.0% | 100.0% | 2 |
-| mechanism_always | 45 | deterministic_fallback | 100.0% | 100.0% | 100.0% | 2 |
-| omit_major_once | 31 | llm_retry | 100.0% | 100.0% | 100.0% | 2 |
-| phantom_citation_once | 45 | llm_retry | 100.0% | 100.0% | 100.0% | 2 |
-| severity_flip_once | 45 | llm_retry | 100.0% | 100.0% | 100.0% | 2 |
-| uncited_claim_once | 45 | llm_retry | 100.0% | 100.0% | 100.0% | 2 |
-| signal_severity_once | 43 | llm_retry | 100.0% | 100.0% | 100.0% | 2 |
-| different_fault_on_retry | 45 | deterministic_fallback | 100.0% | 100.0% | 100.0% | 2 |
-| retry_repeats_rejected_draft | 45 | deterministic_fallback | 100.0% | 100.0% | 100.0% | 2 |
+| clean+faers | 56 | llm | 100.0% | 100.0% | 100.0% | 0.929 |
+| clean | 56 | llm | 100.0% | 100.0% | 100.0% | 0.929 |
+| transient_error_once | 56 | llm_retry | 100.0% | 100.0% | 100.0% | 1.857 |
+| transient_error_always | 56 | deterministic_fallback | 100.0% | 100.0% | 100.0% | 1.857 |
+| non_transient_error_once | 56 | deterministic_fallback | 100.0% | 100.0% | 100.0% | 0.929 |
+| mechanism_once | 52 | llm_retry | 100.0% | 100.0% | 100.0% | 2 |
+| mechanism_always | 52 | deterministic_fallback | 100.0% | 100.0% | 100.0% | 2 |
+| omit_major_once | 36 | llm_retry | 100.0% | 100.0% | 100.0% | 2 |
+| phantom_citation_once | 52 | llm_retry | 100.0% | 100.0% | 100.0% | 2 |
+| severity_flip_once | 52 | llm_retry | 100.0% | 100.0% | 100.0% | 2 |
+| uncited_claim_once | 52 | llm_retry | 100.0% | 100.0% | 100.0% | 2 |
+| signal_severity_once | 49 | llm_retry | 100.0% | 100.0% | 100.0% | 2 |
+| different_fault_on_retry | 52 | deterministic_fallback | 100.0% | 100.0% | 100.0% | 2 |
+| retry_repeats_rejected_draft | 52 | deterministic_fallback | 100.0% | 100.0% | 100.0% | 2 |
 
-Path match 100.0% · report_source match 100.0% · recovery within the retry budget 100.0% · LLM calls per case 1.738
+Path match 100.0% · report_source match 100.0% · recovery within the retry budget 100.0% · LLM calls per case 1.731
 
-## Invariants (725 runs: step scoring + fault suite)
+## Invariants (841 runs: step scoring + fault suite)
 
 | Invariant | Pass rate |
 |---|---:|
@@ -117,24 +135,24 @@ Path match 100.0% · report_source match 100.0% · recovery within the retry bud
 
 | Node | p50 ms | p95 ms |
 |---|---:|---:|
-| finalize | 0.63 | 12.82 |
-| generate_llm | 0.05 | 0.28 |
-| normalize | 0.03 | 0.1 |
-| plan | 0.03 | 0.09 |
-| retrieve | 10.8 | 47.94 |
-| template | 0.04 | 1.53 |
-| validate | 0.75 | 14.65 |
-| **end to end** | 15.5 | 91.3 |
+| finalize | 0.73 | 13.16 |
+| generate_llm | 0.07 | 0.33 |
+| normalize | 0.03 | 0.13 |
+| plan | 0.05 | 0.15 |
+| retrieve | 11.25 | 48.34 |
+| template | 0.05 | 1.75 |
+| validate | 0.99 | 13.7 |
+| **end to end** | 16.4 | 91.3 |
 
 ## Seeded orchestration bugs (validating the evaluation)
 
 | Seeded bug | Caught | Invariants broken (pass rate under the bug) | Path match |
 |---|---|---|---:|
-| validate_always_passes | yes | `no_unvalidated_llm_text` (38.2%), `final_report_valid` (38.2%) | 38.2% |
-| retry_limit_off_by_one | yes | `llm_attempts_within_budget` (71.4%) | 71.4% |
-| fallback_returns_rejected_draft | yes | `no_unvalidated_llm_text` (78.5%), `exhausted_fallback_matches_deterministic` (78.5%), `final_report_valid` (78.5%) | 100.0% |
-| faers_always_consulted | yes | `faers_only_when_needed` (2.4%) | 2.4% |
-| plan_drops_a_pair | yes | `plan_complete` (2.4%), `exhausted_fallback_matches_deterministic` (6.4%) | 38.2% |
-| non_transient_errors_retried | yes | `non_transient_never_retried` (92.8%) | 92.8% |
+| validate_always_passes | yes | `no_unvalidated_llm_text` (38.4%), `final_report_valid` (38.4%) | 38.4% |
+| retry_limit_off_by_one | yes | `llm_attempts_within_budget` (71.5%) | 71.5% |
+| fallback_returns_rejected_draft | yes | `no_unvalidated_llm_text` (78.6%), `exhausted_fallback_matches_deterministic` (78.6%), `final_report_valid` (78.6%) | 100.0% |
+| faers_always_consulted | yes | `faers_only_when_needed` (2.7%) | 2.7% |
+| plan_drops_a_pair | yes | `plan_complete` (2.7%), `exhausted_fallback_matches_deterministic` (6.6%) | 38.4% |
+| non_transient_errors_retried | yes | `non_transient_never_retried` (92.9%) | 92.9% |
 
 Gate: min invariant pass rate 100.0% (threshold 100.0%) → **PASS**

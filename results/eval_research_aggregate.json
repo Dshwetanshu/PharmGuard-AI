@@ -1,22 +1,22 @@
 {
   "data": {
     "profile": "research",
-    "data": "Data: research build from RxNorm Current Prescribable 2026-09-08, DDInter bulk download (ddinter2.scbdd.com, 2024-05-21), SIDER 4.1, TWOSIDES (research only; not for redistribution); 634,582 interaction records; not synthetic.",
-    "provenance_sha256": "45feffc9cecccafcddd405722bbd0ea69775355ed7a33fb4bd0a73e81aeed0a5"
+    "data": "Data: research build from RxNorm Current Prescribable 2026-09-08, Drugs@FDA brand names, DDInter bulk download (ddinter2.scbdd.com, 2024-05-21), SIDER 4.1, TWOSIDES (research only; not for redistribution); 635,607 interaction records; not synthetic.",
+    "provenance_sha256": "8853ed268358af5fa668becbd7d1400653636f932a7a9b2e2b9d079c487043a0"
   },
   "internal_consistency": {
     "note": "internal consistency: ground truth uses the same normalizer and table as retrieval, so recall/precision are 1.0 by construction",
-    "num_cases": 48,
+    "num_cases": 56,
     "mean_recall": 1.0,
     "mean_precision": 1.0
   },
   "hand_labels": {
-    "num_cases": 48,
+    "num_cases": 56,
     "labelled_pairs": 38,
-    "retrieved_pairs": 231,
+    "retrieved_pairs": 238,
     "hits": 37,
     "recall": 0.974,
-    "precision_lower_bound": 0.16,
+    "precision_lower_bound": 0.155,
     "source_gaps": 1,
     "pipeline_misses": 0,
     "pipeline_recall": 1.0
@@ -24,15 +24,15 @@
   "report_checks": {
     "orchestration": "langgraph",
     "template": {
-      "reports": 48,
-      "clinical_claims": 902,
+      "reports": 56,
+      "clinical_claims": 927,
       "fabricated_claims": 0,
       "uncited_claims": 0,
-      "citations": 902,
-      "valid_citations": 902,
-      "pairs_with_records": 231,
+      "citations": 927,
+      "valid_citations": 927,
+      "pairs_with_records": 238,
       "omitted_pairs": 0,
-      "major_pairs": 35,
+      "major_pairs": 40,
       "omitted_major_pairs": 0,
       "no_data_pairs": 0,
       "declared_no_data_pairs": 0,

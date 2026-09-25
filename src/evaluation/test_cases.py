@@ -219,4 +219,27 @@ TEST_CASES: List[TestCase] = [
             ("sertraline", "warfarin"),
         ],
     ),
+
+    # ---------- Brand names and look-alikes (blind trial, step 8b) ----------
+    # Normalization expectations only: no known_interaction_pairs (labels await review).
+    # The synthetic sample vocabulary lacks most of these brands, so on "sample" they
+    # are expected to stay unresolved.
+    TestCase("LA-01", "Discontinued brand (Coumadin) + brand (Diflucan)", ["Coumadin", "Diflucan"], [],
+             expected_resolved={"Coumadin": "warfarin", "Diflucan": "fluconazole"},
+             expected_by_profile={"sample": {"Diflucan": None}}),
+    TestCase("LA-02", "Brand (Lanoxin) + amiodarone", ["Lanoxin", "amiodarone"], [],
+             expected_resolved={"Lanoxin": "digoxin"}, expected_by_profile={"sample": {"Lanoxin": None}}),
+    TestCase("LA-03", "Look-alike brand Celebrex + warfarin", ["Celebrex", "warfarin"], [],
+             expected_resolved={"Celebrex": "celecoxib"}, expected_by_profile={"sample": {"Celebrex": None}}),
+    TestCase("LA-04", "Look-alike brand Cerebyx + warfarin", ["Cerebyx", "warfarin"], [],
+             expected_resolved={"Cerebyx": "fosphenytoin"}, expected_by_profile={"sample": {"Cerebyx": None}}),
+    TestCase("LA-05", "Look-alike brand Klonopin + oxycodone", ["Klonopin", "oxycodone"], [],
+             expected_resolved={"Klonopin": "clonazepam"}, expected_by_profile={"sample": {"Klonopin": None}}),
+    TestCase("LA-06", "Same drug twice (Coumadin + warfarin) + Diflucan", ["Coumadin", "Diflucan", "warfarin"], [],
+             expected_resolved={"Coumadin": "warfarin", "Diflucan": "fluconazole"},
+             expected_by_profile={"sample": {"Diflucan": None}}),
+    TestCase("LA-07", "Misspelling between two look-alikes (Celebyx)", ["Celebyx", "warfarin"], [],
+             expected_unresolved=["Celebyx"]),
+    TestCase("LA-08", "Discontinued brand Biaxin + simvastatin", ["Biaxin", "simvastatin"], [],
+             expected_resolved={"Biaxin": "clarithromycin"}),
 ]
