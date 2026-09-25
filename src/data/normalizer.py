@@ -237,9 +237,11 @@ class DrugNormalizer:
         hits = process.extract(q, self._fuzzy_names, scorer=fuzz.ratio,
                                score_cutoff=min(threshold, FUZZY_NEIGHBOUR_FLOOR), limit=100)
         best_by_generic: Dict[str, float] = {}
+        best_name: Dict[str, str] = {}
         for name, score, _ in hits:
             generic = self._lookup[name][0]
-            best_by_generic[generic] = max(best_by_generic.get(generic, 0.0), float(score))
+            if float(score) > best_by_generic.get(generic, -1.0):
+                best_by_generic[generic], best_name[generic] = float(score), name
         ranked = sorted(best_by_generic.items(), key=lambda x: (-x[1], str(x[0])))
         best = ranked[0][1] if ranked else 0.0
         rival = ranked[1][1] if len(ranked) > 1 else 0.0
@@ -252,7 +254,10 @@ class DrugNormalizer:
             return ResolvedDrug(query, generic, rxcui, dbid, best, True, "fuzzy",
                                 alias_kind=self._kind.get(name), matched_name=name)
         if close_rival and best >= FUZZY_NEIGHBOUR_FLOOR:
-            names = " / ".join(g for g, sc in ranked[:4] if best - sc < FUZZY_AMBIGUITY_MARGIN)
+            # Name the alias that matched when it isn't the drug's own name, so the user can
+            # see why a candidate is listed ("bevacizumab (matched avastin)").
+            names = " / ".join(g if best_name[g] == str(g).lower() else f"{g} (matched {best_name[g]})"
+                               for g, sc in ranked[:4] if best - sc < FUZZY_AMBIGUITY_MARGIN)
             return ResolvedDrug(query, None, None, None, best, False, "fuzzy_ambiguous",
                                 note=f"ambiguous name; closest matches: {names}; enter the specific drug")
 

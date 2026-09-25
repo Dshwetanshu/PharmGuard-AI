@@ -74,3 +74,18 @@ def test_clear_misspellings_still_resolve_and_say_so(n):
 def test_every_unresolved_input_has_a_reason(n):
     r = n.resolve("xyz123")
     assert not r.resolved and r.note.startswith("not found: check the spelling or enter the generic name")
+
+
+def test_entry_lines_have_no_doubled_wording_and_ambiguous_names_the_matched_alias():
+    from src.agents.generator import describe_entry
+    cfg = Config()
+    cfg.retrieval.rxnorm_api_enabled = False
+    vocab = pd.DataFrame([("atorvastatin", "atorvastatin", None, None), ("bevacizumab", "bevacizumab", None, None),
+                          ("avastin", "bevacizumab", None, None)],
+                         columns=["name_lower", "generic_name", "rxcui", "drugbank_id"])
+    n = DrugNormalizer(cfg).load_from_dataframe(vocab)
+    line = describe_entry(n.resolve("atorvastin"))
+    assert line == ("atorvastin → not analysed: ambiguous name; closest matches: atorvastatin / "
+                    "bevacizumab (matched avastin); enter the specific drug")
+    line = describe_entry(n.resolve("xyz123"))
+    assert line.startswith("xyz123 → not found: check the spelling") and "not recognized: not found" not in line

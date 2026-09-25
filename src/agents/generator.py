@@ -67,7 +67,9 @@ def describe_entry(d) -> str:
     if d.method in ("combination_product", "fuzzy_ambiguous"):
         return f"{q} → not analysed: {d.note}"
     from src.data.normalizer import UNRESOLVED_NOTE
-    return f"{q} → not recognized: {d.note or UNRESOLVED_NOTE}"
+    note = d.note or UNRESOLVED_NOTE
+    # Notes that already say what happened ("not found: ...") are shown as they are.
+    return f"{q} → {note}" if note.startswith("not found") else f"{q} → not recognized: {note}"
 
 
 def entries_section(plan) -> List[str]:
