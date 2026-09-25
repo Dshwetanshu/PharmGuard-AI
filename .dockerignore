@@ -27,3 +27,4 @@ examples/
 tests/
 *.pdf
 .DS_Store
+.claude/

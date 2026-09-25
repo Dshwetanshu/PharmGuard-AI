@@ -163,3 +163,8 @@ def test_real_build_source_names_use_drugsatfda_aliases_only_when_reviewed():
     se = pd.read_parquet(p / "side_effects.parquet", columns=["drug_name"])
     assert (se.drug_name == "perflutren").any() and not (se.drug_name == "albumin human, usp").any()
     assert "penicillin" in set(pd.read_csv(p / "unmatched_sider.csv").name)
+
+
+def test_real_build_optison_input_reads_as_perflutren(public_graph):
+    r = public_graph.components.normalizer.resolve("Optison")
+    assert (r.generic_name, r.alias_kind) == ("perflutren", "REVIEWED_BRAND_OVERRIDE")

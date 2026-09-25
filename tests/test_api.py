@@ -265,6 +265,8 @@ def test_page_is_served_with_a_strict_csp_and_no_inline_script(client):
     assert r.status_code == 200 and "script-src 'self'" in r.headers["content-security-policy"]
     html = r.text
     assert '<script src="/static/app.js"></script>' in html and "<script>" not in html
+    assert ("Educational demo, not medical advice.</strong> Don't start, stop or change any medicine based on "
+            "these results; talk to your pharmacist or doctor.") in html
     assert client.get("/static/app.js").status_code == 200
 
 

@@ -293,6 +293,30 @@ REVIEWED_SOURCE_BRAND_ALIASES: Dict[str, str] = {
     # perflutren, not to albumin human (Drugs@FDA's listed ingredient for the Optison product).
     "optison": "perflutren",
 }
+# Reviewed corrections to what a user's brand name means (user input), applied after the
+# Drugs@FDA merge. Reviewed 2026-09-25:
+REVIEWED_BRAND_OVERRIDES: Dict[str, str] = {
+    # Drugs@FDA lists the Optison product's active ingredient as albumin human, but the
+    # active agent is perflutren in albumin microspheres.
+    "optison": "perflutren",
+}
+
+
+def apply_brand_overrides(aliases: pd.DataFrame) -> Tuple[pd.DataFrame, List[str]]:
+    """Point each REVIEWED_BRAND_OVERRIDES name at its reviewed ingredient (kind
+    REVIEWED_BRAND_OVERRIDE). Returns (aliases, names whose target is missing: not applied)."""
+    aliases = aliases.copy()
+    missing = []
+    for name, target in REVIEWED_BRAND_OVERRIDES.items():
+        hit = aliases[(aliases.name_lower == target) & (aliases.generic_name == target)]
+        if hit.empty:
+            missing.append(name)
+            continue
+        row = {**hit.iloc[0].to_dict(), "name_lower": name, "kind": "REVIEWED_BRAND_OVERRIDE"}
+        aliases = pd.concat([aliases[aliases.name_lower != name], pd.DataFrame([row])], ignore_index=True)
+    return aliases, missing
+
+
 # Considered and left unmatched: SIDER "penicillin" covers two compounds (CID 2349 benzyl-
 # penicillin without stereochemistry, and CID 4730 phenoxymethylpenicillin, penicillin V),
 # so it can't map to penicillin G alone.

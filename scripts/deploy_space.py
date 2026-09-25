@@ -59,7 +59,8 @@ class Refused(SystemExit):
     pass
 
 
-FORBIDDEN = ("research", "twosides", "notes/", "claude.md", ".env", "data/raw", "review/", "__pycache__", ".pyc")
+FORBIDDEN = ("research", "twosides", "notes/", "claude.md", ".claude/", ".env", "data/raw", "review/",
+             "__pycache__", ".pyc")
 
 
 def guard(uploads: List[Upload], what: str) -> None:

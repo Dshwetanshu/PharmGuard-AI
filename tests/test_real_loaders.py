@@ -161,3 +161,18 @@ def test_source_tables_map_through_drugsatfda_aliases_only_when_reviewed():
     assert m["8-mop"] == "methoxsalen" and m["optison"] == "perflutren"
     assert set(missing) == set(REVIEWED_SOURCE_BRAND_ALIASES) - {"8-mop", "optison"}   # targets absent here
     assert set(table.kind) <= {"RXNORM:IN", "REVIEWED_SOURCE_ALIAS"}
+
+
+def test_reviewed_brand_override_points_optison_at_perflutren():
+    from src.data.rxnorm import apply_brand_overrides
+    aliases = pd.DataFrame([
+        ("perflutren", "perflutren", "283753", None, "RXNORM:IN"),
+        ("albumin human, usp", "albumin human, usp", "828529", None, "RXNORM:IN"),
+        ("optison", "albumin human, usp", "828529", None, "DRUGSATFDA:BRAND"),
+    ], columns=["name_lower", "generic_name", "rxcui", "drugbank_id", "kind"])
+    out, missing = apply_brand_overrides(aliases)
+    row = out[out.name_lower == "optison"]
+    assert missing == [] and len(row) == 1
+    assert (row.iloc[0].generic_name, row.iloc[0].kind, row.iloc[0].rxcui) == ("perflutren", "REVIEWED_BRAND_OVERRIDE", "283753")
+    _, missing = apply_brand_overrides(aliases[aliases.name_lower != "perflutren"])
+    assert missing == ["optison"]

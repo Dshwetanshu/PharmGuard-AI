@@ -17,3 +17,4 @@ details.collapsed { margin: 1rem 0; } details.collapsed summary { font-weight: 6
 footer { margin-top: 2rem; } footer li { font-size: 0.85rem; margin: 0.4rem 0; color: #3a4252; }
 #status { color: #8a3b12; }
 .notice { background: #fdecea; border: 1px solid #f1aeb5; padding: 0.5rem 0.8rem; border-radius: 6px; font-weight: 500; }
+.plain-notice { background: #fff7e0; border: 2px solid #8a5a00; padding: 0.7rem 0.9rem; border-radius: 6px; color: #1d2330; }

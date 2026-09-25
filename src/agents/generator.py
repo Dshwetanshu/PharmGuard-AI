@@ -48,6 +48,7 @@ ALIAS_KIND_LABELS = {
     "REVIEWED_ALIAS": "international or older name",
     "RXNORM:IN": "same active moiety",      # an IN folded into another by SALT_GROUPS (lithium carbonate)
     "SALT_GROUP": "same active moiety",
+    "REVIEWED_BRAND_OVERRIDE": "brand name, reviewed",
 }
 
 

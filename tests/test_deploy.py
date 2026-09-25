@@ -19,7 +19,8 @@ spec.loader.exec_module(deploy)
 @pytest.mark.parametrize("path", ["processed/twosides_signals.parquet", "data/profiles/research/processed/x.parquet",
                                   "notes/UPGRADE_NOTES.md", "CLAUDE.md", ".env", ".env.local",
                                   "data/raw/ddinter/a.csv", "src/__pycache__/x.pyc",
-                                  "data/profiles/public/review/fda_brand_review.csv", "review/fda_brand_review.csv"])
+                                  "data/profiles/public/review/fda_brand_review.csv", "review/fda_brand_review.csv",
+                                  ".claude/skills/redesign-skill/SKILL.md"])
 def test_guard_refuses_forbidden_paths(path):
     with pytest.raises(deploy.Refused):
         deploy.guard([deploy.Upload(path, content=b"x")], "test")
