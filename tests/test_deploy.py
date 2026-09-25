@@ -29,7 +29,7 @@ def test_space_file_list_has_only_code_and_no_forbidden_paths():
     ups = deploy.space_uploads("u/pharmguard-public-build", "u/pharmguard")
     deploy.guard(ups, "Space")
     names = {u.path_in_repo for u in ups}
-    assert {"Dockerfile", "requirements-api.lock", "README.md", "api/app.py", "src/graph/builder.py"} <= names
+    assert {"Dockerfile", "requirements-api.lock", "LICENSE", "README.md", "api/app.py", "src/graph/builder.py"} <= names
     assert not any(n.startswith(("data/", "tests/", "notes/", "results/")) for n in names)
     readme = next(u for u in ups if u.path_in_repo == "README.md").content.decode()
     assert "sdk: docker" in readme and "app_port: 7860" in readme and "\nlicense: mit\n" in readme

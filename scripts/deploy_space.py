@@ -37,7 +37,7 @@ from src.data.sources import SOURCES  # noqa: E402
 from src.data.provenance import PROVENANCE_FILE, file_sha256, provenance_line  # noqa: E402
 
 BUILD = ROOT / "data" / "profiles" / "public" / "processed"
-SPACE_FILES = ["Dockerfile", ".dockerignore", "requirements-api.lock"]
+SPACE_FILES = ["Dockerfile", ".dockerignore", "requirements-api.lock", "LICENSE"]
 SPACE_DIRS = ["api", "src"]
 DISCLAIMER = ("PharmGuard is a decision-support prototype, not a substitute for professional medical judgment. "
               "It reports only what its loaded data contains; absence of data is not evidence of safety. "
