@@ -1,7 +1,7 @@
 """Trajectory evaluation: score every step of a run, not just the final report.
 
 Three parts, all offline and without API keys:
-- Step scoring (A): each of the 48 cases, per step (normalize, plan, retrieve,
+- Step scoring (A): each evaluation case, per step (normalize, plan, retrieve,
   route, finalize); task completion = every step correct.
 - Fault suite (B): scripted fake LLMs built from each case's deterministic
   report with the checker's fault types. Each scenario has an expected path and
@@ -26,17 +26,18 @@ from dataclasses import dataclass, field, replace
 from itertools import combinations
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
-from src.agents.generator import STATISTICAL_HEADING, Generator
+from src.agents.generator import SEVERITY_HEADINGS, STATISTICAL_HEADING, Generator
 from src.data.canonical import build_alias_map
 from src.evaluation.hand_labels import canonical_pair, classify_miss, pair_sources
 from src.evaluation.test_cases import SUSPECTED_LABEL_ERRORS, TEST_CASES, TestCase
+from src.graph.serde import plan_from_dict, result_from_dict
 from src.graph.simulated import inject_cyp3a4
 from src.llm import is_transient_llm_error
 from src.observability import Tracing
 from src.verification import Evidence, validate_report
 
 STEPS = ("normalize", "plan", "retrieve", "route", "finalize")
-FINDING_HEADINGS = ("## Major Findings", "## Moderate Findings", "## Minor Findings", "## Severity Not Graded")
+FINDING_HEADINGS = tuple(f"## {h}" for h in SEVERITY_HEADINGS.values())
 LATENCY_LABEL = "orchestration overhead only (fake LLMs, synthetic sample data, no network)"
 
 
@@ -263,7 +264,7 @@ def fault_phantom(body: str) -> Optional[str]:
 
 def fault_severity_flip(body: str) -> Optional[str]:
     flip = {"## Major Findings": "## Minor Findings", "## Moderate Findings": "## Major Findings",
-            "## Minor Findings": "## Major Findings", "## Severity Not Graded": "## Major Findings"}
+            "## Minor Findings": "## Major Findings", f"## {SEVERITY_HEADINGS['Unknown']}": "## Major Findings"}
     lines = body.splitlines()
     for i, ln in enumerate(lines):
         if ln in flip:
@@ -400,13 +401,19 @@ def check_invariants(ctx: RunContext) -> Dict[str, Tuple[bool, str]]:
 
     report, source = s["report"], s["report_source"]
     evidence = Evidence.from_dict(s["evidence"])
+    # Each raw LLM output as the user would see it: rebuilt independently with the same
+    # compose step (entries section, FAERS, footer) the generator applies.
+    raw = ctx.llm.returned if ctx.llm else []
+    if raw and s.get("retrieval"):
+        p, r = plan_from_dict(s["plan"]), result_from_dict(s["retrieval"])
+        composed = [ctx.generator.compose(d, p, r) for d in raw]
+    else:
+        composed = [ctx.generator.finalize(d) for d in raw]
     if source in ("llm", "llm_retry"):
-        drafts = [ctx.generator.finalize(d) for d in (ctx.llm.returned if ctx.llm else [])]
-        ok = report in drafts and validate_report(report, evidence, final=True).passed
+        ok = report in composed and validate_report(report, evidence, final=True).passed
         res["no_unvalidated_llm_text"] = (ok, "LLM report shown that isn't an independently valid draft")
     else:
-        rejected = [ctx.generator.finalize(d) for d in (ctx.llm.returned if ctx.llm else [])
-                    if not validate_report(ctx.generator.finalize(d), evidence, final=True).passed]
+        rejected = [d for d in composed if not validate_report(d, evidence, final=True).passed]
         res["no_unvalidated_llm_text"] = (report not in rejected, "a rejected LLM draft reached the report")
 
     if source == "deterministic_fallback":

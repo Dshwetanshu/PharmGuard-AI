@@ -36,7 +36,8 @@ def jsonable(value: Any) -> Any:
 
 def plan_to_dict(plan: RetrievalPlan) -> Dict[str, Any]:
     return jsonable({"resolved": plan.resolved, "unresolved": plan.unresolved,
-                     "pairs": [list(p) for p in plan.pairs], "side_effect_lookups": plan.side_effect_lookups})
+                     "pairs": [list(p) for p in plan.pairs], "side_effect_lookups": plan.side_effect_lookups,
+                     "entries": plan.entries})
 
 
 def plan_from_dict(d: Dict[str, Any]) -> RetrievalPlan:
@@ -45,6 +46,7 @@ def plan_from_dict(d: Dict[str, Any]) -> RetrievalPlan:
         unresolved=[ResolvedDrug(**r) for r in d["unresolved"]],
         pairs=[tuple(p) for p in d["pairs"]],
         side_effect_lookups=list(d["side_effect_lookups"]),
+        entries=[ResolvedDrug(**r) for r in d.get("entries", [])],
     )
 
 

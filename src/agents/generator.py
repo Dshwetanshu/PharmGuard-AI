@@ -17,7 +17,7 @@ presentation, not recall.
 """
 from __future__ import annotations
 
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from src.agents.planner import RetrievalPlan
 from src.agents.retriever import MAX_SIGNALS_PER_PAIR, RetrievalResult
@@ -28,8 +28,83 @@ from src.verification.lexicon import GENERIC_EVENTS, norm
 
 
 STATISTICAL_HEADING = "Statistical reporting signals (not graded for clinical severity)"
+NOT_GRADED_HEADING = "Listed by DDInter without a severity grade"
+NOT_GRADED_NOTE = ("DDInter lists these pairs without a severity grade; the loaded data can't say whether "
+                   "they matter clinically.")
 SEVERITY_HEADINGS = {"Major": "Major Findings", "Moderate": "Moderate Findings",
-                     "Minor": "Minor Findings", "Unknown": "Severity Not Graded"}
+                     "Minor": "Minor Findings", "Unknown": NOT_GRADED_HEADING}
+ENTRIES_HEADING = "How your entries were read"
+
+# How an alias was found, from the vocabulary entry's kind (src/data/rxnorm.py, merge_fda_brands).
+ALIAS_KIND_LABELS = {
+    "RXNORM:BN": "brand name",
+    "DRUGSATFDA:BRAND": "brand name, Drugs@FDA",
+    "DRUGBANK": "synonym, DrugBank",
+    "RXNORM:PIN": "RxNorm ingredient",
+    "RXNORM:MIN": "RxNorm ingredient",
+    "MTHSPL:SU": "FDA substance name",
+    "RXNORM:SY": "synonym",
+    "RXNORM:TMSY": "synonym",
+    "REVIEWED_ALIAS": "international or older name",
+    "RXNORM:IN": "same active moiety",      # an IN folded into another by SALT_GROUPS (lithium carbonate)
+    "SALT_GROUP": "same active moiety",
+}
+
+
+def describe_entry(d) -> str:
+    """One line of "How your entries were read" for a ResolvedDrug. Fuzzy matches are
+    always marked "check this"."""
+    q = d.query.strip()
+    if d.resolved and d.generic_name:
+        g = d.generic_name
+        if d.method == "fuzzy":
+            return f"{q} → {g} (spelling match: check this)"
+        if d.method == "rxnorm_api":
+            return f"{q} → {g} (RxNorm online lookup: check this)"
+        if " ".join(q.lower().split()) == g.lower():
+            return f"{q} → {g}"
+        return f"{q} → {g} ({ALIAS_KIND_LABELS.get(d.alias_kind or '', 'alias')})"
+    if d.method in ("combination_product", "fuzzy_ambiguous"):
+        return f"{q} → not analysed: {d.note}"
+    from src.data.normalizer import UNRESOLVED_NOTE
+    return f"{q} → not recognized: {d.note or UNRESOLVED_NOTE}"
+
+
+def entries_section(plan) -> List[str]:
+    """Markdown lines for the top of every report: how each entry was read, and a notice
+    when two entries are the same drug. Rendered by code for both report paths."""
+    entries = list(getattr(plan, "entries", None) or (list(plan.resolved) + list(plan.unresolved)))
+    if not entries:
+        return []
+    lines = [f"## {ENTRIES_HEADING}"]
+    groups: Dict[str, List[str]] = {}
+    for d in entries:
+        if d.resolved and d.generic_name:
+            groups.setdefault(d.generic_name, []).append(d.query.strip())
+    for generic, queries in groups.items():
+        if len(queries) > 1:
+            names = " and ".join(queries) if len(queries) == 2 else ", ".join(queries[:-1]) + " and " + queries[-1]
+            lines.append(f"> **Same drug entered more than once:** {names} all mean {generic} "
+                         "(possible duplicate therapy). It is analysed once."
+                         if len(queries) > 2 else
+                         f"> **Same drug entered more than once:** {names} both mean {generic} "
+                         "(possible duplicate therapy). It is analysed once.")
+    lines += [f"- {describe_entry(d)}" for d in entries]
+    return lines
+
+
+def strip_entries_section(text: str) -> str:
+    """Remove any existing "How your entries were read" section (up to the next ## heading)."""
+    out, skipping = [], False
+    for line in text.split("\n"):
+        if line.strip() == f"## {ENTRIES_HEADING}":
+            skipping = True
+            continue
+        if skipping and line.startswith("## "):
+            skipping = False
+        if not skipping:
+            out.append(line)
+    return "\n".join(out)
 
 
 def hidden_notice(n: int) -> str:
@@ -46,17 +121,17 @@ Structure. Use exactly these markdown headings, in this order, and omit any sect
   ## Major Findings
   ## Moderate Findings
   ## Minor Findings
-  ## Severity Not Graded
+  ## {NOT_GRADED_HEADING}
   ## {STATISTICAL_HEADING}
   ## Coverage Notes
   ### Unresolved Inputs
   ### No Curated Interaction Data
-Write one finding per line. Do not add a disclaimer or a FAERS section; the system appends both.
+Write one finding per line. Do not add a disclaimer, a FAERS section or a "{ENTRIES_HEADING}" section; the system adds all three. Start the "{NOT_GRADED_HEADING}" section with this sentence: "{NOT_GRADED_NOTE}"
 
 Rules for every sentence or bullet that names a drug and says anything clinical:
 1. Cite it with one or more citations copied exactly from the evidence, in the form [SOURCE:RECORD_ID]. Never invent or alter a record ID.
 2. Cite only records for the drug pair (or, for side effects, the drug) the sentence is about.
-3. Put each curated record under the heading that matches its curated severity (Major, Moderate or Minor); curated records with severity=not graded go under "Severity Not Graded". Do not describe a curated record with a different severity word.
+3. Put each curated record under the heading that matches its curated severity (Major, Moderate or Minor); curated records with severity=not graded go under "{NOT_GRADED_HEADING}". Do not describe a curated record with a different severity word.
 4. Put statistical signals only under "## {STATISTICAL_HEADING}", with their event, PRR and co-report count. Never put a statistical signal under a severity heading, and never attach a severity word to it (major, moderate, minor, mild, severe, serious, dangerous, life-threatening, clinically significant, high-risk or similar).
 5. When the evidence says a pair has "+N more not shown", write "+N more not shown" for that pair (same N) in the statistical section.
 6. State a PRR or a co-report count only if the cited record has one, and only its value (rounding a PRR to one decimal place is fine).
@@ -108,13 +183,24 @@ class Generator:
             messages.append({"role": "user", "content": feedback})
 
         report = self.llm.complete(system=SYSTEM_PROMPT, messages=messages)
+        return self.compose(report, plan, result)
 
+    def compose(self, llm_text: str, plan: RetrievalPlan, result: RetrievalResult) -> str:
+        """Everything code adds to an LLM draft: "How your entries were read" at the top,
+        the FAERS section, and the footer. Any copy the model wrote of these is replaced,
+        so compose is idempotent."""
+        body = strip_entries_section(llm_text).rstrip()
+        lines = body.split("\n")
+        at = 1 if lines and lines[0].startswith("# ") else 0
+        entries = entries_section(plan)
+        if entries:
+            lines[at:at] = ([""] if at else []) + entries + [""]
+        report = "\n".join(lines).strip("\n")
         # FAERS signals are rendered by code, not by the model, so they are always
         # shown and always carry the "unvalidated" label.
         faers = self._faers_section(result)
-        if faers:
+        if faers and faers[0] not in report:
             report = report.rstrip() + "\n\n" + "\n".join(faers)
-
         # Any copy the model wrote is removed; the canonical footer is appended.
         return self._with_disclaimer(report.rstrip().split("\n"))
 
@@ -123,14 +209,20 @@ class Generator:
 
     def generate_deterministic(self, plan: RetrievalPlan, result: RetrievalResult) -> str:
         lines = ["# PharmGuard Interaction Report", ""]
+        entries = entries_section(plan)
+        if entries:
+            lines += entries + [""]
         curated, signals = result.curated_records, result.statistical_signals
         hidden = result.total_hidden_signals
+        graded = [r for r in curated if r.severity in ("Major", "Moderate", "Minor")]
+        by_tier = ", ".join(f"{t} {sum(r.severity == t for r in graded)}" for t in ("Major", "Moderate", "Minor"))
 
         lines.append("## Summary")
         lines.append(
             f"Analyzed {plan.num_drugs} medication(s) across {plan.num_pairs} unique pair(s). "
-            f"Showing {len(curated)} curated interaction record(s) and {len(signals)} statistical "
-            "reporting signal(s)" + (f"; {hidden} further signal(s) are not shown." if hidden else ".")
+            f"Found {len(graded)} graded interaction(s) ({by_tier}), {len(curated) - len(graded)} listing(s) "
+            f"without a severity grade and {len(signals)} statistical reporting signal(s)"
+            + (f"; {hidden} further signal(s) are not shown." if hidden else ".")
         )
         lines.append("")
 
@@ -141,6 +233,8 @@ class Generator:
         for label, heading in SEVERITY_HEADINGS.items():
             if buckets[label]:
                 lines.append(f"## {heading}")
+                if label == "Unknown":
+                    lines.append(NOT_GRADED_NOTE)
                 for r in buckets[label]:
                     sev = r.severity if label != "Unknown" else "not graded"
                     line = f"- **{r.drug_a} + {r.drug_b}** — curated severity: {sev} ({r.source})"

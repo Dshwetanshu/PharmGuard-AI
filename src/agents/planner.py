@@ -25,6 +25,9 @@ class RetrievalPlan:
     unresolved: List[ResolvedDrug]
     pairs: List[Tuple[str, str]] = field(default_factory=list)
     side_effect_lookups: List[str] = field(default_factory=list)
+    # Every input in order, duplicates included (the report shows how each was read and
+    # flags two entries that are the same drug); resolved/unresolved are the deduplicated view.
+    entries: List[ResolvedDrug] = field(default_factory=list)
 
     @property
     def num_drugs(self) -> int:
@@ -69,4 +72,5 @@ class Planner:
             unresolved=bad,
             pairs=pairs,
             side_effect_lookups=names,
+            entries=list(resolved),
         )

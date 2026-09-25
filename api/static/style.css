@@ -16,3 +16,4 @@ details.collapsed { margin: 1rem 0; } details.collapsed summary { font-weight: 6
 .disclaimer { font-size: 0.9rem; background: #fff7e0; border: 1px solid #f0d78c; padding: 0.6rem 0.8rem; border-radius: 6px; }
 footer { margin-top: 2rem; } footer li { font-size: 0.85rem; margin: 0.4rem 0; color: #3a4252; }
 #status { color: #8a3b12; }
+.notice { background: #fdecea; border: 1px solid #f1aeb5; padding: 0.5rem 0.8rem; border-radius: 6px; font-weight: 500; }

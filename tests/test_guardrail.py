@@ -58,6 +58,6 @@ def test_deterministic_path_and_trace_is_json(sample_pipeline):
 
 def test_system_prompt_states_the_checked_rules():
     for phrase in ("[SOURCE:RECORD_ID]", "### No Curated Interaction Data", "### Unresolved Inputs",
-                   "Severity Not Graded", "PRR", "P-glycoprotein", "elderly", "not evidence of safety",
+                   "Listed by DDInter without a severity grade", "How your entries were read", "PRR", "P-glycoprotein", "elderly", "not evidence of safety",
                    "discarded"):
         assert phrase in SYSTEM_PROMPT, phrase

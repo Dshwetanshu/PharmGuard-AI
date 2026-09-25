@@ -11,7 +11,7 @@ import re
 from dataclasses import dataclass
 from typing import Callable, Dict, List, Tuple
 
-from src.agents.generator import STATISTICAL_HEADING, Generator, hidden_notice
+from src.agents.generator import SEVERITY_HEADINGS, STATISTICAL_HEADING, Generator, hidden_notice
 from src.agents.planner import Planner
 from src.agents.retriever import RetrievalResult, select_pair_records
 from src.config import Config
@@ -126,8 +126,7 @@ def render_prose(s: Scenario, plan, result) -> str:
     lines = ["# PharmGuard Interaction Report", "", "## Summary",
              f"{plan.num_drugs} medications, {plan.num_pairs} pairs and {result.total_interactions} "
              "interaction records were reviewed.", ""]
-    headings = {"Major": "Major Findings", "Moderate": "Moderate Findings",
-                "Minor": "Minor Findings", "Unknown": "Severity Not Graded"}
+    headings = SEVERITY_HEADINGS
     n = 0
     for tier, heading in headings.items():
         recs = [r for r in result.curated_records
@@ -198,7 +197,7 @@ def template(s: Scenario, records=None) -> str:
 
 # ------------------------------------------------------------ fault injectors
 Injection = Tuple[str, str]          # (site description, mutated report)
-FINDING_HEADINGS = ("## Major Findings", "## Moderate Findings", "## Minor Findings", "## Severity Not Graded")
+FINDING_HEADINGS = tuple(f"## {h}" for h in SEVERITY_HEADINGS.values())
 SIGNAL_HEADING = f"## {STATISTICAL_HEADING}"
 
 

@@ -146,9 +146,16 @@ def test_timeout_returns_504_and_busy_returns_503(api_settings, service):
     with pytest.raises(ServiceError) as e:        # the timed-out run still holds the only slot
         svc.check({"drugs": DRUGS}, None, "rid-000009")
     assert (e.value.status, e.value.code) == (503, "busy")
-    time.sleep(0.5)
     g.run = real
-    assert svc.check({"drugs": DRUGS}, None, "rid-000010")["validation"]["passed"]
+    deadline = time.monotonic() + 20          # the slow run releases its slot when it finishes
+    while True:
+        try:
+            out = svc.check({"drugs": DRUGS}, None, "rid-000010")
+            break
+        except ServiceError as exc:
+            assert exc.code == "busy" and time.monotonic() < deadline
+            time.sleep(0.1)
+    assert out["validation"]["passed"]
 
 
 def test_fail_closed_on_synthetic_data_when_the_public_build_is_required(test_data_dir, sample_ingest_report):
@@ -268,7 +275,7 @@ def test_page_renderer_escapes_everything_and_collapses_not_graded():
     report = "\n".join([
         "# PharmGuard Interaction Report", "", "## Summary", "Hi <img src=x onerror=alert(1)>", "",
         "## Major Findings", "- **a + b** — curated severity: Major (DDInter) [DDInter:DDI-1]",
-        "## Severity Not Graded", "- **c + d** — curated severity: not graded (DDInter) [DDInter:DDI-2]",
+        "## Listed by DDInter without a severity grade", "- **c + d** — curated severity: not graded (DDInter) [DDInter:DDI-2]",
         "- **<script>alert(2)</script> + e** — x [DDInter:DDI-3]", "",
         "## Coverage Notes", "### Unresolved Inputs", "- \"><svg onload=alert(3)>", "---", "**Disclaimer.** d",
     ])
@@ -279,7 +286,7 @@ def test_page_renderer_escapes_everything_and_collapses_not_graded():
     html = out["html"]
     assert "<img" not in html and "<script>" not in html and "<svg" not in html
     assert "&lt;img src=x onerror=alert(1)&gt;" in html and "&lt;script&gt;" in html
-    assert '<details class="collapsed"><summary>Severity Not Graded (2)</summary>' in html
+    assert '<details class="collapsed"><summary>Listed by DDInter without a severity grade (2)</summary>' in html
     assert html.index("</details>") < html.index("Coverage Notes")
     assert "<strong>a + b</strong>" in html and '<span class="cite">[DDInter:DDI-1]</span>' in html
     assert out["split1"] == ["a", "b"] and out["split2"] == ["insulin, regular, human", "warfarin"]

@@ -72,7 +72,8 @@ def _ungraded_case(sample_pipeline):
 def test_unknown_severity_is_shown_as_not_graded(sample_pipeline):
     plan, result = _ungraded_case(sample_pipeline)
     report = Generator(sample_pipeline.cfg).generate_deterministic(plan, result)
-    assert "## Severity Not Graded" in report
+    assert "## Listed by DDInter without a severity grade" in report
+    assert "the loaded data can't say whether they matter clinically" in report
     assert "[DDInter:DDI-00009999]" in report
 
 
@@ -81,7 +82,7 @@ def test_llm_is_told_about_ungraded_records(sample_pipeline):
     llm = StubLLM()
     Generator(sample_pipeline.cfg, llm=llm).generate(plan, result)
     system, messages = llm.calls[0]
-    assert "Severity Not Graded" in system
+    assert "Listed by DDInter without a severity grade" in system
     assert "severity=not graded" in messages[0]["content"]
 
 
@@ -117,7 +118,8 @@ def test_template_lists_every_no_data_pair_and_unresolved_input(sample_pipeline)
     assert "### No Curated Interaction Data" in report
     for a, b in result.retrieval.no_data_pairs:
         assert f"\n- {a} + {b}\n" in report
-    assert "### Unresolved Inputs" in report and "\n- fictional_drug_xyz\n" in report
+    assert "### Unresolved Inputs" in report
+    assert "\n- fictional_drug_xyz — not found: check the spelling or enter the generic name" in report
     assert "..." not in report
 
 

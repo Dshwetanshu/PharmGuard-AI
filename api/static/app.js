@@ -1,7 +1,7 @@
 // PharmGuard page. Every piece of text from the server or the user is escaped before
 // it is placed in the DOM. The report markdown is escaped first, then a small renderer
 // turns the escaped text into headings, lists and bold, so no markup in a report or a
-// drug name can execute. "Severity Not Graded" is collapsed with its count; the
+// drug name can execute. the ungraded-listings section is collapsed with its count; the
 // markdown report itself is complete (the API returns it unchanged).
 "use strict";
 
@@ -17,7 +17,7 @@ function inline(escaped) {
     .replace(/\[([A-Za-z][A-Za-z0-9 _-]*:[A-Za-z0-9._-]+)\]/g, '<span class="cite">[$1]</span>');
 }
 
-const COLLAPSED = ["Severity Not Graded"];
+const COLLAPSED = ["Listed by DDInter without a severity grade"];
 
 // Markdown (as produced by PharmGuard) -> HTML string. Input is escaped line by line.
 function renderReport(markdown) {
@@ -51,6 +51,7 @@ function renderReport(markdown) {
       continue;
     }
     closeList();
+    if (/^> /.test(line)) { out.push('<p class="notice">' + inline(escapeHtml(line.slice(2))) + "</p>"); continue; }
     if (line.trim() === "---") { closeCollapsed(); out.push("<hr>"); continue; }
     if (line.trim() !== "") out.push("<p>" + inline(escapeHtml(line)) + "</p>");
   }
