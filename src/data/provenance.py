@@ -34,6 +34,7 @@ SOURCE_LABELS = {
     "sider": "SIDER 4.1",
     "rxnorm": "RxNorm Current Prescribable",
     "drugbank": "DrugBank vocabulary",
+    "drugsatfda": "Drugs@FDA brand names",
     "twosides": "TWOSIDES (research only; not for redistribution)",
 }
 
@@ -57,6 +58,8 @@ def write_real_provenance(processed_dir: Path, profile: str, manifest: Dict, rep
     """Record a real-data build: per source URL, version, license, download date, sha256,
     row counts, filters and unmatched counts, plus the profile and vocabulary stats."""
     used = ["rxnorm", "ddinter", "sider"] + (["twosides"] if profile == "research" else [])
+    if "drugsatfda" in report.get("sources", {}):
+        used.insert(1, "drugsatfda")
     if report["vocabulary"].get("drugbank") == "merged":
         used.insert(1, "drugbank")
     sources = {}

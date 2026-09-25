@@ -25,7 +25,8 @@ def _normalizer():
 def test_ambiguous_fuzzy_match_stays_unresolved_and_lists_candidates():
     r = _normalizer().resolve("insulin")
     assert (r.resolved, r.generic_name, r.method) == (False, None, "fuzzy_ambiguous")
-    assert r.note.startswith("ambiguous name; closest matches: inulin / insulin")
+    # Real insulins are listed, never inulin (item 6 of the step 8b fixes).
+    assert r.note == "ambiguous name; matching drugs: insulin detemir / insulin glulisine, human; enter the specific drug"
 
 
 def test_clear_misspellings_still_resolve():

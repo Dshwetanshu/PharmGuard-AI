@@ -375,3 +375,23 @@ def load_ddinter(paths: Union[Path, Iterable[Path]]) -> pd.DataFrame:
         "prr", "frequency", "source", "record_id",
     ) if c in df.columns]
     return df[keep].reset_index(drop=True)
+
+
+# ============================================================
+# Drugs@FDA (U.S. FDA, public domain) — brand names with active ingredients
+# ============================================================
+
+def load_drugsatfda_products(path: Path) -> pd.DataFrame:
+    """Products.txt from the Drugs@FDA data files zip: one row per product with the
+    brand (DrugName) and its active ingredients (';'-separated). Includes discontinued
+    products, which RxNorm Current Prescribable leaves out (e.g. Coumadin, Biaxin)."""
+    import io
+    import zipfile
+
+    with zipfile.ZipFile(path) as z, z.open("Products.txt") as f:
+        df = pd.read_csv(io.TextIOWrapper(f, encoding="latin-1"), sep="\t", dtype=str, na_filter=False,
+                         quoting=3, usecols=["ApplNo", "ProductNo", "DrugName", "ActiveIngredient"])
+    df = df.rename(columns={"DrugName": "drug_name", "ActiveIngredient": "active_ingredient",
+                            "ApplNo": "appl_no", "ProductNo": "product_no"})
+    df["drug_name"] = df["drug_name"].str.strip()
+    return df[df["drug_name"] != ""].reset_index(drop=True)

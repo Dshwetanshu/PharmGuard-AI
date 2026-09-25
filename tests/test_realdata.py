@@ -35,7 +35,7 @@ def public_graph():
 def test_public_provenance_names_sources_with_hashes():
     prov = json.loads((_processed("public") / "provenance.json").read_text())
     assert (prov["profile"], prov["synthetic"], prov["not_for_redistribution"]) == ("public", False, False)
-    assert prov["source_order"] == ["rxnorm", "ddinter", "sider"] and prov["join_integrity_issues"] == 0
+    assert prov["source_order"] == ["rxnorm", "drugsatfda", "ddinter", "sider"] and prov["join_integrity_issues"] == 0
     for key in prov["source_order"]:
         files = prov["sources"][key]["files"]
         assert files and all(len(f["sha256"]) == 64 and f["url"].startswith("http") for f in files), key
@@ -78,7 +78,8 @@ def test_insulin_is_ambiguous_but_a_specific_insulin_resolves(public_graph):
         r = n.resolve(q)
         assert (r.resolved, r.generic_name) == (True, expected), (q, r)
     s = public_graph.run(["insulin", "metoprolol"])
-    assert "- insulin — ambiguous name; closest matches:" in s["report"]
+    assert "- insulin — ambiguous name; matching drugs: insulin" in s["report"]
+    assert "inulin" not in s["report"]
 
 
 def test_inn_names_from_ddinter_reach_the_report(public_graph):
@@ -121,3 +122,29 @@ def test_attribution_notices_follow_the_build():
     res = [n.key for n in notices_for_dir(_processed("research"))]
     assert "twosides" not in pub and "twosides" in res
     assert {"ddinter", "sider", "rxnorm", "openfda", "noncommercial"} <= set(pub)
+
+
+@pytest.mark.parametrize("name,expected", [
+    ("Coumadin", "warfarin"), ("Biaxin", "clarithromycin"), ("Lanoxin", "digoxin"), ("Celebrex", "celecoxib"),
+    ("Cerebyx", "fosphenytoin"), ("Klonopin", "clonazepam"), ("hydroxyzine", "hydroxyzine"),
+    ("hydralazine", "hydralazine"), ("tramadol", "tramadol"), ("trazodone", "trazodone"), ("clonidine", "clonidine"),
+])
+def test_real_build_brands_and_lookalikes_resolve_to_themselves(public_graph, name, expected):
+    r = public_graph.components.normalizer.resolve(name)
+    assert (r.resolved, r.generic_name, r.method) == (True, expected, "exact")
+
+
+@pytest.mark.parametrize("misspelling", ["Celebyx", "Cerebrex", "hydroxalazine", "tramadone", "trazadol",
+                                         "klonidine", "Klonidin"])
+def test_real_build_lookalike_misspellings_are_ambiguous(public_graph, misspelling):
+    r = public_graph.components.normalizer.resolve(misspelling)
+    assert (r.resolved, r.method) == (False, "fuzzy_ambiguous"), r
+
+
+def test_real_build_coumadin_report_finds_warfarin_and_flags_the_duplicate(public_graph):
+    s = public_graph.run(["Coumadin", "Diflucan", "warfarin"])
+    report = s["report"]
+    assert "- Coumadin → warfarin (brand name, Drugs@FDA)" in report
+    assert "> **Same drug entered more than once:** Coumadin and warfarin both mean warfarin" in report
+    assert "fluconazole + warfarin** — curated severity: Major" in report and "coumarin" not in report
+    assert s["final_validation"]["passed"]

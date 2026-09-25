@@ -5,8 +5,8 @@ downloads into data/raw/ (gitignored) and refuses a file whose hash doesn't matc
 Nothing here is data; only where to get it and what it must hash to.
 
 Profiles:
-- "public": RxNorm Current Prescribable, DrugBank vocabulary (when available),
-  the DDInter bulk download, SIDER 4.1. Everything it builds may appear in the public demo.
+- "public": RxNorm Current Prescribable, Drugs@FDA brand names, DrugBank vocabulary
+  (when available), the DDInter bulk download, SIDER 4.1. Everything it builds may appear in the public demo.
 - "research": public + TWOSIDES. TWOSIDES has no stated license, so it is for
   local evaluation only and must never enter the Hugging Face bundle, the demo
   or a commit.
@@ -92,6 +92,15 @@ SOURCES: Dict[str, Source] = {
                     sha256="119b2f5319a9398da83e5fe3419889010dbacf8d3eef590251b00c025e2b3f99"),
          SourceFile(f"{SIDER_BASE}/drug_names.tsv", "drug_names.tsv",
                     sha256="6427a3e3202c71a81dff97092957aacf0700b9c01f34b07e452a1ec47c92b007")],
+    ),
+    "drugsatfda": Source(
+        "drugsatfda", "Drugs@FDA data files", "datdaf_20260924, files dated 2026-09-23",
+        "Public domain (U.S. FDA)", "https://www.fda.gov/drugs/drug-approvals-and-databases/drugsfda-data-files",
+        # FDA replaces this file weekly at the same URL; the pin makes a newer copy fail loudly
+        # instead of silently changing the brand aliases. Re-pin deliberately to update.
+        [SourceFile("https://www.fda.gov/media/89850/download", "drugsatfda_20260924.zip",
+                    sha256="90a8c88e79951ba3b5db726375ae067b8c4afe3e50b51019aec96ec96fb1052d")],
+        note="Brand names (including discontinued products) with their active ingredients.",
     ),
     "twosides": Source(
         "twosides", "TWOSIDES (nSIDES)", "S3 object dated 2024-03-30",

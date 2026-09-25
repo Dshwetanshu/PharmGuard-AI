@@ -58,10 +58,21 @@ except ImportError:
 
 from src.config import Config, config as default_config
 
-# A fuzzy match is accepted only if the next *different* drug scores at least this
-# much lower (WRatio points). Real misspellings clear it easily (metfromin -> metformin
-# leads the next drug by 11); "insulin" (inulin 92 vs insulin products 90) doesn't.
-FUZZY_AMBIGUITY_MARGIN = 5.0
+# Spelling matches use plain Levenshtein similarity (rapidfuzz ratio, 0-100), not WRatio:
+# WRatio's partial matching scored "spironolacton" 90 against "iron". Rules, measured on
+# look-alike pairs and ordinary misspellings against the public build (see docs/DATASETS.md):
+# - accept the best drug only if it scores >= the configured threshold (85) AND no other drug
+#   scores within FUZZY_AMBIGUITY_MARGIN of it (rivals below FUZZY_NEIGHBOUR_FLOOR don't count);
+# - two different drugs both >= FUZZY_NEIGHBOUR_FLOOR within the margin -> ambiguous
+#   (Celebyx: Cerebyx 86 vs Celebrex 80; hydroxalazine: hydralazine 92 vs hydroxyzine 83);
+# - an input that is the first word of two or more drugs' names -> ambiguous, listing those
+#   drugs ("insulin" -> insulin aspart / insulin degludec / ...), never the closest spelling.
+FUZZY_AMBIGUITY_MARGIN = 10.0
+FUZZY_NEIGHBOUR_FLOOR = 75.0
+
+UNRESOLVED_NOTE = ("not found: check the spelling or enter the generic name; discontinued brands and "
+                   "non-US names may not be recognized")
+NOT_IN_DATA_NOTE = "RxNorm knows this name, but the loaded data has no entry for it"
 
 
 @dataclass
@@ -75,6 +86,9 @@ class ResolvedDrug:
     method: str                   # "exact" | "fuzzy" | "rxnorm_api" | "rxnorm_not_in_local_vocab" |
                                   # "combination_product" | "unresolved"
     note: Optional[str] = None    # shown with an unresolved input, e.g. a combination's ingredients
+    alias_kind: Optional[str] = None   # how an exact/fuzzy match was found: the vocabulary entry's kind
+                                       # (e.g. RXNORM:BN, DRUGSATFDA:BRAND, RXNORM:PIN); None if unknown
+    matched_name: Optional[str] = None  # the vocabulary name a fuzzy match landed on
 
 
 class DrugNormalizer:
@@ -96,6 +110,8 @@ class DrugNormalizer:
         # name -> (generic_name, rxcui, drugbank_id)
         self._lookup: Dict[str, tuple] = {}
         self._all_names: List[str] = []
+        self._fuzzy_names: List[str] = []           # fuzzy candidates (see set_fuzzy_targets)
+        self._kind: Dict[str, Optional[str]] = {}
         self._combinations: Dict[str, str] = {}   # combination product name -> "a + b"
         self._loaded = False
         self._api_resolver = None  # lazy — only built if enabled
@@ -118,7 +134,21 @@ class DrugNormalizer:
         df = read_table(path)
         combos_path = self.cfg.paths.processed_dir / "combination_products.parquet"
         combos = read_table(combos_path) if table_exists(combos_path) else None
-        return self.load_from_dataframe(df, combos)
+        self.load_from_dataframe(df, combos)
+        # Fuzzy matching may only land on drugs the loaded data has records for, so an
+        # obscure vocabulary substance (coumarin, inulin) can't capture a misspelling.
+        targets = set()
+        for table, cols in (("interactions.parquet", ["drug_a_name", "drug_b_name"]),
+                            ("side_effects.parquet", ["drug_name"])):
+            tp = self.cfg.paths.processed_dir / table
+            if table_exists(tp):
+                t = read_table(tp)
+                for col in cols:
+                    if col in t.columns:
+                        targets |= {str(x).strip().lower() for x in t[col].dropna().unique()}
+        if targets:
+            self.set_fuzzy_targets(targets)
+        return self
 
     def load_from_dataframe(self, df: pd.DataFrame, combinations: Optional[pd.DataFrame] = None) -> "DrugNormalizer":
         """Load directly from in-memory dataframes (tests, sample mode)."""
@@ -128,8 +158,27 @@ class DrugNormalizer:
         self._loaded = True
         return self
 
+    def set_fuzzy_targets(self, generics) -> "DrugNormalizer":
+        """Restrict fuzzy matching to names whose canonical drug is in `generics`.
+        Exact and alias matching still use the whole vocabulary."""
+        wanted = {str(g).strip().lower() for g in generics if g}
+        self._fuzzy_names = [n for n in self._all_names if str(self._lookup[n][0]).strip().lower() in wanted]
+        return self
+
+    def _family(self, q: str) -> List[str]:
+        """Drugs whose names start with the whole word q ("insulin" -> "insulin aspart, ...")."""
+        if len(q) < 4 or " " in q:
+            return []
+        found: Dict[str, int] = {}
+        for name in self._fuzzy_names:
+            if name.startswith(q) and len(name) > len(q) and not name[len(q)].isalnum():
+                g = str(self._lookup[name][0])
+                found[g] = min(found.get(g, 10 ** 6), len(name))
+        return sorted(found, key=lambda g: (found[g], g))
+
     def _build_lookup(self, df: pd.DataFrame) -> None:
         self._lookup = {}
+        self._kind = {}
         names = []
         for _, row in df.iterrows():
             key = str(row["name_lower"]).strip()
@@ -140,8 +189,11 @@ class DrugNormalizer:
                 row.get("rxcui"),
                 row.get("drugbank_id"),
             )
+            kind = row.get("kind")
+            self._kind[key] = kind if isinstance(kind, str) and kind else None
             names.append(key)
-        self._all_names = list(set(names))
+        self._all_names = sorted(set(names))
+        self._fuzzy_names = list(self._all_names)
 
     # ---------- resolution ----------
 
@@ -160,37 +212,49 @@ class DrugNormalizer:
 
         q = query.strip().lower()
         if not q:
-            return ResolvedDrug(query, None, None, None, 0.0, False, "unresolved")
+            return ResolvedDrug(query, None, None, None, 0.0, False, "unresolved", note="empty input")
 
         # 1. Exact match against local vocabulary
         if q in self._lookup:
             generic, rxcui, dbid = self._lookup[q]
-            return ResolvedDrug(query, generic, rxcui, dbid, 100.0, True, "exact")
+            return ResolvedDrug(query, generic, rxcui, dbid, 100.0, True, "exact", alias_kind=self._kind.get(q))
 
         # Combination products stay unresolved: name the ingredients instead of picking one.
         if q in self._combinations:
             return ResolvedDrug(query, None, None, None, 0.0, False, "combination_product",
                                 note=f"combination product: {self._combinations[q]}; enter them separately")
 
-        # 2. Fuzzy match against local vocabulary. If a *different* drug scores within
-        # FUZZY_AMBIGUITY_MARGIN of the best, don't guess: with the real vocabulary,
-        # "insulin" scored 92 for inulin and 90 for several insulins.
-        hits = process.extract(q, self._all_names, scorer=fuzz.WRatio,
-                               score_cutoff=self.cfg.retrieval.name_match_threshold, limit=10)
+        # 2a. A family word ("insulin"): the first word of two or more drugs' names.
+        family = self._family(q)
+        if len(family) >= 2:
+            names = " / ".join(family[:4])     # RxNorm names can contain commas
+            more = f" (and {len(family) - 4} more)" if len(family) > 4 else ""
+            return ResolvedDrug(query, None, None, None, 0.0, False, "fuzzy_ambiguous",
+                                note=f"ambiguous name; matching drugs: {names}{more}; enter the specific drug")
+
+        # 2b. Spelling match against drugs the loaded data has records for.
+        threshold = self.cfg.retrieval.name_match_threshold
+        hits = process.extract(q, self._fuzzy_names, scorer=fuzz.ratio,
+                               score_cutoff=min(threshold, FUZZY_NEIGHBOUR_FLOOR), limit=100)
         best_by_generic: Dict[str, float] = {}
         for name, score, _ in hits:
             generic = self._lookup[name][0]
             best_by_generic[generic] = max(best_by_generic.get(generic, 0.0), float(score))
-        ranked = sorted(best_by_generic.items(), key=lambda x: -x[1])
-        if len(ranked) >= 2 and ranked[0][1] - ranked[1][1] < FUZZY_AMBIGUITY_MARGIN:
-            names = " / ".join(g for g, _ in ranked[:4])   # RxNorm names can contain commas
-            return ResolvedDrug(query, None, None, None, ranked[0][1], False, "fuzzy_ambiguous",
-                                note=f"ambiguous name; closest matches: {names}; enter the specific drug")
-        if ranked:
+        ranked = sorted(best_by_generic.items(), key=lambda x: (-x[1], str(x[0])))
+        best = ranked[0][1] if ranked else 0.0
+        rival = ranked[1][1] if len(ranked) > 1 else 0.0
+        close_rival = rival >= FUZZY_NEIGHBOUR_FLOOR and best - rival < FUZZY_AMBIGUITY_MARGIN
+        if best >= threshold and not close_rival:
             generic = ranked[0][0]
-            name = next(n for n, _, _ in hits if self._lookup[n][0] == generic)
+            name = max((n for n, _, _ in hits if self._lookup[n][0] == generic),
+                       key=lambda n: fuzz.ratio(q, n))
             _, rxcui, dbid = self._lookup[name]
-            return ResolvedDrug(query, generic, rxcui, dbid, ranked[0][1], True, "fuzzy")
+            return ResolvedDrug(query, generic, rxcui, dbid, best, True, "fuzzy",
+                                alias_kind=self._kind.get(name), matched_name=name)
+        if close_rival and best >= FUZZY_NEIGHBOUR_FLOOR:
+            names = " / ".join(g for g, sc in ranked[:4] if best - sc < FUZZY_AMBIGUITY_MARGIN)
+            return ResolvedDrug(query, None, None, None, best, False, "fuzzy_ambiguous",
+                                note=f"ambiguous name; closest matches: {names}; enter the specific drug")
 
         # 3. RxNorm REST API fallback, mapped back through the local vocabulary
         api = self._ensure_api_resolver()
@@ -202,10 +266,11 @@ class DrugNormalizer:
                         generic, rxcui, dbid = self._lookup[name]
                         return ResolvedDrug(query, generic, rxcui, dbid, match.score, True, "rxnorm_api")
                 return ResolvedDrug(
-                    query, None, match.rxcui, None, match.score, False, "rxnorm_not_in_local_vocab"
+                    query, None, match.rxcui, None, match.score, False, "rxnorm_not_in_local_vocab",
+                    note=NOT_IN_DATA_NOTE,
                 )
 
-        return ResolvedDrug(query, None, None, None, 0.0, False, "unresolved")
+        return ResolvedDrug(query, None, None, None, 0.0, False, "unresolved", note=UNRESOLVED_NOTE)
 
     def aliases_for(self, generics) -> Dict[str, str]:
         """{alias: generic} for every local-vocabulary alias of the given generics."""

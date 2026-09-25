@@ -80,7 +80,7 @@ def main() -> int:
     ap.add_argument("--raw-dir", default=str(ROOT / "data" / "raw"))
     ap.add_argument("--force", action="store_true", help="Re-download even if files exist.")
     args = ap.parse_args()
-    keys = ["rxnorm", "drugbank", "ddinter", "sider"] + (["twosides"] if args.with_twosides else [])
+    keys = ["rxnorm", "drugsatfda", "drugbank", "ddinter", "sider"] + (["twosides"] if args.with_twosides else [])
     fetch(Path(args.raw_dir), keys, args.force)
     print(f"Manifest: {Path(args.raw_dir) / 'MANIFEST.json'}")
     return 0

@@ -20,9 +20,13 @@ from typing import Dict, Optional
 import pandas as pd
 
 from src.data.canonical import build_alias_map, ensure_self_aliases, find_join_integrity_issues
-from src.data.loaders import load_ddinter, load_drugbank_vocabulary, load_sider, load_twosides_filtered
+from src.data.loaders import (
+    load_ddinter, load_drugbank_vocabulary, load_drugsatfda_products, load_sider, load_twosides_filtered,
+)
 from src.data.provenance import write_real_provenance
-from src.data.rxnorm import REVIEWED_ALIASES, SALT_GROUPS, build_rxnorm_vocabulary, merge_drugbank_synonyms
+from src.data.rxnorm import (
+    REVIEWED_ALIASES, SALT_GROUPS, build_rxnorm_vocabulary, merge_drugbank_synonyms, merge_fda_brands,
+)
 from src.data.sources import PROFILES
 from src.data.storage import write_table
 
@@ -81,15 +85,30 @@ def ingest_real(raw_dir: Path, out_dir: Path, profile: str, drugbank_csv: Option
     if drugbank_csv:
         aliases, extra = merge_drugbank_synonyms(vocab, load_drugbank_vocabulary(Path(drugbank_csv)))
     aliases = ensure_self_aliases(aliases)
+    combinations = vocab.combinations
+    fda_path = _find(raw_dir, "drugsatfda/*.zip")
+    fda_stats: Dict[str, int] = {}
+    if fda_path is not None:
+        # Brand names from Drugs@FDA, including discontinued products (Coumadin, Biaxin).
+        # Collisions and ambiguous names are not applied; they go to review/ (not published).
+        aliases, combinations, fda_stats, review = merge_fda_brands(aliases, combinations,
+                                                                    load_drugsatfda_products(fda_path))
+        (out_dir / "review").mkdir(parents=True, exist_ok=True)
+        review.to_csv(out_dir / "review" / "fda_brand_review.csv", index=False)
     write_table(aliases, processed / "drug_vocabulary.parquet")
-    write_table(vocab.combinations, processed / "combination_products.parquet")
+    write_table(combinations, processed / "combination_products.parquet")
     alias = build_alias_map(aliases)
-    report["vocabulary"] = {**vocab.stats, **extra, "rows": len(aliases),
+    report["vocabulary"] = {**vocab.stats, **extra, **fda_stats, "rows": len(aliases),
+                            "combination_products": len(combinations),
                             "salt_groups": dict(SALT_GROUPS), "reviewed_aliases": dict(REVIEWED_ALIASES),
                             "drugbank": "merged" if drugbank_csv else "not available (DrugBank downloads paused)"}
     report["timings_s"]["vocabulary"] = round(time.perf_counter() - t, 1)
 
     frames, sources = [], {}
+    if fda_stats:
+        sources["drugsatfda"] = {**fda_stats, "review_file": "review/fda_brand_review.csv (not published)",
+                                 "rule": "brand added only if every product maps to the same single "
+                                         "vocabulary ingredient and the name is new"}
 
     # ---- DDInter (curated severity)
     t = time.perf_counter()

@@ -204,3 +204,76 @@ def merge_drugbank_synonyms(vocab: RxNormVocabulary, drugbank: pd.DataFrame) -> 
     merged = pd.concat([aliases, pd.DataFrame(added, columns=aliases.columns)], ignore_index=True)
     return merged, {"drugbank_aliases_added": len(added), "drugbank_conflicts_skipped": int(conflicts),
                     "drugbank_rows_without_unii_link": unlinked}
+
+
+def merge_fda_brands(aliases: pd.DataFrame, combinations: pd.DataFrame, products: pd.DataFrame
+                     ) -> Tuple[pd.DataFrame, pd.DataFrame, Dict[str, int], pd.DataFrame]:
+    """Add Drugs@FDA brand names (including discontinued products) to the vocabulary.
+
+    A brand's active ingredients are mapped through the existing aliases (exact match).
+    - one ingredient, every product agrees, name not yet in the vocabulary -> alias
+      (kind DRUGSATFDA:BRAND), e.g. Coumadin -> warfarin;
+    - several ingredients, every product agrees, name new -> combination product;
+    - the name is already in the vocabulary for the same drug -> nothing to do;
+    - the name is already in the vocabulary for a different drug -> collision, not applied;
+    - products under the same name map to different ingredients -> ambiguous, not applied;
+    - some ingredient isn't in the vocabulary -> unmapped, not applied.
+    Returns (aliases, combinations, stats, review) where review lists every collision and
+    ambiguous name with its candidates, for a person to check.
+    """
+    alias = dict(zip(aliases.name_lower, aliases.generic_name))
+    combos = dict(zip(combinations.name_lower, combinations.ingredients))
+    by_name: Dict[str, Set[Tuple[str, ...]]] = defaultdict(set)
+    unmapped: Set[str] = set()
+    for name, ingredients in zip(products.drug_name, products.active_ingredient):
+        n = str(name).strip().lower()
+        parts = [p.strip().lower() for p in str(ingredients).split(";") if p.strip()]
+        mapped = [alias.get(p) for p in parts]
+        if not parts or any(m is None for m in mapped):
+            unmapped.add(n)
+            continue
+        by_name[n].add(tuple(sorted(set(mapped))))
+
+    added, added_combos, review = [], [], []
+    stats = {"fda_brand_names": len(set(by_name) | unmapped), "fda_brands_added": 0,
+             "fda_combinations_added": 0, "fda_already_known": 0, "fda_collisions": 0,
+             "fda_ambiguous": 0, "fda_unmapped": 0}
+    for n in sorted(set(by_name) | unmapped):
+        sets = by_name.get(n, set())
+        if n in unmapped:
+            if sets:     # some products map, others don't: don't guess
+                stats["fda_ambiguous"] += 1
+                review.append({"name": n, "issue": "ambiguous",
+                               "fda_ingredients": " | ".join(" + ".join(s) for s in sorted(sets)) + " | (unmapped)",
+                               "vocabulary": alias.get(n) or combos.get(n) or ""})
+            else:
+                stats["fda_unmapped"] += 1
+            continue
+        if len(sets) > 1:
+            stats["fda_ambiguous"] += 1
+            review.append({"name": n, "issue": "ambiguous", "fda_ingredients": " | ".join(" + ".join(s) for s in sorted(sets)),
+                           "vocabulary": alias.get(n) or combos.get(n) or ""})
+            continue
+        (ins,) = sets
+        existing = alias.get(n)
+        existing_combo = combos.get(n)
+        if existing is not None or existing_combo is not None:
+            same = (len(ins) == 1 and existing == ins[0]) or (existing_combo == " + ".join(ins))
+            if same:
+                stats["fda_already_known"] += 1
+            else:
+                stats["fda_collisions"] += 1
+                review.append({"name": n, "issue": "collision", "fda_ingredients": " + ".join(ins),
+                               "vocabulary": existing or f"combination: {existing_combo}"})
+            continue
+        if len(ins) == 1:
+            hit = aliases[aliases.name_lower == ins[0]].iloc[0]
+            added.append({"name_lower": n, "generic_name": ins[0], "rxcui": hit.get("rxcui"),
+                          "drugbank_id": hit.get("drugbank_id"), "kind": "DRUGSATFDA:BRAND"})
+        else:
+            added_combos.append({"name_lower": n, "ingredients": " + ".join(ins), "rxcui": None})
+    stats["fda_brands_added"], stats["fda_combinations_added"] = len(added), len(added_combos)
+    aliases = pd.concat([aliases, pd.DataFrame(added, columns=aliases.columns)], ignore_index=True)
+    combinations = pd.concat([combinations, pd.DataFrame(added_combos, columns=combinations.columns)],
+                             ignore_index=True)
+    return aliases, combinations, stats, pd.DataFrame(review, columns=["name", "issue", "fda_ingredients", "vocabulary"])

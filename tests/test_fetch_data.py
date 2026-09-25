@@ -63,7 +63,7 @@ def test_pinned_hash_mismatch_is_rejected(tmp_path, fake_source):
 
 
 def test_twosides_is_research_only_and_every_public_file_is_pinned():
-    assert [s.key for s in sources.sources_for("public")] == ["rxnorm", "drugbank", "ddinter", "sider"]
+    assert [s.key for s in sources.sources_for("public")] == ["rxnorm", "drugbank", "ddinter", "sider", "drugsatfda"]
     assert "twosides" in [s.key for s in sources.sources_for("research")]
     for s in sources.SOURCES.values():
         assert all(f.sha256 and len(f.sha256) == 64 for f in s.files), s.key
