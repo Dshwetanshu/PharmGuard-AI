@@ -18,7 +18,8 @@ spec.loader.exec_module(deploy)
 
 @pytest.mark.parametrize("path", ["processed/twosides_signals.parquet", "data/profiles/research/processed/x.parquet",
                                   "notes/UPGRADE_NOTES.md", "CLAUDE.md", ".env", ".env.local",
-                                  "data/raw/ddinter/a.csv", "src/__pycache__/x.pyc"])
+                                  "data/raw/ddinter/a.csv", "src/__pycache__/x.pyc",
+                                  "data/profiles/public/review/fda_brand_review.csv", "review/fda_brand_review.csv"])
 def test_guard_refuses_forbidden_paths(path):
     with pytest.raises(deploy.Refused):
         deploy.guard([deploy.Upload(path, content=b"x")], "test")
@@ -31,7 +32,7 @@ def test_space_file_list_has_only_code_and_no_forbidden_paths():
     assert {"Dockerfile", "requirements-api.lock", "README.md", "api/app.py", "src/graph/builder.py"} <= names
     assert not any(n.startswith(("data/", "tests/", "notes/", "results/")) for n in names)
     readme = next(u for u in ups if u.path_in_repo == "README.md").content.decode()
-    assert "sdk: docker" in readme and "app_port: 7860" in readme and "license:" not in readme
+    assert "sdk: docker" in readme and "app_port: 7860" in readme and "\nlicense: mit\n" in readme
     assert "https://u-pharmguard.hf.space/?drugs=warfarin,aspirin" in readme and "deterministic mode" in readme
 
 

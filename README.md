@@ -223,4 +223,11 @@ PharmGuard is a **decision-support tool**, not a substitute for professional med
 
 ## License
 
-Academic use. See individual dataset licenses in `docs/DATASETS.md`.
+The code is MIT-licensed (see [`LICENSE`](LICENSE)). The data has its own licenses:
+
+- The public build is derived from DDInter and SIDER and is licensed **CC BY-NC-SA 4.0**
+  (non-commercial use; share alike).
+- RxNorm (U.S. National Library of Medicine) and Drugs@FDA (U.S. FDA) are public domain, with
+  the attribution NLM and the FDA ask for.
+
+Citations, license notices and the attribution text are in [`docs/DATASETS.md`](docs/DATASETS.md).

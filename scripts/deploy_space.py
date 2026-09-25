@@ -15,8 +15,8 @@ Refuses to deploy if:
 - the build's profile isn't "public", or it's synthetic or marked not for redistribution;
 - its interactions contain any source other than DDInter;
 - its files don't match their sha256 in provenance;
-- any file to upload comes from the research build, TWOSIDES, notes/, CLAUDE.md, .env*
-  or data/raw.
+- any file to upload comes from the research build, TWOSIDES, notes/, CLAUDE.md, .env*,
+  data/raw or a build's review/ folder (Drugs@FDA collisions for a person to check).
 """
 from __future__ import annotations
 
@@ -59,7 +59,7 @@ class Refused(SystemExit):
     pass
 
 
-FORBIDDEN = ("research", "twosides", "notes/", "claude.md", ".env", "data/raw", "__pycache__", ".pyc")
+FORBIDDEN = ("research", "twosides", "notes/", "claude.md", ".env", "data/raw", "review/", "__pycache__", ".pyc")
 
 
 def guard(uploads: List[Upload], what: str) -> None:
@@ -213,6 +213,7 @@ colorTo: indigo
 sdk: docker
 app_port: 7860
 pinned: false
+license: mit
 short_description: Drug-interaction reports with a citation for every finding
 ---
 
@@ -257,6 +258,12 @@ attribution") and in the dataset card.
 - **Supplements are thinly covered** (warfarin + ginkgo has no record). "No data" is not evidence of safety.
 - **Severities are DDInter's grades** and can differ from other references. Pairs DDInter lists
   without a grade are shown separately; the data can't say whether they matter clinically.
+
+## License
+
+Code: MIT. The data has its own licenses: the interaction and side-effect data (DDInter,
+SIDER) are CC BY-NC-SA 4.0 (non-commercial); RxNorm and Drugs@FDA are public domain, with the
+attribution shown on the page.
 
 ## API
 
