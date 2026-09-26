@@ -54,7 +54,9 @@ Colour always means something. There are five roles and nothing else:
 - **One severity scale**, a single red, with its strength shown by treatment:
   - Major: solid red cell, white word;
   - Moderate: red outline, red word;
-  - Minor: red word, one step marked.
+  - Minor: ink word, one red step marked.
+
+  Red wording is reserved for Moderate and Major.
 - **Neutral** for the absence of a grade:
   - Not graded: a dashed neutral outline;
   - No curated data: a flat neutral grey.
@@ -90,6 +92,7 @@ All three fonts are SIL Open Font License 1.1, self-hosted as woff2 and subset b
 - **Mobile (below 760px):** one column in this order: the form, then the report.
 - **Report order:**
   1. The answer: the headline, "N pairs checked across N medicines", and the non-zero extras.
+     The headline leads with what was found and never reassures. If nothing is graded, it names the ungraded listings, signals or no-data pairs ("No curated data for these 3 pairs"). "Absence of a record doesn't mean the combination is safe." goes directly under it.
   2. Alerts that change coverage: duplicates, unrecognized inputs, spelling matches to check.
   3. The pair grid.
   4. Interactions.
@@ -117,7 +120,7 @@ All three fonts are SIL Open Font License 1.1, self-hosted as woff2 and subset b
   - The grid is part of `report_structure` (`grid.drugs`, `grid.cells`). The parity test rebuilds every cell from the markdown alone and compares.
 - **Interactions:** a hairline-divided list. Each row has the severity marker and word, the pair, and the citation in mono. "Severity grades from DDInter" is said once, in the section header.
 - **Severity marker:** three steps (3 Major, 2 Moderate, 1 Minor, dashed for Not graded). It is decorative (`aria-hidden`); the word carries the meaning.
-- **Entries:**
+- **Entries:** one column, exceptions first, in the order entered.
   - exact matches are plain;
   - only exceptions are flagged: brand or alias ("Coumadin → warfarin (brand name, Drugs@FDA)"), spelling matches to check, not recognized with the reason, ambiguous, combination.
 - **Data sources:** one short labelled line per source, from `Notice.short` in `src/data/attribution.py`.
@@ -135,8 +138,9 @@ All three fonts are SIL Open Font License 1.1, self-hosted as woff2 and subset b
 ## Print
 
 "Print or save as PDF" gives one A4 sheet.
-- **Kept:** a title line, the plain-language notice, the answer with the date and request ID, the alerts, the grid (colours forced), the interactions, entries (run inline), the disclaimer, the data line and the short source lines.
-- **Left out:** the header, the form, the examples, technical details, the full citations and the ungraded items.
+- **Kept:** a title line, the plain-language notice, the answer with the date and request ID, the alerts, the grid (colours forced), the interactions, the ungraded listings in full, the no-data pairs, entries (run inline), the disclaimer, the data line and the short source lines.
+- **Collapsed sections:** a closed `<details>` prints closed, so a section that holds report content has an open print-only copy. A test checks that the print view holds every finding, listing and no-data pair.
+- **Left out:** the header, the form, the examples, technical details and the full citations.
 
 ## Dark mode
 

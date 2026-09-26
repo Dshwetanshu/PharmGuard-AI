@@ -41,21 +41,39 @@ function severity(status) {
 
 // ------------------------------------------------------------------ answer first
 
+const CAUTION = "Absence of a record doesn\u2019t mean the combination is safe.";
+
+// The headline leads with what was found and never reads as reassurance: with nothing graded it
+// names the ungraded listings, signals or no-data pairs, and the caution goes directly under it.
 function answer(s) {
   const sum = s.summary, g = sum.graded;
   const top = TIERS.find(t => g[t] > 0);
-  let headline;
-  if (sum.pairs === 0) headline = "No pairs could be checked";
-  else if (top) headline = plural(g[top], top.toLowerCase() + " interaction");
-  else headline = "No graded interactions found";
-  const also = [];
-  TIERS.forEach(t => { if (t !== top && g[t] > 0) also.push(plural(g[t], t.toLowerCase() + " interaction")); });
-  if (sum.ungraded > 0) also.push(plural(sum.ungraded, "listing") + " without a severity grade");
-  if (sum.signals > 0) also.push(plural(sum.signals, "statistical signal"));
-  if (sum.no_data_pairs > 0) also.push(plural(sum.no_data_pairs, "pair") + " with no curated data");
-  const sub = plural(sum.pairs, "pair") + " checked across " + plural(sum.medications, "medicine") + "." +
-    (also.length ? " Also " + joinAnd(also) + "." : "");
-  return {headline: headline, sub: sub};
+  const parts = [];            // [key, text], most important first
+  TIERS.forEach(t => { if (g[t] > 0) parts.push([t, plural(g[t], t.toLowerCase() + " interaction")]); });
+  if (sum.ungraded > 0) parts.push(["ungraded", plural(sum.ungraded, "listing") + " without a severity grade"]);
+  if (sum.signals > 0) parts.push(["signals", plural(sum.signals, "statistical signal")]);
+  if (sum.no_data_pairs > 0) parts.push(["nodata", plural(sum.no_data_pairs, "pair") + " with no curated data"]);
+  let headline, rest = parts.slice(1);
+  if (sum.pairs === 0) {
+    headline = "No pairs could be checked";
+    rest = [];
+  } else if (parts.length && parts[0][0] === "nodata") {
+    headline = sum.no_data_pairs === sum.pairs
+      ? "No curated data for " + (sum.pairs === 1 ? "this pair" : "these " + sum.pairs + " pairs")
+      : "No curated data for " + sum.no_data_pairs + " of " + sum.pairs + " pairs";
+  } else {
+    headline = parts.length ? parts[0][1] : "";
+  }
+  headline = headline.charAt(0).toUpperCase() + headline.slice(1);
+  let sub;
+  if (sum.pairs === 0) {
+    sub = sum.medications ? plural(sum.medications, "medicine") + " recognized; a check needs at least two." :
+                            "No medicines were recognized.";
+  } else {
+    sub = plural(sum.pairs, "pair") + " checked across " + plural(sum.medications, "medicine") + "." +
+      (rest.length ? " Also " + joinAnd(rest.map(r => r[1])) + "." : "");
+  }
+  return {headline: headline, caution: !top && sum.pairs > 0 ? CAUTION : "", sub: sub};
 }
 
 // Alerts that change what the report covers: duplicates, unrecognised inputs, readings to check.
@@ -69,9 +87,9 @@ function alerts(s) {
   by("spelling_match").forEach(e => out.push("<li><strong>Spelling match, check this:</strong> " + esc(e.input) +
     " → " + esc(e.read_as) + "</li>"));
   by("ambiguous").forEach(e => out.push("<li><strong>Ambiguous name:</strong> " + esc(e.input) +
-    (e.note ? ". " + esc(e.note) : "") + "</li>"));
+    (e.note ? ". " + esc(tidyNote(e.note)) : "") + "</li>"));
   by("combination").forEach(e => out.push("<li><strong>Combination product:</strong> " + esc(e.input) +
-    (e.note ? ". " + esc(e.note) : "") + "</li>"));
+    (e.note ? ". " + esc(tidyNote(e.note)) : "") + "</li>"));
   return out.length ? '<ul class="alerts">' + out.join("") + "</ul>" : "";
 }
 
@@ -123,7 +141,7 @@ function findingRow(f, id) {
   const extra = [];
   if (f.condition) extra.push(esc(f.condition));
   if (f.mechanism) extra.push("Source mechanism: “" + esc(f.mechanism) + "”");
-  return '<li class="f" id="' + id + '" tabindex="-1">' + severity(f.severity) +
+  return '<li class="f"' + (id ? ' id="' + id + '" tabindex="-1"' : "") + ">" + severity(f.severity) +
     '<div class="f-main"><p class="f-pair">' + esc(f.pair[0]) + " + " + esc(f.pair[1]) + "</p>" +
     (extra.length ? '<p class="f-extra">' + extra.join(". ") + "</p>" : "") + "</div>" +
     '<p class="cite">' + esc(f.citation.text) + "</p></li>";
@@ -138,6 +156,21 @@ function section(id, title, sub, body) {
     (sub ? '<p class="sec-sub">' + sub + "</p>" : "") + body + "</section>";
 }
 
+// "not found: check the spelling..." -> "Check the spelling...", so a line reads as one sentence.
+function tidyNote(note) {
+  const t = String(note || "").replace(/^not found:\s*/i, "").trim();
+  if (!t) return "";
+  const c = t.charAt(0).toUpperCase() + t.slice(1);
+  return /[.!?]$/.test(c) ? c : c + ".";
+}
+
+// Exceptions first (in the order entered), then aliases, then exact matches.
+const EXCEPTIONS = ["unresolved", "spelling_match", "ambiguous", "combination"];
+function entryRank(e) {
+  if (EXCEPTIONS.indexOf(e.status) >= 0) return 0;
+  return e.how ? 1 : 2;
+}
+
 function entryLine(e) {
   const name = '<span class="e-typed">' + esc(e.input) + "</span>";
   switch (e.status) {
@@ -148,11 +181,11 @@ function entryLine(e) {
       return '<li class="e-flag">' + name + " → " + esc(e.read_as) + " <strong>(spelling match, check this)</strong></li>";
     case "unresolved":
       return '<li class="e-flag">' + name + ": <strong>not recognized.</strong>" +
-        (e.note ? ' <span class="quiet">' + esc(e.note) + "</span>" : "") + "</li>";
+        (e.note ? " " + esc(tidyNote(e.note)) : "") + "</li>";
     default: {
       const label = e.status === "combination" ? "combination product" : "ambiguous name";
       return '<li class="e-flag">' + name + (e.read_as ? " → " + esc(e.read_as) : "") + ": <strong>" + label +
-        ".</strong>" + (e.note ? ' <span class="quiet">' + esc(e.note) + "</span>" : "") + "</li>";
+        ".</strong>" + (e.note ? " " + esc(tidyNote(e.note)) : "") + "</li>";
     }
   }
 }
@@ -168,10 +201,16 @@ function renderStructured(s) {
       '<ol class="findings">' + s.findings.map((f, i) => findingRow(f, "finding-" + i)).join("") + "</ol>");
   }
   if (s.ungraded.items.length) {
-    body += '<section class="sec" aria-labelledby="sec-ungraded"><details class="fold"><summary><h3 class="h3" id="sec-ungraded">' +
-      "Listed by DDInter without a severity grade (" + s.ungraded.items.length + ")</h3></summary>" +
-      '<p class="sec-sub">' + esc(s.ungraded.note) + '</p><ol class="findings">' +
-      s.ungraded.items.map((f, i) => findingRow(f, "ungraded-" + i)).join("") + "</ol></details></section>";
+    // Collapsed on screen; printing uses the open copy (a closed <details> prints closed).
+    const title = "Listed by DDInter without a severity grade (" + s.ungraded.items.length + ")";
+    const note = '<p class="sec-sub">' + esc(s.ungraded.note) + "</p>";
+    // Open when it is all there is to show; collapsed under graded findings.
+    body += '<section class="sec" aria-labelledby="sec-ungraded"><details class="fold screen-only"' +
+      (s.findings.length ? "" : " open") + "><summary>" +
+      '<h3 class="h3" id="sec-ungraded">' + title + "</h3></summary>" + note + '<ol class="findings">' +
+      s.ungraded.items.map((f, i) => findingRow(f, "ungraded-" + i)).join("") + "</ol></details>" +
+      '<div class="print-only"><h3 class="h3">' + title + "</h3>" + note + '<ol class="findings">' +
+      s.ungraded.items.map(f => findingRow(f, null)).join("") + "</ol></div></section>";
   }
   if (s.signals.items.length) {
     const hidden = {};
@@ -203,13 +242,13 @@ function renderStructured(s) {
       (nd.faers_note ? '<p class="sec-sub">' + esc(nd.faers_note) + "</p>" : ""));
   }
   if (s.entries.items.length) {
-    const unres = s.coverage.unresolved;
-    body += section("sec-entries", s.entries.heading, unres ? esc(unres.intro.replace(/:$/, ".")) : null,
-      '<ul class="entries">' + s.entries.items.map(entryLine).join("") + "</ul>");
+    const ordered = s.entries.items.map((e, i) => [entryRank(e), i, e]).sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+    body += section("sec-entries", s.entries.heading, null,
+      '<ul class="entries">' + ordered.map(x => entryLine(x[2])).join("") + "</ul>");
   }
   body += '<div class="report-foot"><p><strong>Disclaimer.</strong> ' + esc(s.disclaimer) + '</p><p class="small">' +
     esc(s.data_line) + "</p></div>";
-  return {headline: a.headline, sub: a.sub, body: body};
+  return {headline: a.headline, caution: a.caution, sub: a.sub, body: body};
 }
 
 // ------------------------------------------------------------------ markdown fallback (LLM reports)
@@ -360,6 +399,8 @@ function showReport(body) {
   if (s) {
     const parts = renderStructured(s);
     setText("report-h", parts.headline);
+    setText("report-caution", parts.caution);
+    show("report-caution", !!parts.caution);
     setText("report-sub", parts.sub);
     $("report-body").innerHTML = parts.body;
   } else {
@@ -367,6 +408,7 @@ function showReport(body) {
     const md = String(body.report_markdown || "");
     const first = /^# (.*)\n?/.exec(md);
     setText("report-h", first ? first[1] : "Interaction report");
+    show("report-caution", false);
     setText("report-sub", "");
     $("report-body").innerHTML = '<div class="md">' + renderReport(first ? md.slice(first[0].length) : md) + "</div>";
   }
@@ -427,5 +469,5 @@ if (typeof document !== "undefined") {
 }
 if (typeof module !== "undefined") {
   module.exports = {escapeHtml, renderReport, renderStructured, splitDrugs, techDetails, plural, answer, gridHtml,
-                    sourcesHtml, citationsHtml};
+                    sourcesHtml, citationsHtml, tidyNote};
 }

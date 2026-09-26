@@ -106,7 +106,18 @@ def test_input_splitting_keeps_comma_names_whole_on_separate_lines():
 def test_invalid_name_message_uses_real_plurals():
     with pytest.raises(InvalidDrugNameError) as one:
         clean_drug_names(["aspirin", "<img src=x>"])
-    assert str(one.value).startswith("Invalid drug name: ") and "(s)" not in str(one.value)
+    assert str(one.value).startswith("This drug name can't be checked: ") and "(s)" not in str(one.value)
     with pytest.raises(InvalidDrugNameError) as two:
         clean_drug_names(["<a>", "<b>"])
-    assert str(two.value).startswith("Invalid drug names: ")
+    assert str(two.value).startswith("These drug names can't be checked: ")
+
+
+def test_invalid_name_message_is_plain_and_says_what_is_allowed():
+    with pytest.raises(InvalidDrugNameError) as exc:
+        clean_drug_names(["aspirin", "<img src=x>"])
+    assert str(exc.value) == ("This drug name can't be checked: '<img src=x>' uses characters a drug name can't "
+                              "have. Drug names can use letters, numbers, spaces and - . ' ( ) / _ , characters, "
+                              "starting with a letter or number.")
+    with pytest.raises(InvalidDrugNameError) as long:     # the hint is only added for a character problem
+        clean_drug_names(["a" * 300, "aspirin"])
+    assert "Drug names can use" not in str(long.value) and "is longer than" in str(long.value)

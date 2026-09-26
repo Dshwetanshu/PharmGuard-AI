@@ -26,8 +26,7 @@
   <p class="print-title" aria-hidden="true">PharmGuard drug-interaction check</p>
   <div class="intro">
     <h1 class="h1">Drug-interaction check</h1>
-    <p class="lede">Drug-interaction reports from curated sources, with a citation for every finding.
-      Decision support only; not medical advice.</p>
+    <p class="lede">Drug-interaction reports from curated sources, with a citation for every finding.</p>
   </div>
   <p class="plain-notice" role="note"><strong>Educational demo, not medical advice.</strong> Don't start, stop or change any medicine based on these results; talk to your pharmacist or doctor.</p>
 
@@ -49,6 +48,11 @@
 
       <section id="empty" class="empty" aria-labelledby="empty-h">
         <h2 id="empty-h" class="h2">Enter two or more medicines to check them.</h2>
+        <ol class="how">
+          <li>Names are matched to a drug vocabulary.</li>
+          <li>Every pair is checked against curated interaction data from DDInter.</li>
+          <li>Every finding cites its source record.</li>
+        </ol>
         <p>Or try an example:</p>
         <ul id="examples" class="examples"></ul>
       </section>
@@ -61,6 +65,7 @@
       <article id="report" class="report" aria-labelledby="report-h" hidden>
         <header class="answer">
           <h2 id="report-h" class="answer-h" tabindex="-1"></h2>
+          <p id="report-caution" class="caution" hidden></p>
           <p id="report-sub" class="answer-sub"></p>
           <div class="answer-meta">
             <p id="checked" class="small"></p>

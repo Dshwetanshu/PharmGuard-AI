@@ -38,27 +38,29 @@ def clean_drug_names(names: Sequence[str]) -> List[str]:
 
     Raises InvalidDrugNameError listing every invalid input.
     """
-    cleaned, problems = [], []
+    cleaned, problems, bad_chars = [], [], False
     for raw in names:
         if not isinstance(raw, str):
-            problems.append(f"{raw!r}: not a string")
+            problems.append(f"{raw!r} is not text")
             continue
         if any(ord(ch) < 32 or ord(ch) == 127 for ch in raw):
             # Checked before collapsing whitespace, so newlines can't be turned
             # into spaces and slip a second "line" into the prompt.
-            problems.append(f"{raw[:20]!r}: contains control characters (e.g. newlines)")
+            problems.append(f"{raw[:20]!r} contains control characters such as newlines")
             continue
         name = re.sub(r" {2,}", " ", raw.strip())
         if not name:
-            problems.append(f"{raw!r}: empty")
+            problems.append("an entry is empty")
         elif len(name) > MAX_NAME_LENGTH:
-            problems.append(f"{name[:20]!r}...: longer than {MAX_NAME_LENGTH} characters")
+            problems.append(f"{name[:20]!r}... is longer than {MAX_NAME_LENGTH} characters")
         elif not _ALLOWED.fullmatch(name):
-            problems.append(f"{name!r}: only letters, digits, spaces and - . ' ( ) / _ , are allowed, "
-                            "starting with a letter or digit")
+            problems.append(f"{name!r} uses characters a drug name can't have")
+            bad_chars = True
         else:
             cleaned.append(name)
     if problems:
-        raise InvalidDrugNameError(("Invalid drug name: " if len(problems) == 1 else "Invalid drug names: ")
-                                   + "; ".join(problems))
+        lead = "This drug name can't be checked: " if len(problems) == 1 else "These drug names can't be checked: "
+        hint = (" Drug names can use letters, numbers, spaces and - . ' ( ) / _ , characters, "
+                "starting with a letter or number.") if bad_chars else ""
+        raise InvalidDrugNameError(lead + "; ".join(problems) + "." + hint)
     return cleaned

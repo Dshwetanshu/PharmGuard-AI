@@ -7,6 +7,7 @@ the real default (required_profile="public") against the same synthetic data.
 from __future__ import annotations
 
 import json
+import re
 import shutil
 import subprocess
 import time
@@ -362,16 +363,16 @@ def test_page_renders_the_structure_escaped_and_complete(service):
     # Every entry, the duplicate notice, each finding with its record, the unresolved reason,
     # the summary sentence, the disclaimer and the data line are all present.
     for e in s["entries"]["items"]:
-        assert escape_like(e["input"]) in html and (e["note"] is None or escape_like(e["note"]) in html)
+        assert escape_like(e["input"]) in html and (e["note"] is None or escape_like(tidy(e["note"])) in html)
     assert "Same drug entered more than once:" in html
     for f in s["findings"]:
         assert escape_like(f["pair"][0]) in html and escape_like(f["citation"]["record_id"]) in html
     assert got["p"]["headline"] and "0 " not in got["p"]["sub"]      # answer first, no zero counts
     assert escape_like(s["disclaimer"]) in html and escape_like(s["data_line"]) in html
-    assert escape_like(s["coverage"]["unresolved"]["items"][0]["reason"]) in html
+    assert escape_like(tidy(s["coverage"]["unresolved"]["items"][0]["reason"])) in html
     # Severity by word and icon; the ungraded listings are collapsed (closed <details>).
     assert 'class="sevword sevword--major"' in html or 'class="sevword sevword--moderate"' in html
-    assert '<details class="fold"><summary>' in html and "<details open" not in html
+    assert '<details class="fold screen-only"><summary>' in html and "<details open" not in html
     assert "+4 more not shown" in html and "1,234 co-reports" in html and "1 report" in html
     assert "Report source" in got["tech"] and "Request ID" in got["tech"]
     assert got["pl"] == ["1 report", "2 reports"]
@@ -460,6 +461,91 @@ def test_fonts_cover_the_page_and_the_subset_is_current():
     assert set(text) <= set(built)
     lic = (ROOT / "api" / "static" / "fonts" / "OFL-IBM-Plex.txt").read_text()
     assert 'Reserved Font Name "Plex"' in lic        # why the Plex subsets are renamed PharmGuard Sans/Mono
+
+
+def _node(expr: str) -> dict:
+    js = "const m=require(%s);process.stdout.write(JSON.stringify(%s))" % (
+        json.dumps(str(ROOT / "api" / "static" / "app.js")), expr)
+    return json.loads(subprocess.run(["node", "-e", js], capture_output=True, text=True, check=True).stdout)
+
+
+def _print_view(html: str) -> str:
+    """What the print stylesheet shows: .screen-only blocks (the collapsed <details>) are dropped,
+    .print-only copies are shown; any <details> left would print closed, so there must be none."""
+    import re
+    out = re.sub(r'<details class="[^"]*screen-only[^"]*"[^>]*>.*?</details>', "", html, flags=re.S)
+    assert "<details" not in out
+    return out
+
+
+@pytest.mark.skipif(shutil.which("node") is None, reason="node not installed")
+def test_print_view_contains_every_finding_listing_and_no_data_pair(service):
+    s = service.check({"drugs": ["lisinopril", "spironolactone", "aspirin", "warfarin"]}, None, "rid-000011")[
+        "report_structure"]
+    s["ungraded"]["items"] = [dict(s["findings"][0], severity="not graded",
+                                   citation={"source": "DDInter", "record_id": "DDI-u1", "text": "DDInter:DDI-u1"})]
+    s["coverage"]["no_data"] = {"intro": "none", "pairs": [["c", "d"], ["e", "f"]], "faers_note": None}
+    body = _node("m.renderStructured(%s).body" % json.dumps(s))
+    printed = _print_view(body)
+    for f in s["findings"] + s["ungraded"]["items"]:
+        assert f["citation"]["text"] in printed and f"{f['pair'][0]} + {f['pair'][1]}" in printed
+    for a, b in s["coverage"]["no_data"]["pairs"]:
+        assert f"{a} + {b}" in printed
+    assert "Listed by DDInter without a severity grade (1)" in printed
+    s["findings"] = []                                   # nothing graded: the listings start open on screen
+    assert '<details class="fold screen-only" open>' in _node("m.renderStructured(%s).body" % json.dumps(s))
+    css = (ROOT / "api" / "static" / "style.css").read_text()
+    print_css = css.split("@media print")[1]
+    assert ".screen-only" in print_css and ".print-only { display: block; }" in print_css
+    for hidden in re.findall(r"^\s*([^{}@]+)\{\s*display:\s*none", print_css, flags=re.M):
+        assert not ({".findings", ".nodata", ".sec", ".print-only", ".f"} & set(x.strip() for x in hidden.split(","))), hidden
+
+
+def _summary(graded=(0, 0, 0), ungraded=0, signals=0, no_data=0, pairs=3, meds=3):
+    return {"summary": {"graded": dict(zip(("Major", "Moderate", "Minor"), graded)), "ungraded": ungraded,
+                        "signals": signals, "no_data_pairs": no_data, "pairs": pairs, "medications": meds}}
+
+
+@pytest.mark.skipif(shutil.which("node") is None, reason="node not installed")
+def test_headline_leads_with_what_was_found_and_never_reassures():
+    cases = {
+        "ungraded": _summary(ungraded=2, no_data=1),
+        "nodata": _summary(no_data=3),
+        "some_nodata": _summary(no_data=2, signals=1),
+        "graded": _summary(graded=(0, 1, 0), no_data=2),
+        "none": _summary(pairs=0, meds=1),
+    }
+    got = _node("Object.fromEntries(Object.entries(%s).map(([k, v]) => [k, m.answer(v)]))" % json.dumps(cases))
+    caution = "Absence of a record doesn\u2019t mean the combination is safe."
+    assert got["ungraded"]["headline"] == "2 listings without a severity grade"
+    assert got["ungraded"]["caution"] == caution and "1 pair with no curated data" in got["ungraded"]["sub"]
+    assert got["nodata"]["headline"] == "No curated data for these 3 pairs" and got["nodata"]["caution"] == caution
+    assert got["some_nodata"]["headline"] == "1 statistical signal" and got["some_nodata"]["caution"] == caution
+    assert got["graded"]["headline"] == "1 moderate interaction" and got["graded"]["caution"] == ""
+    assert got["none"]["headline"] == "No pairs could be checked" and "0 " not in got["none"]["sub"]
+    for a in got.values():
+        assert "No graded" not in a["headline"] and "found" not in a["headline"].lower()
+
+
+@pytest.mark.skipif(shutil.which("node") is None, reason="node not installed")
+def test_entries_list_exceptions_first_and_read_as_one_sentence(service):
+    s = service.check({"drugs": ["lisinopril", "Zestril", "aspirin", "xyz123"]}, None, "rid-000012")["report_structure"]
+    body = _node("m.renderStructured(%s).body" % json.dumps(s))
+    entries = body.split('id="sec-entries"')[1].split("</section>")[0]
+    assert "could not be matched" not in entries          # the old intro implied every entry was excluded
+    assert entries.index("xyz123") < entries.index("aspirin")
+    assert ("xyz123</span>: <strong>not recognized.</strong> Check the spelling or enter the generic name; "
+            "discontinued brands and non-US names may not be recognized.") in entries
+    assert _node("m.tidyNote('not found: check this')") == "Check this."
+    css = (ROOT / "api" / "static" / "style.css").read_text()
+    assert ".sevword--minor { color: var(--ink);" in css       # red words are for Moderate and Major only
+
+
+def tidy(note):
+    """The page's tidyNote: drop a leading "not found: ", capitalise, end with a full stop."""
+    t = re.sub(r"^not found:\s*", "", note, flags=re.I).strip()
+    t = t[:1].upper() + t[1:]
+    return t if t[-1:] in ".!?" else t + "."
 
 
 def escape_like(text):

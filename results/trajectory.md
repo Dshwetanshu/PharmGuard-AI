@@ -98,8 +98,8 @@ All other inputs are expected to resolve. Suspected label errors (unchanged, for
 
 | Scenario | Runs | Expected report_source | Path match | Source match | All invariants | LLM calls/run |
 |---|---:|---|---:|---:|---:|---:|
-| clean+faers | 56 | llm | 100.0% | 100.0% | 100.0% | 0.839 |
 | clean | 56 | llm | 100.0% | 100.0% | 100.0% | 0.839 |
+| clean+faers | 56 | llm | 100.0% | 100.0% | 100.0% | 0.839 |
 | transient_error_once | 56 | llm_retry | 100.0% | 100.0% | 100.0% | 1.679 |
 | transient_error_always | 56 | deterministic_fallback | 100.0% | 100.0% | 100.0% | 1.679 |
 | non_transient_error_once | 56 | deterministic_fallback | 100.0% | 100.0% | 100.0% | 0.839 |
@@ -136,15 +136,15 @@ Path match 100.0% · report_source match 100.0% · recovery within the retry bud
 
 | Node | p50 ms | p95 ms |
 |---|---:|---:|
-| faers | 0.17 | 0.84 |
-| finalize | 0.48 | 2.05 |
-| generate_llm | 0.05 | 0.13 |
-| normalize | 0.03 | 0.07 |
-| plan | 0.05 | 0.15 |
-| retrieve | 2.12 | 11.26 |
-| template | 0.09 | 0.22 |
-| validate | 0.59 | 3.32 |
-| **end to end** | 6.2 | 18.4 |
+| faers | 0.1 | 0.49 |
+| finalize | 0.27 | 1.2 |
+| generate_llm | 0.03 | 0.07 |
+| normalize | 0.02 | 0.04 |
+| plan | 0.03 | 0.12 |
+| retrieve | 1.17 | 6.44 |
+| template | 0.06 | 0.23 |
+| validate | 0.33 | 1.9 |
+| **end to end** | 3.5 | 10.6 |
 
 ## Seeded orchestration bugs (validating the evaluation)
 
