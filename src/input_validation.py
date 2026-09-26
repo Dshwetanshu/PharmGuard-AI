@@ -59,5 +59,6 @@ def clean_drug_names(names: Sequence[str]) -> List[str]:
         else:
             cleaned.append(name)
     if problems:
-        raise InvalidDrugNameError("Invalid drug name(s): " + "; ".join(problems))
+        raise InvalidDrugNameError(("Invalid drug name: " if len(problems) == 1 else "Invalid drug names: ")
+                                   + "; ".join(problems))
     return cleaned

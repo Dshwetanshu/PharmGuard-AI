@@ -101,3 +101,12 @@ def test_input_splitting_keeps_comma_names_whole_on_separate_lines():
     assert split_drug_input("warfarin, aspirin") == ["warfarin", "aspirin"]
     assert split_drug_input("insulin, regular, human\nmetoprolol\n") == ["insulin, regular, human", "metoprolol"]
     assert split_drug_input("  \n") == []
+
+
+def test_invalid_name_message_uses_real_plurals():
+    with pytest.raises(InvalidDrugNameError) as one:
+        clean_drug_names(["aspirin", "<img src=x>"])
+    assert str(one.value).startswith("Invalid drug name: ") and "(s)" not in str(one.value)
+    with pytest.raises(InvalidDrugNameError) as two:
+        clean_drug_names(["<a>", "<b>"])
+    assert str(two.value).startswith("Invalid drug names: ")
