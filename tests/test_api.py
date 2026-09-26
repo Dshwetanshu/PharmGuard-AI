@@ -269,8 +269,9 @@ def test_page_is_served_with_a_strict_csp_and_no_inline_script(client):
             "these results; talk to your pharmacist or doctor.") in html
     assert client.get("/static/app.js").status_code == 200
     assert "font-src 'self'" in r.headers["content-security-policy"]
-    for asset in ("/static/style.css", "/static/favicon.svg", "/static/fonts/InterVariable.woff2",
-                  "/static/fonts/Inter-LICENSE.txt"):
+    for asset in ("/static/style.css", "/static/favicon.svg", "/static/fonts/newsreader-subset.woff2",
+                  "/static/fonts/pharmguard-sans.woff2", "/static/fonts/pharmguard-mono.woff2",
+                  "/static/fonts/OFL-Newsreader.txt", "/static/fonts/OFL-IBM-Plex.txt"):
         assert client.get(asset).status_code == 200, asset
 
 
@@ -355,7 +356,7 @@ def test_page_renders_the_structure_escaped_and_complete(service):
           "process.stdout.write(JSON.stringify({p:p,tech:m.techDetails(%s),pl:[m.plural(1,'report'),m.plural(2,'report')]}))"
           % (json.dumps(str(ROOT / "api" / "static" / "app.js")), json.dumps(s), json.dumps(resp)))
     got = json.loads(subprocess.run(["node", "-e", js], capture_output=True, text=True, check=True).stdout)
-    html = got["p"]["body"] + got["p"]["entries"] + got["tech"]
+    html = got["p"]["body"] + got["tech"]
     # Escape-then-render: the only markup is the page's own.
     assert "<img" not in html and html.count("&lt;img src=x onerror=alert(1)&gt;") > 20
     # Every entry, the duplicate notice, each finding with its record, the unresolved reason,
@@ -365,16 +366,100 @@ def test_page_renders_the_structure_escaped_and_complete(service):
     assert "Same drug entered more than once:" in html
     for f in s["findings"]:
         assert escape_like(f["pair"][0]) in html and escape_like(f["citation"]["record_id"]) in html
-    for key in ("text",):
-        assert escape_like(s["summary"][key]) in html
+    assert got["p"]["headline"] and "0 " not in got["p"]["sub"]      # answer first, no zero counts
     assert escape_like(s["disclaimer"]) in html and escape_like(s["data_line"]) in html
     assert escape_like(s["coverage"]["unresolved"]["items"][0]["reason"]) in html
     # Severity by word and icon; the ungraded listings are collapsed (closed <details>).
-    assert 'class="badge badge--major"' in html or 'class="badge badge--moderate"' in html
+    assert 'class="sevword sevword--major"' in html or 'class="sevword sevword--moderate"' in html
     assert '<details class="fold"><summary>' in html and "<details open" not in html
     assert "+4 more not shown" in html and "1,234 co-reports" in html and "1 report" in html
     assert "Report source" in got["tech"] and "Request ID" in got["tech"]
     assert got["pl"] == ["1 report", "2 reports"]
+
+
+@pytest.mark.skipif(shutil.which("node") is None, reason="node not installed")
+@pytest.mark.parametrize("drugs", [["lisinopril", "spironolactone", "aspirin"],
+                                   ["lisinopril", "Lisinopril", "spironolactone", "aspirin", "warfarin", "qqqzzz"]])
+def test_pair_grid_renders_every_pair_with_headers_and_links(service, drugs):
+    """The grid is a lower-triangle table with real row and column headers; each checked pair is one
+    cell showing its status in words, linked to its finding (no-data cells have nothing to link to)."""
+    import re
+    s = service.check({"drugs": drugs}, None, "rid-000010")["report_structure"]
+    js = ("const m=require(%s);const s=%s;const p=m.renderStructured(s);"
+          "process.stdout.write(JSON.stringify({grid:m.gridHtml(s.grid),body:p.body,a:m.answer(s)}))"
+          % (json.dumps(str(ROOT / "api" / "static" / "app.js")), json.dumps(s)))
+    got = json.loads(subprocess.run(["node", "-e", js], capture_output=True, text=True, check=True).stdout)
+    table = got["grid"].split('<ul class="pairlist">')[0]
+    n = len(s["grid"]["drugs"])
+    assert table.count('<th scope="col">') == n - 1 and table.count('<th scope="row">') == n - 1
+    assert table.count('<td class="c ') == len(s["grid"]["cells"]) == n * (n - 1) // 2
+    words = {"Major", "Moderate", "Minor", "Not graded", "No curated data", "Signals only"}
+    shown = re.findall(r'<td class="c [^"]*">.*?<span>([^<]+)</span></span>', table)
+    assert len(shown) == len(s["grid"]["cells"]) and set(shown) <= words
+    for href in re.findall(r'href="#([^"]+)"', table):
+        assert f'id="{href}"' in got["body"], href           # every cell link lands on a report item
+    assert "green" not in got["grid"]
+    counts = [int(x) for x in re.findall(r"\b(\d+) ", got["a"]["headline"] + " " + got["a"]["sub"])]
+    assert counts and 0 not in counts                         # never a zero count
+
+
+def test_page_uses_four_text_sizes_and_no_dashes_or_icons():
+    import re
+    static = ROOT / "api" / "static"
+    css = (static / "style.css").read_text()
+    screen = css.split("@media print")[0]
+    sizes = set(re.findall(r"font-size:\s*([^;]+);", screen)) | set(re.findall(r"font:\s*\d+\s+([^/ ]+)/", screen))
+    assert sizes <= {"var(--fs-1)", "var(--fs-2)", "var(--fs-3)", "var(--fs-4)"}, sizes
+    assert len(set(re.findall(r"--fs-\d:", screen))) == 4
+    for name in ("index.html", "app.js", "style.css"):
+        text = (static / name).read_text()
+        assert "\u2014" not in text and "\u2013" not in text, name       # no em or en dashes on the page
+    html = (static / "index.html").read_text()
+    assert html.count("<svg") == 1                                       # the logo mark only
+
+
+def _tokens(block):
+    import re
+    return dict(re.findall(r"--([a-z0-9-]+):\s*(#[0-9A-Fa-f]{6})", block))
+
+
+def _contrast(a, b):
+    def lum(h):
+        c = [int(h[i:i + 2], 16) / 255 for i in (1, 3, 5)]
+        c = [x / 12.92 if x <= 0.03928 else ((x + 0.055) / 1.055) ** 2.4 for x in c]
+        return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]
+    hi, lo = sorted((lum(a), lum(b)), reverse=True)
+    return (hi + 0.05) / (lo + 0.05)
+
+
+def test_colour_tokens_pass_aa_in_light_dark_and_print():
+    css = (ROOT / "api" / "static" / "style.css").read_text()
+    light = _tokens(css.split("@media (prefers-color-scheme: dark)")[0])
+    dark = {**light, **_tokens(css.split("@media (prefers-color-scheme: dark)")[1].split("}")[0])}
+    printed = {**light, **_tokens(css.split("@media print")[1].split("}")[0])}
+    for theme in (light, dark, printed):
+        for fg, bg in (("ink", "paper"), ("ink-2", "paper"), ("accent", "paper"), ("sev", "paper"),
+                       ("on-sev", "sev-fill"), ("ink-2", "none-bg"), ("on-accent", "accent")):
+            if fg in theme and bg in theme:
+                assert _contrast(theme[fg], theme[bg]) >= 4.5, (fg, bg, theme[fg], theme[bg])
+        assert _contrast(theme["control"], theme["paper"]) >= 3.0          # form borders (non-text)
+
+
+def test_fonts_cover_the_page_and_the_subset_is_current():
+    """charset.txt is what scripts/subset_fonts.py built the woff2 files from; it must match the
+    current page and report text, so a new character forces a re-subset."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("subset_fonts", ROOT / "scripts" / "subset_fonts.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    built = (ROOT / "api" / "static" / "fonts" / "charset.txt").read_text(encoding="utf-8")
+    assert mod.charset() == built, "page text changed: re-run scripts/subset_fonts.py"
+    from src.data.attribution import notices_for
+    text = " ".join(n.text + n.short for n in notices_for(["rxnorm", "drugsatfda", "drugbank", "ddinter", "sider",
+                                                           "twosides"], synthetic=True))
+    assert set(text) <= set(built)
+    lic = (ROOT / "api" / "static" / "fonts" / "OFL-IBM-Plex.txt").read_text()
+    assert 'Reserved Font Name "Plex"' in lic        # why the Plex subsets are renamed PharmGuard Sans/Mono
 
 
 def escape_like(text):

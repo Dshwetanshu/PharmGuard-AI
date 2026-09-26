@@ -3,9 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
 <title>PharmGuard: drug-interaction check</title>
 <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
-<link rel="preload" href="/static/fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/static/fonts/pharmguard-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/static/fonts/newsreader-subset.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
@@ -21,49 +23,50 @@
 </header>
 
 <main class="wrap" id="main">
+  <p class="print-title" aria-hidden="true">PharmGuard drug-interaction check</p>
   <div class="intro">
-    <h1 class="page-title">Drug-interaction check</h1>
+    <h1 class="h1">Drug-interaction check</h1>
     <p class="lede">Drug-interaction reports from curated sources, with a citation for every finding.
       Decision support only; not medical advice.</p>
   </div>
-  <p class="plain-notice" role="note"><svg class="i" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3.2l9.3 16.3H2.7z"/><path d="M12 9.5v4.2M12 16.6v.3"/></svg><span><strong>Educational demo, not medical advice.</strong> Don't start, stop or change any medicine based on these results; talk to your pharmacist or doctor.</span></p>
+  <p class="plain-notice" role="note"><strong>Educational demo, not medical advice.</strong> Don't start, stop or change any medicine based on these results; talk to your pharmacist or doctor.</p>
 
   <div class="layout">
-    <div class="side">
-      <form id="check-form" class="panel checker" autocomplete="off" novalidate>
-        <label for="drugs" class="label">Your medications</label>
-        <p id="drugs-help" class="help">2 to 12 names, one per line, or comma-separated on one line. Use one per line for names that contain commas. Brand names work.</p>
-        <textarea id="drugs" rows="6" aria-describedby="drugs-help" spellcheck="false" placeholder="For example:&#10;warfarin&#10;aspirin"></textarea>
-        <label class="check"><input type="checkbox" id="faers"><span>Also query openFDA FAERS for pairs with no curated record <span class="muted">(slower; capped)</span></span></label>
-        <button type="submit" id="submit" class="btn btn-primary"><span class="btn-label">Check interactions</span></button>
-        <p id="status" class="status" role="status" aria-live="polite"></p>
-      </form>
-      <section id="entries" class="panel entries-panel" aria-labelledby="entries-h" hidden></section>
-    </div>
+    <form id="check-form" class="checker" autocomplete="off" novalidate>
+      <label for="drugs" class="label">Your medications</label>
+      <p id="drugs-help" class="small">2 to 12 names, one per line, or comma-separated on one line. Use one per line for names that contain commas. Brand names work.</p>
+      <textarea id="drugs" rows="6" aria-describedby="drugs-help" spellcheck="false"></textarea>
+      <label class="check"><input type="checkbox" id="faers"><span>Also query openFDA FAERS for pairs with no curated record (slower; capped)</span></label>
+      <button type="submit" id="submit" class="btn btn-primary">Check interactions</button>
+      <p id="status" class="status small" role="status" aria-live="polite"></p>
+    </form>
 
     <div class="results" id="results">
-      <div id="error" class="callout callout-error" role="alert" hidden>
-        <svg class="i" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/></svg>
-        <div><p class="callout-title">This list wasn't checked</p><p id="error-msg"></p><p id="error-id" class="meta"></p></div>
+      <div id="error" class="error" role="alert" hidden>
+        <p><strong>This list wasn't checked.</strong> <span id="error-msg"></span></p>
+        <p id="error-id" class="small"></p>
       </div>
 
-      <section id="empty" class="panel empty" aria-labelledby="empty-h">
-        <h2 id="empty-h" class="empty-title">Enter two or more medications to check them</h2>
-        <p class="empty-sub">Or try an example:</p>
+      <section id="empty" class="empty" aria-labelledby="empty-h">
+        <h2 id="empty-h" class="h2">Enter two or more medicines to check them.</h2>
+        <p>Or try an example:</p>
         <ul id="examples" class="examples"></ul>
       </section>
 
-      <div id="loading" class="panel loading" hidden aria-hidden="true">
-        <div class="sk sk-title"></div>
-        <div class="sk-tiles"><div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>
-        <div class="sk sk-row"></div><div class="sk sk-row"></div><div class="sk sk-row"></div>
+      <div id="loading" class="loading" hidden aria-hidden="true">
+        <div class="sk sk-answer"></div><div class="sk sk-line"></div>
+        <div class="sk sk-grid"></div><div class="sk sk-line"></div><div class="sk sk-line"></div>
       </div>
 
-
-      <article id="report" class="panel report" aria-labelledby="report-h" hidden>
-        <header class="report-head">
-          <h2 id="report-h" class="report-title" tabindex="-1"></h2>
-          <span id="checked"></span>
+      <article id="report" class="report" aria-labelledby="report-h" hidden>
+        <header class="answer">
+          <h2 id="report-h" class="answer-h" tabindex="-1"></h2>
+          <p id="report-sub" class="answer-sub"></p>
+          <div class="answer-meta">
+            <p id="checked" class="small"></p>
+            <button type="button" id="print" class="btn btn-quiet">Print or save as PDF</button>
+          </div>
+          <p id="printed" class="printed small"></p>
         </header>
         <div id="report-body"></div>
         <div id="tech"></div>
@@ -72,11 +75,16 @@
   </div>
 
   <footer class="page-foot" id="sources">
-    <p id="disclaimer" class="disclaimer"></p>
-    <p id="data-line" class="meta"></p>
-    <h2 class="foot-h">Data sources and attribution</h2>
-    <ul id="attribution" class="attribution"></ul>
-    <p class="meta"><a href="/docs">API documentation</a> · <a href="/health">Service health</a> · Inter typeface, SIL Open Font License (<a href="/static/fonts/Inter-LICENSE.txt">license</a>)</p>
+    <p id="disclaimer"></p>
+    <p id="data-line" class="small"></p>
+    <h2 class="h2">Data sources</h2>
+    <ul id="sources-list" class="sources"></ul>
+    <details class="citations">
+      <summary>Licenses and citations</summary>
+      <ul id="citations-list" class="sources"></ul>
+      <p class="small">Fonts: Newsreader, and PharmGuard Sans and PharmGuard Mono (subsets of IBM Plex Sans and IBM Plex Mono), all under the SIL Open Font License 1.1: <a href="/static/fonts/OFL-Newsreader.txt">Newsreader license</a>, <a href="/static/fonts/OFL-IBM-Plex.txt">IBM Plex license</a>.</p>
+    </details>
+    <ul class="foot-links small"><li><a href="/docs">API documentation</a></li><li><a href="/health">Service health</a></li></ul>
   </footer>
 </main>
 <script src="/static/app.js"></script>
