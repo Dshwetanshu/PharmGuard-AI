@@ -24,6 +24,7 @@ class Notice:
     key: str
     title: str
     text: str
+    short: str = ""     # one readable line for the page; `text` holds the full citation and license
 
 
 DDINTER_LABEL = "DDInter bulk download (ddinter2.scbdd.com, files dated 2024-05-21)"
@@ -65,38 +66,47 @@ def notices_for(source_keys: Iterable[str], rxnorm_version: Optional[str] = None
     keys = list(source_keys)
     out: List[Notice] = []
     if synthetic:
-        out.append(Notice("synthetic", "Sample data", SYNTHETIC_NOTICE))
+        out.append(Notice("synthetic", "Sample data", SYNTHETIC_NOTICE,
+                          "Synthetic test records, not real clinical data."))
     if "ddinter" in keys:
         out.append(Notice("ddinter", "DDInter",
                           f"Interaction severities from the {DDINTER_LABEL}. Cite: {DDINTER2_CITATION}; and "
                           f"{DDINTER1_CITATION}. Licensed CC BY-NC-SA 4.0 "
                           "(https://creativecommons.org/licenses/by-nc-sa/4.0/). PharmGuard mapped drug names "
-                          "to RxNorm and removed duplicates."))
+                          "to RxNorm and removed duplicates.",
+                          "Interaction severities. DDInter bulk download, files dated 2024-05-21. CC BY-NC-SA 4.0."))
     if "sider" in keys:
         out.append(Notice("sider", "SIDER 4.1",
                           f"{SIDER_CITATION}. Licensed CC BY-NC-SA 4.0 "
-                          "(https://creativecommons.org/licenses/by-nc-sa/4.0/)."))
+                          "(https://creativecommons.org/licenses/by-nc-sa/4.0/).",
+                          "Side effects. SIDER 4.1. CC BY-NC-SA 4.0."))
     if "rxnorm" in keys:
         version = rxnorm_version or SOURCES["rxnorm"].version
         out.append(Notice("rxnorm", "RxNorm",
                           f"{RXNORM_STATEMENT} Vocabulary: RxNorm Current Prescribable Content, release "
                           f"{version}; drug names may have changed since that release. NLM urges you to "
-                          "consult with a qualified physician for medical advice."))
+                          "consult with a qualified physician for medical advice.",
+                          f"Drug names. RxNorm Current Prescribable Content, release {version}. {RXNORM_STATEMENT}"))
     if "drugsatfda" in keys:
         out.append(Notice("drugsatfda", "Drugs@FDA",
                           "Brand names, including discontinued products, from the Drugs@FDA data files "
                           f"({SOURCES['drugsatfda'].version}), U.S. Food and Drug Administration; public domain. "
-                          "The FDA does not endorse this product."))
+                          "The FDA does not endorse this product.",
+                          f"Brand names. Drugs@FDA data files ({SOURCES['drugsatfda'].version}). Public domain."))
     if "drugbank" in keys:
         out.append(Notice("drugbank", "DrugBank vocabulary",
-                          "Drug synonyms from the DrugBank Open Data vocabulary (CC0 1.0), https://go.drugbank.com."))
+                          "Drug synonyms from the DrugBank Open Data vocabulary (CC0 1.0), https://go.drugbank.com.",
+                          "Drug synonyms. DrugBank Open Data vocabulary. CC0 1.0."))
     out.append(Notice("openfda", "openFDA",
                       f"{OPENFDA_CREDIT}. Used only when the optional FAERS lookup is enabled; FAERS reports "
-                      "are unvalidated, and the FDA does not endorse this product."))
+                      "are unvalidated, and the FDA does not endorse this product.",
+                      "Adverse-event reports, only with the optional FAERS lookup. openFDA, U.S. FDA."))
     if "twosides" in keys:
-        out.append(Notice("twosides", "TWOSIDES", TWOSIDES_NOTICE + " (no license stated by the publisher)."))
+        out.append(Notice("twosides", "TWOSIDES", TWOSIDES_NOTICE + " (no license stated by the publisher).",
+                          "Statistical signals. Research use only, not for redistribution."))
     if {"ddinter", "sider"} & set(keys):
-        out.append(Notice("noncommercial", "Non-commercial use", NONCOMMERCIAL_NOTICE))
+        out.append(Notice("noncommercial", "Non-commercial use", NONCOMMERCIAL_NOTICE,
+                          "DDInter and SIDER data: non-commercial use only, share alike (CC BY-NC-SA 4.0)."))
     return out
 
 

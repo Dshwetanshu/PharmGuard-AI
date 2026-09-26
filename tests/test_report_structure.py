@@ -62,7 +62,7 @@ def from_structure(s):
 
 def _check(state, generator):
     s = state["report_structure"]
-    assert s is not None and s["version"] == 1
+    assert s is not None and s["version"] == 2
     md = state["report"]
     assert generator.finalize("\n".join(render_markdown(s))) == md          # the markdown is the structure
     p = parse(md)
@@ -70,6 +70,51 @@ def _check(state, generator):
     assert p == from_structure(s)
     assert s["disclaimer"] in md and s["data_line"] in md
     assert s["summary"]["graded"]["Major"] == sum(1 for x in s["findings"] if x["severity"] == "Major")
+    assert grid_from_markdown(p, s["grid"]["drugs"]) == grid_cells(s)
+
+
+RANK = ("Major", "Moderate", "Minor", "not graded")
+
+
+def grid_from_markdown(p, drugs):
+    """Each pair's status as read back from the markdown alone: the most severe finding,
+    else a statistical signal, else a listed no-data pair."""
+    out = {}
+    for i in range(len(drugs)):
+        for j in range(i):
+            key = frozenset((drugs[i], drugs[j]))
+            sev = [f[2] for f in p["findings"] if frozenset((f[0].lower(), f[1].lower())) == key]
+            if sev:
+                status = min(sev, key=RANK.index)
+            elif any(frozenset(x.lower() for x in re.match(r"\*\*(.+?) \+ (.+?)\*\*", line).groups()) == key
+                     for line in p["signals"]):
+                status = "signals only"
+            else:
+                assert any(frozenset(x.split(" + ")) == key for x in p["no_data"]), key
+                status = "no curated data"
+            out[key] = status
+    return out
+
+
+def grid_cells(s):
+    """The structure's grid, checked for shape: the lower triangle, each pair once, links to the right item."""
+    g = s["grid"]
+    drugs, cells = g["drugs"], g["cells"]
+    assert len(cells) == len(drugs) * (len(drugs) - 1) // 2 == s["summary"]["pairs"]
+    assert s["summary"]["medications"] == len(drugs)
+    out = {}
+    for c in cells:
+        assert c["row"] > c["col"] and c["pair"] == [drugs[c["row"]], drugs[c["col"]]]
+        key = frozenset(c["pair"])
+        assert key not in out
+        out[key] = c["status"]
+        if c["ref"] is None:
+            assert c["status"] == "no curated data"
+        else:
+            items = {"findings": s["findings"], "ungraded": s["ungraded"]["items"], "signals": s["signals"]["items"]}
+            item = items[c["ref"]["section"]][c["ref"]["index"]]
+            assert frozenset(x.lower() for x in item["pair"]) == key
+    return out
 
 
 @pytest.fixture(scope="module")

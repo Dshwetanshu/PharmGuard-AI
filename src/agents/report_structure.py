@@ -12,7 +12,9 @@ from __future__ import annotations
 from typing import Any, Dict, List, Optional
 
 TIERS = ("Major", "Moderate", "Minor")
-STRUCTURE_VERSION = 1
+STRUCTURE_VERSION = 2
+# Grid cell statuses, most severe first. "signals only": statistical signals but no curated record.
+GRID_STATUSES = ("Major", "Moderate", "Minor", "not graded", "signals only", "no curated data")
 
 
 def plural(n: int, singular: str, plural_form: Optional[str] = None) -> str:
@@ -132,6 +134,7 @@ def build_structure(plan, result) -> Dict[str, Any]:
                    for p, sigs in result.faers_signals.items() for s in sigs]
     return {
         "version": STRUCTURE_VERSION,
+        "grid": pair_grid(plan, findings, ungraded, sig_items, nd),
         "title": "PharmGuard Interaction Report",
         "entries": {"heading": ENTRIES_HEADING, **ent},
         "summary": {"medications": plan.num_drugs, "pairs": plan.num_pairs, "graded": counts,
@@ -160,6 +163,36 @@ def build_structure(plan, result) -> Dict[str, Any]:
         "disclaimer": None,     # filled in by Generator (the canonical footer)
         "data_line": None,
     }
+
+
+def pair_grid(plan, findings, ungraded, signals, no_data) -> Dict[str, Any]:
+    """Every checked pair once, with its most severe status and the report item it links to.
+
+    drugs: the analysed drugs in the order entered (row i, column j < i is the pair drugs[i] + drugs[j]).
+    """
+    drugs = [d.generic_name.lower() for d in plan.resolved]
+    index = {name: i for i, name in enumerate(drugs)}
+    nd = {tuple(sorted(p)) for p in no_data}
+    cells = []
+    for a, b in plan.pairs:
+        key = tuple(sorted((a, b)))
+        status, ref = None, None
+        for section, items in (("findings", findings), ("ungraded", ungraded), ("signals", signals)):
+            for i, item in enumerate(items):
+                if tuple(sorted(x.lower() for x in item["pair"])) == key:
+                    status = item.get("severity", "signals only")
+                    ref = {"section": section, "index": i}
+                    break
+            if status:
+                break
+        if status is None:
+            if key not in nd:     # every retrieved pair has a report item; anything else is a bug
+                raise ValueError(f"pair {a} + {b} has no report item and is not a no-data pair")
+            status = "no curated data"
+        row, col = sorted((index[a], index[b]), reverse=True)
+        cells.append({"pair": [drugs[row], drugs[col]], "row": row, "col": col, "status": status, "ref": ref})
+    cells.sort(key=lambda c: (c["row"], c["col"]))
+    return {"drugs": drugs, "cells": cells}
 
 
 def entries_markdown(ent: Dict[str, Any]) -> List[str]:

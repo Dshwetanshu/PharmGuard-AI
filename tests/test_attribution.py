@@ -43,3 +43,17 @@ def test_datasets_doc_embeds_the_generated_block():
     doc = (ROOT / "docs" / "DATASETS.md").read_text()
     start, end = doc.index(DOC_START), doc.index(DOC_END) + len(DOC_END)
     assert doc[start:end] == datasets_md_block(), "regenerate the block with src.data.attribution.datasets_md_block()"
+
+
+def test_every_notice_has_a_short_line_that_keeps_the_license_and_required_wording():
+    from src.data.attribution import notices_for
+    from src.data.attribution import RXNORM_STATEMENT
+    notices = notices_for(["rxnorm", "drugsatfda", "drugbank", "ddinter", "sider", "twosides"]) + \
+        notices_for([], synthetic=True)
+    for n in notices:
+        assert n.short and "—" not in n.short, n.key
+        # The license named in the full text is named in the short line too.
+        for lic in ("CC BY-NC-SA 4.0", "CC0 1.0"):
+            assert (lic in n.text) == (lic in n.short) or n.key == "noncommercial", (n.key, lic)
+    rx = next(n for n in notices if n.key == "rxnorm")
+    assert RXNORM_STATEMENT in rx.short          # NLM's required statement stays visible
