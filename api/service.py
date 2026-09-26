@@ -266,6 +266,10 @@ class CheckService:
             "request_id": state["request_id"],
             "report_markdown": state["report"],
             "report_source": state["report_source"],
+            # The template report as data (entries, findings, notices...), for deterministic reports;
+            # null for LLM reports, which the page shows as styled markdown.
+            "report_structure": state.get("report_structure") if state["report_source"].startswith("deterministic")
+                                else None,
             "mode": mode,
             "validation": {"passed": v["passed"], "finding_codes": sorted({f["code"] for f in v["findings"]}),
                            "clinical_claims": v["stats"].get("clinical_claims"),

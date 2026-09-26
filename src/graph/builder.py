@@ -69,6 +69,7 @@ class GraphState(TypedDict, total=False):
     feedback: Optional[str]                 # checker findings for the next attempt
     drafts: List[Dict[str, Any]]            # per attempt: passed, finding codes, stats, usage, error
     report: str
+    report_structure: Optional[Dict[str, Any]]   # the template report as data (None for LLM reports)
     report_source: str
     final_validation: Dict[str, Any]
     trajectory: Annotated[List[Dict[str, Any]], operator.add]   # append-only
@@ -280,7 +281,11 @@ def build_graph(settings: Settings, c: Components, tracing: Optional[Tracing] = 
             reason = "deterministic_no_llm"
         else:
             reason = "deterministic_fallback"
-        update = {"report": fallback_report(c, p, result, state), "report_source": reason}
+        report = fallback_report(c, p, result, state)
+        markdown, structure = c.generator.deterministic_report(p, result)
+        # The structure describes the template report; attach it only if that's what is shown.
+        update = {"report": report, "report_source": reason,
+                  "report_structure": structure if report == markdown else None}
         if "evidence" not in state:
             update["evidence"] = evidence(p, result)
         return update, "ok", {"reason": reason, "llm_attempts": state.get("llm_attempts", 0)}
@@ -290,7 +295,10 @@ def build_graph(settings: Settings, c: Components, tracing: Optional[Tracing] = 
         v = validate_report(report, Evidence.from_dict(state["evidence"]), final=True)
         detail = {"report_source": state["report_source"], "final_validation_passed": v.passed,
                   "finding_codes": sorted(v.codes())}
-        return {"report": report, "final_validation": v.to_dict()}, ("ok" if v.passed else "invalid"), detail
+        update = {"report": report, "final_validation": v.to_dict()}
+        if state.get("report_structure") is not None and report != state["report"]:
+            update["report_structure"] = None      # the footer changed the text: structure no longer matches
+        return update, ("ok" if v.passed else "invalid"), detail
 
     # -------------------------------------------------------------- topology
     g = StateGraph(GraphState)

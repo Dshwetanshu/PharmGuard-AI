@@ -76,24 +76,8 @@ def describe_entry(d) -> str:
 def entries_section(plan) -> List[str]:
     """Markdown lines for the top of every report: how each entry was read, and a notice
     when two entries are the same drug. Rendered by code for both report paths."""
-    entries = list(getattr(plan, "entries", None) or (list(plan.resolved) + list(plan.unresolved)))
-    if not entries:
-        return []
-    lines = [f"## {ENTRIES_HEADING}"]
-    groups: Dict[str, List[str]] = {}
-    for d in entries:
-        if d.resolved and d.generic_name:
-            groups.setdefault(d.generic_name, []).append(d.query.strip())
-    for generic, queries in groups.items():
-        if len(queries) > 1:
-            names = " and ".join(queries) if len(queries) == 2 else ", ".join(queries[:-1]) + " and " + queries[-1]
-            lines.append(f"> **Same drug entered more than once:** {names} all mean {generic} "
-                         "(possible duplicate therapy). It is analysed once."
-                         if len(queries) > 2 else
-                         f"> **Same drug entered more than once:** {names} both mean {generic} "
-                         "(possible duplicate therapy). It is analysed once.")
-    lines += [f"- {describe_entry(d)}" for d in entries]
-    return lines
+    from src.agents.report_structure import entries_markdown, entries_structure
+    return entries_markdown({"heading": ENTRIES_HEADING, **entries_structure(plan)})
 
 
 def strip_entries_section(text: str) -> str:
@@ -211,90 +195,16 @@ class Generator:
     # Useful for testing, offline mode, and as a fallback if the LLM call fails.
 
     def generate_deterministic(self, plan: RetrievalPlan, result: RetrievalResult) -> str:
-        lines = ["# PharmGuard Interaction Report", ""]
-        entries = entries_section(plan)
-        if entries:
-            lines += entries + [""]
-        curated, signals = result.curated_records, result.statistical_signals
-        hidden = result.total_hidden_signals
-        graded = [r for r in curated if r.severity in ("Major", "Moderate", "Minor")]
-        by_tier = ", ".join(f"{t} {sum(r.severity == t for r in graded)}" for t in ("Major", "Moderate", "Minor"))
+        return self.deterministic_report(plan, result)[0]
 
-        lines.append("## Summary")
-        lines.append(
-            f"Analyzed {plan.num_drugs} medication(s) across {plan.num_pairs} unique pair(s). "
-            f"Found {len(graded)} graded interaction(s) ({by_tier}), {len(curated) - len(graded)} listing(s) "
-            f"without a severity grade and {len(signals)} statistical reporting signal(s)"
-            + (f"; {hidden} further signal(s) are not shown." if hidden else ".")
-        )
-        lines.append("")
-
-        # Curated records, grouped by their curated severity.
-        buckets = {k: [] for k in SEVERITY_HEADINGS}
-        for r in curated:
-            buckets.get(r.severity, buckets["Unknown"]).append(r)
-        for label, heading in SEVERITY_HEADINGS.items():
-            if buckets[label]:
-                lines.append(f"## {heading}")
-                if label == "Unknown":
-                    lines.append(NOT_GRADED_NOTE)
-                for r in buckets[label]:
-                    sev = r.severity if label != "Unknown" else "not graded"
-                    line = f"- **{r.drug_a} + {r.drug_b}** — curated severity: {sev} ({r.source})"
-                    if not _is_placeholder(r.condition):
-                        line += f"; {r.condition}"
-                    if r.mechanism:
-                        line += f'; source mechanism: "{r.mechanism}"'
-                    lines.append(f"{line} {r.citation()}")
-                lines.append("")
-
-        # Statistical signals: PRR and co-reports only, never a severity word.
-        if signals:
-            lines.append(f"## {STATISTICAL_HEADING}")
-            lines.append(
-                "Disproportionality statistics from co-reported adverse events: up to "
-                f"{MAX_SIGNALS_PER_PAIR} per pair, highest PRR first. A PRR compares how often an event "
-                "is reported with the pair against other drugs; it is not a clinical severity grade "
-                "and does not establish that the drugs interact."
-            )
-            for pair, records in result.interactions.items():
-                for r in records:
-                    if r.is_statistical:
-                        lines.append(f"- **{r.drug_a} + {r.drug_b}** — {r.condition}: {_signal_stats(r)} "
-                                     f"{r.citation()}")
-                if result.hidden_signals.get(pair):
-                    lines.append(f"- **{pair[0]} + {pair[1]}** — {hidden_notice(result.hidden_signals[pair])}")
-            lines.append("")
-
-        # Coverage: every unresolved input and every no-data pair is listed.
-        lines.append("## Coverage Notes")
-        if plan.unresolved:
-            lines.append("### Unresolved Inputs")
-            lines.append("These inputs could not be matched to a drug in the local vocabulary and were excluded:")
-            lines.extend(f"- {u.query}" + (f" — {u.note}" if u.note else "") for u in plan.unresolved)
-            lines.append("")
-        if result.no_data_pairs:
-            lines.append("### No Curated Interaction Data")
-            lines.append(
-                f"No record in the queried curated sources for these {len(result.no_data_pairs)} pair(s). "
-                "Absence of a record does not mean the combination is safe."
-            )
-            lines.extend(f"- {a} + {b}" for a, b in result.no_data_pairs)
-            if result.faers_signals:
-                lines.append(
-                    f"FAERS spontaneous reports were found for {len(result.faers_signals)} "
-                    "of these pair(s); see the unvalidated section below."
-                )
-            lines.append("")
-        if not plan.unresolved and not result.no_data_pairs:
-            lines.append("All inputs resolved; all pairs had coverage in queried sources.")
-            lines.append("")
-
-        faers = self._faers_section(result)
-        if faers:
-            lines.extend(faers + [""])
-
-        return self._with_disclaimer(lines)
+    def deterministic_report(self, plan: RetrievalPlan, result: RetrievalResult):
+        """(markdown, structure): the template report and the same report as data. The
+        markdown is written only from the structure (src/agents/report_structure.py)."""
+        from src.agents.report_structure import build_structure, render_markdown
+        structure = build_structure(plan, result)
+        structure["disclaimer"] = self.cfg.disclaimer
+        structure["data_line"] = self.provenance
+        return self._with_disclaimer(render_markdown(structure)), structure
 
     # ---------- helpers ----------
 
@@ -320,8 +230,9 @@ class Generator:
         ]
         for (a, b), signals in result.faers_signals.items():
             for s in signals:
+                from src.agents.report_structure import plural
                 lines.append(
-                    f"- **{a} + {b}** — {s.condition}: {s.report_count} report(s) {s.citation()}"
+                    f"- **{a} + {b}** — {s.condition}: {plural(int(s.report_count), 'report')} {s.citation()}"
                 )
         return lines
 

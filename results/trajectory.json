@@ -36,40 +36,40 @@
       "latency_label": "orchestration overhead only (fake LLMs, synthetic sample data, no network)",
       "latency_ms_end_to_end": {
         "p50": 6.2,
-        "p95": 20.7
+        "p95": 18.4
       },
       "latency_ms_per_node": {
         "faers": {
           "p50": 0.17,
-          "p95": 0.89
+          "p95": 0.84
         },
         "finalize": {
           "p50": 0.48,
-          "p95": 2.3
+          "p95": 2.05
         },
         "generate_llm": {
           "p50": 0.05,
-          "p95": 0.15
+          "p95": 0.13
         },
         "normalize": {
           "p50": 0.03,
-          "p95": 0.09
+          "p95": 0.07
         },
         "plan": {
           "p50": 0.05,
-          "p95": 0.21
+          "p95": 0.15
         },
         "retrieve": {
-          "p50": 2.16,
-          "p95": 11.15
+          "p50": 2.12,
+          "p95": 11.26
         },
         "template": {
-          "p50": 0.04,
-          "p95": 0.09
+          "p50": 0.09,
+          "p95": 0.22
         },
         "validate": {
-          "p50": 0.6,
-          "p95": 3.38
+          "p50": 0.59,
+          "p95": 3.32
         }
       },
       "llm_calls_per_case": 1.633,

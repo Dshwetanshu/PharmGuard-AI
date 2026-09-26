@@ -168,3 +168,11 @@ def test_real_build_source_names_use_drugsatfda_aliases_only_when_reviewed():
 def test_real_build_optison_input_reads_as_perflutren(public_graph):
     r = public_graph.components.normalizer.resolve("Optison")
     assert (r.generic_name, r.alias_kind) == ("perflutren", "REVIEWED_BRAND_OVERRIDE")
+
+
+def test_real_build_structured_report_matches_markdown(public_graph):
+    from tests.test_report_structure import _check
+    for case in TEST_CASES:
+        s = public_graph.run(case.input_drugs)
+        if s["report_source"].startswith("deterministic"):
+            _check(s, public_graph.components.generator)
