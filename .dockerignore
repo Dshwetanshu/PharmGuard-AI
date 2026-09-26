@@ -28,7 +28,3 @@ tests/
 *.pdf
 .DS_Store
 .claude/
-.vercel-deploy/
-.vercel/
-.vercelignore
-Dockerfile.vercel
