@@ -23,3 +23,7 @@ Thumbs.db
 
 # Real-data builds (scripts/ingest_data.py --full --profile ...); never committed
 data/profiles/
+
+# Vercel CLI staging folder and project link (scripts/deploy_vercel.py)
+.vercel-deploy/
+.vercel/

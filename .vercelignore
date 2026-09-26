@@ -1,0 +1,13 @@
+# Allowlist: ignore everything at the root, then allow only what Dockerfile.vercel needs.
+# Second layer only: scripts/deploy_vercel.py deploys from a staging folder that already
+# holds just these files, and refuses if anything else (or anything forbidden) is there.
+/*
+!Dockerfile.vercel
+!.vercelignore
+!requirements-api.lock
+!LICENSE
+!api
+!src
+**/__pycache__
+**/*.pyc
+**/.DS_Store
