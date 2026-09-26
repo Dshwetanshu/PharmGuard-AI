@@ -19,7 +19,7 @@ Analyzed 2 medication(s) across 1 unique pair(s). Retrieved 2 interaction record
 - **warfarin + ibuprofen** — NSAID potentiation of anticoagulation [DDInter:DDI-00000002]
 
 ## Coverage Notes
-All inputs resolved; all pairs had coverage in queried sources.
+All entries were recognized, and each pair has a record in the loaded data.
 
 ---
 **Disclaimer.** PharmGuard is a decision-support tool grounded in public pharmaceutical databases. It is not a substitute for professional medical judgment. Always consult a licensed clinician or pharmacist before making changes to a medication regimen.

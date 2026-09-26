@@ -13,6 +13,8 @@ from typing import Any, Dict, List, Optional
 
 TIERS = ("Major", "Moderate", "Minor")
 STRUCTURE_VERSION = 2
+# Coverage note when every entry was recognized and every pair has at least one record.
+ALL_COVERED_NOTE = "All entries were recognized, and each pair has a record in the loaded data."
 # Grid cell statuses, most severe first. "signals only": statistical signals but no curated record.
 GRID_STATUSES = ("Major", "Moderate", "Minor", "not graded", "signals only", "no curated data")
 
@@ -152,7 +154,7 @@ def build_structure(plan, result) -> Dict[str, Any]:
             "unresolved": {"intro": "These inputs could not be matched to a drug in the local vocabulary and were excluded:",
                            "items": unresolved} if unresolved else None,
             "no_data": no_data,
-            "all_covered": ("All inputs resolved; all pairs had coverage in queried sources."
+            "all_covered": (ALL_COVERED_NOTE
                             if not unresolved and not nd else None),
         },
         "faers": {"heading": "FAERS Spontaneous Reports (unvalidated)",

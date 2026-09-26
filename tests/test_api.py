@@ -509,22 +509,34 @@ def _summary(graded=(0, 0, 0), ungraded=0, signals=0, no_data=0, pairs=3, meds=3
 @pytest.mark.skipif(shutil.which("node") is None, reason="node not installed")
 def test_headline_leads_with_what_was_found_and_never_reassures():
     cases = {
-        "ungraded": _summary(ungraded=2, no_data=1),
+        "ungraded": _summary(ungraded=2),
         "nodata": _summary(no_data=3),
-        "some_nodata": _summary(no_data=2, signals=1),
-        "graded": _summary(graded=(0, 1, 0), no_data=2),
+        "both": _summary(ungraded=2, no_data=1),
+        "signals": _summary(signals=1),
+        "graded": _summary(graded=(0, 1, 0), ungraded=1, no_data=2),
         "none": _summary(pairs=0, meds=1),
     }
     got = _node("Object.fromEntries(Object.entries(%s).map(([k, v]) => [k, m.answer(v)]))" % json.dumps(cases))
-    caution = "Absence of a record doesn\u2019t mean the combination is safe."
     assert got["ungraded"]["headline"] == "2 listings without a severity grade"
-    assert got["ungraded"]["caution"] == caution and "1 pair with no curated data" in got["ungraded"]["sub"]
-    assert got["nodata"]["headline"] == "No curated data for these 3 pairs" and got["nodata"]["caution"] == caution
-    assert got["some_nodata"]["headline"] == "1 statistical signal" and got["some_nodata"]["caution"] == caution
+    assert got["nodata"]["headline"] == "No curated data for these 3 pairs"
+    assert got["both"]["headline"] == "2 listings without a severity grade"
+    assert "1 pair with no curated data" in got["both"]["sub"]
+    assert got["signals"]["headline"] == "1 statistical signal"
     assert got["graded"]["headline"] == "1 moderate interaction" and got["graded"]["caution"] == ""
     assert got["none"]["headline"] == "No pairs could be checked" and "0 " not in got["none"]["sub"]
     for a in got.values():
         assert "No graded" not in a["headline"] and "found" not in a["headline"].lower()
+
+
+@pytest.mark.skipif(shutil.which("node") is None, reason="node not installed")
+@pytest.mark.parametrize("case, expected", [
+    (_summary(no_data=3), "Absence of a record doesn\u2019t mean the combination is safe."),
+    (_summary(ungraded=3), "A listing without a severity grade doesn\u2019t mean the combination is safe."),
+    (_summary(ungraded=2, no_data=1),
+     "Neither a missing record nor a listing without a severity grade means the combination is safe."),
+], ids=["no-data only", "ungraded only", "both"])
+def test_caution_matches_what_is_missing(case, expected):
+    assert _node("m.answer(%s).caution" % json.dumps(case)) == expected
 
 
 @pytest.mark.skipif(shutil.which("node") is None, reason="node not installed")

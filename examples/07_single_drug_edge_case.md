@@ -14,7 +14,7 @@ metformin
 Analyzed 1 medication(s) across 0 unique pair(s). Retrieved 0 interaction record(s) from structured sources.
 
 ## Coverage Notes
-All inputs resolved; all pairs had coverage in queried sources.
+All entries were recognized, and each pair has a record in the loaded data.
 
 ---
 **Disclaimer.** PharmGuard is a decision-support tool grounded in public pharmaceutical databases. It is not a substitute for professional medical judgment. Always consult a licensed clinician or pharmacist before making changes to a medication regimen.

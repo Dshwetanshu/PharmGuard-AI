@@ -41,7 +41,20 @@ function severity(status) {
 
 // ------------------------------------------------------------------ answer first
 
-const CAUTION = "Absence of a record doesn\u2019t mean the combination is safe.";
+// The caution under a headline with nothing graded, matched to what is missing.
+const CAUTION = {
+  nodata: "Absence of a record doesn\u2019t mean the combination is safe.",
+  ungraded: "A listing without a severity grade doesn\u2019t mean the combination is safe.",
+  both: "Neither a missing record nor a listing without a severity grade means the combination is safe.",
+  signals: "A statistical signal isn\u2019t a severity grade and doesn\u2019t mean the combination is safe.",
+};
+
+function caution(sum) {
+  if (sum.no_data_pairs > 0 && sum.ungraded > 0) return CAUTION.both;
+  if (sum.ungraded > 0) return CAUTION.ungraded;
+  if (sum.no_data_pairs > 0) return CAUTION.nodata;
+  return sum.signals > 0 ? CAUTION.signals : "";
+}
 
 // The headline leads with what was found and never reads as reassurance: with nothing graded it
 // names the ungraded listings, signals or no-data pairs, and the caution goes directly under it.
@@ -73,7 +86,7 @@ function answer(s) {
     sub = plural(sum.pairs, "pair") + " checked across " + plural(sum.medications, "medicine") + "." +
       (rest.length ? " Also " + joinAnd(rest.map(r => r[1])) + "." : "");
   }
-  return {headline: headline, caution: !top && sum.pairs > 0 ? CAUTION : "", sub: sub};
+  return {headline: headline, caution: !top && sum.pairs > 0 ? caution(sum) : "", sub: sub};
 }
 
 // Alerts that change what the report covers: duplicates, unrecognised inputs, readings to check.

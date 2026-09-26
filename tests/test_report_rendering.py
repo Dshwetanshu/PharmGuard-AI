@@ -51,7 +51,7 @@ def test_faers_pairs_stay_no_data_and_are_shown_as_unvalidated(sample_pipeline, 
         report = Generator(sample_pipeline.cfg, llm=StubLLM()).generate(result.plan, result.retrieval)
     else:
         report = result.report
-    assert "all pairs had coverage" not in report.lower()
+    assert "each pair has a record" not in report.lower()     # a no-data pair: no full-coverage note
     assert "FAERS Spontaneous Reports (unvalidated)" in report
     assert "[FAERS:FAERS-abc123]" in report
     assert "600" in report

@@ -177,3 +177,19 @@ def test_llm_reports_have_no_structure(test_data_dir, sample_ingest_report):
 def test_plurals():
     assert plural(1, "medication") == "1 medication" and plural(4, "medication") == "4 medications"
     assert plural(0, "listing") == "0 listings" and plural(1, "unique pair") == "1 unique pair"
+
+
+def test_all_covered_note_says_what_it_means(graph):
+    """Every entry recognized and every pair with a record: the note states exactly that, in the
+    structure and the markdown, and the report still passes the checker."""
+    from src.agents.report_structure import ALL_COVERED_NOTE
+    assert ALL_COVERED_NOTE == "All entries were recognized, and each pair has a record in the loaded data."
+    for case in TEST_CASES:
+        state = graph.run(case.input_drugs)
+        s = state["report_structure"]
+        if s["coverage"]["all_covered"]:
+            assert s["coverage"]["all_covered"] == ALL_COVERED_NOTE and ALL_COVERED_NOTE in state["report"]
+            assert "had coverage" not in state["report"] and state["final_validation"]["passed"]
+            break
+    else:
+        pytest.fail("no sample case with full coverage")
