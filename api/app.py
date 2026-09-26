@@ -39,8 +39,8 @@ SECURITY_HEADERS = {
     "Referrer-Policy": "no-referrer",
     "X-Frame-Options": "DENY",
 }
-# The page loads only its own script and stylesheet; no inline script, no third-party origin.
-PAGE_CSP = ("default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self'; "
+# The page loads only its own script, stylesheet, font and icon; no inline script, no third-party origin.
+PAGE_CSP = ("default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self'; font-src 'self'; "
             "base-uri 'none'; form-action 'none'; frame-ancestors 'none'")
 
 

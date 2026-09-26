@@ -268,6 +268,34 @@ def test_page_is_served_with_a_strict_csp_and_no_inline_script(client):
     assert ("Educational demo, not medical advice.</strong> Don't start, stop or change any medicine based on "
             "these results; talk to your pharmacist or doctor.") in html
     assert client.get("/static/app.js").status_code == 200
+    assert "font-src 'self'" in r.headers["content-security-policy"]
+    for asset in ("/static/style.css", "/static/favicon.svg", "/static/fonts/InterVariable.woff2",
+                  "/static/fonts/Inter-LICENSE.txt"):
+        assert client.get(asset).status_code == 200, asset
+
+
+def test_page_makes_no_third_party_requests():
+    """Every URL the page can load (src, href, url(), fetch) is same-origin."""
+    import re
+    static = ROOT / "api" / "static"
+    html, css, js = ((static / n).read_text() for n in ("index.html", "style.css", "app.js"))
+    urls = re.findall(r'(?:src|href)="([^"]*)"', html) + re.findall(r'url\(\s*"?([^")]*)', css)
+    urls += re.findall(r'fetch\(\s*"([^"]*)"', js) + re.findall(r'href="(?![?#/])([^"]*)"', js)
+    assert urls and all(u.startswith(("/", "?", "#")) and not u.startswith("//") for u in urls), urls
+    assert "@import" not in css and not re.search(r"https?://", css + js)
+
+
+def test_page_palette_has_no_green():
+    """No green anywhere, so "no curated data" (or anything else) can't read as "safe"."""
+    import colorsys
+    import re
+    css = (ROOT / "api" / "static" / "style.css").read_text()
+    colours = [tuple(int(h[i:i + 2], 16) / 255 for i in (0, 2, 4)) for h in re.findall(r"#([0-9A-Fa-f]{6})\b", css)]
+    colours += [tuple(int(x) / 255 for x in m) for m in re.findall(r"rgba?\((\d+),\s*(\d+),\s*(\d+)", css)]
+    assert len(colours) > 20
+    for rgb in colours:
+        h, lum, sat = colorsys.rgb_to_hls(*rgb)
+        assert not (75 <= h * 360 <= 170 and sat > 0.2), rgb
 
 
 # ------------------------------------------------------------------ page renderer (Node)
@@ -292,6 +320,66 @@ def test_page_renderer_escapes_everything_and_collapses_not_graded():
     assert html.index("</details>") < html.index("Coverage Notes")
     assert "<strong>a + b</strong>" in html and '<span class="cite">[DDInter:DDI-1]</span>' in html
     assert out["split1"] == ["a", "b"] and out["split2"] == ["insulin, regular, human", "warfarin"]
+
+
+HOSTILE = "<img src=x onerror=alert(1)>"
+
+
+def _hostile(value, key=None):
+    """Append markup to every free-text string; keep the keys the renderer switches on."""
+    if isinstance(value, dict):
+        return {k: _hostile(v, k) for k, v in value.items()}
+    if isinstance(value, list):
+        return [_hostile(v, key) for v in value]
+    if isinstance(value, str) and key not in ("status", "severity", "kind"):
+        return value + HOSTILE
+    return value
+
+
+@pytest.mark.skipif(shutil.which("node") is None, reason="node not installed")
+def test_page_renders_the_structure_escaped_and_complete(service):
+    out = service.check({"drugs": ["lisinopril", "Lisinopril", "spironolactone", "aspirin", "qqqzzz"]}, None, "rid-000009")
+    s = out["report_structure"]
+    assert s and s["findings"] and s["entries"]["notices"] and s["coverage"]["unresolved"]
+    cite = {"source": "DDInter", "record_id": "DDI-9", "text": "DDInter:DDI-9"}
+    s["ungraded"]["items"] = [dict(s["findings"][0], severity="not graded")]
+    s["signals"]["items"] = [{"pair": ["a", "b"], "event": "nausea", "prr": 2.5, "reports": 1234, "citation": cite, "line": "x"}]
+    s["signals"]["hidden"] = [{"pair": ["a", "b"], "count": 4, "line": "**a + b** — +4 more not shown", "after": 1}]
+    s["coverage"]["no_data"] = {"intro": "none", "pairs": [["c", "d"]], "faers_note": None}
+    s["faers"] = {"heading": "FAERS", "intro": "raw", "items": [{"pair": ["c", "d"], "event": "rash", "report_count": 1,
+                                                                 "citation": cite, "line": "x"}]}
+    s = _hostile(s)
+    resp = _hostile({"report_source": "deterministic", "request_id": "rid", "validation": {"passed": True,
+                     "clinical_claims": 3, "citations": 3}, "timings_ms": {"total": 12.3}})
+    js = ("const m=require(%s);const p=m.renderStructured(%s);"
+          "process.stdout.write(JSON.stringify({p:p,tech:m.techDetails(%s),pl:[m.plural(1,'report'),m.plural(2,'report')]}))"
+          % (json.dumps(str(ROOT / "api" / "static" / "app.js")), json.dumps(s), json.dumps(resp)))
+    got = json.loads(subprocess.run(["node", "-e", js], capture_output=True, text=True, check=True).stdout)
+    html = got["p"]["body"] + got["p"]["entries"] + got["tech"]
+    # Escape-then-render: the only markup is the page's own.
+    assert "<img" not in html and html.count("&lt;img src=x onerror=alert(1)&gt;") > 20
+    # Every entry, the duplicate notice, each finding with its record, the unresolved reason,
+    # the summary sentence, the disclaimer and the data line are all present.
+    for e in s["entries"]["items"]:
+        assert escape_like(e["input"]) in html and (e["note"] is None or escape_like(e["note"]) in html)
+    assert "Same drug entered more than once:" in html
+    for f in s["findings"]:
+        assert escape_like(f["pair"][0]) in html and escape_like(f["citation"]["record_id"]) in html
+    for key in ("text",):
+        assert escape_like(s["summary"][key]) in html
+    assert escape_like(s["disclaimer"]) in html and escape_like(s["data_line"]) in html
+    assert escape_like(s["coverage"]["unresolved"]["items"][0]["reason"]) in html
+    # Severity by word and icon; the ungraded listings are collapsed (closed <details>).
+    assert 'class="badge badge--major"' in html or 'class="badge badge--moderate"' in html
+    assert '<details class="fold"><summary>' in html and "<details open" not in html
+    assert "+4 more not shown" in html and "1,234 co-reports" in html and "1 report" in html
+    assert "Report source" in got["tech"] and "Request ID" in got["tech"]
+    assert got["pl"] == ["1 report", "2 reports"]
+
+
+def escape_like(text):
+    return (text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+            .replace('"', "&quot;").replace("'", "&#39;").replace("**", ""))
 
 
 # ------------------------------------------------------------------ bootstrap (fake downloader)
