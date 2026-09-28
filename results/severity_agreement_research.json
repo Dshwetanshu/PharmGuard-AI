@@ -1,0 +1,231 @@
+{
+  "aggregate_only": true,
+  "calibration": {
+    "current": {
+      "accuracy": 0.198,
+      "confusion": {
+        "cols_prr_tier": [
+          "Minor",
+          "Moderate",
+          "Major"
+        ],
+        "counts": [
+          [
+            5,
+            45,
+            833
+          ],
+          [
+            59,
+            427,
+            8421
+          ],
+          [
+            9,
+            76,
+            1899
+          ]
+        ],
+        "rows_ddinter": [
+          "Minor",
+          "Moderate",
+          "Major"
+        ]
+      },
+      "linear_weighted_kappa": 0.0037,
+      "macro_f1": 0.13,
+      "n": 11774,
+      "spearman_prr": 0.0341,
+      "spearman_tier": 0.0185
+    },
+    "tuned": {
+      "accuracy": 0.6152,
+      "confusion": {
+        "cols_prr_tier": [
+          "Minor",
+          "Moderate",
+          "Major"
+        ],
+        "counts": [
+          [
+            49,
+            620,
+            214
+          ],
+          [
+            443,
+            6678,
+            1786
+          ],
+          [
+            73,
+            1395,
+            516
+          ]
+        ],
+        "rows_ddinter": [
+          "Minor",
+          "Moderate",
+          "Major"
+        ]
+      },
+      "linear_weighted_kappa": 0.0393,
+      "macro_f1": 0.352,
+      "n": 11774,
+      "spearman_prr": 0.0341,
+      "spearman_tier": 0.0361
+    }
+  },
+  "command": "python scripts/eval_severity_agreement.py",
+  "counts": {
+    "ddinter_pairs": 169657,
+    "overlap_graded": 23549,
+    "overlap_not_graded": 30548,
+    "overlap_pairs": 54097,
+    "twosides_pairs": 115995
+  },
+  "current_thresholds": {
+    "major_from": 10.0,
+    "moderate_from": 4.0
+  },
+  "data": {
+    "data": "Data: research build from RxNorm Current Prescribable 2026-09-08, Drugs@FDA brand names, DDInter bulk download (ddinter2.scbdd.com, 2024-05-21), SIDER 4.1, TWOSIDES (research only; not for redistribution); 634,721 interaction records; not synthetic.",
+    "data_dir": "data/profiles/research",
+    "profile": "research",
+    "provenance_sha256": "73a84f12af814416c14bfccf5c8f02b0cda98081fcbfd81aa2b9f3f64e2c0ddd"
+  },
+  "ddinter_grade_share_test": {
+    "Major": 2012,
+    "Minor": 850,
+    "Moderate": 8913
+  },
+  "pair_prr": "highest PRR among the pair's kept TWOSIDES events",
+  "seed": 20260928,
+  "split": {
+    "calibration": 11774,
+    "test": 11775
+  },
+  "test": {
+    "current": {
+      "accuracy": 0.1976,
+      "confusion": {
+        "cols_prr_tier": [
+          "Minor",
+          "Moderate",
+          "Major"
+        ],
+        "counts": [
+          [
+            7,
+            33,
+            810
+          ],
+          [
+            56,
+            400,
+            8457
+          ],
+          [
+            10,
+            82,
+            1920
+          ]
+        ],
+        "rows_ddinter": [
+          "Minor",
+          "Moderate",
+          "Major"
+        ]
+      },
+      "linear_weighted_kappa": 0.002,
+      "macro_f1": 0.1303,
+      "n": 11775,
+      "spearman_prr": 0.0321,
+      "spearman_tier": 0.0054
+    },
+    "majority_class": {
+      "accuracy": 0.7569,
+      "class": "Moderate",
+      "confusion": {
+        "cols_prr_tier": [
+          "Minor",
+          "Moderate",
+          "Major"
+        ],
+        "counts": [
+          [
+            0,
+            850,
+            0
+          ],
+          [
+            0,
+            8913,
+            0
+          ],
+          [
+            0,
+            2012,
+            0
+          ]
+        ],
+        "rows_ddinter": [
+          "Minor",
+          "Moderate",
+          "Major"
+        ]
+      },
+      "linear_weighted_kappa": 0.0,
+      "macro_f1": 0.2872,
+      "n": 11775,
+      "spearman_prr": 0.0321,
+      "spearman_tier": null
+    },
+    "tuned": {
+      "accuracy": 0.6112,
+      "confusion": {
+        "cols_prr_tier": [
+          "Minor",
+          "Moderate",
+          "Major"
+        ],
+        "counts": [
+          [
+            36,
+            613,
+            201
+          ],
+          [
+            419,
+            6687,
+            1807
+          ],
+          [
+            84,
+            1454,
+            474
+          ]
+        ],
+        "rows_ddinter": [
+          "Minor",
+          "Moderate",
+          "Major"
+        ]
+      },
+      "linear_weighted_kappa": 0.019,
+      "macro_f1": 0.3399,
+      "n": 11775,
+      "spearman_prr": 0.0321,
+      "spearman_tier": 0.0138
+    }
+  },
+  "tuning": {
+    "calibration_kappa": 0.0393,
+    "candidates": "31 calibration-half PRR quantiles",
+    "objective": "linear-weighted kappa on the calibration half",
+    "tuned_thresholds": {
+      "major_from": 100.0,
+      "moderate_from": 8.57
+    }
+  }
+}
