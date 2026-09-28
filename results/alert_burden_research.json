@@ -1,0 +1,47 @@
+{
+  "aggregate_only": true,
+  "command": "python scripts/eval_alert_burden.py --profile research",
+  "data": {
+    "data": "Data: research build from RxNorm Current Prescribable 2026-09-08, Drugs@FDA brand names, DDInter bulk download (ddinter2.scbdd.com, 2024-05-21), SIDER 4.1, TWOSIDES (research only; not for redistribution); 634,721 interaction records; not synthetic.",
+    "data_dir": "data/profiles/research",
+    "profile": "research",
+    "provenance_sha256": "73a84f12af814416c14bfccf5c8f02b0cda98081fcbfd81aa2b9f3f64e2c0ddd"
+  },
+  "skipped": 0,
+  "summary": {
+    "items_shown": 927,
+    "major_share_of_items": 0.0431,
+    "max_per_report": {
+      "graded": 34,
+      "signals": 195,
+      "ungraded": 32
+    },
+    "median_per_report": {
+      "graded": 1.0,
+      "major": 1.0,
+      "no_data_pairs": 0.0,
+      "signals": 3.0,
+      "ungraded": 0.0
+    },
+    "reports": 56,
+    "reports_with_a_major": 36,
+    "reports_with_nothing_graded": 6,
+    "share_of_items": {
+      "graded": 0.151,
+      "signals": 0.7433,
+      "ungraded": 0.1057
+    },
+    "totals": {
+      "graded": 140,
+      "hidden_signals": 458,
+      "major": 40,
+      "minor": 14,
+      "moderate": 86,
+      "no_data_pairs": 0,
+      "pairs": 238,
+      "signals": 689,
+      "ungraded": 98,
+      "unresolved": 3
+    }
+  }
+}
