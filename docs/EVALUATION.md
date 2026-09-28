@@ -121,6 +121,35 @@ Notes:
 - **Seeded bugs:** six orchestration bugs (`src/evaluation/seeded_bugs.py`) are checked to break at least one invariant each.
 - **Latency:** with fake LLMs it measures orchestration overhead only.
 
+## Latency
+
+All deterministic (no LLM call). **End to end** means timed by the client, from sending the HTTP request to
+receiving the whole response, so it includes the network, TLS and the server. **Server-side** is the
+`timings_ms.total` the API reports. **In-process** is the graph alone, with no HTTP.
+
+| Where | What is timed | p50 | p95 | n | Source |
+|---|---|---:|---:|---:|---|
+| Live, https://pharmguard.web.app (Firebase Hosting → Cloud Run) | six-drug check, **end to end** | 174 ms | 236 ms | 38 | docs/DEPLOYMENT.md, 28 Sep 2026 |
+| Live, same requests | server-side | 56 ms | 77 ms | 38 | docs/DEPLOYMENT.md |
+| Live, run.app (Cloud Run directly) | six-drug check, **end to end** | 138 ms | 161 ms | 40 | docs/DEPLOYMENT.md |
+| Live, same requests | server-side | 54 ms | 70 ms | 40 | docs/DEPLOYMENT.md |
+| Local Docker (OrbStack, Apple Silicon) | 47 cases × 5 rounds, **end to end** | 22.7 ms | 125.5 ms | 235 | docs/API.md, 24 Sep 2026 |
+| Local Docker, same requests | server-side | 18.1 ms | 121.0 ms | 235 | docs/API.md |
+| Local, in-process (public build, fake LLMs) | graph orchestration only, not end to end | 8.4 ms | 32.6 ms | — | results/trajectory_public.md |
+
+The live end-to-end numbers were measured from the machine used for the deployment, so they include that
+machine's network path to Google. Cold starts, all end to end (`/health`):
+
+| Where | Cold start | Next request |
+|---|---:|---:|
+| Live run.app, after 25 min idle (new instance in the log) | 14.9 s | 82 ms |
+| Live web.app, after 25 min idle (new instance in the log) | 15.7 s | 117 ms |
+| Live, a deployment's first instance, start to ready | 12.9 s (about 7 s image and Python start, about 6 s to download, verify and load the build) | — |
+| Local Docker, first run after the build / later runs | 16.9 s / 2.8 s | — |
+
+An LLM-mode check would add at least one model call per report (two with a retry). Its latency is
+unmeasured: "—".
+
 ## Running the evaluation
 
 ```bash
