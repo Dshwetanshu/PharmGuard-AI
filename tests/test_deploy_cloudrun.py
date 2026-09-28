@@ -21,7 +21,7 @@ def test_settings_match_the_plan_and_the_app():
     from api.settings import ApiSettings
     s = dc.SETTINGS
     assert s["concurrency"] == str(ApiSettings.from_env({}).max_concurrency) == "4"
-    assert (s["cpu"], s["memory"], s["min-instances"], s["max-instances"], s["port"]) == ("1", "1Gi", "0", "2", "7860")
+    assert (s["cpu"], s["memory"], s["min-instances"], s["max-instances"], s["port"]) == ("1", "1Gi", "0", "1", "7860")
     assert dc.REGION.startswith("us-east") and dc.APIS == ["run.googleapis.com", "artifactregistry.googleapis.com"]
     assert dc.cleanup_policy()[0]["mostRecentVersions"]["keepCount"] == 1
 
@@ -30,7 +30,7 @@ def test_deploy_command_is_public_request_billed_and_pinned_by_digest():
     env = {"PHARMGUARD_HF_DATASET": "u/d", "PHARMGUARD_HF_REVISION": "a" * 40,
            "PHARMGUARD_HF_PROVENANCE_SHA256": "b" * 64, "PHARMGUARD_TRUSTED_PROXY_HOPS": "1"}
     args = dc.deploy_args("p", "us-east1-docker.pkg.dev/p/pharmguard/api@sha256:" + "c" * 64, env)
-    for flag in ("--allow-unauthenticated", "--cpu-throttling", "--min-instances=0", "--max-instances=2",
+    for flag in ("--allow-unauthenticated", "--cpu-throttling", "--min-instances=0", "--max-instances=1",
                  "--concurrency=4", "--port=7860", "--memory=1Gi", "--cpu=1", "--region=us-east1"):
         assert flag in args, flag
     assert any(a.startswith("--image=") and "@sha256:" in a for a in args)

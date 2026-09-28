@@ -56,7 +56,7 @@ SETTINGS = {
     "memory": "1Gi",                      # ~400-500 MiB measured, plus the in-memory filesystem copy of the build
     "concurrency": str(ApiSettings.from_env({}).max_concurrency),   # the app's own limit (4)
     "min-instances": "0",
-    "max-instances": "2",
+    "max-instances": "1",                 # one instance: the in-memory rate limiter sees all traffic
     "port": "7860",
     "timeout": "120s",                    # above the app's own 90 s LLM timeout (LLM mode is off here)
 }
@@ -191,7 +191,7 @@ def main() -> int:
             "ingress all")
     print("Environment variables:" + "".join(f"\n  {k}={v}" for k, v in env.items()))
     print(f"Dataset: https://huggingface.co/datasets/{dataset} @ {revision} (provenance matches the local build)")
-    print("Budget: $5 on this project, alerts at 50/90/100% (warns only; max-instances=2 is the real cap)"
+    print("Budget: $5 on this project, alerts at 50/90/100% (warns only; max-instances=1 is the real cap)"
           + ("" if args.create_budget else " -- not created unless --create-budget"))
     print("Secrets: none (the dataset is public).")
     if args.dry_run:
