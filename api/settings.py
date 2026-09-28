@@ -21,7 +21,8 @@ class ApiSettings:
     api_key: Optional[str] = None             # X-API-Key value that unlocks LLM mode
     rate_limit_requests: int = 20             # per client IP ...
     rate_limit_window_s: float = 60.0         # ... per window
-    trusted_proxy_hops: int = 0               # 1 behind the Hugging Face Spaces proxy
+    trusted_proxy_hops: int = 0               # 1 behind Google's front end (Cloud Run)
+    trusted_proxy_ranges: str = ""            # "fastly": also step past Firebase Hosting's CDN (api/trusted_proxies/)
     timeout_deterministic_s: float = 20.0
     timeout_llm_s: float = 90.0
     max_concurrency: int = 4
@@ -56,6 +57,7 @@ class ApiSettings:
             rate_limit_requests=int(rate[0]),
             rate_limit_window_s=float(rate[1]) if len(rate) > 1 else 60.0,
             trusted_proxy_hops=int(env.get("PHARMGUARD_TRUSTED_PROXY_HOPS", "0")),
+            trusted_proxy_ranges=env.get("PHARMGUARD_TRUSTED_PROXY_RANGES", ""),
             timeout_deterministic_s=float(env.get("PHARMGUARD_TIMEOUT_S", "20")),
             timeout_llm_s=float(env.get("PHARMGUARD_LLM_TIMEOUT_S", "90")),
             max_concurrency=int(env.get("PHARMGUARD_MAX_CONCURRENCY", "4")),

@@ -255,7 +255,9 @@ def test_client_ip_uses_only_trusted_proxy_hops():
 
 def test_health_reports_proxy_counts_without_addresses(client):
     h = client.get("/health", headers={"X-Forwarded-For": "198.51.100.7, 203.0.113.9"}).json()
-    assert h["proxy"] == {"forwarded_for_entries": 2, "trusted_proxy_hops": 0, "client_key_is_tcp_peer": True}
+    assert h["proxy"] == {"forwarded_for_entries": 2, "trusted_proxy_hops": 0, "client_key_is_tcp_peer": True,
+                          "client_ip_headers": ["x-forwarded-for"], "fastly_client_ip_position_from_right": None,
+                          "trusted_proxy_entries_skipped": 0, "client_key_is_fastly_client_ip": False}
     assert "198.51.100.7" not in json.dumps(h) and "203.0.113.9" not in json.dumps(h)
     from api.ratelimit import proxy_summary
     assert proxy_summary({"x-forwarded-for": "198.51.100.7"}, "10.0.0.1", 1)["client_key_is_tcp_peer"] is False
@@ -265,7 +267,7 @@ def test_page_is_served_with_a_strict_csp_and_no_inline_script(client):
     r = client.get("/")
     assert r.status_code == 200 and "script-src 'self'" in r.headers["content-security-policy"]
     html = r.text
-    assert '<script src="/static/app.js"></script>' in html and "<script>" not in html
+    assert re.search(r'<script src="/static/app\.js\?v=[0-9a-f]{12}"></script>', html) and "<script>" not in html
     assert ("Educational demo, not medical advice.</strong> Don't start, stop or change any medicine based on "
             "these results; talk to your pharmacist or doctor.") in html
     assert client.get("/static/app.js").status_code == 200
@@ -274,6 +276,51 @@ def test_page_is_served_with_a_strict_csp_and_no_inline_script(client):
                   "/static/fonts/pharmguard-sans.woff2", "/static/fonts/pharmguard-mono.woff2",
                   "/static/fonts/OFL-Newsreader.txt", "/static/fonts/OFL-IBM-Plex.txt"):
         assert client.get(asset).status_code == 200, asset
+
+
+def test_cache_headers_let_a_cdn_keep_static_files_but_never_api_responses(client):
+    from api.app import PAGE_CACHE, STATIC_CACHE
+    assert client.get("/").headers["cache-control"] == PAGE_CACHE
+    for asset in ("/static/app.js", "/static/style.css", "/static/fonts/pharmguard-sans.woff2", "/static/favicon.svg"):
+        assert client.get(asset).headers["cache-control"] == STATIC_CACHE, asset
+    assert client.get("/health").headers["cache-control"] == "no-store"
+    assert client.post("/v1/check", json={"drugs": DRUGS}).headers["cache-control"] == "no-store"
+    assert client.post("/v1/check", json={"drugs": ["x"]}).headers["cache-control"] == "no-store"
+    assert client.get("/static/missing.js").headers["cache-control"] == "no-store"     # errors never cached
+    assert "public" not in client.get("/docs").headers["cache-control"]
+
+
+def test_static_urls_carry_the_build_id_in_the_page_and_the_css(client, tmp_path):
+    from api.app import static_build_id, versioned
+    html = client.get("/").text
+    build = re.search(r"/static/app\.js\?v=([0-9a-f]{12})", html).group(1)
+    assert build == static_build_id()
+    refs = re.findall(r'(?:href|src)="(/static/[^"]+)"', html)
+    assert refs and all(r.endswith("?v=" + build) for r in refs)
+    css = client.get("/static/style.css").text
+    fonts = re.findall(r'url\("(/static/[^"]+)"\)', css)
+    assert fonts and all(f.endswith("?v=" + build) for f in fonts)
+    for f in re.findall(r'rel="preload" href="([^"]+)"', html):
+        assert f in fonts                                  # preloads match the CSS URLs exactly
+    assert client.get("/", headers={"If-None-Match": f'"{build}"'}).status_code == 304
+    # Any change to any static file changes the id.
+    (tmp_path / "a.js").write_text("1")
+    first = static_build_id(tmp_path)
+    (tmp_path / "a.js").write_text("2")
+    assert static_build_id(tmp_path) != first
+    assert versioned('src="/static/x.js?v=old"', "abc") == 'src="/static/x.js?v=old"'   # already versioned: untouched
+
+
+def test_proxy_summary_reports_header_names_and_positions_never_addresses():
+    from api.ratelimit import proxy_summary
+    headers = {"x-forwarded-for": "198.51.100.7, 203.0.113.9, 192.0.2.1", "fastly-client-ip": "203.0.113.9",
+               "x-forwarded-host": "pharmguard.web.app"}
+    out = proxy_summary(headers, "10.0.0.1", 1)
+    assert out["forwarded_for_entries"] == 3 and out["fastly_client_ip_position_from_right"] == 2
+    assert out["client_ip_headers"] == ["fastly-client-ip", "x-forwarded-for", "x-forwarded-host"]
+    text = json.dumps(out)
+    assert not any(a in text for a in ("198.51.100.7", "203.0.113.9", "192.0.2.1", "10.0.0.1"))
+    assert proxy_summary({"fastly-client-ip": "203.0.113.9"}, None, 1)["fastly_client_ip_position_from_right"] is None
 
 
 def test_page_makes_no_third_party_requests():

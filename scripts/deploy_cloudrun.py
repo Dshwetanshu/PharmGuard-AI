@@ -83,6 +83,11 @@ def deploy_args(project: str, image_at_digest: str, env: Dict[str, str]) -> List
     return args
 
 
+def repo_exists(listing: str) -> bool:
+    """`gcloud artifacts repositories list --format=value(name)` prints bare names (or full paths)."""
+    return any(line.strip().split("/")[-1] == REPO for line in listing.splitlines())
+
+
 def image_guard(paths: List[str]) -> None:
     """The deploy_space guard on the files inside the image's /app, plus an exact top-level check."""
     guard([Upload(p, content=b"") for p in paths], "image")
@@ -177,7 +182,9 @@ def main() -> int:
     if remote_sha != prov_sha:
         raise Refused(f"REFUSED: {dataset}@{revision[:12]} provenance {remote_sha[:12]}... != local {prov_sha[:12]}...")
     env = {"PHARMGUARD_HF_DATASET": dataset, "PHARMGUARD_HF_REVISION": revision,
-           "PHARMGUARD_HF_PROVENANCE_SHA256": prov_sha, "PHARMGUARD_TRUSTED_PROXY_HOPS": str(args.trusted_proxy_hops)}
+           "PHARMGUARD_HF_PROVENANCE_SHA256": prov_sha, "PHARMGUARD_TRUSTED_PROXY_HOPS": str(args.trusted_proxy_hops),
+           # Firebase Hosting's CDN (Fastly) is a proxy hop: key on the client entry it writes.
+           "PHARMGUARD_TRUSTED_PROXY_RANGES": "fastly"}
     ref = image_ref(args.project)
     tag = f"{ref}:{time.strftime('%Y%m%d-%H%M%S')}"
 
@@ -205,7 +212,7 @@ def main() -> int:
     run(["gcloud", "services", "enable", *APIS, f"--project={args.project}"])
     repos = run(["gcloud", "artifacts", "repositories", "list", f"--project={args.project}",
                  f"--location={REGION}", "--format=value(name)"], quiet=True)
-    if not any(r.endswith("/" + REPO) for r in repos.splitlines()):
+    if not repo_exists(repos):
         run(["gcloud", "artifacts", "repositories", "create", REPO, "--repository-format=docker",
              f"--location={REGION}", f"--project={args.project}", "--description=PharmGuard API images"])
     with tempfile.TemporaryDirectory() as tmp:
@@ -226,6 +233,9 @@ def main() -> int:
     print(f"Pushed {image_at_digest}")
     run(deploy_args(args.project, image_at_digest, env))
     url = verify_live(args.project, digest, prov_sha)
+    if (ROOT / "firebase.json").exists():
+        import deploy_hosting            # re-release Hosting: clears its CDN cache so no stale page is served
+        deploy_hosting.release(args.project)
     if args.create_budget:
         create_budget(args.project)
     print(f"Live: {url}")

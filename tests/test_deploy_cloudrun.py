@@ -89,3 +89,12 @@ def test_verify_live_fails_loudly(monkeypatch, live, health, percent):
     _fake_cloud(monkeypatch, live, health, percent)
     with pytest.raises(SystemExit):
         dc.verify_live("p", DIGEST, "f" * 64)
+
+
+@pytest.mark.parametrize("listing, exists", [
+    ("pharmguard", True),                                                     # what gcloud prints
+    ("projects/p/locations/us-east1/repositories/pharmguard", True),
+    ("other\npharmguard-old", False), ("", False),
+])
+def test_repo_exists_matches_the_bare_or_full_name(listing, exists):
+    assert dc.repo_exists(listing) is exists

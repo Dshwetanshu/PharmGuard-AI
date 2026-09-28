@@ -8,6 +8,7 @@ Logs record counts and codes, never drug names or report text.
 from __future__ import annotations
 
 import contextvars
+import hashlib
 import logging
 import re
 import time
@@ -18,13 +19,13 @@ from typing import List, Optional
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from starlette.concurrency import run_in_threadpool
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from api.ratelimit import SlidingWindowLimiter, client_ip, proxy_summary
+from api.ratelimit import SlidingWindowLimiter, client_ip, load_trusted_networks, proxy_summary
 from api.service import MAX_DRUGS, MIN_DRUGS, CheckService, ServiceError
 from api.settings import ApiSettings
 
@@ -39,6 +40,35 @@ SECURITY_HEADERS = {
     "Referrer-Policy": "no-referrer",
     "X-Frame-Options": "DENY",
 }
+# Cache-Control by path. The CDN in front (Firebase Hosting) may keep the page and static files, and
+# every Hosting release clears it; responses from the app itself are never cached.
+STATIC_CACHE = "public, max-age=3600, s-maxage=2592000"
+PAGE_CACHE = "public, max-age=0, s-maxage=2592000"
+NO_STORE = "no-store"
+_STATIC_REF = re.compile(r'((?:href|src)="|url\(")(/static/[^"?]+)(")')
+
+
+def static_build_id(root: Path = STATIC) -> str:
+    """A hash of every static file, so any change gives the page new asset URLs (?v=<id>)."""
+    h = hashlib.sha256()
+    for p in sorted(x for x in root.rglob("*") if x.is_file()):
+        h.update(str(p.relative_to(root)).encode() + b"\0" + p.read_bytes() + b"\0")
+    return h.hexdigest()[:12]
+
+
+def versioned(text: str, build_id: str) -> str:
+    """Add ?v=<build id> to every /static/ URL in the page's href/src attributes and CSS url()s."""
+    return _STATIC_REF.sub(lambda m: f"{m.group(1)}{m.group(2)}?v={build_id}{m.group(3)}", text)
+
+
+def cache_control(path: str, status: int) -> str:
+    if status == 200 and path.startswith("/static/"):
+        return STATIC_CACHE
+    if status == 200 and path == "/":
+        return PAGE_CACHE
+    return NO_STORE
+
+
 # The page loads only its own script, stylesheet, font and icon; no inline script, no third-party origin.
 PAGE_CSP = ("default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self'; font-src 'self'; "
             "base-uri 'none'; form-action 'none'; frame-ancestors 'none'")
@@ -80,6 +110,17 @@ def _error(request_id: str, status: int, code: str, message: str, headers=None) 
                         status_code=status, headers=headers)
 
 
+_NETWORKS: dict = {}
+
+
+def trusted_networks(settings: ApiSettings):
+    """The pinned proxy ranges named by settings (loaded once)."""
+    name = settings.trusted_proxy_ranges
+    if name not in _NETWORKS:
+        _NETWORKS[name] = load_trusted_networks(name)
+    return _NETWORKS[name]
+
+
 def create_app(service: Optional[CheckService] = None, settings: Optional[ApiSettings] = None,
                clock=time.monotonic) -> FastAPI:
     @asynccontextmanager
@@ -115,7 +156,7 @@ def create_app(service: Optional[CheckService] = None, settings: Optional[ApiSet
             if request.method == "POST" and request.url.path == "/v1/check":
                 svc = request.app.state.service
                 ip = client_ip(request.headers, request.client.host if request.client else None,
-                               svc.settings.trusted_proxy_hops)
+                               svc.settings.trusted_proxy_hops, trusted_networks(svc.settings))
                 allowed, retry_after = request.app.state.limiter.check(ip)
                 if not allowed:   # counted before the body is parsed, so malformed bursts count too
                     limited = _error(rid, 429, "rate_limited", "too many requests; slow down",
@@ -131,6 +172,7 @@ def create_app(service: Optional[CheckService] = None, settings: Optional[ApiSet
                     log.exception("unhandled error")
                     response = _error(rid, 500, "internal_error", "internal error")
             response.headers["X-Request-ID"] = rid
+            response.headers["Cache-Control"] = cache_control(request.url.path, response.status_code)
             for k, v in SECURITY_HEADERS.items():
                 response.headers.setdefault(k, v)
             log.info("%s %s -> %s in %.1f ms", request.method, request.url.path, response.status_code,
@@ -164,7 +206,7 @@ def create_app(service: Optional[CheckService] = None, settings: Optional[ApiSet
         svc = request.app.state.service
         body = {"request_id": request.state.request_id, **svc.health(),
                 "proxy": proxy_summary(request.headers, request.client.host if request.client else None,
-                                       svc.settings.trusted_proxy_hops)}
+                                       svc.settings.trusted_proxy_hops, trusted_networks(svc.settings))}
         return JSONResponse(body, status_code=200 if body["data_loaded"] else 503)
 
     @app.get("/v1/graph", summary="The LangGraph topology as Mermaid")
@@ -186,10 +228,22 @@ def create_app(service: Optional[CheckService] = None, settings: Optional[ApiSet
                  out["timings_ms"]["graph"])
         return out
 
+    build_id = static_build_id()
+    page_html = versioned((STATIC / "index.html").read_text(encoding="utf-8"), build_id)
+    style_css = versioned((STATIC / "style.css").read_text(encoding="utf-8"), build_id)
+    etag = f'"{build_id}"'
+
     @app.get("/", include_in_schema=False)
-    async def page():
-        return FileResponse(STATIC / "index.html", headers={"Content-Security-Policy": PAGE_CSP,
-                                                            "Cache-Control": "no-cache"})
+    async def page(request: Request):
+        headers = {"Content-Security-Policy": PAGE_CSP, "ETag": etag}
+        if request.headers.get("if-none-match") == etag:
+            return Response(status_code=304, headers=headers)
+        return Response(page_html, media_type="text/html; charset=utf-8", headers=headers)
+
+    # Served before the /static mount: the stylesheet's font URLs carry the same ?v=<build id>.
+    @app.get("/static/style.css", include_in_schema=False)
+    async def stylesheet():
+        return Response(style_css, media_type="text/css; charset=utf-8", headers={"ETag": etag})
 
     app.mount("/static", StaticFiles(directory=STATIC), name="static")
     return app
