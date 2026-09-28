@@ -1,0 +1,64 @@
+{
+  "by_ddinter_grade": {
+    "Major": {
+      "declared_no_data": 2327,
+      "recovered": 388,
+      "rejected_input": 0,
+      "silent": 0,
+      "unresolved": 0
+    },
+    "Minor": {
+      "declared_no_data": 460,
+      "recovered": 195,
+      "rejected_input": 0,
+      "silent": 0,
+      "unresolved": 0
+    },
+    "Moderate": {
+      "declared_no_data": 7706,
+      "recovered": 1801,
+      "rejected_input": 0,
+      "silent": 0,
+      "unresolved": 0
+    },
+    "Unknown": {
+      "declared_no_data": 1041,
+      "recovered": 3048,
+      "rejected_input": 0,
+      "silent": 0,
+      "unresolved": 0
+    }
+  },
+  "command": "python scripts/eval_holdout.py --profile research --fraction 0.1 --seed 20260928",
+  "data": {
+    "data": "Data: research build from RxNorm Current Prescribable 2026-09-08, Drugs@FDA brand names, DDInter bulk download (ddinter2.scbdd.com, 2024-05-21), SIDER 4.1, TWOSIDES (research only; not for redistribution); 634,721 interaction records; not synthetic.",
+    "data_dir": "data/profiles/research",
+    "profile": "research",
+    "provenance_sha256": "73a84f12af814416c14bfccf5c8f02b0cda98081fcbfd81aa2b9f3f64e2c0ddd"
+  },
+  "ddinter_leaks": 0,
+  "ddinter_pairs": 169657,
+  "fraction": 0.1,
+  "held_out_pairs": 16966,
+  "kind": "graceful-degradation test (not a retrieval-quality test)",
+  "mode": "deterministic; RxNorm API and FAERS off",
+  "outcomes": {
+    "declared_no_data": 11534,
+    "recovered": 5432,
+    "rejected_input": 0,
+    "silent": 0,
+    "unresolved": 0
+  },
+  "rates": {
+    "declared_no_data": 0.6798,
+    "recovered": 0.3202,
+    "rejected_input": 0.0,
+    "silent": 0.0,
+    "unresolved": 0.0
+  },
+  "recovered_by_source": {
+    "TWOSIDES": 5432
+  },
+  "seconds": 129.1,
+  "seed": 20260928
+}
