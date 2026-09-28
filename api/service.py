@@ -30,7 +30,7 @@ from src.data.provenance import data_stamp, read_provenance
 from src.graph import Components, PharmGuardGraph, Settings, build_components, build_graph
 from src.input_validation import InvalidDrugNameError, clean_drug_names
 from src.observability import Tracing
-from src.retrieval.faers_retriever import FaersRetriever
+from src.retrieval.faers_retriever import FaersAssessment, FaersRetriever, OpenFdaCounts
 
 log = logging.getLogger("pharmguard.api")
 MIN_DRUGS, MAX_DRUGS = 2, 12
@@ -92,6 +92,11 @@ class FaersBudget:
         self.consulted = self.skipped = 0
 
 
+def _faers_deadline() -> Optional[float]:
+    budget = _FAERS_BUDGET.get()
+    return budget.deadline if budget is not None else None
+
+
 class CappedFaers:
     """FAERS lookups limited per request to max_pairs and a time budget; pairs over the
     cap are skipped (counted in the response), never silently reported as checked."""
@@ -100,14 +105,24 @@ class CappedFaers:
     def __init__(self, inner: FaersRetriever):
         self.inner = inner
 
-    def retrieve_pair(self, a: str, b: str):
+    def _admit(self) -> bool:
         budget = _FAERS_BUDGET.get()
         if budget is None or budget.consulted >= budget.max_pairs or time.monotonic() >= budget.deadline:
             if budget is not None:
                 budget.skipped += 1
-            return []
+            return False
         budget.consulted += 1
-        return self.inner.retrieve_pair(a, b)
+        return True
+
+    def retrieve_pair(self, a: str, b: str):
+        return self.inner.retrieve_pair(a, b) if self._admit() else []
+
+    def assess_pair(self, a: str, b: str) -> FaersAssessment:
+        if not self._admit():
+            return FaersAssessment(tuple(sorted((a, b))))
+        if hasattr(self.inner, "assess_pair"):
+            return self.inner.assess_pair(a, b)
+        return FaersAssessment(tuple(sorted((a, b))), surfaced=self.inner.retrieve_pair(a, b))
 
 
 # ------------------------------------------------------------------ service
@@ -138,8 +153,9 @@ class CheckService:
             comps = components or build_components(gs)
             tracing = Tracing()   # tracing off in the API
             det = PharmGuardGraph(gs, comps, tracing)
-            faers_comps = replace(comps, faers=CappedFaers(FaersRetriever(enabled=True,
-                                                                           timeout_s=settings.faers_timeout_s)))
+            faers_comps = replace(comps, faers=CappedFaers(FaersRetriever(
+                enabled=True, timeout_s=settings.faers_timeout_s,
+                counts=OpenFdaCounts(timeout_s=settings.faers_timeout_s, deadline=_faers_deadline))))
             det_f = PharmGuardGraph(replace(gs, faers_enabled=True), faers_comps, tracing)
             graphs = {("deterministic", False): det, ("llm", False): det.with_mode("llm"),
                       ("deterministic", True): det_f, ("llm", True): det_f.with_mode("llm")}

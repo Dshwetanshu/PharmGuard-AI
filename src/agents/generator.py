@@ -219,22 +219,9 @@ class Generator:
 
     @staticmethod
     def _faers_section(result: RetrievalResult) -> List[str]:
-        """Markdown lines for FAERS signals, or [] if there are none."""
-        if not result.faers_signals:
-            return []
-        lines = [
-            "## FAERS Spontaneous Reports (unvalidated)",
-            "Raw counts of FDA adverse-event reports that mention both drugs, for pairs "
-            "with no curated interaction record. Spontaneous reports are not validated, "
-            "are not rate-adjusted, and do not establish that the drugs interact.",
-        ]
-        for (a, b), signals in result.faers_signals.items():
-            for s in signals:
-                from src.agents.report_structure import plural
-                lines.append(
-                    f"- **{a} + {b}** — {s.condition}: {plural(int(s.report_count), 'report')} {s.citation()}"
-                )
-        return lines
+        """Markdown lines for the FAERS section (the same as the template's), or [] if there is none."""
+        from src.agents.report_structure import faers_block, faers_lines
+        return faers_lines(faers_block(result))
 
     def _format_evidence(self, plan: RetrievalPlan, result: RetrievalResult) -> str:
         blocks: List[str] = []

@@ -23,3 +23,6 @@ Thumbs.db
 
 # Real-data builds (scripts/ingest_data.py --full --profile ...); never committed
 data/profiles/
+
+# openFDA response cache (scripts/demo_faers_signals.py)
+data/cache/

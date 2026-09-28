@@ -28,6 +28,9 @@ class RetrievalResult:
     no_data_pairs: List[tuple] = field(default_factory=list)
     # pair -> statistical signals retrieved but not selected (the report states "+N more not shown")
     hidden_signals: Dict[tuple, int] = field(default_factory=dict)
+    # pair -> FAERS co-reported events checked but suppressed (below the signal thresholds,
+    # or explained by one drug alone); the report states the count
+    faers_suppressed: Dict[tuple, int] = field(default_factory=dict)
 
     @property
     def total_interactions(self) -> int:
@@ -62,6 +65,20 @@ def select_pair_records(records: List[InteractionRecord],
     signals = sorted((r for r in records if r.is_statistical),
                      key=lambda r: -(r.prr if r.prr is not None else float("-inf")))
     return curated + signals[:max_signals], max(0, len(signals) - max_signals)
+
+
+def faers_lookup(faers, pair: tuple, result: RetrievalResult) -> None:
+    """Add one pair's FAERS signals (and its suppressed count) to result. Components that only
+    implement retrieve_pair (test stubs) report no suppressed signals."""
+    if hasattr(faers, "assess_pair"):
+        found = faers.assess_pair(*pair)
+        signals, suppressed = found.surfaced, len(found.suppressed)
+    else:
+        signals, suppressed = faers.retrieve_pair(*pair), 0
+    if signals:
+        result.faers_signals[pair] = signals
+    if suppressed:
+        result.faers_suppressed[pair] = suppressed
 
 
 class Retriever:
@@ -102,9 +119,6 @@ class Retriever:
         # separately.
         if self.faers is not None and self.faers.enabled and result.no_data_pairs:
             for pair in result.no_data_pairs:
-                a, b = pair
-                signals = self.faers.retrieve_pair(a, b)
-                if signals:
-                    result.faers_signals[pair] = signals
+                faers_lookup(self.faers, pair, result)
 
         return result

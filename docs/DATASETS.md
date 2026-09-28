@@ -177,9 +177,18 @@ manually obtained copy. Neither current build includes it.
 
 ### openFDA FAERS (runtime, optional)
 
-`PHARMGUARD_FAERS_ENABLED=true` queries `api.fda.gov/drug/event.json` for pairs with no
-curated record. Counts are shown in a separate "unvalidated" section and never as curated
-evidence. openFDA data is CC0.
+`PHARMGUARD_FAERS_ENABLED=true` (or `"faers": true` on the API) queries `api.fda.gov/drug/event.json`
+for pairs with no curated record. For the top co-reported events of each pair (administrative MedDRA
+terms skipped), `src/retrieval/faers_stats.py` computes PRR, ROR with its 95% CI and a Yates
+chi-square from openFDA report counts. A signal is shown only if it meets the Evans criteria (PRR ≥ 2,
+χ² ≥ 4, at least 3 reports), the ROR's lower bound is above 1, and the pair's event rate is at least
+twice each drug's rate in reports without the other ("A without B" = n(A) − n(A and B)). The rest are
+counted as suppressed, and the report says how many. Shown signals go in a separate "unvalidated"
+section, never as curated evidence. `python scripts/demo_faers_signals.py` prints surfaced and
+suppressed events side by side (results/faers_signal_demo.md). Limits: drugs are matched on the
+free-text `medicinalproduct` field; events are the most co-reported, not the most specific, so common
+events dominate; and reporting artifacts can pass every threshold (the demo's clarithromycin +
+simvastatin "macular degeneration", PRR 192.50). openFDA data is CC0.
 
 ## Build totals
 

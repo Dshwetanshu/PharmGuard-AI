@@ -246,7 +246,8 @@ function renderStructured(s) {
     body += section("sec-faers", s.faers.heading, esc(s.faers.intro), '<ol class="findings">' + s.faers.items.map(x =>
       '<li class="f"><span class="sevword sevword--signals">' + esc(plural(x.report_count, "report")) +
       '</span><div class="f-main"><p class="f-pair">' + esc(x.pair[0]) + " + " + esc(x.pair[1]) + '</p><p class="f-extra">' +
-      esc(x.event) + '</p></div><p class="cite">' + esc(x.citation.text) + "</p></li>").join("") + "</ol>");
+      esc(x.event) + " · " + esc(x.stats) + '</p></div><p class="cite">' + esc(x.citation.text) + "</p></li>").join("") + "</ol>" +
+      (s.faers.suppressed_note ? '<p class="sec-sub">' + esc(s.faers.suppressed_note) + "</p>" : ""));
   }
   const nd = s.coverage.no_data;
   if (nd) {

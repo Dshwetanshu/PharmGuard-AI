@@ -29,7 +29,7 @@ from langgraph.graph import END, START, StateGraph
 
 from src.agents.generator import Generator
 from src.agents.planner import Planner
-from src.agents.retriever import Retriever
+from src.agents.retriever import Retriever, faers_lookup
 from src.data.normalizer import DrugNormalizer, ResolvedDrug
 from src.graph.serde import empty_result, jsonable, plan_from_dict, plan_to_dict, result_from_dict, result_to_dict
 from src.graph.settings import Settings
@@ -220,12 +220,11 @@ def build_graph(settings: Settings, c: Components, tracing: Optional[Tracing] = 
 
     def faers(state):
         p, result = plan_from_dict(state["plan"]), result_from_dict(state["retrieval"])
-        for a, b in result.no_data_pairs:   # same pairs as the legacy Retriever's FAERS step
-            signals = c.faers.retrieve_pair(a, b)
-            if signals:
-                result.faers_signals[(a, b)] = signals
+        for pair in result.no_data_pairs:   # same pairs as the legacy Retriever's FAERS step
+            faers_lookup(c.faers, pair, result)
         update = {"retrieval": result_to_dict(result), "evidence": evidence(p, result)}
         detail = {"consulted_pairs": len(result.no_data_pairs), "pairs_with_signals": len(result.faers_signals),
+                  "suppressed_signals": sum(result.faers_suppressed.values()),
                   "route": route_generation(state)}
         return update, "ok", detail
 

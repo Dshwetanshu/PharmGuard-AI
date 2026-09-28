@@ -126,14 +126,10 @@ def build_structure(plan, result) -> Dict[str, Any]:
             "intro": (f"No record in the queried curated sources for {'this pair' if n_nd == 1 else f'these {n_nd} pairs'}. "
                       "Absence of a record does not mean the combination is safe."),
             "pairs": nd,
-            "faers_note": (f"FAERS spontaneous reports were found for {len(result.faers_signals)} of "
+            "faers_note": (f"FAERS reporting signals were found for {len(result.faers_signals)} of "
                            f"{'this pair' if n_nd == 1 else 'these pairs'}; see the unvalidated section below."
                            if result.faers_signals else None),
         }
-    faers_items = [{"pair": list(p), "event": s.condition, "report_count": int(s.report_count),
-                    "citation": {"source": s.source, "record_id": s.record_id, "text": f"{s.source}:{s.record_id}"},
-                    "line": f"**{p[0]} + {p[1]}** — {s.condition}: {plural(int(s.report_count), 'report')} {s.citation()}"}
-                   for p, sigs in result.faers_signals.items() for s in sigs]
     return {
         "version": STRUCTURE_VERSION,
         "grid": pair_grid(plan, findings, ungraded, sig_items, nd),
@@ -157,14 +153,56 @@ def build_structure(plan, result) -> Dict[str, Any]:
             "all_covered": (ALL_COVERED_NOTE
                             if not unresolved and not nd else None),
         },
-        "faers": {"heading": "FAERS Spontaneous Reports (unvalidated)",
-                  "intro": ("Raw counts of FDA adverse-event reports that mention both drugs, for pairs "
-                            "with no curated interaction record. Spontaneous reports are not validated, "
-                            "are not rate-adjusted, and do not establish that the drugs interact."),
-                  "items": faers_items} if faers_items else None,
+        "faers": faers_block(result),
         "disclaimer": None,     # filled in by Generator (the canonical footer)
         "data_line": None,
     }
+
+
+FAERS_HEADING = "FAERS Spontaneous Reports (unvalidated)"
+FAERS_INTRO = ("Disproportionality signals from FDA adverse-event reports that mention both drugs, for pairs "
+               "with no curated interaction record. Shown only if PRR ≥ 2, chi-square ≥ 4, at least 3 reports, the ROR's "
+               "lower 95% bound is above 1, and the pair's event rate is at least twice each drug's rate without "
+               "the other. Spontaneous reports are not validated and do not establish that the drugs interact.")
+
+
+def _fmt(v: Optional[float], digits: int = 2) -> str:
+    return "—" if v is None else f"{v:.{digits}f}"
+
+
+def faers_stats_text(s) -> str:
+    return (f"PRR {_fmt(s.prr)}, ROR {_fmt(s.ror)} (95% CI {_fmt(s.ror_ci_low)}–{_fmt(s.ror_ci_high)}), "
+            f"chi-square {_fmt(s.chi2, 1)}")
+
+
+def faers_block(result) -> Optional[Dict[str, Any]]:
+    """The unvalidated FAERS section: surfaced signals and how many co-reported events were suppressed."""
+    items = [{"pair": list(p), "event": s.condition, "report_count": int(s.report_count),
+              "prr": s.prr, "ror": s.ror, "ror_ci": [s.ror_ci_low, s.ror_ci_high], "chi2": s.chi2,
+              "stats": faers_stats_text(s),
+              "citation": {"source": s.source, "record_id": s.record_id, "text": f"{s.source}:{s.record_id}"},
+              "line": (f"**{p[0]} + {p[1]}** — {s.condition}: {plural(int(s.report_count), 'report')}; "
+                       f"{faers_stats_text(s)} {s.citation()}")}
+             for p, sigs in result.faers_signals.items() for s in sigs]
+    suppressed = sum(result.faers_suppressed.values())
+    if not items and not suppressed:
+        return None
+    note = None
+    if suppressed:
+        note = (f"{plural(suppressed, 'co-reported event')} checked in FAERS "
+                f"{'was' if suppressed == 1 else 'were'} suppressed: below these thresholds, or as common "
+                "with one of the drugs alone.")
+    return {"heading": FAERS_HEADING, "intro": FAERS_INTRO, "items": items, "suppressed": suppressed,
+            "suppressed_note": note}
+
+
+def faers_lines(block: Optional[Dict[str, Any]]) -> List[str]:
+    if not block:
+        return []
+    lines = [f"## {block['heading']}", block["intro"]] + [f"- {i['line']}" for i in block["items"]]
+    if block["suppressed_note"]:
+        lines.append(block["suppressed_note"])
+    return lines
 
 
 def pair_grid(plan, findings, ungraded, signals, no_data) -> Dict[str, Any]:
@@ -242,6 +280,5 @@ def render_markdown(s: Dict[str, Any]) -> List[str]:
     if cov["all_covered"]:
         lines += [cov["all_covered"], ""]
     if s["faers"]:
-        f = s["faers"]
-        lines += [f"## {f['heading']}", f["intro"]] + [f"- {i['line']}" for i in f["items"]] + [""]
+        lines += faers_lines(s["faers"]) + [""]
     return lines

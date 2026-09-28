@@ -140,7 +140,7 @@ def test_structure_matches_markdown_with_faers_signals_and_duplicates(graph):
     g = PharmGuardGraph(replace(graph.settings, faers_enabled=True), replace(graph.components, faers=StubFaers()))
     s = g.run(["metformin", "levothyroxine", "Coumadin", "warfarin", "xyz123"])
     assert s["report_structure"]["faers"]["items"] and s["report_structure"]["entries"]["notices"]
-    assert "1 report [FAERS:FAERS-abc123]" in s["report"]          # singular, no "(s)"
+    assert "nausea: 1 report; PRR —" in s["report"]          # singular, no "(s)"; a stub record has no statistics
     _check(s, g.components.generator)
 
 

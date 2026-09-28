@@ -99,7 +99,7 @@ def build_evidence(plan, result, aliases: Optional[Mapping[str, str]] = None,
                                      _severity(r.severity), r.prr, r.mechanism, detail))
     for (a, b), sigs in result.faers_signals.items():
         for s in sigs:
-            add(NormalizedRecord(s.record_id, s.source, "faers", a, b, s.condition, None, None, None,
+            add(NormalizedRecord(s.record_id, s.source, "faers", a, b, s.condition, None, s.prr, None,
                                  {"report_count": int(s.report_count), "query_url": s.source_url}))
     for drug, ses in result.side_effects.items():
         for s in ses:

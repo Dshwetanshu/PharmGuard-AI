@@ -148,7 +148,7 @@ def test_faers_on_and_off(settings, components):
     on = graph(settings, components, faers=StubFaers(), faers_enabled=True).run(["metformin", "levothyroxine"])
     assert "faers" in nodes(on)
     assert on["trajectory"][nodes(on).index("faers")]["detail"] == {
-        "consulted_pairs": 1, "pairs_with_signals": 1, "route": "template"}
+        "consulted_pairs": 1, "pairs_with_signals": 1, "suppressed_signals": 0, "route": "template"}
     assert on["retrieval"]["no_data_pairs"] == [["levothyroxine", "metformin"]]
     assert "FAERS Spontaneous Reports (unvalidated)" in on["report"] and "[FAERS:FAERS-abc123]" in on["report"]
     off = graph(settings, components, faers=StubFaers()).run(["metformin", "levothyroxine"])
