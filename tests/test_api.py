@@ -258,7 +258,7 @@ def test_health_reports_proxy_counts_without_addresses(client):
     assert h["proxy"] == {"forwarded_for_entries": 2, "trusted_proxy_hops": 0, "client_key_is_tcp_peer": True,
                           "client_ip_headers": ["x-forwarded-for"], "fastly_client_ip_position_from_right": None,
                           "trusted_proxy_entries_skipped": 0, "client_key_is_fastly_client_ip": False,
-                          "rightmost_hop_in_google_list": False}
+                          "rightmost_hop_in_google_list": False, "proxy_list_stale": False}
     assert "198.51.100.7" not in json.dumps(h) and "203.0.113.9" not in json.dumps(h)
     from api.ratelimit import proxy_summary
     assert proxy_summary({"x-forwarded-for": "198.51.100.7"}, "10.0.0.1", 1)["client_key_is_tcp_peer"] is False

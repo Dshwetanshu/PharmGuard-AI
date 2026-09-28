@@ -152,15 +152,18 @@ def verify_live(project: str, digest: str, prov_sha: str) -> str:
     return url
 
 
-def warn_if_ranges_changed() -> None:
-    """Warn (don't refuse) when Google's published lists differ from the pinned copy."""
+def refresh_proxy_ranges() -> None:
+    """Refresh the pinned Google list before building, so every redeploy renews it (it goes stale after
+    30 days). If Google's lists can't be fetched, deploy with the pinned copy and say so."""
     import update_proxy_ranges
     try:
-        diffs = update_proxy_ranges.changed_since_pinned()
-    except Exception as exc:              # noqa: BLE001 (a warning, never a blocker)
-        diffs = [f"could not compare with the published lists: {type(exc).__name__}"]
-    for d in diffs:
-        print(f"WARNING: Google ranges: {d}")
+        changes = update_proxy_ranges.refresh()
+    except Exception as exc:              # noqa: BLE001 (keep the pinned copy)
+        print(f"WARNING: couldn't refresh the Google ranges ({type(exc).__name__}); using the pinned copy "
+              f"from {json.loads(update_proxy_ranges.PINNED.read_text())['fetched']}")
+        return
+    print("Google ranges refreshed (api/trusted_proxies/google.json): "
+          + ("; ".join(changes) if changes else "no changes") + ". Commit the file with the deploy.")
 
 
 def create_budget(project: str) -> None:
@@ -194,8 +197,8 @@ def main() -> int:
     remote_sha = remote_provenance_sha(dataset, revision)
     if remote_sha != prov_sha:
         raise Refused(f"REFUSED: {dataset}@{revision[:12]} provenance {remote_sha[:12]}... != local {prov_sha[:12]}...")
-    if args.trusted_proxy_ranges:
-        warn_if_ranges_changed()
+    if args.trusted_proxy_ranges and not args.dry_run:
+        refresh_proxy_ranges()
     env = {"PHARMGUARD_HF_DATASET": dataset, "PHARMGUARD_HF_REVISION": revision,
            "PHARMGUARD_HF_PROVENANCE_SHA256": prov_sha, "PHARMGUARD_TRUSTED_PROXY_HOPS": str(args.trusted_proxy_hops),
            # Firebase Hosting's CDN hop is Google-operated: key on the client entry Hosting writes before it.

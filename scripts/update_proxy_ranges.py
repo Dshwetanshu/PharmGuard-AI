@@ -66,22 +66,33 @@ def build() -> Dict:
             "networks": subtract(prefixes(goog), prefixes(cloud))}
 
 
+def diff(old: List[str], new: List[str]) -> List[str]:
+    added, removed = sorted(set(new) - set(old)), sorted(set(old) - set(new))
+    out = []
+    if added:
+        out.append(f"{len(added)} ranges added: " + ", ".join(added[:10]) + (" ..." if len(added) > 10 else ""))
+    if removed:
+        out.append(f"{len(removed)} ranges removed: " + ", ".join(removed[:10]) + (" ..." if len(removed) > 10 else ""))
+    return out
+
+
 def changed_since_pinned() -> List[str]:
     """Differences between the published lists and the pinned copy (empty when they agree)."""
-    pinned = json.loads(PINNED.read_text())
-    fresh = build()
-    diffs = []
-    added = set(fresh["networks"]) - set(pinned["networks"])
-    removed = set(pinned["networks"]) - set(fresh["networks"])
-    if added or removed:
-        diffs.append(f"{len(added)} ranges added and {len(removed)} removed since the pinned copy "
-                     f"({pinned['fetched']}); run scripts/update_proxy_ranges.py")
-    return diffs
+    return diff(json.loads(PINNED.read_text())["networks"], build()["networks"])
+
+
+def refresh() -> List[str]:
+    """Fetch the published lists, rewrite the pinned copy with today's date, and return what changed.
+    scripts/deploy_cloudrun.py runs this first, so every redeploy renews the list."""
+    old = json.loads(PINNED.read_text())["networks"] if PINNED.exists() else []
+    doc = build()
+    PINNED.write_text(json.dumps(doc, indent=1) + "\n")
+    return diff(old, doc["networks"])
 
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--check", action="store_true")
+    ap.add_argument("--check", action="store_true", help="compare only; don't rewrite the pinned copy")
     args = ap.parse_args()
     if args.check:
         diffs = changed_since_pinned()

@@ -16,7 +16,9 @@ import pytest
 from api import ratelimit
 from api.ratelimit import client_ip, load_trusted_networks, proxy_summary
 
-GOOGLE = load_trusted_networks("google")
+_FETCHED = datetime.date.fromisoformat(
+    json.loads((ratelimit.TRUSTED_RANGES_DIR / "google.json").read_text())["fetched"])
+GOOGLE = load_trusted_networks("google", today=_FETCHED)
 _first = json.loads((ratelimit.TRUSTED_RANGES_DIR / "google.json").read_text())["networks"][0]
 import ipaddress  # noqa: E402
 CDN = str(next(ipaddress.ip_network(_first).hosts()))          # a Google-operated address from the list
@@ -42,7 +44,7 @@ def test_forged_fastly_header_is_never_the_key():
 
 def test_a_stale_list_fails_safe_to_the_rightmost_entry(tmp_path, monkeypatch):
     doc = json.loads((ratelimit.TRUSTED_RANGES_DIR / "google.json").read_text())
-    doc["fetched"] = (datetime.date.today() - datetime.timedelta(days=ratelimit.MAX_RANGE_AGE_DAYS + 1)).isoformat()
+    doc["fetched"] = (_FETCHED - datetime.timedelta(days=ratelimit.MAX_RANGE_AGE_DAYS + 1)).isoformat()
     (tmp_path / "google.json").write_text(json.dumps(doc))
     monkeypatch.setattr(ratelimit, "TRUSTED_RANGES_DIR", tmp_path)
     stale = load_trusted_networks("google")
@@ -64,3 +66,23 @@ def test_proxy_summary_reports_the_google_hop_as_yes_no_only():
     direct = proxy_summary({"x-forwarded-for": CLIENT}, "10.0.0.1", 1, ())
     assert direct["rightmost_hop_in_google_list"] is False and direct["trusted_proxy_entries_skipped"] == 0
     assert CLIENT not in json.dumps(out) and CDN not in json.dumps(out)
+
+
+def test_health_says_whether_the_pinned_list_is_stale(tmp_path, monkeypatch):
+    fresh = proxy_summary({"x-forwarded-for": CLIENT}, "10.0.0.1", 1, GOOGLE)
+    assert fresh["proxy_list_stale"] is False
+    fetched = _FETCHED
+    limit = datetime.timedelta(days=ratelimit.MAX_RANGE_AGE_DAYS)
+    assert ratelimit.proxy_list_stale("google", today=fetched + limit) is False          # day 30: still used
+    assert ratelimit.proxy_list_stale("google", today=fetched + limit + datetime.timedelta(days=1)) is True
+    doc = json.loads((ratelimit.TRUSTED_RANGES_DIR / "google.json").read_text())
+    doc["fetched"] = (_FETCHED - datetime.timedelta(days=ratelimit.MAX_RANGE_AGE_DAYS + 1)).isoformat()
+    (tmp_path / "google.json").write_text(json.dumps(doc))
+    monkeypatch.setattr(ratelimit, "TRUSTED_RANGES_DIR", tmp_path)
+    ratelimit._GOOGLE_DIAG.clear()
+    try:
+        assert ratelimit.proxy_list_stale("google") is True
+        stale = proxy_summary({"x-forwarded-for": f"{CLIENT}, {CDN}"}, "10.0.0.1", 1, load_trusted_networks("google"))
+        assert stale["proxy_list_stale"] is True and stale["trusted_proxy_entries_skipped"] == 0
+    finally:
+        ratelimit._GOOGLE_DIAG.clear()

@@ -14,6 +14,7 @@ from typing import Callable, Deque, Dict, List, Mapping, Optional, Tuple, Union
 TRUSTED_RANGES_DIR = Path(__file__).resolve().parent / "trusted_proxies"
 KNOWN_RANGES = ("google",)
 MAX_RANGE_AGE_DAYS = 30          # an older pinned list is ignored (fail safe: key on the rightmost entry)
+_today = datetime.date.today     # one place for "today", so tests can pin it
 Networks = Tuple[Union[ipaddress.IPv4Network, ipaddress.IPv6Network], ...]
 
 
@@ -25,11 +26,18 @@ def load_trusted_networks(name: str, today: Optional[datetime.date] = None) -> N
         return ()
     if name not in KNOWN_RANGES:
         raise ValueError(f"unknown trusted proxy ranges {name!r}")
-    doc = json.loads((TRUSTED_RANGES_DIR / f"{name}.json").read_text())
-    age = ((today or datetime.date.today()) - datetime.date.fromisoformat(doc["fetched"])).days
-    if age > MAX_RANGE_AGE_DAYS:
+    if proxy_list_stale(name, today):
         return ()
+    doc = json.loads((TRUSTED_RANGES_DIR / f"{name}.json").read_text())
     return tuple(ipaddress.ip_network(n) for n in doc["networks"])
+
+
+def proxy_list_stale(name: str = "google", today: Optional[datetime.date] = None) -> bool:
+    """True once the pinned list is more than MAX_RANGE_AGE_DAYS old: it is then ignored, the key falls
+    back to the rightmost entry (still unforgeable) and traffic through Hosting is no longer limited per
+    client. Every scripts/deploy_cloudrun.py run refreshes the list."""
+    doc = json.loads((TRUSTED_RANGES_DIR / f"{name}.json").read_text())
+    return ((today or _today()) - datetime.date.fromisoformat(doc["fetched"])).days > MAX_RANGE_AGE_DAYS
 
 
 def _in(addr: str, networks: Networks) -> bool:
@@ -82,6 +90,7 @@ def proxy_summary(headers: Mapping[str, str], peer: Optional[str], trusted_proxy
             "trusted_proxy_entries_skipped": (len(parts) - trusted_proxy_hops - i) if i is not None else 0,
             "client_key_is_fastly_client_ip": bool(fastly) and i is not None and parts[i] == fastly,
             "rightmost_hop_in_google_list": bool(parts) and _in(parts[-1], _google_for_diagnostics()),
+            "proxy_list_stale": proxy_list_stale("google"),
             "client_ip_headers": sorted(h for h in CLIENT_IP_HEADERS if headers.get(h)),
             "fastly_client_ip_position_from_right": fastly_pos}
 

@@ -104,3 +104,18 @@ def sample_pipeline(test_data_dir, sample_ingest_report):
     retriever = Retriever(ir, ser)
     generator = Generator(cfg)
     return PharmGuardPipeline(normalizer, Planner(), retriever, generator, cfg=cfg)
+
+
+
+@pytest.fixture(autouse=True)
+def _pinned_proxy_list_is_fresh(monkeypatch):
+    """Tests run as if today were the pinned Google list's fetch date, so they don't start failing
+    30 days later; the staleness tests move the date on purpose."""
+    import datetime
+    import json
+    from api import ratelimit
+    fetched = json.loads((ratelimit.TRUSTED_RANGES_DIR / "google.json").read_text())["fetched"]
+    monkeypatch.setattr(ratelimit, "_today", lambda: datetime.date.fromisoformat(fetched))
+    ratelimit._GOOGLE_DIAG.clear()
+    yield
+    ratelimit._GOOGLE_DIAG.clear()
