@@ -152,6 +152,17 @@ def verify_live(project: str, digest: str, prov_sha: str) -> str:
     return url
 
 
+def warn_if_ranges_changed() -> None:
+    """Warn (don't refuse) when Google's published lists differ from the pinned copy."""
+    import update_proxy_ranges
+    try:
+        diffs = update_proxy_ranges.changed_since_pinned()
+    except Exception as exc:              # noqa: BLE001 (a warning, never a blocker)
+        diffs = [f"could not compare with the published lists: {type(exc).__name__}"]
+    for d in diffs:
+        print(f"WARNING: Google ranges: {d}")
+
+
 def create_budget(project: str) -> None:
     acct = run(["gcloud", "billing", "projects", "describe", project, "--format=value(billingAccountName)"])
     if not acct:
@@ -169,6 +180,8 @@ def main() -> int:
     ap.add_argument("--dataset", default=None, help="HF dataset repo id (default <hf user>/pharmguard-public-build)")
     ap.add_argument("--revision", default=None, help="pinned dataset commit (default: the dataset's current commit)")
     ap.add_argument("--trusted-proxy-hops", type=int, default=1)
+    ap.add_argument("--trusted-proxy-ranges", default="google", choices=["google", ""],
+                    help="pinned ranges whose X-Forwarded-For hop is stepped past ('' = none)")
     ap.add_argument("--create-budget", action="store_true", help="also create the $5 budget alert (warns only)")
     args = ap.parse_args()
 
@@ -181,10 +194,12 @@ def main() -> int:
     remote_sha = remote_provenance_sha(dataset, revision)
     if remote_sha != prov_sha:
         raise Refused(f"REFUSED: {dataset}@{revision[:12]} provenance {remote_sha[:12]}... != local {prov_sha[:12]}...")
+    if args.trusted_proxy_ranges:
+        warn_if_ranges_changed()
     env = {"PHARMGUARD_HF_DATASET": dataset, "PHARMGUARD_HF_REVISION": revision,
            "PHARMGUARD_HF_PROVENANCE_SHA256": prov_sha, "PHARMGUARD_TRUSTED_PROXY_HOPS": str(args.trusted_proxy_hops),
-           # Firebase Hosting's CDN (Fastly) is a proxy hop: key on the client entry it writes.
-           "PHARMGUARD_TRUSTED_PROXY_RANGES": "fastly"}
+           # Firebase Hosting's CDN hop is Google-operated: key on the client entry Hosting writes before it.
+           "PHARMGUARD_TRUSTED_PROXY_RANGES": args.trusted_proxy_ranges}
     ref = image_ref(args.project)
     tag = f"{ref}:{time.strftime('%Y%m%d-%H%M%S')}"
 

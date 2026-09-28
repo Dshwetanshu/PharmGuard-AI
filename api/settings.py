@@ -22,7 +22,7 @@ class ApiSettings:
     rate_limit_requests: int = 20             # per client IP ...
     rate_limit_window_s: float = 60.0         # ... per window
     trusted_proxy_hops: int = 0               # 1 behind Google's front end (Cloud Run)
-    trusted_proxy_ranges: str = ""            # "fastly": also step past Firebase Hosting's CDN (api/trusted_proxies/)
+    trusted_proxy_ranges: str = ""            # "google": step past Firebase Hosting's CDN hop (api/trusted_proxies/)
     timeout_deterministic_s: float = 20.0
     timeout_llm_s: float = 90.0
     max_concurrency: int = 4

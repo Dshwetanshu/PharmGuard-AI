@@ -1,48 +1,66 @@
-"""Client IP for rate limiting behind Google's front end, directly and through Firebase Hosting (Fastly).
+"""Client IP for rate limiting behind Google's front end, directly and through Firebase Hosting.
 
-Shapes measured live on 28 September 2026 (see docs/DEPLOYMENT.md): directly, Google appends the
-client to X-Forwarded-For (anything the client sent stays in front); through Hosting, Hosting drops the
-client's X-Forwarded-For, writes "client, <CDN address>", and overwrites Fastly-Client-IP.
+Shapes measured live on 28 September 2026 (docs/DEPLOYMENT.md): directly, Google appends the caller's
+address to X-Forwarded-For (anything the caller sent stays in front); through Hosting, Hosting drops
+the caller's X-Forwarded-For and writes "client, <CDN address>", and the CDN address is Google-operated.
+Rule: if the rightmost entry is in the pinned Google-operated list, key on the entry just before it;
+otherwise key on the rightmost. A stale list fails safe: it is ignored.
 """
 from __future__ import annotations
 
-import ipaddress
+import datetime
 import json
 
 import pytest
 
+from api import ratelimit
 from api.ratelimit import client_ip, load_trusted_networks, proxy_summary
 
-FASTLY = load_trusted_networks("fastly")
-CDN = str(next(ipaddress.ip_network("151.101.0.0/16").hosts()))      # a Fastly address (in the pinned list)
+GOOGLE = load_trusted_networks("google")
+_first = json.loads((ratelimit.TRUSTED_RANGES_DIR / "google.json").read_text())["networks"][0]
+import ipaddress  # noqa: E402
+CDN = str(next(ipaddress.ip_network(_first).hosts()))          # a Google-operated address from the list
 CLIENT, ATTACKER, FORGED = "198.51.100.7", "192.0.2.44", "203.0.113.9"
 
 
 @pytest.mark.parametrize("headers, expected", [
-    ({"x-forwarded-for": CLIENT}, CLIENT),                                           # direct
-    ({"x-forwarded-for": f"{FORGED}, {ATTACKER}"}, ATTACKER),                        # direct, forged XFF
-    ({"x-forwarded-for": f"{FORGED}, {CDN}, {ATTACKER}", "fastly-client-ip": FORGED}, ATTACKER),  # forged "via CDN"
-    ({"x-forwarded-for": f"{CLIENT}, {CDN}", "fastly-client-ip": CLIENT}, CLIENT),   # through Hosting
-    ({"x-forwarded-for": f"{CLIENT}, {CDN}"}, CLIENT),                               # Hosting, no Fastly header
-    ({"x-forwarded-for": CDN}, CDN),                                                  # nothing left of the CDN hop
+    ({"x-forwarded-for": CLIENT}, CLIENT),                                          # direct
+    ({"x-forwarded-for": f"{FORGED}, {ATTACKER}"}, ATTACKER),                       # direct, forged entry in front
+    ({"x-forwarded-for": f"{FORGED}, {CDN}, {ATTACKER}"}, ATTACKER),                # direct, forged "CDN" hop
+    ({"x-forwarded-for": f"{CLIENT}, {CDN}", "fastly-client-ip": FORGED}, CLIENT),  # through Hosting
+    ({"x-forwarded-for": f"{FORGED}, {CDN}, {CDN}"}, CDN),                          # only one step, never two
+    ({"x-forwarded-for": CDN}, CDN),                                                 # nothing before the hop
 ])
-def test_client_key_is_the_first_untrusted_hop(headers, expected):
-    assert client_ip(headers, "10.0.0.1", 1, FASTLY) == expected
+def test_rightmost_or_the_entry_before_a_google_hop(headers, expected):
+    assert client_ip(headers, "10.0.0.1", 1, GOOGLE) == expected
 
 
-def test_without_trusted_ranges_hosting_traffic_keys_on_the_cdn():
-    assert client_ip({"x-forwarded-for": f"{CLIENT}, {CDN}"}, "10.0.0.1", 1) == CDN
+def test_forged_fastly_header_is_never_the_key():
+    h = {"x-forwarded-for": ATTACKER, "fastly-client-ip": FORGED}
+    assert client_ip(h, "10.0.0.1", 1, GOOGLE) == ATTACKER
 
 
-def test_ranges_load_from_the_pinned_list_and_are_off_by_default():
-    assert load_trusted_networks("") == () and len(FASTLY) >= 19
-    with pytest.raises(ValueError):
-        load_trusted_networks("somewhere")
-    assert any(ipaddress.ip_address(CDN) in n for n in FASTLY)
-    assert not any(ipaddress.ip_address(CLIENT) in n for n in FASTLY)
+def test_a_stale_list_fails_safe_to_the_rightmost_entry(tmp_path, monkeypatch):
+    doc = json.loads((ratelimit.TRUSTED_RANGES_DIR / "google.json").read_text())
+    doc["fetched"] = (datetime.date.today() - datetime.timedelta(days=ratelimit.MAX_RANGE_AGE_DAYS + 1)).isoformat()
+    (tmp_path / "google.json").write_text(json.dumps(doc))
+    monkeypatch.setattr(ratelimit, "TRUSTED_RANGES_DIR", tmp_path)
+    stale = load_trusted_networks("google")
+    assert stale == ()
+    assert client_ip({"x-forwarded-for": f"{CLIENT}, {CDN}"}, "10.0.0.1", 1, stale) == CDN
 
 
-def test_proxy_summary_counts_skipped_trusted_hops_without_addresses():
-    out = proxy_summary({"x-forwarded-for": f"{CLIENT}, {CDN}", "fastly-client-ip": CLIENT}, "10.0.0.1", 1, FASTLY)
-    assert out["trusted_proxy_entries_skipped"] == 1 and out["client_key_is_fastly_client_ip"] is True
+def test_ranges_are_off_by_default_and_only_google_is_known():
+    assert load_trusted_networks("") == ()
+    for name in ("fastly", "../etc", "cloud"):
+        with pytest.raises(ValueError):
+            load_trusted_networks(name)
+    assert len(GOOGLE) > 100 and not any(ipaddress.ip_address(CLIENT) in n for n in GOOGLE)
+
+
+def test_proxy_summary_reports_the_google_hop_as_yes_no_only():
+    out = proxy_summary({"x-forwarded-for": f"{CLIENT}, {CDN}"}, "10.0.0.1", 1, GOOGLE)
+    assert out["rightmost_hop_in_google_list"] is True and out["trusted_proxy_entries_skipped"] == 1
+    direct = proxy_summary({"x-forwarded-for": CLIENT}, "10.0.0.1", 1, ())
+    assert direct["rightmost_hop_in_google_list"] is False and direct["trusted_proxy_entries_skipped"] == 0
     assert CLIENT not in json.dumps(out) and CDN not in json.dumps(out)

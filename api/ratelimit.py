@@ -1,9 +1,9 @@
 """Per-client sliding-window rate limiting and client IP resolution (framework-free)."""
 from __future__ import annotations
 
+import datetime
 import ipaddress
 import json
-import re
 import threading
 import time
 from collections import defaultdict, deque
@@ -12,18 +12,24 @@ from typing import Callable, Deque, Dict, List, Mapping, Optional, Tuple, Union
 
 
 TRUSTED_RANGES_DIR = Path(__file__).resolve().parent / "trusted_proxies"
+KNOWN_RANGES = ("google",)
+MAX_RANGE_AGE_DAYS = 30          # an older pinned list is ignored (fail safe: key on the rightmost entry)
 Networks = Tuple[Union[ipaddress.IPv4Network, ipaddress.IPv6Network], ...]
 
 
-def load_trusted_networks(name: str) -> Networks:
-    """Pinned proxy address ranges by name ("" = none). "fastly": Firebase Hosting's CDN, from
-    api/trusted_proxies/fastly.json (Fastly's published list, with its source and fetch date)."""
+def load_trusted_networks(name: str, today: Optional[datetime.date] = None) -> Networks:
+    """Pinned proxy ranges by name ("" = none). "google": Google-operated ranges (goog.json minus
+    cloud.json, api/trusted_proxies/google.json, built by scripts/update_proxy_ranges.py), where
+    Firebase Hosting's CDN connects from. A list older than MAX_RANGE_AGE_DAYS loads as empty."""
     if not name:
         return ()
-    path = TRUSTED_RANGES_DIR / f"{name}.json"
-    if not re.fullmatch(r"[a-z0-9_-]+", name) or not path.exists():
+    if name not in KNOWN_RANGES:
         raise ValueError(f"unknown trusted proxy ranges {name!r}")
-    return tuple(ipaddress.ip_network(n) for n in json.loads(path.read_text())["networks"])
+    doc = json.loads((TRUSTED_RANGES_DIR / f"{name}.json").read_text())
+    age = ((today or datetime.date.today()) - datetime.date.fromisoformat(doc["fetched"])).days
+    if age > MAX_RANGE_AGE_DAYS:
+        return ()
+    return tuple(ipaddress.ip_network(n) for n in doc["networks"])
 
 
 def _in(addr: str, networks: Networks) -> bool:
@@ -38,9 +44,10 @@ def _key_index(parts: List[str], trusted_proxy_hops: int, trusted_networks: Netw
     if trusted_proxy_hops <= 0 or len(parts) < trusted_proxy_hops:
         return None
     i = len(parts) - trusted_proxy_hops
-    # A trusted proxy's address is a hop, not the client: step left past it (Firebase Hosting's CDN
-    # writes "client, <CDN>" and drops whatever X-Forwarded-For the client sent).
-    while i > 0 and _in(parts[i], trusted_networks):
+    # Firebase Hosting drops the caller's X-Forwarded-For and writes "client, <CDN>"; the CDN connects
+    # from a Google-operated address. If that is the entry here, key on the one just before it (one
+    # step only). Directly, this entry is the caller's own address and is used as is.
+    if i > 0 and _in(parts[i], trusted_networks):
         i -= 1
     return i
 
@@ -49,8 +56,8 @@ def client_ip(headers: Mapping[str, str], peer: Optional[str], trusted_proxy_hop
               trusted_networks: Networks = ()) -> str:
     """The client address. Behind N trusted proxies (Google's front end: N=1), the client is the
     N-th X-Forwarded-For entry from the right; entries further left were supplied by the client and
-    can be forged. If that entry is in `trusted_networks` (a proxy in front, such as Firebase Hosting's
-    CDN), the entry to its left is used instead. With no trusted proxy, X-Forwarded-For is ignored."""
+    can be forged. If that entry is in `trusted_networks` (Firebase Hosting's CDN), the entry just
+    before it is used instead. With no trusted proxy, X-Forwarded-For is ignored."""
     parts = [p.strip() for p in (headers.get("x-forwarded-for") or "").split(",") if p.strip()]
     i = _key_index(parts, trusted_proxy_hops, trusted_networks)
     return parts[i] if i is not None else (peer or "unknown")
@@ -74,8 +81,19 @@ def proxy_summary(headers: Mapping[str, str], peer: Optional[str], trusted_proxy
             "client_key_is_tcp_peer": client_ip(headers, peer, trusted_proxy_hops, trusted_networks) == (peer or "unknown"),
             "trusted_proxy_entries_skipped": (len(parts) - trusted_proxy_hops - i) if i is not None else 0,
             "client_key_is_fastly_client_ip": bool(fastly) and i is not None and parts[i] == fastly,
+            "rightmost_hop_in_google_list": bool(parts) and _in(parts[-1], _google_for_diagnostics()),
             "client_ip_headers": sorted(h for h in CLIENT_IP_HEADERS if headers.get(h)),
             "fastly_client_ip_position_from_right": fastly_pos}
+
+
+_GOOGLE_DIAG: list = []
+
+
+def _google_for_diagnostics() -> Networks:
+    """The pinned Google list, for the yes/no in /health even while it isn't used for keys."""
+    if not _GOOGLE_DIAG:
+        _GOOGLE_DIAG.append(load_trusted_networks("google"))
+    return _GOOGLE_DIAG[0]
 
 
 # Header names that proxies use for the client address; /health reports which ones arrived (names only).
