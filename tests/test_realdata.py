@@ -176,3 +176,19 @@ def test_real_build_structured_report_matches_markdown(public_graph):
         s = public_graph.run(case.input_drugs)
         if s["report_source"].startswith("deterministic"):
             _check(s, public_graph.components.generator)
+
+
+@pytest.mark.parametrize("profile", ["public", "research"])
+def test_committed_results_match_the_current_build(profile):
+    """results/*_<profile>* must come from the build on disk; rerun the scripts after a rebuild."""
+    import hashlib
+    import re
+    current = hashlib.sha256((_processed(profile) / "provenance.json").read_bytes()).hexdigest()
+    files = sorted((ROOT / "results").glob(f"*_{profile}*"))
+    assert files, f"no results for {profile}"
+    stale = {}
+    for f in files:
+        hashes = set(re.findall(r"\b[0-9a-f]{64}\b", f.read_text()))
+        if hashes != {current}:
+            stale[f.name] = sorted(h[:8] for h in hashes)
+    assert stale == {}, f"stale vs current {profile} build {current[:8]}: {stale}"
