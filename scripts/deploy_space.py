@@ -15,8 +15,9 @@ Refuses to deploy if:
 - the build's profile isn't "public", or it's synthetic or marked not for redistribution;
 - its interactions contain any source other than DDInter;
 - its files don't match their sha256 in provenance;
-- any file to upload comes from the research build, TWOSIDES, notes/, CLAUDE.md, .env*,
-  data/raw or a build's review/ folder (Drugs@FDA collisions for a person to check).
+- any file to upload comes from the research build, TWOSIDES, notes/, .env*, data/raw or a build's
+  review/ folder (Drugs@FDA collisions for a person to check), or matches a local-only pattern in
+  .git/info/exclude.
 """
 from __future__ import annotations
 
@@ -59,16 +60,37 @@ class Refused(SystemExit):
     pass
 
 
-FORBIDDEN = ("research", "twosides", "notes/", "claude.md", ".claude/", ".env", "data/raw", "review/",
-             "__pycache__", ".pyc")
+FORBIDDEN = ("research", "twosides", "notes/", ".env", "data/raw", "review/", "__pycache__", ".pyc")
+LOCAL_EXCLUDE = ROOT / ".git" / "info" / "exclude"
 
 
-def guard(uploads: List[Upload], what: str) -> None:
+def local_only_patterns(exclude_file: Path = LOCAL_EXCLUDE) -> List[str]:
+    """Patterns in .git/info/exclude: files that exist only on this machine and are never published."""
+    if not Path(exclude_file).exists():
+        return []
+    lines = (l.strip() for l in Path(exclude_file).read_text().splitlines())
+    return [l.lower() for l in lines if l and not l.startswith("#")]
+
+
+def _matches_local(path: str, pattern: str) -> bool:
+    import fnmatch
+    p = pattern.lstrip("/")
+    if p.endswith("/"):
+        return path.startswith(p) or f"/{p}" in f"/{path}"
+    return any(fnmatch.fnmatch(part, p) for part in [path, path.rsplit("/", 1)[-1]])
+
+
+def guard(uploads: List[Upload], what: str, exclude_file: Path = LOCAL_EXCLUDE) -> None:
+    local = local_only_patterns(exclude_file)
     for u in uploads:
         names = [u.path_in_repo.lower()] + ([str(u.local).lower()] if u.local else [])
         for bad in FORBIDDEN:
             if any(bad in n for n in names):
                 raise Refused(f"REFUSED: {what} file {u.path_in_repo!r} matches forbidden pattern {bad!r}")
+        for pat in local:
+            if _matches_local(u.path_in_repo.lower(), pat):
+                raise Refused(f"REFUSED: {what} file {u.path_in_repo!r} matches local-only pattern {pat!r} "
+                              "(.git/info/exclude)")
 
 
 def check_build(build: Path) -> dict:

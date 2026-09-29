@@ -42,9 +42,9 @@ def test_image_guard_accepts_the_app_files():
     dc.image_guard(GOOD)
 
 
-@pytest.mark.parametrize("extra", ["notes/UPGRADE_NOTES.md", "CLAUDE.md", ".env", "data/raw/x.csv",
+@pytest.mark.parametrize("extra", ["notes/UPGRADE_NOTES.md", "LOCAL_NOTES.md", ".env", "data/raw/x.csv",
                                    "data/profiles/research/processed/x.parquet", "processed/twosides.parquet",
-                                   "src/__pycache__/x.pyc", "review/fda_brand_review.csv", ".claude/x",
+                                   "src/__pycache__/x.pyc", "review/fda_brand_review.csv", ".assistant/x",
                                    "tests/test_api.py"])
 def test_image_guard_refuses_forbidden_or_unexpected_files(extra):
     with pytest.raises(dc.Refused):

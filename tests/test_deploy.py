@@ -17,13 +17,35 @@ spec.loader.exec_module(deploy)
 
 
 @pytest.mark.parametrize("path", ["processed/twosides_signals.parquet", "data/profiles/research/processed/x.parquet",
-                                  "notes/UPGRADE_NOTES.md", "CLAUDE.md", ".env", ".env.local",
+                                  "notes/UPGRADE_NOTES.md", ".env", ".env.local",
                                   "data/raw/ddinter/a.csv", "src/__pycache__/x.pyc",
-                                  "data/profiles/public/review/fda_brand_review.csv", "review/fda_brand_review.csv",
-                                  ".claude/skills/redesign-skill/SKILL.md"])
-def test_guard_refuses_forbidden_paths(path):
+                                  "data/profiles/public/review/fda_brand_review.csv", "review/fda_brand_review.csv"])
+def test_guard_refuses_forbidden_paths(path, tmp_path):
     with pytest.raises(deploy.Refused):
-        deploy.guard([deploy.Upload(path, content=b"x")], "test")
+        deploy.guard([deploy.Upload(path, content=b"x")], "test", exclude_file=tmp_path / "none")
+
+
+@pytest.fixture
+def exclude(tmp_path):
+    f = tmp_path / "exclude"
+    f.write_text("# local-only files\nLOCAL_NOTES.md\n.assistant/\n*.secret\n")
+    return f
+
+
+@pytest.mark.parametrize("path", ["LOCAL_NOTES.md", ".assistant/skills/x/SKILL.md", "api/.assistant/y", "keys.secret"])
+def test_guard_refuses_local_only_patterns_from_git_exclude(path, exclude):
+    with pytest.raises(deploy.Refused, match="local-only"):
+        deploy.guard([deploy.Upload(path, content=b"x")], "test", exclude_file=exclude)
+
+
+@pytest.mark.parametrize("path", ["api/app.py", "src/notes_parser.py", "README.md", "src/local_notes.md.py"])
+def test_guard_allows_normal_files_with_an_exclude_file(path, exclude):
+    deploy.guard([deploy.Upload(path, content=b"x")], "test", exclude_file=exclude)
+
+
+def test_local_only_patterns_ignore_comments_and_missing_files(exclude, tmp_path):
+    assert deploy.local_only_patterns(exclude) == ["local_notes.md", ".assistant/", "*.secret"]
+    assert deploy.local_only_patterns(tmp_path / "missing") == []
 
 
 def test_space_file_list_has_only_code_and_no_forbidden_paths():
