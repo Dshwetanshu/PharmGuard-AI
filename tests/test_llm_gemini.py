@@ -5,6 +5,9 @@ from types import SimpleNamespace
 
 import pytest
 
+# The API image doesn't ship the Gemini SDK (requirements-api.lock); CI installs it for these tests.
+pytest.importorskip("google.genai")
+
 from src.config import Config
 from src.llm import LLMClient, LLMError, is_transient_llm_error
 
