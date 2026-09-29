@@ -128,3 +128,22 @@ def test_markdown_discloses_a_same_provider_judge_and_leaves_the_audit_unscored(
     assert "same provider as the generator" in md
     assert "Cohen's κ: — until a human fills it in" in md
     assert prompt_info()["sha256"] in md
+
+
+def test_cache_resumes_without_repeating_calls(tmp_path):
+    from src.evaluation.llm_eval import CachedLLM
+    inner = RuleJudgeLLM('{"verdict": "supported"}')
+    msg = [{"role": "user", "content": "x"}]
+    a = CachedLLM(inner, "gemini:m", tmp_path)
+    assert a.complete("s", msg) == '{"verdict": "supported"}' and len(inner.calls) == 1
+    b = CachedLLM(RuleJudgeLLM("never"), "gemini:m", tmp_path)          # a new process, same cache
+    assert b.complete("s", msg) == '{"verdict": "supported"}' and (b.hits, b.misses) == (1, 0)
+    assert b.last_usage == inner.last_usage
+    assert CachedLLM(RuleJudgeLLM("other"), "anthropic:m", tmp_path).complete("s", msg) == "other"
+
+
+def test_template_judging_can_be_skipped(graphs):
+    det, llm, _ = graphs
+    r = evaluate_provider(det, llm, [c for c in TEST_CASES if c.case_id == "GER-01"], ClaimJudge(RuleJudgeLLM()),
+                          "gemini", "gemini:fake", judge_template=False)
+    assert r["judge"]["template"] is None and r["judge"]["calls"] == r["judge"]["llm_shown"]["judged"]

@@ -13,7 +13,10 @@ Per generation provider:
 """
 from __future__ import annotations
 
+import hashlib
+import json
 import time
+from pathlib import Path
 from statistics import median
 from typing import Any, Callable, Dict, List, Optional, Sequence
 
@@ -47,6 +50,31 @@ class Throttled:
         return self.llm.complete(system=system, messages=messages, **kw)
 
 
+class CachedLLM:
+    """Stores each response on disk, keyed by provider, model, system prompt and messages, so a run
+    stopped by a daily quota resumes without repeating calls. Errors are never cached."""
+
+    def __init__(self, llm, label: str, cache_dir: Path):
+        self.llm, self.label, self.dir = llm, label, Path(cache_dir)
+        self.hits = self.misses = 0
+        self.last_usage = None
+
+    def complete(self, system, messages, **kw):
+        key = hashlib.sha256(json.dumps([self.label, system, messages], sort_keys=True).encode()).hexdigest()
+        path = self.dir / f"{key[:40]}.json"
+        if path.exists():
+            self.hits += 1
+            blob = json.loads(path.read_text())
+            self.last_usage = blob.get("usage")
+            return blob["text"]
+        self.misses += 1
+        text = self.llm.complete(system=system, messages=messages, **kw)
+        self.last_usage = getattr(self.llm, "last_usage", None)
+        self.dir.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps({"label": self.label, "text": text, "usage": self.last_usage}))
+        return text
+
+
 def _p50(xs: Sequence[float]) -> Optional[float]:
     return round(median(xs) * 1000, 1) if xs else None
 
@@ -61,7 +89,7 @@ def judge_states(states: Sequence[Dict[str, Any]], judge: ClaimJudge, case_ids: 
 
 
 def evaluate_provider(det_graph, llm_graph, cases, judge: Optional[ClaimJudge], provider: str,
-                      model: str) -> Dict[str, Any]:
+                      model: str, judge_template: bool = True) -> Dict[str, Any]:
     """Run every case in both modes; judge the shown LLM reports and the template reports."""
     det_states, llm_states, ids = [], [], []
     for case in cases:
@@ -88,7 +116,8 @@ def evaluate_provider(det_graph, llm_graph, cases, judge: Optional[ClaimJudge], 
     }
     if judge is not None:
         j_llm = judge_states([s for _, s in shown], judge, [c for c, _ in shown], f"{provider}:llm")
-        j_tpl = judge_states(det_states, judge, ids, "template")
+        j_tpl = (judge_states(det_states, judge, ids, "template") if judge_template
+                 else {"claims": [], "judgements": [], "summary": None})
         out["judge"] = {"llm_shown": j_llm["summary"], "template": j_tpl["summary"],
                         "calls": judge.calls, "usage": dict(judge.usage)}
         out["_claims"] = j_llm["claims"] + j_tpl["claims"]

@@ -37,7 +37,7 @@ from src.config import Config, DEFAULT_MODELS  # noqa: E402
 from src.data.ingestion import Ingester  # noqa: E402
 from src.data.provenance import data_stamp  # noqa: E402
 from src.evaluation.judge import ClaimJudge, check_providers, export_blind, extract_claims, prompt_info  # noqa: E402
-from src.evaluation.llm_eval import Throttled, call_budget, evaluate_provider  # noqa: E402
+from src.evaluation.llm_eval import CachedLLM, Throttled, call_budget, evaluate_provider  # noqa: E402
 from src.evaluation.test_cases import TEST_CASES  # noqa: E402
 from src.graph import PharmGuardGraph, Settings, build_components  # noqa: E402
 from src.graph.settings import KEY_VARS  # noqa: E402
@@ -67,10 +67,11 @@ def data_dir_for(profile: str, tmp: Path) -> Path:
     return d
 
 
-def llm_client(provider: str, model: str) -> LLMClient:
+def llm_client(provider: str, model: str, min_interval: float, cache: bool):
     cfg = Config()
     cfg.llm.provider, cfg.llm.model = provider, model
-    return LLMClient(cfg)
+    client = Throttled(LLMClient(cfg), min_interval)
+    return CachedLLM(client, f"{provider}:{model}", ROOT / "data" / "cache" / "llm") if cache else client
 
 
 def to_markdown(r: dict) -> str:
@@ -93,6 +94,7 @@ def to_markdown(r: dict) -> str:
         for m in METRICS:
             L.append(f"| {m} | {fmt((ch['template'] or {}).get(m))} | {fmt((ch['llm_first_draft'] or {}).get(m))} | "
                      f"{fmt((ch['llm_shown'] or {}).get(m))} |")
+        j = {**j, "template": j.get("template") or {}}
         L.append(f"| faithfulness (judge: supported / judged) | {fmt((j.get('template') or {}).get('faithfulness'))} | — | "
                  f"{fmt((j.get('llm_shown') or {}).get('faithfulness'))} |")
         L.append(f"| contradicted rate (judge) | {fmt((j.get('template') or {}).get('contradicted_rate'))} | — | "
@@ -129,6 +131,9 @@ def main() -> int:
     ap.add_argument("--judge-model", default=None)
     ap.add_argument("--allow-same-provider-judge", action="store_true")
     ap.add_argument("--no-judge", action="store_true")
+    ap.add_argument("--no-template-judge", action="store_true",
+                    help="judge only the LLM reports (saves about half the judge calls)")
+    ap.add_argument("--no-cache", action="store_true", help="don't reuse or store responses in data/cache/llm/")
     ap.add_argument("--min-interval", type=float, default=0.0, help="seconds between LLM calls, per client")
     ap.add_argument("--subset", default=None, help="case-id prefix")
     ap.add_argument("--max-cases", type=int, default=None)
@@ -156,10 +161,11 @@ def main() -> int:
                 except ValueError:
                     continue
                 claims += len(extract_claims(s["report"], Evidence.from_dict(s["evidence"]), c.case_id))
-            b = call_budget(claims, len(cases), base.max_llm_attempts, judge_template=not args.no_judge)
+            b = call_budget(claims, len(cases), base.max_llm_attempts, judge_template=not args.no_template_judge)
             print(f"{len(cases)} cases on the {args.profile} build; template reports have {claims} cited claims.")
             print(f"Per generation provider: {b['generation_calls_min']}-{b['generation_calls_max']} generation calls; "
-                  f"judge calls ≈ {0 if args.no_judge else b['judge_calls_est']} (LLM reports + template reports); "
+                  f"judge calls ≈ {0 if args.no_judge else b['judge_calls_est']} "
+                  f"({'LLM reports only' if args.no_template_judge else 'LLM reports + template reports'}); "
                   f"at most ≈ {b['generation_calls_max'] + (0 if args.no_judge else b['judge_calls_est'])} calls.")
             print(f"Keys present for: {', '.join(keyed) or 'none'}. Generators requested: {', '.join(providers) or 'none'}. "
                   f"Judge: {judge_provider or 'none'}.")
@@ -178,14 +184,16 @@ def main() -> int:
         for p in providers:
             model = args.model or os.getenv("PHARMGUARD_LLM_MODEL") or DEFAULT_MODELS[p]
             disclosure = None if args.no_judge else check_providers(p, judge_provider, args.allow_same_provider_judge)
-            gen_llm = Throttled(llm_client(p, model), args.min_interval)
+            gen_llm = llm_client(p, model, args.min_interval, not args.no_cache)
             s = replace(base, mode="llm", llm_provider=p, llm_model=model, llm_configured=True)
             c = replace(comps, generator=Generator(s.to_config(), llm=gen_llm, provenance=comps.generator.provenance),
                         llm_available=True, llm_label=f"{p}:{model}")
-            judge = None if args.no_judge else ClaimJudge(Throttled(llm_client(judge_provider, judge_model),
-                                                                    args.min_interval))
-            res = evaluate_provider(det, PharmGuardGraph(s, c), cases, judge, p, f"{p}:{model}")
-            res["judge_disclosure"], res["generation_calls"] = disclosure, gen_llm.calls
+            judge = None if args.no_judge else ClaimJudge(llm_client(judge_provider, judge_model, args.min_interval,
+                                                                     not args.no_cache))
+            res = evaluate_provider(det, PharmGuardGraph(s, c), cases, judge, p, f"{p}:{model}",
+                                    judge_template=not args.no_template_judge)
+            res["judge_disclosure"] = disclosure
+            res["generation_calls"] = getattr(gen_llm, "misses", None) or getattr(gen_llm, "calls", None)
             claims += res.pop("_claims", [])
             judgements += res.pop("_judgements", [])
             out["providers"].append(res)
