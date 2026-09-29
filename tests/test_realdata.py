@@ -205,3 +205,4 @@ def test_examples_are_current():
     have = {p.name: p.read_text() for p in (ROOT / "examples").glob("*.md")}
     assert set(have) == set(want)
     assert [n for n in want if have[n] != want[n]] == []
+    assert (ROOT / "docs" / "appendix" / "sample_case.md").read_text() == generate_examples.sample_case(g)
