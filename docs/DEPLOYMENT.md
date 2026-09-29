@@ -206,4 +206,4 @@ data source above.
 - **Fastly's published ranges** don't contain Hosting's CDN hop (measured), so the key uses Google's
   ranges instead.
 - **Vercel:** container images weren't available on the Hobby plan as of 26 September 2026 (the build
-  fell back to zero-config detection); the attempt is in commit 2a6b5b0.
+  fell back to zero-config detection); the attempt is in commit e41205b.
