@@ -31,6 +31,8 @@ class RetrievalResult:
     # pair -> FAERS co-reported events checked but suppressed (below the signal thresholds,
     # or explained by one drug alone); the report states the count
     faers_suppressed: Dict[tuple, int] = field(default_factory=dict)
+    # pairs whose FAERS lookup failed (network, rate limit, time budget); the report says so
+    faers_failed: List[tuple] = field(default_factory=list)
 
     @property
     def total_interactions(self) -> int:
@@ -73,6 +75,8 @@ def faers_lookup(faers, pair: tuple, result: RetrievalResult) -> None:
     if hasattr(faers, "assess_pair"):
         found = faers.assess_pair(*pair)
         signals, suppressed = found.surfaced, len(found.suppressed)
+        if found.error:
+            result.faers_failed.append(pair)
     else:
         signals, suppressed = faers.retrieve_pair(*pair), 0
     if signals:

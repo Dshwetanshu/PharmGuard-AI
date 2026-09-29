@@ -207,7 +207,9 @@ def test_api_cap_counts_assessed_pairs():
     capped = CappedFaers(AssessingFaers())
     token = _FAERS_BUDGET.set(FaersBudget(max_pairs=1, budget_s=10))
     try:
-        assert capped.assess_pair("a", "b").surfaced and not capped.assess_pair("c", "d").surfaced
+        assert capped.assess_pair("a", "b").surfaced
+        skipped = capped.assess_pair("c", "d")
+        assert not skipped.surfaced and skipped.error == "SkippedByRequestCap"
         assert (_FAERS_BUDGET.get().consulted, _FAERS_BUDGET.get().skipped) == (1, 1)
     finally:
         _FAERS_BUDGET.reset(token)
@@ -271,3 +273,17 @@ def test_caches_are_bounded():
     for i in range(10):
         c.get(OpenFdaCounts.url(f"x{i}", limit=1))
     assert len(c._mem) == 3
+
+
+def test_a_failed_faers_lookup_is_stated_in_the_report(faers_graph):
+    from src.retrieval.faers_retriever import FaersAssessment
+
+    class DownFaers:
+        enabled = True
+
+        def assess_pair(self, a, b):
+            return FaersAssessment(tuple(sorted((a, b))), error="HTTPError")
+
+    s = faers_graph(DownFaers()).run(["metformin", "levothyroxine"])
+    assert "FAERS was not checked for 1 pair" in s["report"] and s["final_validation"]["passed"]
+    assert s["retrieval"]["faers_failed"] == [["levothyroxine", "metformin"]]

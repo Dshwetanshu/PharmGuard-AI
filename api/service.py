@@ -118,8 +118,8 @@ class CappedFaers:
         return self.inner.retrieve_pair(a, b) if self._admit() else []
 
     def assess_pair(self, a: str, b: str) -> FaersAssessment:
-        if not self._admit():
-            return FaersAssessment(tuple(sorted((a, b))))
+        if not self._admit():      # skipped pairs are stated in the report, not passed over silently
+            return FaersAssessment(tuple(sorted((a, b))), error="SkippedByRequestCap")
         if hasattr(self.inner, "assess_pair"):
             return self.inner.assess_pair(a, b)
         return FaersAssessment(tuple(sorted((a, b))), surfaced=self.inner.retrieve_pair(a, b))

@@ -185,15 +185,20 @@ def faers_block(result) -> Optional[Dict[str, Any]]:
                        f"{faers_stats_text(s)} {s.citation()}")}
              for p, sigs in result.faers_signals.items() for s in sigs]
     suppressed = sum(result.faers_suppressed.values())
-    if not items and not suppressed:
+    failed = len(result.faers_failed)
+    if not items and not suppressed and not failed:
         return None
     note = None
     if suppressed:
         note = (f"{plural(suppressed, 'co-reported event')} checked in FAERS "
                 f"{'was' if suppressed == 1 else 'were'} suppressed: below these thresholds, or as common "
                 "with one of the drugs alone.")
+    if failed:
+        fail = (f"FAERS was not checked for {plural(failed, 'pair')} (lookup failed, or over this request's "
+                "FAERS cap or time budget); nothing is known from FAERS about " + ("it." if failed == 1 else "them."))
+        note = f"{note} {fail}" if note else fail
     return {"heading": FAERS_HEADING, "intro": FAERS_INTRO, "items": items, "suppressed": suppressed,
-            "suppressed_note": note}
+            "failed": failed, "suppressed_note": note}
 
 
 def faers_lines(block: Optional[Dict[str, Any]]) -> List[str]:

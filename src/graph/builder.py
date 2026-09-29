@@ -225,6 +225,7 @@ def build_graph(settings: Settings, c: Components, tracing: Optional[Tracing] = 
         update = {"retrieval": result_to_dict(result), "evidence": evidence(p, result)}
         detail = {"consulted_pairs": len(result.no_data_pairs), "pairs_with_signals": len(result.faers_signals),
                   "suppressed_signals": sum(result.faers_suppressed.values()),
+                  "failed_pairs": len(result.faers_failed),
                   "route": route_generation(state)}
         return update, "ok", detail
 
