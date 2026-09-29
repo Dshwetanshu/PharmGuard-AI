@@ -1,0 +1,3284 @@
+{
+ "fetched_on": "2026-09-29",
+ "method": "src/evaluation/label_evidence.py (heuristic wording classes)",
+ "labels": {
+  "acetaminophen": {
+   "drug": "acetaminophen",
+   "set_id": "113d92bf-f6c9-cc3d-e063-6294a90af033",
+   "version": "3",
+   "effective_time": "20260902",
+   "application_number": "M013",
+   "brand": "AMAZON BASIC CARE ACETAMINOPHEN",
+   "sections": [
+    "warnings"
+   ]
+  },
+  "allopurinol": {
+   "drug": "allopurinol",
+   "set_id": "30ad5ba2-1cef-4933-b104-0597f6a2aaa2",
+   "version": "5",
+   "effective_time": "20260521",
+   "application_number": "NDA016084",
+   "brand": "Allopurinol",
+   "sections": [
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "alprazolam": {
+   "drug": "alprazolam",
+   "set_id": "1338d1c9-7c75-42ed-95f3-9eb1b6fc51d3",
+   "version": "19",
+   "effective_time": "20250211",
+   "application_number": "NDA021434",
+   "brand": "Alprazolam XR",
+   "sections": [
+    "boxed_warning",
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "amiodarone": {
+   "drug": "amiodarone",
+   "set_id": "e9108958-b8d7-4fba-87c3-9a32990de551",
+   "version": "25",
+   "effective_time": "20240416",
+   "application_number": "NDA022325",
+   "brand": "Nexterone",
+   "sections": [
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "amlodipine": {
+   "drug": "amlodipine",
+   "set_id": "614d974f-51c7-4b18-8171-39eb6e8d4c03",
+   "version": "2",
+   "effective_time": "20260216",
+   "application_number": "NDA214439",
+   "brand": "NORLIQVA",
+   "sections": [
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "amoxicillin": {
+   "drug": "amoxicillin",
+   "set_id": "06e5c07d-d95c-4955-8d35-a4703ca2359e",
+   "version": "5",
+   "effective_time": "20260707",
+   "application_number": "NDA050760",
+   "brand": "Amoxicillin",
+   "sections": [
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "apixaban": {
+   "drug": "apixaban",
+   "set_id": "a454cd24-0c6d-46e8-b1e4-197388606175",
+   "version": "38",
+   "effective_time": "20260424",
+   "application_number": "NDA202155",
+   "brand": "ELIQUIS",
+   "sections": [
+    "boxed_warning",
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "aspirin": {
+   "drug": "aspirin",
+   "set_id": "7ce4807e-7bd5-41f1-a9c7-1f3af6acdc09",
+   "version": "6",
+   "effective_time": "20260909",
+   "application_number": "M013",
+   "brand": "Low Dose Aspirin",
+   "sections": [
+    "warnings"
+   ]
+  },
+  "atorvastatin": {
+   "drug": "atorvastatin",
+   "set_id": "a60cc18b-0631-4cf0-b021-9f52224ece65",
+   "version": "8",
+   "effective_time": "20240415",
+   "application_number": "NDA020702",
+   "brand": "Lipitor",
+   "sections": [
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "azathioprine": {
+   "drug": "azathioprine",
+   "set_id": "606101a0-6244-7eff-e053-2a91aa0acadd",
+   "version": "6",
+   "effective_time": "20251108",
+   "application_number": "NDA016324",
+   "brand": "IMURAN",
+   "sections": [
+    "boxed_warning",
+    "contraindications",
+    "drug_interactions",
+    "precautions",
+    "warnings"
+   ]
+  },
+  "calcium carbonate": {
+   "drug": "calcium carbonate",
+   "set_id": "7471ec99-6c0b-40d8-a9cf-85240a0d471a",
+   "version": "10",
+   "effective_time": "20260909",
+   "application_number": "M001",
+   "brand": "Childrens Stomach Relief",
+   "sections": [
+    "warnings"
+   ]
+  },
+  "carbamazepine": {
+   "drug": "carbamazepine",
+   "set_id": "8d409411-aa9f-4f3a-a52c-fbcb0c3ec053",
+   "version": "39",
+   "effective_time": "20260820",
+   "application_number": "NDA018927",
+   "brand": "Tegretol",
+   "sections": [
+    "boxed_warning",
+    "contraindications",
+    "drug_interactions",
+    "precautions",
+    "warnings"
+   ]
+  },
+  "cetirizine": {
+   "drug": "cetirizine",
+   "set_id": "573770f6-b76e-f6ba-e063-6294a90aa54d",
+   "version": "4",
+   "effective_time": "20260813",
+   "application_number": "NDA211415",
+   "brand": "QUZYTTIR",
+   "sections": [
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "ciprofloxacin": {
+   "drug": "ciprofloxacin",
+   "set_id": "1ac4540c-d0f7-70bc-e063-6394a90a0f7a",
+   "version": "2",
+   "effective_time": "20260505",
+   "application_number": "NDA019992",
+   "brand": "Ciprofloxacin Hydrochloride",
+   "sections": [
+    "contraindications",
+    "drug_interactions",
+    "precautions",
+    "warnings"
+   ]
+  },
+  "clarithromycin": {
+   "drug": "clarithromycin",
+   "set_id": "9d5848f0-e9f0-4112-a7ca-bcc8ea2e69c6",
+   "version": "14",
+   "effective_time": "20260624",
+   "application_number": "ANDA065489",
+   "brand": "Clarithromycin",
+   "sections": [
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "clopidogrel": {
+   "drug": "clopidogrel",
+   "set_id": "de8b0b67-eb25-4684-83b5-7ad785314227",
+   "version": "5",
+   "effective_time": "20250530",
+   "application_number": "NDA020839",
+   "brand": "Plavix",
+   "sections": [
+    "boxed_warning",
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "clozapine": {
+   "drug": "clozapine",
+   "set_id": "2592c9a8-fd74-4e0d-a895-b07b014cf355",
+   "version": "7",
+   "effective_time": "20260906",
+   "application_number": "NDA203479",
+   "brand": "VERSACLOZ",
+   "sections": [
+    "boxed_warning",
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "colchicine": {
+   "drug": "colchicine",
+   "set_id": "19486f52-1c7b-43b8-ba48-0d1a6389fedf",
+   "version": "5",
+   "effective_time": "20260318",
+   "application_number": "NDA204820",
+   "brand": "Colchicine",
+   "sections": [
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "digoxin": {
+   "drug": "digoxin",
+   "set_id": "dcf907d9-0f0e-4ecc-a555-7e6dcc08c166",
+   "version": "8",
+   "effective_time": "20251211",
+   "application_number": "NDA021648",
+   "brand": "Digoxin",
+   "sections": [
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "ethinyl estradiol": null,
+  "famotidine": {
+   "drug": "famotidine",
+   "set_id": "9710995d-b518-40ce-bc2b-8b5dcf002c31",
+   "version": "6",
+   "effective_time": "20260606",
+   "application_number": "NDA219935",
+   "brand": "Famotidine",
+   "sections": [
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "fluconazole": {
+   "drug": "fluconazole",
+   "set_id": "737e0fac-a2d2-4053-a0d7-edbfb6248f69",
+   "version": "43",
+   "effective_time": "20260402",
+   "application_number": "NDA020090",
+   "brand": "Fluconazole",
+   "sections": [
+    "contraindications",
+    "drug_interactions",
+    "precautions",
+    "warnings"
+   ]
+  },
+  "fluoxetine": {
+   "drug": "fluoxetine",
+   "set_id": "c88f33ed-6dfb-4c5e-bc01-d8e36dd97299",
+   "version": "59",
+   "effective_time": "20260108",
+   "application_number": "NDA018936",
+   "brand": "Prozac",
+   "sections": [
+    "boxed_warning",
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "fluvoxamine": {
+   "drug": "fluvoxamine",
+   "set_id": "5198b1c8-8dd6-4b8f-bd85-294ac468af53",
+   "version": "16",
+   "effective_time": "20260423",
+   "application_number": "NDA021519",
+   "brand": "fluvoxamine maleate",
+   "sections": [
+    "boxed_warning",
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "gemfibrozil": {
+   "drug": "gemfibrozil",
+   "set_id": "c48855b7-215e-453b-b3b1-a0f9dee7221f",
+   "version": "23",
+   "effective_time": "20260521",
+   "application_number": "NDA018422",
+   "brand": "Lopid",
+   "sections": [
+    "contraindications",
+    "drug_interactions",
+    "precautions",
+    "warnings"
+   ]
+  },
+  "hydrochlorothiazide": {
+   "drug": "hydrochlorothiazide",
+   "set_id": "41aaea48-6c1b-42c8-a96f-5923d49dc934",
+   "version": "2",
+   "effective_time": "20251216",
+   "application_number": "NDA219141",
+   "brand": "INZIRQO",
+   "sections": [
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "itraconazole": {
+   "drug": "itraconazole",
+   "set_id": "a4d555fa-787c-40fb-bb7d-b0d4f7318fd0",
+   "version": "31",
+   "effective_time": "20260713",
+   "application_number": "NDA020083",
+   "brand": "SPORANOX",
+   "sections": [
+    "boxed_warning",
+    "contraindications",
+    "drug_interactions",
+    "precautions",
+    "warnings"
+   ]
+  },
+  "ketoconazole": {
+   "drug": "ketoconazole",
+   "set_id": "f5c8c5b4-49bd-4dc7-8c29-8f1317c6ef88",
+   "version": "2",
+   "effective_time": "20250821",
+   "application_number": "NDA020310",
+   "brand": "Nizoral",
+   "sections": [
+    "warnings"
+   ]
+  },
+  "levothyroxine": {
+   "drug": "levothyroxine",
+   "set_id": "489ffba8-983e-478f-8f62-fe08bf3d0e0b",
+   "version": "102",
+   "effective_time": "20260623",
+   "application_number": "NDA021342",
+   "brand": "Levothyroxine Sodium",
+   "sections": [
+    "boxed_warning",
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "linezolid": {
+   "drug": "linezolid",
+   "set_id": "3e5e9975-6f36-42e4-ab46-0e75dda83592",
+   "version": "24",
+   "effective_time": "20260709",
+   "application_number": "NDA021131",
+   "brand": "Zyvox",
+   "sections": [
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "lisinopril": {
+   "drug": "lisinopril",
+   "set_id": "9f6e4e57-a489-4b36-b093-b93865d3717c",
+   "version": "10",
+   "effective_time": "20251216",
+   "application_number": "NDA208401",
+   "brand": "Qbrelis",
+   "sections": [
+    "boxed_warning",
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "lithium": {
+   "drug": "lithium",
+   "set_id": "f7f5b69a-c2a1-4586-a189-1475d41387c0",
+   "version": "13",
+   "effective_time": "20260824",
+   "application_number": "NDA018027",
+   "brand": "LITHOBID",
+   "sections": [
+    "boxed_warning",
+    "precautions",
+    "warnings"
+   ]
+  },
+  "loratadine": {
+   "drug": "loratadine",
+   "set_id": "039ea563-9796-4270-b84a-50dd25a9d976",
+   "version": "3",
+   "effective_time": "20260223",
+   "application_number": "NDA021375",
+   "brand": "Alavert Allergy",
+   "sections": [
+    "warnings"
+   ]
+  },
+  "losartan": {
+   "drug": "losartan",
+   "set_id": "9949448f-c3b9-44ee-94ed-c1aca8c90f39",
+   "version": "9",
+   "effective_time": "20260120",
+   "application_number": "NDA020386",
+   "brand": "COZAAR",
+   "sections": [
+    "boxed_warning",
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "mercaptopurine": {
+   "drug": "mercaptopurine",
+   "set_id": "9c6fc66b-522f-499d-961a-cde6ca0ec2e5",
+   "version": "6",
+   "effective_time": "20260720",
+   "application_number": "NDA205919",
+   "brand": "MERCAPTOPURINE",
+   "sections": [
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "metformin": {
+   "drug": "metformin",
+   "set_id": "74d32a8a-c4c2-4dbb-b376-eea3f8fa64d7",
+   "version": "10",
+   "effective_time": "20241114",
+   "application_number": "NDA021748",
+   "brand": "Metformin hydrochloride",
+   "sections": [
+    "boxed_warning",
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "methotrexate": {
+   "drug": "methotrexate",
+   "set_id": "96e931f5-51ae-4bdf-a441-bb0dd26d4c0e",
+   "version": "13",
+   "effective_time": "20260608",
+   "application_number": "NDA212479",
+   "brand": "JYLAMVO",
+   "sections": [
+    "boxed_warning",
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "montelukast": {
+   "drug": "montelukast",
+   "set_id": "482dcc92-b47f-4ea6-854a-f5ac2aea7842",
+   "version": "5",
+   "effective_time": "20250430",
+   "application_number": "NDA020830",
+   "brand": "SINGULAIR",
+   "sections": [
+    "boxed_warning",
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "nitroglycerin": {
+   "drug": "nitroglycerin",
+   "set_id": "603aa9ed-54c4-4a35-ade4-690fa44850e4",
+   "version": "16",
+   "effective_time": "20260908",
+   "application_number": "NDA021359",
+   "brand": "Rectiv",
+   "sections": [
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "omeprazole": {
+   "drug": "omeprazole",
+   "set_id": "28a0b4c8-3ad3-451c-a957-28aef5e3d8b5",
+   "version": "4",
+   "effective_time": "20260909",
+   "application_number": "NDA022032",
+   "brand": "omeprazole",
+   "sections": [
+    "warnings"
+   ]
+  },
+  "oxycodone": {
+   "drug": "oxycodone",
+   "set_id": "bfdfe235-d717-4855-a3c8-a13d26dadede",
+   "version": "44",
+   "effective_time": "20260624",
+   "application_number": "NDA022272",
+   "brand": "OxyContin",
+   "sections": [
+    "boxed_warning",
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "pantoprazole": {
+   "drug": "pantoprazole",
+   "set_id": "08098cb2-c048-4640-f387-6beec4a38936",
+   "version": "48",
+   "effective_time": "20260518",
+   "application_number": "NDA020987",
+   "brand": "Protonix Delayed-Release",
+   "sections": [
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "phenelzine": {
+   "drug": "phenelzine",
+   "set_id": "fa041652-fdde-4794-a8d2-279dd309e075",
+   "version": "14",
+   "effective_time": "20260521",
+   "application_number": "NDA011909",
+   "brand": "phenelzine sulfate",
+   "sections": [
+    "boxed_warning",
+    "contraindications",
+    "drug_interactions",
+    "precautions",
+    "warnings"
+   ]
+  },
+  "pimozide": {
+   "drug": "pimozide",
+   "set_id": "70b079e2-a1f7-4a93-8685-d60a4d7c1280",
+   "version": "5",
+   "effective_time": "20260812",
+   "application_number": "ANDA204521",
+   "brand": "Pimozide",
+   "sections": [
+    "contraindications",
+    "drug_interactions",
+    "precautions",
+    "warnings"
+   ]
+  },
+  "potassium chloride": {
+   "drug": "potassium chloride",
+   "set_id": "2d938cbf-27aa-4f9c-a582-5564d3b72465",
+   "version": "1",
+   "effective_time": "20260122",
+   "application_number": "NDA206814",
+   "brand": "POKONZA potassium chloride",
+   "sections": [
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "ramelteon": {
+   "drug": "ramelteon",
+   "set_id": "9de82310-70e8-47b9-b1fc-6c6848b99455",
+   "version": "20",
+   "effective_time": "20260415",
+   "application_number": "NDA021782",
+   "brand": "Rozerem",
+   "sections": [
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "rifampin": {
+   "drug": "rifampin",
+   "set_id": "036ab68e-5085-4edc-bd83-784b43d64eab",
+   "version": "52",
+   "effective_time": "20260527",
+   "application_number": "NDA050627",
+   "brand": "Rifadin IV",
+   "sections": [
+    "contraindications",
+    "drug_interactions",
+    "precautions",
+    "warnings"
+   ]
+  },
+  "sertraline": {
+   "drug": "sertraline",
+   "set_id": "e0e1f35e-114d-bb39-34f1-70208b94ac9e",
+   "version": "1",
+   "effective_time": "20250806",
+   "application_number": "NDA215133",
+   "brand": "sertraline hydrochloride",
+   "sections": [
+    "boxed_warning",
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "sildenafil": {
+   "drug": "sildenafil",
+   "set_id": "a17a970e-25a2-4807-9644-74e6d2bd2383",
+   "version": "3",
+   "effective_time": "20260717",
+   "application_number": "NDA210858",
+   "brand": "Sildenafil",
+   "sections": [
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "simvastatin": {
+   "drug": "simvastatin",
+   "set_id": "8f55d5de-5a4f-4a39-8c84-c53976dd6af9",
+   "version": "11",
+   "effective_time": "20250328",
+   "application_number": "NDA019766",
+   "brand": "ZOCOR",
+   "sections": [
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "spironolactone": {
+   "drug": "spironolactone",
+   "set_id": "5a203ae4-0ed1-0099-e063-6294a90abc85",
+   "version": "1",
+   "effective_time": "20260828",
+   "application_number": "NDA209478",
+   "brand": "SPIRONOLACTONE",
+   "sections": [
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "tacrolimus": {
+   "drug": "tacrolimus",
+   "set_id": "de2315b0-6344-43ac-9aea-3e3b68d828e7",
+   "version": "16",
+   "effective_time": "20250226",
+   "application_number": "NDA206406",
+   "brand": "Envarsus XR",
+   "sections": [
+    "boxed_warning",
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "theophylline": {
+   "drug": "theophylline",
+   "set_id": "5e64036a-ee3e-42e7-9e59-881f88a4e298",
+   "version": "7",
+   "effective_time": "20260729",
+   "application_number": "ANDA215312",
+   "brand": "Theophylline",
+   "sections": [
+    "contraindications",
+    "drug_interactions",
+    "precautions",
+    "warnings"
+   ]
+  },
+  "tizanidine": {
+   "drug": "tizanidine",
+   "set_id": "60c27d35-7349-4fc6-86ad-70fffdbe3e08",
+   "version": "2",
+   "effective_time": "20260102",
+   "application_number": "NDA021447",
+   "brand": "Zanaflex",
+   "sections": [
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "tramadol": {
+   "drug": "tramadol",
+   "set_id": "c0bc7218-3fd0-4646-96f4-25355fc84aa9",
+   "version": "16",
+   "effective_time": "20260123",
+   "application_number": "NDA022370",
+   "brand": "Tramadol Hydrochloride Extended-Release",
+   "sections": [
+    "boxed_warning",
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  },
+  "trimethoprim": {
+   "drug": "trimethoprim",
+   "set_id": "73ccebc1-7412-2424-d62c-a5180ec52d81",
+   "version": "1",
+   "effective_time": "20240126",
+   "application_number": "NDA018679",
+   "brand": "Trimethoprim",
+   "sections": [
+    "contraindications",
+    "drug_interactions",
+    "precautions",
+    "warnings"
+   ]
+  },
+  "warfarin": {
+   "drug": "warfarin",
+   "set_id": "5a5b5e3a-6556-a542-e063-6294a90a6d3f",
+   "version": "1",
+   "effective_time": "20260831",
+   "application_number": "ANDA202202",
+   "brand": "Warfarin Sodium",
+   "sections": [
+    "boxed_warning",
+    "contraindications",
+    "drug_interactions",
+    "warnings_and_cautions"
+   ]
+  }
+ },
+ "label_counts": {
+  "acetaminophen": 3453,
+  "allopurinol": 134,
+  "alprazolam": 79,
+  "amiodarone": 51,
+  "amlodipine": 240,
+  "amoxicillin": 381,
+  "apixaban": 8,
+  "aspirin": 709,
+  "atorvastatin": 263,
+  "azathioprine": 19,
+  "calcium carbonate": 621,
+  "carbamazepine": 82,
+  "cetirizine": 423,
+  "ciprofloxacin": 161,
+  "clarithromycin": 43,
+  "clopidogrel": 56,
+  "clozapine": 16,
+  "colchicine": 57,
+  "digoxin": 43,
+  "ethinyl estradiol": 296,
+  "famotidine": 368,
+  "fluconazole": 98,
+  "fluoxetine": 167,
+  "fluvoxamine": 24,
+  "gemfibrozil": 43,
+  "hydrochlorothiazide": 540,
+  "itraconazole": 15,
+  "ketoconazole": 71,
+  "levothyroxine": 308,
+  "linezolid": 36,
+  "lisinopril": 225,
+  "lithium": 121,
+  "loratadine": 403,
+  "losartan": 213,
+  "mercaptopurine": 6,
+  "metformin": 374,
+  "methotrexate": 47,
+  "montelukast": 65,
+  "nitroglycerin": 84,
+  "omeprazole": 337,
+  "oxycodone": 164,
+  "pantoprazole": 136,
+  "phenelzine": 3,
+  "pimozide": 2,
+  "potassium chloride": 315,
+  "ramelteon": 41,
+  "rifampin": 13,
+  "sertraline": 159,
+  "sildenafil": 165,
+  "simvastatin": 120,
+  "spironolactone": 140,
+  "tacrolimus": 45,
+  "theophylline": 28,
+  "tizanidine": 121,
+  "tramadol": 113,
+  "trimethoprim": 106,
+  "warfarin": 75
+ },
+ "pairs": [
+  {
+   "row": {
+    "drug_a": "warfarin",
+    "drug_b": "amiodarone",
+    "expected": "interaction"
+   },
+   "reference": "interaction",
+   "reason": "label: monitor / adjust",
+   "evidence": {
+    "pair": [
+     "warfarin",
+     "amiodarone"
+    ],
+    "klass": "monitor_or_adjust",
+    "labels_found": {
+     "warfarin": {
+      "set_id": "5a5b5e3a-6556-a542-e063-6294a90a6d3f",
+      "version": "1",
+      "effective_time": "20260831",
+      "application_number": "ANDA202202",
+      "brand": "Warfarin Sodium"
+     },
+     "amiodarone": {
+      "set_id": "e9108958-b8d7-4fba-87c3-9a32990de551",
+      "version": "25",
+      "effective_time": "20240416",
+      "application_number": "NDA022325",
+      "brand": "Nexterone"
+     }
+    },
+    "best": {
+     "label_drug": "amiodarone",
+     "other_drug": "warfarin",
+     "set_id": "e9108958-b8d7-4fba-87c3-9a32990de551",
+     "version": "25",
+     "section": "Drug Interactions",
+     "alias": "warfarin",
+     "snippet": "Reduce warfarin dose by one-third to one-half and monitor INR",
+     "klass": "monitor_or_adjust"
+    },
+    "matches": [
+     {
+      "label_drug": "warfarin",
+      "other_drug": "amiodarone",
+      "set_id": "5a5b5e3a-6556-a542-e063-6294a90a6d3f",
+      "version": "1",
+      "section": "Drug Interactions",
+      "alias": "amiodarone",
+      "snippet": "Table 2: Examples of CYP450 Interactions with Warfarin Enzyme Inhibitors Inducers CYP2C9 amiodarone, capecitabine, cotrimoxazole, etravirine, fluconazole, fluvastatin, fluvoxamine, metronidazole, miconazole, oxandrolone\u2026",
+      "klass": "mentioned_without_guidance"
+     },
+     {
+      "label_drug": "amiodarone",
+      "other_drug": "warfarin",
+      "set_id": "e9108958-b8d7-4fba-87c3-9a32990de551",
+      "version": "25",
+      "section": "Drug Interactions",
+      "alias": "warfarin",
+      "snippet": "Reduce warfarin dose by one-third to one-half and monitor INR",
+      "klass": "monitor_or_adjust"
+     }
+    ]
+   }
+  },
+  {
+   "row": {
+    "drug_a": "simvastatin",
+    "drug_b": "clarithromycin",
+    "expected": "interaction"
+   },
+   "reference": "interaction",
+   "reason": "label: contraindicated",
+   "evidence": {
+    "pair": [
+     "simvastatin",
+     "clarithromycin"
+    ],
+    "klass": "contraindicated",
+    "labels_found": {
+     "simvastatin": {
+      "set_id": "8f55d5de-5a4f-4a39-8c84-c53976dd6af9",
+      "version": "11",
+      "effective_time": "20250328",
+      "application_number": "NDA019766",
+      "brand": "ZOCOR"
+     },
+     "clarithromycin": {
+      "set_id": "9d5848f0-e9f0-4112-a7ca-bcc8ea2e69c6",
+      "version": "14",
+      "effective_time": "20260624",
+      "application_number": "ANDA065489",
+      "brand": "Clarithromycin"
+     }
+    },
+    "best": {
+     "label_drug": "simvastatin",
+     "other_drug": "clarithromycin",
+     "set_id": "8f55d5de-5a4f-4a39-8c84-c53976dd6af9",
+     "version": "11",
+     "section": "Drug Interactions",
+     "alias": "clarithromycin",
+     "snippet": "\u2026e.g., itraconazole, ketoconazole, posaconazole, and voriconazole), select macrolide antibiotics (e.g., erythromycin and clarithromycin), select HIV protease inhibitors (e.g., nelfinavir, ritonavir, and darunavir/ritonavir), select HCV protease inhibitors\u2026",
+     "klass": "contraindicated"
+    },
+    "matches": [
+     {
+      "label_drug": "simvastatin",
+      "other_drug": "clarithromycin",
+      "set_id": "8f55d5de-5a4f-4a39-8c84-c53976dd6af9",
+      "version": "11",
+      "section": "Drug Interactions",
+      "alias": "clarithromycin",
+      "snippet": "\u2026e.g., itraconazole, ketoconazole, posaconazole, and voriconazole), select macrolide antibiotics (e.g., erythromycin and clarithromycin), select HIV protease inhibitors (e.g., nelfinavir, ritonavir, and darunavir/ritonavir), select HCV protease inhibitors\u2026",
+      "klass": "contraindicated"
+     },
+     {
+      "label_drug": "clarithromycin",
+      "other_drug": "simvastatin",
+      "set_id": "9d5848f0-e9f0-4112-a7ca-bcc8ea2e69c6",
+      "version": "14",
+      "section": "Contraindications",
+      "alias": "simvastatin",
+      "snippet": "Lomitapide, lovastatin, and simvastatin",
+      "klass": "contraindicated"
+     },
+     {
+      "label_drug": "clarithromycin",
+      "other_drug": "simvastatin",
+      "set_id": "9d5848f0-e9f0-4112-a7ca-bcc8ea2e69c6",
+      "version": "14",
+      "section": "Warnings and Precautions",
+      "alias": "simvastatin",
+      "snippet": "The use of clarithromycin with lomitapide, simvastatin, lovastatin, ergotamine, or dihydroergotamine is contraindicated",
+      "klass": "contraindicated"
+     },
+     {
+      "label_drug": "clarithromycin",
+      "other_drug": "simvastatin",
+      "set_id": "9d5848f0-e9f0-4112-a7ca-bcc8ea2e69c6",
+      "version": "14",
+      "section": "Drug Interactions",
+      "alias": "simvastatin",
+      "snippet": "Lipid-lowering agents: Lomitapide Lovastatin Simvastatin Atorvastatin Pravastatin Fluvastatin Contraindicated Use With Caution No Dose Adjustment Lomitapide, Lovastatin, Simvas\u2026",
+      "klass": "contraindicated"
+     }
+    ]
+   }
+  },
+  {
+   "row": {
+    "drug_a": "clopidogrel",
+    "drug_b": "omeprazole",
+    "expected": "interaction"
+   },
+   "reference": "interaction",
+   "reason": "label: avoid / not recommended",
+   "evidence": {
+    "pair": [
+     "clopidogrel",
+     "omeprazole"
+    ],
+    "klass": "avoid_or_not_recommended",
+    "labels_found": {
+     "clopidogrel": {
+      "set_id": "de8b0b67-eb25-4684-83b5-7ad785314227",
+      "version": "5",
+      "effective_time": "20250530",
+      "application_number": "NDA020839",
+      "brand": "Plavix"
+     },
+     "omeprazole": {
+      "set_id": "28a0b4c8-3ad3-451c-a957-28aef5e3d8b5",
+      "version": "4",
+      "effective_time": "20260909",
+      "application_number": "NDA022032",
+      "brand": "omeprazole"
+     }
+    },
+    "best": {
+     "label_drug": "clopidogrel",
+     "other_drug": "omeprazole",
+     "set_id": "de8b0b67-eb25-4684-83b5-7ad785314227",
+     "version": "5",
+     "section": "Warnings and Precautions",
+     "alias": "omeprazole",
+     "snippet": "5 WARNINGS AND PRECAUTIONS CYP2C19 inhibitors: Avoid concomitant use of omeprazole or esomeprazole",
+     "klass": "avoid_or_not_recommended"
+    },
+    "matches": [
+     {
+      "label_drug": "clopidogrel",
+      "other_drug": "omeprazole",
+      "set_id": "de8b0b67-eb25-4684-83b5-7ad785314227",
+      "version": "5",
+      "section": "Warnings and Precautions",
+      "alias": "omeprazole",
+      "snippet": "5 WARNINGS AND PRECAUTIONS CYP2C19 inhibitors: Avoid concomitant use of omeprazole or esomeprazole",
+      "klass": "avoid_or_not_recommended"
+     },
+     {
+      "label_drug": "clopidogrel",
+      "other_drug": "omeprazole",
+      "set_id": "de8b0b67-eb25-4684-83b5-7ad785314227",
+      "version": "5",
+      "section": "Drug Interactions",
+      "alias": "omeprazole",
+      "snippet": "Omeprazole or Esomeprazole Avoid concomitant use of Plavix with omeprazole or esomeprazole",
+      "klass": "avoid_or_not_recommended"
+     }
+    ]
+   }
+  },
+  {
+   "row": {
+    "drug_a": "sildenafil",
+    "drug_b": "nitroglycerin",
+    "expected": "interaction"
+   },
+   "reference": "interaction",
+   "reason": "label: contraindicated",
+   "evidence": {
+    "pair": [
+     "sildenafil",
+     "nitroglycerin"
+    ],
+    "klass": "contraindicated",
+    "labels_found": {
+     "sildenafil": {
+      "set_id": "a17a970e-25a2-4807-9644-74e6d2bd2383",
+      "version": "3",
+      "effective_time": "20260717",
+      "application_number": "NDA210858",
+      "brand": "Sildenafil"
+     },
+     "nitroglycerin": {
+      "set_id": "603aa9ed-54c4-4a35-ade4-690fa44850e4",
+      "version": "16",
+      "effective_time": "20260908",
+      "application_number": "NDA021359",
+      "brand": "Rectiv"
+     }
+    },
+    "best": {
+     "label_drug": "nitroglycerin",
+     "other_drug": "sildenafil",
+     "set_id": "603aa9ed-54c4-4a35-ade4-690fa44850e4",
+     "version": "16",
+     "section": "Contraindications",
+     "alias": "sildenafil",
+     "snippet": "sildenafil, vardenafil and tadalafil) as these are shown to potentiate the hypotensive effects of organic nitrates",
+     "klass": "contraindicated"
+    },
+    "matches": [
+     {
+      "label_drug": "nitroglycerin",
+      "other_drug": "sildenafil",
+      "set_id": "603aa9ed-54c4-4a35-ade4-690fa44850e4",
+      "version": "16",
+      "section": "Contraindications",
+      "alias": "sildenafil",
+      "snippet": "sildenafil, vardenafil and tadalafil) as these are shown to potentiate the hypotensive effects of organic nitrates",
+      "klass": "contraindicated"
+     },
+     {
+      "label_drug": "nitroglycerin",
+      "other_drug": "sildenafil",
+      "set_id": "603aa9ed-54c4-4a35-ade4-690fa44850e4",
+      "version": "16",
+      "section": "Drug Interactions",
+      "alias": "sildenafil",
+      "snippet": "7.1 PDE5 inhibitors Phosphodiesterase type 5 (PDE5) inhibitors such as sildenafil, vardenafil, and tadalafil have been shown to potentiate the hypotensive effects of organic nitrates",
+      "klass": "mentioned_without_guidance"
+     }
+    ]
+   }
+  },
+  {
+   "row": {
+    "drug_a": "linezolid",
+    "drug_b": "sertraline",
+    "expected": "interaction"
+   },
+   "reference": "interaction",
+   "reason": "label: contraindicated",
+   "evidence": {
+    "pair": [
+     "linezolid",
+     "sertraline"
+    ],
+    "klass": "contraindicated",
+    "labels_found": {
+     "linezolid": {
+      "set_id": "3e5e9975-6f36-42e4-ab46-0e75dda83592",
+      "version": "24",
+      "effective_time": "20260709",
+      "application_number": "NDA021131",
+      "brand": "Zyvox"
+     },
+     "sertraline": {
+      "set_id": "e0e1f35e-114d-bb39-34f1-70208b94ac9e",
+      "version": "1",
+      "effective_time": "20250806",
+      "application_number": "NDA215133",
+      "brand": "sertraline hydrochloride"
+     }
+    },
+    "best": {
+     "label_drug": "sertraline",
+     "other_drug": "linezolid",
+     "set_id": "e0e1f35e-114d-bb39-34f1-70208b94ac9e",
+     "version": "1",
+     "section": "Contraindications",
+     "alias": "linezolid",
+     "snippet": "\u2026rochloride capsules are contraindicated in patients: Taking, or within 14 days of stopping, MAOIs, (including the MAOIs linezolid and intravenous methylene blue) because of an increased risk of serotonin syndrome",
+     "klass": "contraindicated"
+    },
+    "matches": [
+     {
+      "label_drug": "sertraline",
+      "other_drug": "linezolid",
+      "set_id": "e0e1f35e-114d-bb39-34f1-70208b94ac9e",
+      "version": "1",
+      "section": "Contraindications",
+      "alias": "linezolid",
+      "snippet": "\u2026rochloride capsules are contraindicated in patients: Taking, or within 14 days of stopping, MAOIs, (including the MAOIs linezolid and intravenous methylene blue) because of an increased risk of serotonin syndrome",
+      "klass": "contraindicated"
+     },
+     {
+      "label_drug": "sertraline",
+      "other_drug": "linezolid",
+      "set_id": "e0e1f35e-114d-bb39-34f1-70208b94ac9e",
+      "version": "1",
+      "section": "Warnings and Precautions",
+      "alias": "linezolid",
+      "snippet": "If it is necessary to initiate treatment with an MAOI such as linezolid or intravenous methylene blue in a patient taking sertraline hydrochloride capsules, discontinue sertraline hydrochlori\u2026",
+      "klass": "monitor_or_adjust"
+     },
+     {
+      "label_drug": "sertraline",
+      "other_drug": "linezolid",
+      "set_id": "e0e1f35e-114d-bb39-34f1-70208b94ac9e",
+      "version": "1",
+      "section": "Drug Interactions",
+      "alias": "linezolid",
+      "snippet": "Intervention: Sertraline hydrochloride capsules are contraindicated in patients taking MAOIs, including MAOIs such as linezolid or intravenous methylene blue",
+      "klass": "contraindicated"
+     }
+    ]
+   }
+  },
+  {
+   "row": {
+    "drug_a": "lithium",
+    "drug_b": "hydrochlorothiazide",
+    "expected": "interaction"
+   },
+   "reference": "interaction",
+   "reason": "label: monitor / adjust",
+   "evidence": {
+    "pair": [
+     "lithium",
+     "hydrochlorothiazide"
+    ],
+    "klass": "monitor_or_adjust",
+    "labels_found": {
+     "lithium": {
+      "set_id": "f7f5b69a-c2a1-4586-a189-1475d41387c0",
+      "version": "13",
+      "effective_time": "20260824",
+      "application_number": "NDA018027",
+      "brand": "LITHOBID"
+     },
+     "hydrochlorothiazide": {
+      "set_id": "41aaea48-6c1b-42c8-a96f-5923d49dc934",
+      "version": "2",
+      "effective_time": "20251216",
+      "application_number": "NDA219141",
+      "brand": "INZIRQO"
+     }
+    },
+    "best": {
+     "label_drug": "hydrochlorothiazide",
+     "other_drug": "lithium",
+     "set_id": "41aaea48-6c1b-42c8-a96f-5923d49dc934",
+     "version": "2",
+     "section": "Drug Interactions",
+     "alias": "lithium",
+     "snippet": "Monitor serum lithium levels during concomitant use and adjust the lithium dose during concomitant administration or discontinuation of hydro\u2026",
+     "klass": "monitor_or_adjust"
+    },
+    "matches": [
+     {
+      "label_drug": "hydrochlorothiazide",
+      "other_drug": "lithium",
+      "set_id": "41aaea48-6c1b-42c8-a96f-5923d49dc934",
+      "version": "2",
+      "section": "Drug Interactions",
+      "alias": "lithium",
+      "snippet": "Monitor serum lithium levels during concomitant use and adjust the lithium dose during concomitant administration or discontinuation of hydro\u2026",
+      "klass": "monitor_or_adjust"
+     }
+    ]
+   }
+  },
+  {
+   "row": {
+    "drug_a": "methotrexate",
+    "drug_b": "trimethoprim",
+    "expected": "interaction"
+   },
+   "reference": "unclear",
+   "reason": "named in a label, but without guidance the heuristic recognises",
+   "evidence": {
+    "pair": [
+     "methotrexate",
+     "trimethoprim"
+    ],
+    "klass": "mentioned_without_guidance",
+    "labels_found": {
+     "methotrexate": {
+      "set_id": "96e931f5-51ae-4bdf-a441-bb0dd26d4c0e",
+      "version": "13",
+      "effective_time": "20260608",
+      "application_number": "NDA212479",
+      "brand": "JYLAMVO"
+     },
+     "trimethoprim": {
+      "set_id": "73ccebc1-7412-2424-d62c-a5180ec52d81",
+      "version": "1",
+      "effective_time": "20240126",
+      "application_number": "NDA018679",
+      "brand": "Trimethoprim"
+     }
+    },
+    "best": {
+     "label_drug": "trimethoprim",
+     "other_drug": "methotrexate",
+     "set_id": "73ccebc1-7412-2424-d62c-a5180ec52d81",
+     "version": "1",
+     "section": "Precautions",
+     "alias": "methotrexate",
+     "snippet": "Drug/Laboratory Test Interactions Trimethoprim can interfere with a serum methotrexate assay as determined by the Competitive Binding Protein Technique (CBPA) when a bacterial dihydrofolate reductase is use\u2026",
+     "klass": "mentioned_without_guidance"
+    },
+    "matches": [
+     {
+      "label_drug": "trimethoprim",
+      "other_drug": "methotrexate",
+      "set_id": "73ccebc1-7412-2424-d62c-a5180ec52d81",
+      "version": "1",
+      "section": "Precautions",
+      "alias": "methotrexate",
+      "snippet": "Drug/Laboratory Test Interactions Trimethoprim can interfere with a serum methotrexate assay as determined by the Competitive Binding Protein Technique (CBPA) when a bacterial dihydrofolate reductase is use\u2026",
+      "klass": "mentioned_without_guidance"
+     }
+    ]
+   }
+  },
+  {
+   "row": {
+    "drug_a": "digoxin",
+    "drug_b": "amiodarone",
+    "expected": "interaction"
+   },
+   "reference": "interaction",
+   "reason": "label: monitor / adjust",
+   "evidence": {
+    "pair": [
+     "digoxin",
+     "amiodarone"
+    ],
+    "klass": "monitor_or_adjust",
+    "labels_found": {
+     "digoxin": {
+      "set_id": "dcf907d9-0f0e-4ecc-a555-7e6dcc08c166",
+      "version": "8",
+      "effective_time": "20251211",
+      "application_number": "NDA021648",
+      "brand": "Digoxin"
+     },
+     "amiodarone": {
+      "set_id": "e9108958-b8d7-4fba-87c3-9a32990de551",
+      "version": "25",
+      "effective_time": "20240416",
+      "application_number": "NDA022325",
+      "brand": "Nexterone"
+     }
+    },
+    "best": {
+     "label_drug": "amiodarone",
+     "other_drug": "digoxin",
+     "set_id": "e9108958-b8d7-4fba-87c3-9a32990de551",
+     "version": "25",
+     "section": "Drug Interactions",
+     "alias": "digoxin",
+     "snippet": "Reduce digoxin by half or discontinue",
+     "klass": "monitor_or_adjust"
+    },
+    "matches": [
+     {
+      "label_drug": "digoxin",
+      "other_drug": "amiodarone",
+      "set_id": "dcf907d9-0f0e-4ecc-a555-7e6dcc08c166",
+      "version": "8",
+      "section": "Drug Interactions",
+      "alias": "amiodarone",
+      "snippet": "\u2026Adults Digoxin concentrations increased > 50% Digoxin Serum Concentration Increase Digoxin AUC Increase Recommendations Amiodarone 70% NA Measure serum digoxin concentrations before initiating concomitant drugs",
+      "klass": "mentioned_without_guidance"
+     },
+     {
+      "label_drug": "amiodarone",
+      "other_drug": "digoxin",
+      "set_id": "e9108958-b8d7-4fba-87c3-9a32990de551",
+      "version": "25",
+      "section": "Drug Interactions",
+      "alias": "digoxin",
+      "snippet": "Reduce digoxin by half or discontinue",
+      "klass": "monitor_or_adjust"
+     }
+    ]
+   }
+  },
+  {
+   "row": {
+    "drug_a": "theophylline",
+    "drug_b": "ciprofloxacin",
+    "expected": "interaction"
+   },
+   "reference": "unclear",
+   "reason": "named in a label, but without guidance the heuristic recognises",
+   "evidence": {
+    "pair": [
+     "theophylline",
+     "ciprofloxacin"
+    ],
+    "klass": "mentioned_without_guidance",
+    "labels_found": {
+     "theophylline": {
+      "set_id": "5e64036a-ee3e-42e7-9e59-881f88a4e298",
+      "version": "7",
+      "effective_time": "20260729",
+      "application_number": "ANDA215312",
+      "brand": "Theophylline"
+     },
+     "ciprofloxacin": {
+      "set_id": "1ac4540c-d0f7-70bc-e063-6394a90a0f7a",
+      "version": "2",
+      "effective_time": "20260505",
+      "application_number": "NDA019992",
+      "brand": "Ciprofloxacin Hydrochloride"
+     }
+    },
+    "best": {
+     "label_drug": "theophylline",
+     "other_drug": "ciprofloxacin",
+     "set_id": "5e64036a-ee3e-42e7-9e59-881f88a4e298",
+     "version": "7",
+     "section": "Precautions",
+     "alias": "ciprofloxacin",
+     "snippet": "70% increase Ciprofloxacin Similar to cimetidine",
+     "klass": "mentioned_without_guidance"
+    },
+    "matches": [
+     {
+      "label_drug": "theophylline",
+      "other_drug": "ciprofloxacin",
+      "set_id": "5e64036a-ee3e-42e7-9e59-881f88a4e298",
+      "version": "7",
+      "section": "Precautions",
+      "alias": "ciprofloxacin",
+      "snippet": "70% increase Ciprofloxacin Similar to cimetidine",
+      "klass": "mentioned_without_guidance"
+     },
+     {
+      "label_drug": "theophylline",
+      "other_drug": "ciprofloxacin",
+      "set_id": "5e64036a-ee3e-42e7-9e59-881f88a4e298",
+      "version": "7",
+      "section": "Drug Interactions",
+      "alias": "ciprofloxacin",
+      "snippet": "70% increase Ciprofloxacin Similar to cimetidine",
+      "klass": "mentioned_without_guidance"
+     },
+     {
+      "label_drug": "ciprofloxacin",
+      "other_drug": "theophylline",
+      "set_id": "1ac4540c-d0f7-70bc-e063-6394a90a0f7a",
+      "version": "2",
+      "section": "Precautions",
+      "alias": "theophylline",
+      "snippet": "However, the systemic administration of some quinolones has been shown to elevate plasma concentrations of theophylline, interfere with the metabolism of caffeine, enhance the effects of the oral anticoagulant, warfarin, and its derivative\u2026",
+      "klass": "mentioned_without_guidance"
+     },
+     {
+      "label_drug": "ciprofloxacin",
+      "other_drug": "theophylline",
+      "set_id": "1ac4540c-d0f7-70bc-e063-6394a90a0f7a",
+      "version": "2",
+      "section": "Drug Interactions",
+      "alias": "theophylline",
+      "snippet": "However, the systemic administration of some quinolones has been shown to elevate plasma concentrations of theophylline, interfere with the metabolism of caffeine, enhance the effects of the oral anticoagulant, warfarin, and its derivative\u2026",
+      "klass": "mentioned_without_guidance"
+     }
+    ]
+   }
+  },
+  {
+   "row": {
+    "drug_a": "azathioprine",
+    "drug_b": "allopurinol",
+    "expected": "interaction"
+   },
+   "reference": "interaction",
+   "reason": "label: monitor / adjust",
+   "evidence": {
+    "pair": [
+     "azathioprine",
+     "allopurinol"
+    ],
+    "klass": "monitor_or_adjust",
+    "labels_found": {
+     "azathioprine": {
+      "set_id": "606101a0-6244-7eff-e053-2a91aa0acadd",
+      "version": "6",
+      "effective_time": "20251108",
+      "application_number": "NDA016324",
+      "brand": "IMURAN"
+     },
+     "allopurinol": {
+      "set_id": "30ad5ba2-1cef-4933-b104-0597f6a2aaa2",
+      "version": "5",
+      "effective_time": "20260521",
+      "application_number": "NDA016084",
+      "brand": "Allopurinol"
+     }
+    },
+    "best": {
+     "label_drug": "azathioprine",
+     "other_drug": "allopurinol",
+     "set_id": "606101a0-6244-7eff-e053-2a91aa0acadd",
+     "version": "6",
+     "section": "Precautions",
+     "alias": "allopurinol",
+     "snippet": "Patients receiving IMURAN and allopurinol concomitantly should have a dose reduction of IMURAN, to approximately 1/ 3 to 1/ 4 the usual dose",
+     "klass": "monitor_or_adjust"
+    },
+    "matches": [
+     {
+      "label_drug": "azathioprine",
+      "other_drug": "allopurinol",
+      "set_id": "606101a0-6244-7eff-e053-2a91aa0acadd",
+      "version": "6",
+      "section": "Precautions",
+      "alias": "allopurinol",
+      "snippet": "Patients receiving IMURAN and allopurinol concomitantly should have a dose reduction of IMURAN, to approximately 1/ 3 to 1/ 4 the usual dose",
+      "klass": "monitor_or_adjust"
+     },
+     {
+      "label_drug": "azathioprine",
+      "other_drug": "allopurinol",
+      "set_id": "606101a0-6244-7eff-e053-2a91aa0acadd",
+      "version": "6",
+      "section": "Drug Interactions",
+      "alias": "allopurinol",
+      "snippet": "Patients receiving IMURAN and allopurinol concomitantly should have a dose reduction of IMURAN, to approximately 1/ 3 to 1/ 4 the usual dose",
+      "klass": "monitor_or_adjust"
+     },
+     {
+      "label_drug": "allopurinol",
+      "other_drug": "azathioprine",
+      "set_id": "30ad5ba2-1cef-4933-b104-0597f6a2aaa2",
+      "version": "5",
+      "section": "Warnings and Precautions",
+      "alias": "azathioprine",
+      "snippet": "Reduce the dosage of mercaptopurine or azathioprine as recommended in their respective prescribing information when used concomitantly with allopurinol tablets [ see Drug\u2026",
+      "klass": "monitor_or_adjust"
+     },
+     {
+      "label_drug": "allopurinol",
+      "other_drug": "azathioprine",
+      "set_id": "30ad5ba2-1cef-4933-b104-0597f6a2aaa2",
+      "version": "5",
+      "section": "Drug Interactions",
+      "alias": "azathioprine",
+      "snippet": "Subsequent adjustment of doses of mercaptopurine or azathioprine should be made on the basis of therapeutic response and the appearance of toxic effects",
+      "klass": "monitor_or_adjust"
+     }
+    ]
+   }
+  },
+  {
+   "row": {
+    "drug_a": "colchicine",
+    "drug_b": "clarithromycin",
+    "expected": "interaction"
+   },
+   "reference": "interaction",
+   "reason": "label: contraindicated",
+   "evidence": {
+    "pair": [
+     "colchicine",
+     "clarithromycin"
+    ],
+    "klass": "contraindicated",
+    "labels_found": {
+     "colchicine": {
+      "set_id": "19486f52-1c7b-43b8-ba48-0d1a6389fedf",
+      "version": "5",
+      "effective_time": "20260318",
+      "application_number": "NDA204820",
+      "brand": "Colchicine"
+     },
+     "clarithromycin": {
+      "set_id": "9d5848f0-e9f0-4112-a7ca-bcc8ea2e69c6",
+      "version": "14",
+      "effective_time": "20260624",
+      "application_number": "ANDA065489",
+      "brand": "Clarithromycin"
+     }
+    },
+    "best": {
+     "label_drug": "clarithromycin",
+     "other_drug": "colchicine",
+     "set_id": "9d5848f0-e9f0-4112-a7ca-bcc8ea2e69c6",
+     "version": "14",
+     "section": "Contraindications",
+     "alias": "colchicine",
+     "snippet": "Colchicine in renal or hepatic impairment",
+     "klass": "contraindicated"
+    },
+    "matches": [
+     {
+      "label_drug": "colchicine",
+      "other_drug": "clarithromycin",
+      "set_id": "19486f52-1c7b-43b8-ba48-0d1a6389fedf",
+      "version": "5",
+      "section": "Warnings and Precautions",
+      "alias": "clarithromycin",
+      "snippet": "Inhibition of both CYP3A4 and P-gp by dual inhibitors such as clarithromycin has been reported to produce life-threatening or fatal colchicine toxicity due to significant increases in systemic col\u2026",
+      "klass": "mentioned_without_guidance"
+     },
+     {
+      "label_drug": "colchicine",
+      "other_drug": "clarithromycin",
+      "set_id": "19486f52-1c7b-43b8-ba48-0d1a6389fedf",
+      "version": "5",
+      "section": "Drug Interactions",
+      "alias": "clarithromycin",
+      "snippet": "7.1 CYP3A4 The concomitant use of colchicine capsules and CYP3A4 inhibitors (e.g., clarithromycin, ketoconazole, grapefruit juice, erythromycin, verapamil, etc.) should be avoided due to the potential for serious and\u2026",
+      "klass": "avoid_or_not_recommended"
+     },
+     {
+      "label_drug": "clarithromycin",
+      "other_drug": "colchicine",
+      "set_id": "9d5848f0-e9f0-4112-a7ca-bcc8ea2e69c6",
+      "version": "14",
+      "section": "Contraindications",
+      "alias": "colchicine",
+      "snippet": "Colchicine in renal or hepatic impairment",
+      "klass": "contraindicated"
+     },
+     {
+      "label_drug": "clarithromycin",
+      "other_drug": "colchicine",
+      "set_id": "9d5848f0-e9f0-4112-a7ca-bcc8ea2e69c6",
+      "version": "14",
+      "section": "Warnings and Precautions",
+      "alias": "colchicine",
+      "snippet": "Concomitant administration of clarithromycin and colchicine is contraindicated in patients with renal or hepatic impairment",
+      "klass": "contraindicated"
+     },
+     {
+      "label_drug": "clarithromycin",
+      "other_drug": "colchicine",
+      "set_id": "9d5848f0-e9f0-4112-a7ca-bcc8ea2e69c6",
+      "version": "14",
+      "section": "Drug Interactions",
+      "alias": "colchicine",
+      "snippet": "Anti-Gout Agents: Colchicine (in patients with renal or hepatic impairment) Colchicine (in patients with normal renal and hepatic function) Contrain\u2026",
+      "klass": "contraindicated"
+     }
+    ]
+   }
+  },
+  {
+   "row": {
+    "drug_a": "tizanidine",
+    "drug_b": "ciprofloxacin",
+    "expected": "interaction"
+   },
+   "reference": "interaction",
+   "reason": "label: contraindicated",
+   "evidence": {
+    "pair": [
+     "tizanidine",
+     "ciprofloxacin"
+    ],
+    "klass": "contraindicated",
+    "labels_found": {
+     "tizanidine": {
+      "set_id": "60c27d35-7349-4fc6-86ad-70fffdbe3e08",
+      "version": "2",
+      "effective_time": "20260102",
+      "application_number": "NDA021447",
+      "brand": "Zanaflex"
+     },
+     "ciprofloxacin": {
+      "set_id": "1ac4540c-d0f7-70bc-e063-6394a90a0f7a",
+      "version": "2",
+      "effective_time": "20260505",
+      "application_number": "NDA019992",
+      "brand": "Ciprofloxacin Hydrochloride"
+     }
+    },
+    "best": {
+     "label_drug": "tizanidine",
+     "other_drug": "ciprofloxacin",
+     "set_id": "60c27d35-7349-4fc6-86ad-70fffdbe3e08",
+     "version": "2",
+     "section": "Drug Interactions",
+     "alias": "ciprofloxacin",
+     "snippet": "\u2026g CYP1A2 Inhibitors Concomitant use of Zanaflex with strong cytochrome P450 1A2 (CYP1A2) inhibitors (e.g., fluvoxamine, ciprofloxacin) is contraindicated",
+     "klass": "contraindicated"
+    },
+    "matches": [
+     {
+      "label_drug": "tizanidine",
+      "other_drug": "ciprofloxacin",
+      "set_id": "60c27d35-7349-4fc6-86ad-70fffdbe3e08",
+      "version": "2",
+      "section": "Drug Interactions",
+      "alias": "ciprofloxacin",
+      "snippet": "\u2026g CYP1A2 Inhibitors Concomitant use of Zanaflex with strong cytochrome P450 1A2 (CYP1A2) inhibitors (e.g., fluvoxamine, ciprofloxacin) is contraindicated",
+      "klass": "contraindicated"
+     }
+    ]
+   }
+  },
+  {
+   "row": {
+    "drug_a": "warfarin",
+    "drug_b": "fluconazole",
+    "expected": "interaction"
+   },
+   "reference": "interaction",
+   "reason": "label: monitor / adjust",
+   "evidence": {
+    "pair": [
+     "warfarin",
+     "fluconazole"
+    ],
+    "klass": "monitor_or_adjust",
+    "labels_found": {
+     "warfarin": {
+      "set_id": "5a5b5e3a-6556-a542-e063-6294a90a6d3f",
+      "version": "1",
+      "effective_time": "20260831",
+      "application_number": "ANDA202202",
+      "brand": "Warfarin Sodium"
+     },
+     "fluconazole": {
+      "set_id": "737e0fac-a2d2-4053-a0d7-edbfb6248f69",
+      "version": "43",
+      "effective_time": "20260402",
+      "application_number": "NDA020090",
+      "brand": "Fluconazole"
+     }
+    },
+    "best": {
+     "label_drug": "fluconazole",
+     "other_drug": "warfarin",
+     "set_id": "737e0fac-a2d2-4053-a0d7-edbfb6248f69",
+     "version": "43",
+     "section": "Precautions",
+     "alias": "warfarin",
+     "snippet": "Dose adjustment of warfarin may be necessary",
+     "klass": "monitor_or_adjust"
+    },
+    "matches": [
+     {
+      "label_drug": "warfarin",
+      "other_drug": "fluconazole",
+      "set_id": "5a5b5e3a-6556-a542-e063-6294a90a6d3f",
+      "version": "1",
+      "section": "Drug Interactions",
+      "alias": "fluconazole",
+      "snippet": "\u2026YP450 Interactions with Warfarin Enzyme Inhibitors Inducers CYP2C9 amiodarone, capecitabine, cotrimoxazole, etravirine, fluconazole, fluvastatin, fluvoxamine, metronidazole, miconazole, oxandrolone, sulfinpyrazone, tigecycline, voriconazole, zafirluka\u2026",
+      "klass": "mentioned_without_guidance"
+     },
+     {
+      "label_drug": "fluconazole",
+      "other_drug": "warfarin",
+      "set_id": "737e0fac-a2d2-4053-a0d7-edbfb6248f69",
+      "version": "43",
+      "section": "Precautions",
+      "alias": "warfarin",
+      "snippet": "Dose adjustment of warfarin may be necessary",
+      "klass": "monitor_or_adjust"
+     },
+     {
+      "label_drug": "fluconazole",
+      "other_drug": "warfarin",
+      "set_id": "737e0fac-a2d2-4053-a0d7-edbfb6248f69",
+      "version": "43",
+      "section": "Drug Interactions",
+      "alias": "warfarin",
+      "snippet": "Dose adjustment of warfarin may be necessary",
+      "klass": "monitor_or_adjust"
+     }
+    ]
+   }
+  },
+  {
+   "row": {
+    "drug_a": "simvastatin",
+    "drug_b": "itraconazole",
+    "expected": "interaction"
+   },
+   "reference": "interaction",
+   "reason": "label: contraindicated",
+   "evidence": {
+    "pair": [
+     "simvastatin",
+     "itraconazole"
+    ],
+    "klass": "contraindicated",
+    "labels_found": {
+     "simvastatin": {
+      "set_id": "8f55d5de-5a4f-4a39-8c84-c53976dd6af9",
+      "version": "11",
+      "effective_time": "20250328",
+      "application_number": "NDA019766",
+      "brand": "ZOCOR"
+     },
+     "itraconazole": {
+      "set_id": "a4d555fa-787c-40fb-bb7d-b0d4f7318fd0",
+      "version": "31",
+      "effective_time": "20260713",
+      "application_number": "NDA020083",
+      "brand": "SPORANOX"
+     }
+    },
+    "best": {
+     "label_drug": "simvastatin",
+     "other_drug": "itraconazole",
+     "set_id": "8f55d5de-5a4f-4a39-8c84-c53976dd6af9",
+     "version": "11",
+     "section": "Drug Interactions",
+     "alias": "itraconazole",
+     "snippet": "\u2026ble, suspend ZOCOR during the course of strong CYP3A4 inhibitor treatment. \u2026 Examples: Select azole anti-fungals (e.g., itraconazole, ketoconazole, posaconazole, and voriconazole), select macrolide antibiotics (e.g., erythromycin and clarithromycin), s\u2026",
+     "klass": "contraindicated"
+    },
+    "matches": [
+     {
+      "label_drug": "simvastatin",
+      "other_drug": "itraconazole",
+      "set_id": "8f55d5de-5a4f-4a39-8c84-c53976dd6af9",
+      "version": "11",
+      "section": "Drug Interactions",
+      "alias": "itraconazole",
+      "snippet": "\u2026ble, suspend ZOCOR during the course of strong CYP3A4 inhibitor treatment. \u2026 Examples: Select azole anti-fungals (e.g., itraconazole, ketoconazole, posaconazole, and voriconazole), select macrolide antibiotics (e.g., erythromycin and clarithromycin), s\u2026",
+      "klass": "contraindicated"
+     },
+     {
+      "label_drug": "itraconazole",
+      "other_drug": "simvastatin",
+      "set_id": "a4d555fa-787c-40fb-bb7d-b0d4f7318fd0",
+      "version": "31",
+      "section": "Boxed Warning",
+      "alias": "simvastatin",
+      "snippet": "\u2026, triazolam, felodipine, nisoldipine, ivabradine, ranolazine, eplerenone, cisapride, naloxegol, lomitapide, lovastatin, simvastatin, avanafil, ticagrelor, finerenone, voclosporin",
+      "klass": "mentioned_without_guidance"
+     },
+     {
+      "label_drug": "itraconazole",
+      "other_drug": "simvastatin",
+      "set_id": "a4d555fa-787c-40fb-bb7d-b0d4f7318fd0",
+      "version": "31",
+      "section": "Contraindications",
+      "alias": "simvastatin",
+      "snippet": "\u2026, triazolam, felodipine, nisoldipine, ivabradine, ranolazine, eplerenone, cisapride, naloxegol, lomitapide, lovastatin, simvastatin, avanafil, ticagrelor, finerenone, voclosporin",
+      "klass": "contraindicated"
+     },
+     {
+      "label_drug": "itraconazole",
+      "other_drug": "simvastatin",
+      "set_id": "a4d555fa-787c-40fb-bb7d-b0d4f7318fd0",
+      "version": "31",
+      "section": "Precautions",
+      "alias": "simvastatin",
+      "snippet": "Lipid-Lowering Drugs Lomitapide Lovastatin Simvastatin Contraindicated during and 2 weeks after SPORANOX \u00ae treatment",
+      "klass": "contraindicated"
+     },
+     {
+      "label_drug": "itraconazole",
+      "other_drug": "simvastatin",
+      "set_id": "a4d555fa-787c-40fb-bb7d-b0d4f7318fd0",
+      "version": "31",
+      "section": "Drug Interactions",
+      "alias": "simvastatin",
+      "snippet": "Lipid-Lowering Drugs Lomitapide Lovastatin Simvastatin Contraindicated during and 2 weeks after SPORANOX \u00ae treatment",
+      "klass": "contraindicated"
+     }
+    ]
+   }
+  },
+  {
+   "row": {
+    "drug_a": "spironolactone",
+    "drug_b": "lisinopril",
+    "expected": "interaction"
+   },
+   "reference": "unclear",
+   "reason": "named in a label, but without guidance the heuristic recognises",
+   "evidence": {
+    "pair": [
+     "spironolactone",
+     "lisinopril"
+    ],
+    "klass": "mentioned_without_guidance",
+    "labels_found": {
+     "spironolactone": {
+      "set_id": "5a203ae4-0ed1-0099-e063-6294a90abc85",
+      "version": "1",
+      "effective_time": "20260828",
+      "application_number": "NDA209478",
+      "brand": "SPIRONOLACTONE"
+     },
+     "lisinopril": {
+      "set_id": "9f6e4e57-a489-4b36-b093-b93865d3717c",
+      "version": "10",
+      "effective_time": "20251216",
+      "application_number": "NDA208401",
+      "brand": "Qbrelis"
+     }
+    },
+    "best": {
+     "label_drug": "lisinopril",
+     "other_drug": "spironolactone",
+     "set_id": "9f6e4e57-a489-4b36-b093-b93865d3717c",
+     "version": "10",
+     "section": "Drug Interactions",
+     "alias": "spironolactone",
+     "snippet": "Potassium-sparing diuretics (spironolactone, amiloride, triamterene, and others) can increase the risk of hyperkalemia",
+     "klass": "mentioned_without_guidance"
+    },
+    "matches": [
+     {
+      "label_drug": "lisinopril",
+      "other_drug": "spironolactone",
+      "set_id": "9f6e4e57-a489-4b36-b093-b93865d3717c",
+      "version": "10",
+      "section": "Drug Interactions",
+      "alias": "spironolactone",
+      "snippet": "Potassium-sparing diuretics (spironolactone, amiloride, triamterene, and others) can increase the risk of hyperkalemia",
+      "klass": "mentioned_without_guidance"
+     }
+    ]
+   }
+  },
+  {
+   "row": {
+    "drug_a": "tramadol",
+    "drug_b": "fluoxetine",
+    "expected": "interaction"
+   },
+   "reference": "interaction",
+   "reason": "label: monitor / adjust",
+   "evidence": {
+    "pair": [
+     "tramadol",
+     "fluoxetine"
+    ],
+    "klass": "monitor_or_adjust",
+    "labels_found": {
+     "tramadol": {
+      "set_id": "c0bc7218-3fd0-4646-96f4-25355fc84aa9",
+      "version": "16",
+      "effective_time": "20260123",
+      "application_number": "NDA022370",
+      "brand": "Tramadol Hydrochloride Extended-Release"
+     },
+     "fluoxetine": {
+      "set_id": "c88f33ed-6dfb-4c5e-bc01-d8e36dd97299",
+      "version": "59",
+      "effective_time": "20260108",
+      "application_number": "NDA018936",
+      "brand": "Prozac"
+     }
+    },
+    "best": {
+     "label_drug": "tramadol",
+     "other_drug": "fluoxetine",
+     "set_id": "c0bc7218-3fd0-4646-96f4-25355fc84aa9",
+     "version": "16",
+     "section": "Drug Interactions",
+     "alias": "fluoxetine",
+     "snippet": "\u2026patients at frequent intervals for adverse events including respiratory depression and sedation. \u2026 Examples: Quinidine, fluoxetine, paroxetine, and bupropion Inhibitors of CYP3A4 Clinical Impact: The concomitant use of Tramadol Hydrochloride Extended\u2026",
+     "klass": "monitor_or_adjust"
+    },
+    "matches": [
+     {
+      "label_drug": "tramadol",
+      "other_drug": "fluoxetine",
+      "set_id": "c0bc7218-3fd0-4646-96f4-25355fc84aa9",
+      "version": "16",
+      "section": "Drug Interactions",
+      "alias": "fluoxetine",
+      "snippet": "\u2026patients at frequent intervals for adverse events including respiratory depression and sedation. \u2026 Examples: Quinidine, fluoxetine, paroxetine, and bupropion Inhibitors of CYP3A4 Clinical Impact: The concomitant use of Tramadol Hydrochloride Extended\u2026",
+      "klass": "monitor_or_adjust"
+     },
+     {
+      "label_drug": "fluoxetine",
+      "other_drug": "tramadol",
+      "set_id": "c88f33ed-6dfb-4c5e-bc01-d8e36dd97299",
+      "version": "59",
+      "section": "Warnings and Precautions",
+      "alias": "tramadol",
+      "snippet": "\u2026sed with concomitant use of other serotonergic drugs (including triptans, tricyclic antidepressants, fentanyl, lithium, tramadol, tryptophan, meperidine, methadone, buspirone, amphetamines, and St",
+      "klass": "mentioned_without_guidance"
+     }
+    ]
+   }
+  },
+  {
+   "row": {
+    "drug_a": "phenelzine",
+    "drug_b": "fluoxetine",
+    "expected": "interaction"
+   },
+   "reference": "interaction",
+   "reason": "label: contraindicated",
+   "evidence": {
+    "pair": [
+     "phenelzine",
+     "fluoxetine"
+    ],
+    "klass": "contraindicated",
+    "labels_found": {
+     "phenelzine": {
+      "set_id": "fa041652-fdde-4794-a8d2-279dd309e075",
+      "version": "14",
+      "effective_time": "20260521",
+      "application_number": "NDA011909",
+      "brand": "phenelzine sulfate"
+     },
+     "fluoxetine": {
+      "set_id": "c88f33ed-6dfb-4c5e-bc01-d8e36dd97299",
+      "version": "59",
+      "effective_time": "20260108",
+      "application_number": "NDA018936",
+      "brand": "Prozac"
+     }
+    },
+    "best": {
+     "label_drug": "phenelzine",
+     "other_drug": "fluoxetine",
+     "set_id": "fa041652-fdde-4794-a8d2-279dd309e075",
+     "version": "14",
+     "section": "Contraindications",
+     "alias": "fluoxetine",
+     "snippet": "\u2026ons (including hyperthermia, rigidity, myoclonic movements and death) when serotoninergic drugs (e.g., dexfenfluramine, fluoxetine, fluvoxamine, paroxetine, sertraline, citalopram, venlafaxine) have been combined with an MAO inhibitor",
+     "klass": "contraindicated"
+    },
+    "matches": [
+     {
+      "label_drug": "phenelzine",
+      "other_drug": "fluoxetine",
+      "set_id": "fa041652-fdde-4794-a8d2-279dd309e075",
+      "version": "14",
+      "section": "Contraindications",
+      "alias": "fluoxetine",
+      "snippet": "\u2026ons (including hyperthermia, rigidity, myoclonic movements and death) when serotoninergic drugs (e.g., dexfenfluramine, fluoxetine, fluvoxamine, paroxetine, sertraline, citalopram, venlafaxine) have been combined with an MAO inhibitor",
+      "klass": "contraindicated"
+     },
+     {
+      "label_drug": "phenelzine",
+      "other_drug": "fluoxetine",
+      "set_id": "fa041652-fdde-4794-a8d2-279dd309e075",
+      "version": "14",
+      "section": "Precautions",
+      "alias": "fluoxetine",
+      "snippet": "\u2026iving nonselective monoamine oxidase (MAO) inhibitors in combination with serotoninergic agents (e.g., dexfenfluramine, fluoxetine, fluvoxamine, paroxetine, sertraline, citalopram, venlafaxine) there have been reports of serious, sometimes fatal, rea\u2026",
+      "klass": "mentioned_without_guidance"
+     },
+     {
+      "label_drug": "phenelzine",
+      "other_drug": "fluoxetine",
+      "set_id": "fa041652-fdde-4794-a8d2-279dd309e075",
+      "version": "14",
+      "section": "Drug Interactions",
+      "alias": "fluoxetine",
+      "snippet": "\u2026iving nonselective monoamine oxidase (MAO) inhibitors in combination with serotoninergic agents (e.g., dexfenfluramine, fluoxetine, fluvoxamine, paroxetine, sertraline, citalopram, venlafaxine) there have been reports of serious, sometimes fatal, rea\u2026",
+      "klass": "mentioned_without_guidance"
+     }
+    ]
+   }
+  },
+  {
+   "row": {
+    "drug_a": "rifampin",
+    "drug_b": "ethinyl estradiol",
+    "expected": "interaction"
+   },
+   "reference": "unclear",
+   "reason": "no single-ingredient label found for ethinyl estradiol",
+   "evidence": {
+    "pair": [
+     "rifampin",
+     "ethinyl estradiol"
+    ],
+    "klass": "not_mentioned",
+    "labels_found": {
+     "rifampin": {
+      "set_id": "036ab68e-5085-4edc-bd83-784b43d64eab",
+      "version": "52",
+      "effective_time": "20260527",
+      "application_number": "NDA050627",
+      "brand": "Rifadin IV"
+     },
+     "ethinyl estradiol": null
+    },
+    "best": null,
+    "matches": []
+   }
+  },
+  {
+   "row": {
+    "drug_a": "carbamazepine",
+    "drug_b": "clarithromycin",
+    "expected": "interaction"
+   },
+   "reference": "interaction",
+   "reason": "label: monitor / adjust",
+   "evidence": {
+    "pair": [
+     "carbamazepine",
+     "clarithromycin"
+    ],
+    "klass": "monitor_or_adjust",
+    "labels_found": {
+     "carbamazepine": {
+      "set_id": "8d409411-aa9f-4f3a-a52c-fbcb0c3ec053",
+      "version": "39",
+      "effective_time": "20260820",
+      "application_number": "NDA018927",
+      "brand": "Tegretol"
+     },
+     "clarithromycin": {
+      "set_id": "9d5848f0-e9f0-4112-a7ca-bcc8ea2e69c6",
+      "version": "14",
+      "effective_time": "20260624",
+      "application_number": "ANDA065489",
+      "brand": "Clarithromycin"
+     }
+    },
+    "best": {
+     "label_drug": "clarithromycin",
+     "other_drug": "carbamazepine",
+     "set_id": "9d5848f0-e9f0-4112-a7ca-bcc8ea2e69c6",
+     "version": "14",
+     "section": "Drug Interactions",
+     "alias": "carbamazepine",
+     "snippet": "\u2026th other drugs known to be CYP3A enzyme substrates, especially if the CYP3A substrate has a narrow safety margin (e.g., carbamazepine) and/or the substrate is extensively metabolized by this enzyme",
+     "klass": "monitor_or_adjust"
+    },
+    "matches": [
+     {
+      "label_drug": "carbamazepine",
+      "other_drug": "clarithromycin",
+      "set_id": "8d409411-aa9f-4f3a-a52c-fbcb0c3ec053",
+      "version": "39",
+      "section": "Drug Interactions",
+      "alias": "clarithromycin",
+      "snippet": "\u2026carbamazepine levels include aprepitant, cimetidine, ciprofloxacin, danazol, diltiazem, macrolides (e.g., erythromycin, clarithromycin), fluoxetine, fluvoxamine, trazodone, omeprazole, oxybutynin, isoniazid, niacinamide (nicotinamide), azoles (e.g., keta\u2026",
+      "klass": "mentioned_without_guidance"
+     },
+     {
+      "label_drug": "clarithromycin",
+      "other_drug": "carbamazepine",
+      "set_id": "9d5848f0-e9f0-4112-a7ca-bcc8ea2e69c6",
+      "version": "14",
+      "section": "Drug Interactions",
+      "alias": "carbamazepine",
+      "snippet": "\u2026th other drugs known to be CYP3A enzyme substrates, especially if the CYP3A substrate has a narrow safety margin (e.g., carbamazepine) and/or the substrate is extensively metabolized by this enzyme",
+      "klass": "monitor_or_adjust"
+     }
+    ]
+   }
+  },
+  {
+   "row": {
+    "drug_a": "tacrolimus",
+    "drug_b": "clarithromycin",
+    "expected": "interaction"
+   },
+   "reference": "interaction",
+   "reason": "label: monitor / adjust",
+   "evidence": {
+    "pair": [
+     "tacrolimus",
+     "clarithromycin"
+    ],
+    "klass": "monitor_or_adjust",
+    "labels_found": {
+     "tacrolimus": {
+      "set_id": "de2315b0-6344-43ac-9aea-3e3b68d828e7",
+      "version": "16",
+      "effective_time": "20250226",
+      "application_number": "NDA206406",
+      "brand": "Envarsus XR"
+     },
+     "clarithromycin": {
+      "set_id": "9d5848f0-e9f0-4112-a7ca-bcc8ea2e69c6",
+      "version": "14",
+      "effective_time": "20260624",
+      "application_number": "ANDA065489",
+      "brand": "Clarithromycin"
+     }
+    },
+    "best": {
+     "label_drug": "tacrolimus",
+     "other_drug": "clarithromycin",
+     "set_id": "de2315b0-6344-43ac-9aea-3e3b68d828e7",
+     "version": "16",
+     "section": "Warnings and Precautions",
+     "alias": "clarithromycin",
+     "snippet": "\u2026bitors (e.g., including but not limited to telaprevir, boceprevir, ritonavir, ketoconazole, itraconazole, voriconazole, clarithromycin) or strong CYP3A inducers (e.g., including but not limited to rifampin, rifabutin)",
+     "klass": "monitor_or_adjust"
+    },
+    "matches": [
+     {
+      "label_drug": "tacrolimus",
+      "other_drug": "clarithromycin",
+      "set_id": "de2315b0-6344-43ac-9aea-3e3b68d828e7",
+      "version": "16",
+      "section": "Warnings and Precautions",
+      "alias": "clarithromycin",
+      "snippet": "\u2026bitors (e.g., including but not limited to telaprevir, boceprevir, ritonavir, ketoconazole, itraconazole, voriconazole, clarithromycin) or strong CYP3A inducers (e.g., including but not limited to rifampin, rifabutin)",
+      "klass": "monitor_or_adjust"
+     },
+     {
+      "label_drug": "tacrolimus",
+      "other_drug": "clarithromycin",
+      "set_id": "de2315b0-6344-43ac-9aea-3e3b68d828e7",
+      "version": "16",
+      "section": "Drug Interactions",
+      "alias": "clarithromycin",
+      "snippet": "\u2026taining products), azole antifungals (e.g., voriconazole, posaconazole, itraconazole, ketoconazole), antibiotics (e.g., clarithromycin, troleandomycin, chloramphenicol), nefazodone, Schisandra sphenanthera extracts, cobicistat May increase tacrolimus who\u2026",
+      "klass": "mentioned_without_guidance"
+     },
+     {
+      "label_drug": "clarithromycin",
+      "other_drug": "tacrolimus",
+      "set_id": "9d5848f0-e9f0-4112-a7ca-bcc8ea2e69c6",
+      "version": "14",
+      "section": "Drug Interactions",
+      "alias": "tacrolimus",
+      "snippet": "Immunosuppressants: Cyclosporine Tacrolimus Use With Caution Cyclosporine : There have been spontaneous or published reports of CYP3A based interactions of clarith\u2026",
+      "klass": "monitor_or_adjust"
+     }
+    ]
+   }
+  },
+  {
+   "row": {
+    "drug_a": "mercaptopurine",
+    "drug_b": "allopurinol",
+    "expected": "interaction"
+   },
+   "reference": "interaction",
+   "reason": "label: monitor / adjust",
+   "evidence": {
+    "pair": [
+     "mercaptopurine",
+     "allopurinol"
+    ],
+    "klass": "monitor_or_adjust",
+    "labels_found": {
+     "mercaptopurine": {
+      "set_id": "9c6fc66b-522f-499d-961a-cde6ca0ec2e5",
+      "version": "6",
+      "effective_time": "20260720",
+      "application_number": "NDA205919",
+      "brand": "MERCAPTOPURINE"
+     },
+     "allopurinol": {
+      "set_id": "30ad5ba2-1cef-4933-b104-0597f6a2aaa2",
+      "version": "5",
+      "effective_time": "20260521",
+      "application_number": "NDA016084",
+      "brand": "Allopurinol"
+     }
+    },
+    "best": {
+     "label_drug": "mercaptopurine",
+     "other_drug": "allopurinol",
+     "set_id": "9c6fc66b-522f-499d-961a-cde6ca0ec2e5",
+     "version": "6",
+     "section": "Drug Interactions",
+     "alias": "allopurinol",
+     "snippet": "7 DRUG INTERACTIONS Allopurinol : Reduce the dose of MERCAPTOPURINE when co-administered with allopurinol",
+     "klass": "monitor_or_adjust"
+    },
+    "matches": [
+     {
+      "label_drug": "mercaptopurine",
+      "other_drug": "allopurinol",
+      "set_id": "9c6fc66b-522f-499d-961a-cde6ca0ec2e5",
+      "version": "6",
+      "section": "Drug Interactions",
+      "alias": "allopurinol",
+      "snippet": "7 DRUG INTERACTIONS Allopurinol : Reduce the dose of MERCAPTOPURINE when co-administered with allopurinol",
+      "klass": "monitor_or_adjust"
+     },
+     {
+      "label_drug": "allopurinol",
+      "other_drug": "mercaptopurine",
+      "set_id": "30ad5ba2-1cef-4933-b104-0597f6a2aaa2",
+      "version": "5",
+      "section": "Warnings and Precautions",
+      "alias": "mercaptopurine",
+      "snippet": "Reduce the dosage of mercaptopurine or azathioprine as recommended in their respective prescribing information when used concomitantly with allopurinol tab\u2026",
+      "klass": "monitor_or_adjust"
+     },
+     {
+      "label_drug": "allopurinol",
+      "other_drug": "mercaptopurine",
+      "set_id": "30ad5ba2-1cef-4933-b104-0597f6a2aaa2",
+      "version": "5",
+      "section": "Drug Interactions",
+      "alias": "mercaptopurine",
+      "snippet": "Subsequent adjustment of doses of mercaptopurine or azathioprine should be made on the basis of therapeutic response and the appearance of toxic effects",
+      "klass": "monitor_or_adjust"
+     }
+    ]
+   }
+  },
+  {
+   "row": {
+    "drug_a": "potassium chloride",
+    "drug_b": "spironolactone",
+    "expected": "interaction"
+   },
+   "reference": "unclear",
+   "reason": "named in a label, but without guidance the heuristic recognises",
+   "evidence": {
+    "pair": [
+     "potassium chloride",
+     "spironolactone"
+    ],
+    "klass": "mentioned_without_guidance",
+    "labels_found": {
+     "potassium chloride": {
+      "set_id": "2d938cbf-27aa-4f9c-a582-5564d3b72465",
+      "version": "1",
+      "effective_time": "20260122",
+      "application_number": "NDA206814",
+      "brand": "POKONZA potassium chloride"
+     },
+     "spironolactone": {
+      "set_id": "5a203ae4-0ed1-0099-e063-6294a90abc85",
+      "version": "1",
+      "effective_time": "20260828",
+      "application_number": "NDA209478",
+      "brand": "SPIRONOLACTONE"
+     }
+    },
+    "best": {
+     "label_drug": "potassium chloride",
+     "other_drug": "spironolactone",
+     "set_id": "2d938cbf-27aa-4f9c-a582-5564d3b72465",
+     "version": "1",
+     "section": "Drug Interactions",
+     "alias": "spironolactone",
+     "snippet": "\u2026dosterone system (RAAS) including angiotensin converting enzyme (ACE) inhibitors, angiotensin receptor blockers (ARBs), spironolactone, eplerenone, or aliskiren produce potassium retention by inhibiting aldosterone production",
+     "klass": "mentioned_without_guidance"
+    },
+    "matches": [
+     {
+      "label_drug": "potassium chloride",
+      "other_drug": "spironolactone",
+      "set_id": "2d938cbf-27aa-4f9c-a582-5564d3b72465",
+      "version": "1",
+      "section": "Drug Interactions",
+      "alias": "spironolactone",
+      "snippet": "\u2026dosterone system (RAAS) including angiotensin converting enzyme (ACE) inhibitors, angiotensin receptor blockers (ARBs), spironolactone, eplerenone, or aliskiren produce potassium retention by inhibiting aldosterone production",
+      "klass": "mentioned_without_guidance"
+     }
+    ]
+   }
+  },
+  {
+   "row": {
+    "drug_a": "warfarin",
+    "drug_b": "aspirin",
+    "expected": "interaction"
+   },
+   "reference": "unclear",
+   "reason": "named in a label, but without guidance the heuristic recognises",
+   "evidence": {
+    "pair": [
+     "warfarin",
+     "aspirin"
+    ],
+    "klass": "mentioned_without_guidance",
+    "labels_found": {
+     "warfarin": {
+      "set_id": "5a5b5e3a-6556-a542-e063-6294a90a6d3f",
+      "version": "1",
+      "effective_time": "20260831",
+      "application_number": "ANDA202202",
+      "brand": "Warfarin Sodium"
+     },
+     "aspirin": {
+      "set_id": "7ce4807e-7bd5-41f1-a9c7-1f3af6acdc09",
+      "version": "6",
+      "effective_time": "20260909",
+      "application_number": "M013",
+      "brand": "Low Dose Aspirin"
+     }
+    },
+    "best": {
+     "label_drug": "warfarin",
+     "other_drug": "aspirin",
+     "set_id": "5a5b5e3a-6556-a542-e063-6294a90a6d3f",
+     "version": "1",
+     "section": "Drug Interactions",
+     "alias": "aspirin",
+     "snippet": "\u2026ss Specific Drugs Anticoagulants argatroban, dabigatran, bivalirudin, desirudin, heparin, lepirudin Antiplatelet Agents aspirin, cilostazol, clopidogrel, dipyridamole, prasugrel, ticlopidine Nonsteroidal Anti-Inflammatory Agents celecoxib, diclofe\u2026",
+     "klass": "mentioned_without_guidance"
+    },
+    "matches": [
+     {
+      "label_drug": "warfarin",
+      "other_drug": "aspirin",
+      "set_id": "5a5b5e3a-6556-a542-e063-6294a90a6d3f",
+      "version": "1",
+      "section": "Drug Interactions",
+      "alias": "aspirin",
+      "snippet": "\u2026ss Specific Drugs Anticoagulants argatroban, dabigatran, bivalirudin, desirudin, heparin, lepirudin Antiplatelet Agents aspirin, cilostazol, clopidogrel, dipyridamole, prasugrel, ticlopidine Nonsteroidal Anti-Inflammatory Agents celecoxib, diclofe\u2026",
+      "klass": "mentioned_without_guidance"
+     }
+    ]
+   }
+  },
+  {
+   "row": {
+    "drug_a": "pimozide",
+    "drug_b": "clarithromycin",
+    "expected": "interaction"
+   },
+   "reference": "interaction",
+   "reason": "label: contraindicated",
+   "evidence": {
+    "pair": [
+     "pimozide",
+     "clarithromycin"
+    ],
+    "klass": "contraindicated",
+    "labels_found": {
+     "pimozide": {
+      "set_id": "70b079e2-a1f7-4a93-8685-d60a4d7c1280",
+      "version": "5",
+      "effective_time": "20260812",
+      "application_number": "ANDA204521",
+      "brand": "Pimozide"
+     },
+     "clarithromycin": {
+      "set_id": "9d5848f0-e9f0-4112-a7ca-bcc8ea2e69c6",
+      "version": "14",
+      "effective_time": "20260624",
+      "application_number": "ANDA065489",
+      "brand": "Clarithromycin"
+     }
+    },
+    "best": {
+     "label_drug": "pimozide",
+     "other_drug": "clarithromycin",
+     "set_id": "70b079e2-a1f7-4a93-8685-d60a4d7c1280",
+     "version": "5",
+     "section": "Contraindications",
+     "alias": "clarithromycin",
+     "snippet": "Specifically, two sudden deaths have been reported when clarithromycin was added to ongoing pimozide therapy",
+     "klass": "contraindicated"
+    },
+    "matches": [
+     {
+      "label_drug": "pimozide",
+      "other_drug": "clarithromycin",
+      "set_id": "70b079e2-a1f7-4a93-8685-d60a4d7c1280",
+      "version": "5",
+      "section": "Contraindications",
+      "alias": "clarithromycin",
+      "snippet": "Specifically, two sudden deaths have been reported when clarithromycin was added to ongoing pimozide therapy",
+      "klass": "contraindicated"
+     },
+     {
+      "label_drug": "clarithromycin",
+      "other_drug": "pimozide",
+      "set_id": "9d5848f0-e9f0-4112-a7ca-bcc8ea2e69c6",
+      "version": "14",
+      "section": "Contraindications",
+      "alias": "pimozide",
+      "snippet": "Cisapride and pimozide",
+      "klass": "contraindicated"
+     },
+     {
+      "label_drug": "clarithromycin",
+      "other_drug": "pimozide",
+      "set_id": "9d5848f0-e9f0-4112-a7ca-bcc8ea2e69c6",
+      "version": "14",
+      "section": "Drug Interactions",
+      "alias": "pimozide",
+      "snippet": "Antipsychotics: Pimozide Quetiapine Lurasidone Contraindicated Pimozide:",
+      "klass": "contraindicated"
+     }
+    ]
+   }
+  },
+  {
+   "row": {
+    "drug_a": "simvastatin",
+    "drug_b": "gemfibrozil",
+    "expected": "interaction"
+   },
+   "reference": "interaction",
+   "reason": "label: contraindicated",
+   "evidence": {
+    "pair": [
+     "simvastatin",
+     "gemfibrozil"
+    ],
+    "klass": "contraindicated",
+    "labels_found": {
+     "simvastatin": {
+      "set_id": "8f55d5de-5a4f-4a39-8c84-c53976dd6af9",
+      "version": "11",
+      "effective_time": "20250328",
+      "application_number": "NDA019766",
+      "brand": "ZOCOR"
+     },
+     "gemfibrozil": {
+      "set_id": "c48855b7-215e-453b-b3b1-a0f9dee7221f",
+      "version": "23",
+      "effective_time": "20260521",
+      "application_number": "NDA018422",
+      "brand": "Lopid"
+     }
+    },
+    "best": {
+     "label_drug": "simvastatin",
+     "other_drug": "gemfibrozil",
+     "set_id": "8f55d5de-5a4f-4a39-8c84-c53976dd6af9",
+     "version": "11",
+     "section": "Contraindications",
+     "alias": "gemfibrozil",
+     "snippet": "Concomitant use of cyclosporine, danazol or gemfibrozil",
+     "klass": "contraindicated"
+    },
+    "matches": [
+     {
+      "label_drug": "simvastatin",
+      "other_drug": "gemfibrozil",
+      "set_id": "8f55d5de-5a4f-4a39-8c84-c53976dd6af9",
+      "version": "11",
+      "section": "Contraindications",
+      "alias": "gemfibrozil",
+      "snippet": "Concomitant use of cyclosporine, danazol or gemfibrozil",
+      "klass": "contraindicated"
+     },
+     {
+      "label_drug": "simvastatin",
+      "other_drug": "gemfibrozil",
+      "set_id": "8f55d5de-5a4f-4a39-8c84-c53976dd6af9",
+      "version": "11",
+      "section": "Warnings and Precautions",
+      "alias": "gemfibrozil",
+      "snippet": "The concomitant use of ZOCOR with gemfibrozil, cyclosporine, or danazol is also contraindicated",
+      "klass": "contraindicated"
+     },
+     {
+      "label_drug": "simvastatin",
+      "other_drug": "gemfibrozil",
+      "set_id": "8f55d5de-5a4f-4a39-8c84-c53976dd6af9",
+      "version": "11",
+      "section": "Drug Interactions",
+      "alias": "gemfibrozil",
+      "snippet": "\u2026bitor is unavoidable, suspend ZOCOR during the course of strong CYP3A4 inhibitor treatment. \u2026 Cyclosporine, Danazol, or Gemfibrozil Clinical Impact: The risk of myopathy and rhabdomyolysis is increased with concomitant use of cyclosporine, danazol, or\u2026",
+      "klass": "contraindicated"
+     },
+     {
+      "label_drug": "gemfibrozil",
+      "other_drug": "simvastatin",
+      "set_id": "c48855b7-215e-453b-b3b1-a0f9dee7221f",
+      "version": "23",
+      "section": "Contraindications",
+      "alias": "simvastatin",
+      "snippet": "Combination therapy of gemfibrozil with simvastatin (see WARNINGS and PRECAUTIONS )",
+      "klass": "contraindicated"
+     },
+     {
+      "label_drug": "gemfibrozil",
+      "other_drug": "simvastatin",
+      "set_id": "c48855b7-215e-453b-b3b1-a0f9dee7221f",
+      "version": "23",
+      "section": "Warnings",
+      "alias": "simvastatin",
+      "snippet": "The concomitant administration of LOPID with simvastatin is contraindicated (see CONTRAINDICATIONS and PRECAUTIONS )",
+      "klass": "contraindicated"
+     },
+     {
+      "label_drug": "gemfibrozil",
+      "other_drug": "simvastatin",
+      "set_id": "c48855b7-215e-453b-b3b1-a0f9dee7221f",
+      "version": "23",
+      "section": "Precautions",
+      "alias": "simvastatin",
+      "snippet": "Drug Interactions (A) HMG-CoA Reductase Inhibitors The concomitant administration of LOPID with simvastatin is contraindicated (see CONTRAINDICATIONS and WARNINGS )",
+      "klass": "contraindicated"
+     },
+     {
+      "label_drug": "gemfibrozil",
+      "other_drug": "simvastatin",
+      "set_id": "c48855b7-215e-453b-b3b1-a0f9dee7221f",
+      "version": "23",
+      "section": "Drug Interactions",
+      "alias": "simvastatin",
+      "snippet": "Drug Interactions (A) HMG-CoA Reductase Inhibitors The concomitant administration of LOPID with simvastatin is contraindicated (see CONTRAINDICATIONS and WARNINGS )",
+      "klass": "contraindicated"
+     }
+    ]
+   }
+  },
+  {
+   "row": {
+    "drug_a": "ramelteon",
+    "drug_b": "fluvoxamine",
+    "expected": "interaction"
+   },
+   "reference": "interaction",
+   "reason": "label: contraindicated",
+   "evidence": {
+    "pair": [
+     "ramelteon",
+     "fluvoxamine"
+    ],
+    "klass": "contraindicated",
+    "labels_found": {
+     "ramelteon": {
+      "set_id": "9de82310-70e8-47b9-b1fc-6c6848b99455",
+      "version": "20",
+      "effective_time": "20260415",
+      "application_number": "NDA021782",
+      "brand": "Rozerem"
+     },
+     "fluvoxamine": {
+      "set_id": "5198b1c8-8dd6-4b8f-bd85-294ac468af53",
+      "version": "16",
+      "effective_time": "20260423",
+      "application_number": "NDA021519",
+      "brand": "fluvoxamine maleate"
+     }
+    },
+    "best": {
+     "label_drug": "ramelteon",
+     "other_drug": "fluvoxamine",
+     "set_id": "9de82310-70e8-47b9-b1fc-6c6848b99455",
+     "version": "20",
+     "section": "Contraindications",
+     "alias": "fluvoxamine",
+     "snippet": "Patients should not take ROZEREM in conjunction with fluvoxamine",
+     "klass": "contraindicated"
+    },
+    "matches": [
+     {
+      "label_drug": "ramelteon",
+      "other_drug": "fluvoxamine",
+      "set_id": "9de82310-70e8-47b9-b1fc-6c6848b99455",
+      "version": "20",
+      "section": "Contraindications",
+      "alias": "fluvoxamine",
+      "snippet": "Patients should not take ROZEREM in conjunction with fluvoxamine",
+      "klass": "contraindicated"
+     },
+     {
+      "label_drug": "ramelteon",
+      "other_drug": "fluvoxamine",
+      "set_id": "9de82310-70e8-47b9-b1fc-6c6848b99455",
+      "version": "20",
+      "section": "Drug Interactions",
+      "alias": "fluvoxamine",
+      "snippet": "ROZEREM should not be used in combination with fluvoxamine",
+      "klass": "avoid_or_not_recommended"
+     },
+     {
+      "label_drug": "fluvoxamine",
+      "other_drug": "ramelteon",
+      "set_id": "5198b1c8-8dd6-4b8f-bd85-294ac468af53",
+      "version": "16",
+      "section": "Warnings and Precautions",
+      "alias": "ramelteon",
+      "snippet": "Ramelteon: Should not be used in combination with fluvoxamine",
+      "klass": "avoid_or_not_recommended"
+     },
+     {
+      "label_drug": "fluvoxamine",
+      "other_drug": "ramelteon",
+      "set_id": "5198b1c8-8dd6-4b8f-bd85-294ac468af53",
+      "version": "16",
+      "section": "Drug Interactions",
+      "alias": "ramelteon",
+      "snippet": "Ramelteon: See Warnings and Precautions",
+      "klass": "mentioned_without_guidance"
+     }
+    ]
+   }
+  },
+  {
+   "row": {
+    "drug_a": "clozapine",
+    "drug_b": "fluvoxamine",
+    "expected": "interaction"
+   },
+   "reference": "interaction",
+   "reason": "label: monitor / adjust",
+   "evidence": {
+    "pair": [
+     "clozapine",
+     "fluvoxamine"
+    ],
+    "klass": "monitor_or_adjust",
+    "labels_found": {
+     "clozapine": {
+      "set_id": "2592c9a8-fd74-4e0d-a895-b07b014cf355",
+      "version": "7",
+      "effective_time": "20260906",
+      "application_number": "NDA203479",
+      "brand": "VERSACLOZ"
+     },
+     "fluvoxamine": {
+      "set_id": "5198b1c8-8dd6-4b8f-bd85-294ac468af53",
+      "version": "16",
+      "effective_time": "20260423",
+      "application_number": "NDA021519",
+      "brand": "fluvoxamine maleate"
+     }
+    },
+    "best": {
+     "label_drug": "fluvoxamine",
+     "other_drug": "clozapine",
+     "set_id": "5198b1c8-8dd6-4b8f-bd85-294ac468af53",
+     "version": "16",
+     "section": "Warnings and Precautions",
+     "alias": "clozapine",
+     "snippet": "Patients should be closely monitored when fluvoxamine maleate and clozapine are used concurrently",
+     "klass": "monitor_or_adjust"
+    },
+    "matches": [
+     {
+      "label_drug": "clozapine",
+      "other_drug": "fluvoxamine",
+      "set_id": "2592c9a8-fd74-4e0d-a895-b07b014cf355",
+      "version": "7",
+      "section": "Drug Interactions",
+      "alias": "fluvoxamine",
+      "snippet": "\u2026Strong CYP1A2 Inhibitors : Reduce VERSACLOZ dose to one third when coadministered with strong CYP1A2 inhibitors (e.g., fluvoxamine, ciprofloxacin, enoxacin) ( 2.8 , 7.1 )",
+      "klass": "mentioned_without_guidance"
+     },
+     {
+      "label_drug": "fluvoxamine",
+      "other_drug": "clozapine",
+      "set_id": "5198b1c8-8dd6-4b8f-bd85-294ac468af53",
+      "version": "16",
+      "section": "Warnings and Precautions",
+      "alias": "clozapine",
+      "snippet": "Patients should be closely monitored when fluvoxamine maleate and clozapine are used concurrently",
+      "klass": "monitor_or_adjust"
+     },
+     {
+      "label_drug": "fluvoxamine",
+      "other_drug": "clozapine",
+      "set_id": "5198b1c8-8dd6-4b8f-bd85-294ac468af53",
+      "version": "16",
+      "section": "Drug Interactions",
+      "alias": "clozapine",
+      "snippet": "Clozapine: See Warnings and Precautions",
+      "klass": "mentioned_without_guidance"
+     }
+    ]
+   }
+  },
+  {
+   "row": {
+    "drug_a": "levothyroxine",
+    "drug_b": "calcium carbonate",
+    "expected": "interaction"
+   },
+   "reference": "unclear",
+   "reason": "named in a label, but without guidance the heuristic recognises",
+   "evidence": {
+    "pair": [
+     "levothyroxine",
+     "calcium carbonate"
+    ],
+    "klass": "mentioned_without_guidance",
+    "labels_found": {
+     "levothyroxine": {
+      "set_id": "489ffba8-983e-478f-8f62-fe08bf3d0e0b",
+      "version": "102",
+      "effective_time": "20260623",
+      "application_number": "NDA021342",
+      "brand": "Levothyroxine Sodium"
+     },
+     "calcium carbonate": {
+      "set_id": "7471ec99-6c0b-40d8-a9cf-85240a0d471a",
+      "version": "10",
+      "effective_time": "20260909",
+      "application_number": "M001",
+      "brand": "Childrens Stomach Relief"
+     }
+    },
+    "best": {
+     "label_drug": "levothyroxine",
+     "other_drug": "calcium carbonate",
+     "set_id": "489ffba8-983e-478f-8f62-fe08bf3d0e0b",
+     "version": "102",
+     "section": "Drug Interactions",
+     "alias": "calcium carbonate",
+     "snippet": "Drug or Drug Class Effect Calcium Carbonate Ferrous Sulfate Calcium carbonate may form an insoluble chelate with levothyroxine, and ferrous sulfate likely forms a\u2026",
+     "klass": "mentioned_without_guidance"
+    },
+    "matches": [
+     {
+      "label_drug": "levothyroxine",
+      "other_drug": "calcium carbonate",
+      "set_id": "489ffba8-983e-478f-8f62-fe08bf3d0e0b",
+      "version": "102",
+      "section": "Drug Interactions",
+      "alias": "calcium carbonate",
+      "snippet": "Drug or Drug Class Effect Calcium Carbonate Ferrous Sulfate Calcium carbonate may form an insoluble chelate with levothyroxine, and ferrous sulfate likely forms a\u2026",
+      "klass": "mentioned_without_guidance"
+     }
+    ]
+   }
+  },
+  {
+   "row": {
+    "drug_a": "alprazolam",
+    "drug_b": "ketoconazole",
+    "expected": "interaction"
+   },
+   "reference": "interaction",
+   "reason": "label: contraindicated",
+   "evidence": {
+    "pair": [
+     "alprazolam",
+     "ketoconazole"
+    ],
+    "klass": "contraindicated",
+    "labels_found": {
+     "alprazolam": {
+      "set_id": "1338d1c9-7c75-42ed-95f3-9eb1b6fc51d3",
+      "version": "19",
+      "effective_time": "20250211",
+      "application_number": "NDA021434",
+      "brand": "Alprazolam XR"
+     },
+     "ketoconazole": {
+      "set_id": "f5c8c5b4-49bd-4dc7-8c29-8f1317c6ef88",
+      "version": "2",
+      "effective_time": "20250821",
+      "application_number": "NDA020310",
+      "brand": "Nizoral"
+     }
+    },
+    "best": {
+     "label_drug": "alprazolam",
+     "other_drug": "ketoconazole",
+     "set_id": "1338d1c9-7c75-42ed-95f3-9eb1b6fc51d3",
+     "version": "19",
+     "section": "Contraindications",
+     "alias": "ketoconazole",
+     "snippet": "taking strong cytochrome P450 3A (CYP3A) inhibitors (e.g., ketoconazole, itraconazole), except ritonavir",
+     "klass": "contraindicated"
+    },
+    "matches": [
+     {
+      "label_drug": "alprazolam",
+      "other_drug": "ketoconazole",
+      "set_id": "1338d1c9-7c75-42ed-95f3-9eb1b6fc51d3",
+      "version": "19",
+      "section": "Contraindications",
+      "alias": "ketoconazole",
+      "snippet": "taking strong cytochrome P450 3A (CYP3A) inhibitors (e.g., ketoconazole, itraconazole), except ritonavir",
+      "klass": "contraindicated"
+     },
+     {
+      "label_drug": "alprazolam",
+      "other_drug": "ketoconazole",
+      "set_id": "1338d1c9-7c75-42ed-95f3-9eb1b6fc51d3",
+      "version": "19",
+      "section": "Warnings and Precautions",
+      "alias": "ketoconazole",
+      "snippet": "Ketoconazole and itraconazole have been shown in vivo to increase plasma alprazolam concentrations 3.98 fold and 2.70 fold, respecti\u2026",
+      "klass": "mentioned_without_guidance"
+     },
+     {
+      "label_drug": "alprazolam",
+      "other_drug": "ketoconazole",
+      "set_id": "1338d1c9-7c75-42ed-95f3-9eb1b6fc51d3",
+      "version": "19",
+      "section": "Drug Interactions",
+      "alias": "ketoconazole",
+      "snippet": "Examples Ketoconazole, itraconazole, clarithromycin Moderate or Weak Inhibitors of CYP3A Clinical implication Concomitant use of alprazolam X\u2026",
+      "klass": "mentioned_without_guidance"
+     }
+    ]
+   }
+  },
+  {
+   "row": {
+    "drug_a": "oxycodone",
+    "drug_b": "alprazolam",
+    "expected": "interaction"
+   },
+   "reference": "unclear",
+   "reason": "named in a label, but without guidance the heuristic recognises",
+   "evidence": {
+    "pair": [
+     "oxycodone",
+     "alprazolam"
+    ],
+    "klass": "mentioned_without_guidance",
+    "labels_found": {
+     "oxycodone": {
+      "set_id": "bfdfe235-d717-4855-a3c8-a13d26dadede",
+      "version": "44",
+      "effective_time": "20260624",
+      "application_number": "NDA022272",
+      "brand": "OxyContin"
+     },
+     "alprazolam": {
+      "set_id": "1338d1c9-7c75-42ed-95f3-9eb1b6fc51d3",
+      "version": "19",
+      "effective_time": "20250211",
+      "application_number": "NDA021434",
+      "brand": "Alprazolam XR"
+     }
+    },
+    "best": {
+     "label_drug": "alprazolam",
+     "other_drug": "oxycodone",
+     "set_id": "1338d1c9-7c75-42ed-95f3-9eb1b6fc51d3",
+     "version": "19",
+     "section": "Drug Interactions",
+     "alias": "oxycodone",
+     "snippet": "Examples Morphine, buprenorphine, hydromorphone, oxymorphone, oxycodone, fentanyl, methadone, alfentanil, butorphanol, codeine, dihydrocodeine, meperidine, pentazocine, remifentanil, sufentan\u2026",
+     "klass": "mentioned_without_guidance"
+    },
+    "matches": [
+     {
+      "label_drug": "alprazolam",
+      "other_drug": "oxycodone",
+      "set_id": "1338d1c9-7c75-42ed-95f3-9eb1b6fc51d3",
+      "version": "19",
+      "section": "Drug Interactions",
+      "alias": "oxycodone",
+      "snippet": "Examples Morphine, buprenorphine, hydromorphone, oxymorphone, oxycodone, fentanyl, methadone, alfentanil, butorphanol, codeine, dihydrocodeine, meperidine, pentazocine, remifentanil, sufentan\u2026",
+      "klass": "mentioned_without_guidance"
+     }
+    ]
+   }
+  },
+  {
+   "row": {
+    "drug_a": "apixaban",
+    "drug_b": "ketoconazole",
+    "expected": "interaction"
+   },
+   "reference": "interaction",
+   "reason": "label: monitor / adjust",
+   "evidence": {
+    "pair": [
+     "apixaban",
+     "ketoconazole"
+    ],
+    "klass": "monitor_or_adjust",
+    "labels_found": {
+     "apixaban": {
+      "set_id": "a454cd24-0c6d-46e8-b1e4-197388606175",
+      "version": "38",
+      "effective_time": "20260424",
+      "application_number": "NDA202155",
+      "brand": "ELIQUIS"
+     },
+     "ketoconazole": {
+      "set_id": "f5c8c5b4-49bd-4dc7-8c29-8f1317c6ef88",
+      "version": "2",
+      "effective_time": "20250821",
+      "application_number": "NDA020310",
+      "brand": "Nizoral"
+     }
+    },
+    "best": {
+     "label_drug": "apixaban",
+     "other_drug": "ketoconazole",
+     "set_id": "a454cd24-0c6d-46e8-b1e4-197388606175",
+     "version": "38",
+     "section": "Drug Interactions",
+     "alias": "ketoconazole",
+     "snippet": "\u2026IS should be decreased by 50% when coadministered with drugs that are combined P-gp and strong CYP3A4 inhibitors (e.g., ketoconazole, itraconazole, ritonavir)",
+     "klass": "monitor_or_adjust"
+    },
+    "matches": [
+     {
+      "label_drug": "apixaban",
+      "other_drug": "ketoconazole",
+      "set_id": "a454cd24-0c6d-46e8-b1e4-197388606175",
+      "version": "38",
+      "section": "Drug Interactions",
+      "alias": "ketoconazole",
+      "snippet": "\u2026IS should be decreased by 50% when coadministered with drugs that are combined P-gp and strong CYP3A4 inhibitors (e.g., ketoconazole, itraconazole, ritonavir)",
+      "klass": "monitor_or_adjust"
+     }
+    ]
+   }
+  },
+  {
+   "row": {
+    "drug_a": "acetaminophen",
+    "drug_b": "amoxicillin",
+    "expected": "none"
+   },
+   "reference": "none_weak",
+   "reason": "not mentioned in either label (weak evidence of no interaction)",
+   "evidence": {
+    "pair": [
+     "acetaminophen",
+     "amoxicillin"
+    ],
+    "klass": "not_mentioned",
+    "labels_found": {
+     "acetaminophen": {
+      "set_id": "113d92bf-f6c9-cc3d-e063-6294a90af033",
+      "version": "3",
+      "effective_time": "20260902",
+      "application_number": "M013",
+      "brand": "AMAZON BASIC CARE ACETAMINOPHEN"
+     },
+     "amoxicillin": {
+      "set_id": "06e5c07d-d95c-4955-8d35-a4703ca2359e",
+      "version": "5",
+      "effective_time": "20260707",
+      "application_number": "NDA050760",
+      "brand": "Amoxicillin"
+     }
+    },
+    "best": null,
+    "matches": []
+   }
+  },
+  {
+   "row": {
+    "drug_a": "atorvastatin",
+    "drug_b": "lisinopril",
+    "expected": "none"
+   },
+   "reference": "none_weak",
+   "reason": "not mentioned in either label (weak evidence of no interaction)",
+   "evidence": {
+    "pair": [
+     "atorvastatin",
+     "lisinopril"
+    ],
+    "klass": "not_mentioned",
+    "labels_found": {
+     "atorvastatin": {
+      "set_id": "a60cc18b-0631-4cf0-b021-9f52224ece65",
+      "version": "8",
+      "effective_time": "20240415",
+      "application_number": "NDA020702",
+      "brand": "Lipitor"
+     },
+     "lisinopril": {
+      "set_id": "9f6e4e57-a489-4b36-b093-b93865d3717c",
+      "version": "10",
+      "effective_time": "20251216",
+      "application_number": "NDA208401",
+      "brand": "Qbrelis"
+     }
+    },
+    "best": null,
+    "matches": []
+   }
+  },
+  {
+   "row": {
+    "drug_a": "montelukast",
+    "drug_b": "cetirizine",
+    "expected": "none"
+   },
+   "reference": "none_weak",
+   "reason": "not mentioned in either label (weak evidence of no interaction)",
+   "evidence": {
+    "pair": [
+     "montelukast",
+     "cetirizine"
+    ],
+    "klass": "not_mentioned",
+    "labels_found": {
+     "montelukast": {
+      "set_id": "482dcc92-b47f-4ea6-854a-f5ac2aea7842",
+      "version": "5",
+      "effective_time": "20250430",
+      "application_number": "NDA020830",
+      "brand": "SINGULAIR"
+     },
+     "cetirizine": {
+      "set_id": "573770f6-b76e-f6ba-e063-6294a90aa54d",
+      "version": "4",
+      "effective_time": "20260813",
+      "application_number": "NDA211415",
+      "brand": "QUZYTTIR"
+     }
+    },
+    "best": null,
+    "matches": []
+   }
+  },
+  {
+   "row": {
+    "drug_a": "famotidine",
+    "drug_b": "acetaminophen",
+    "expected": "none"
+   },
+   "reference": "none_weak",
+   "reason": "not mentioned in either label (weak evidence of no interaction)",
+   "evidence": {
+    "pair": [
+     "famotidine",
+     "acetaminophen"
+    ],
+    "klass": "not_mentioned",
+    "labels_found": {
+     "famotidine": {
+      "set_id": "9710995d-b518-40ce-bc2b-8b5dcf002c31",
+      "version": "6",
+      "effective_time": "20260606",
+      "application_number": "NDA219935",
+      "brand": "Famotidine"
+     },
+     "acetaminophen": {
+      "set_id": "113d92bf-f6c9-cc3d-e063-6294a90af033",
+      "version": "3",
+      "effective_time": "20260902",
+      "application_number": "M013",
+      "brand": "AMAZON BASIC CARE ACETAMINOPHEN"
+     }
+    },
+    "best": null,
+    "matches": []
+   }
+  },
+  {
+   "row": {
+    "drug_a": "loratadine",
+    "drug_b": "omeprazole",
+    "expected": "none"
+   },
+   "reference": "none_weak",
+   "reason": "not mentioned in either label (weak evidence of no interaction)",
+   "evidence": {
+    "pair": [
+     "loratadine",
+     "omeprazole"
+    ],
+    "klass": "not_mentioned",
+    "labels_found": {
+     "loratadine": {
+      "set_id": "039ea563-9796-4270-b84a-50dd25a9d976",
+      "version": "3",
+      "effective_time": "20260223",
+      "application_number": "NDA021375",
+      "brand": "Alavert Allergy"
+     },
+     "omeprazole": {
+      "set_id": "28a0b4c8-3ad3-451c-a957-28aef5e3d8b5",
+      "version": "4",
+      "effective_time": "20260909",
+      "application_number": "NDA022032",
+      "brand": "omeprazole"
+     }
+    },
+    "best": null,
+    "matches": []
+   }
+  },
+  {
+   "row": {
+    "drug_a": "levothyroxine",
+    "drug_b": "acetaminophen",
+    "expected": "none"
+   },
+   "reference": "none_weak",
+   "reason": "not mentioned in either label (weak evidence of no interaction)",
+   "evidence": {
+    "pair": [
+     "levothyroxine",
+     "acetaminophen"
+    ],
+    "klass": "not_mentioned",
+    "labels_found": {
+     "levothyroxine": {
+      "set_id": "489ffba8-983e-478f-8f62-fe08bf3d0e0b",
+      "version": "102",
+      "effective_time": "20260623",
+      "application_number": "NDA021342",
+      "brand": "Levothyroxine Sodium"
+     },
+     "acetaminophen": {
+      "set_id": "113d92bf-f6c9-cc3d-e063-6294a90af033",
+      "version": "3",
+      "effective_time": "20260902",
+      "application_number": "M013",
+      "brand": "AMAZON BASIC CARE ACETAMINOPHEN"
+     }
+    },
+    "best": null,
+    "matches": []
+   }
+  },
+  {
+   "row": {
+    "drug_a": "pantoprazole",
+    "drug_b": "amlodipine",
+    "expected": "none"
+   },
+   "reference": "none_weak",
+   "reason": "not mentioned in either label (weak evidence of no interaction)",
+   "evidence": {
+    "pair": [
+     "pantoprazole",
+     "amlodipine"
+    ],
+    "klass": "not_mentioned",
+    "labels_found": {
+     "pantoprazole": {
+      "set_id": "08098cb2-c048-4640-f387-6beec4a38936",
+      "version": "48",
+      "effective_time": "20260518",
+      "application_number": "NDA020987",
+      "brand": "Protonix Delayed-Release"
+     },
+     "amlodipine": {
+      "set_id": "614d974f-51c7-4b18-8171-39eb6e8d4c03",
+      "version": "2",
+      "effective_time": "20260216",
+      "application_number": "NDA214439",
+      "brand": "NORLIQVA"
+     }
+    },
+    "best": null,
+    "matches": []
+   }
+  },
+  {
+   "row": {
+    "drug_a": "losartan",
+    "drug_b": "acetaminophen",
+    "expected": "none"
+   },
+   "reference": "none_weak",
+   "reason": "not mentioned in either label (weak evidence of no interaction)",
+   "evidence": {
+    "pair": [
+     "losartan",
+     "acetaminophen"
+    ],
+    "klass": "not_mentioned",
+    "labels_found": {
+     "losartan": {
+      "set_id": "9949448f-c3b9-44ee-94ed-c1aca8c90f39",
+      "version": "9",
+      "effective_time": "20260120",
+      "application_number": "NDA020386",
+      "brand": "COZAAR"
+     },
+     "acetaminophen": {
+      "set_id": "113d92bf-f6c9-cc3d-e063-6294a90af033",
+      "version": "3",
+      "effective_time": "20260902",
+      "application_number": "M013",
+      "brand": "AMAZON BASIC CARE ACETAMINOPHEN"
+     }
+    },
+    "best": null,
+    "matches": []
+   }
+  },
+  {
+   "row": {
+    "drug_a": "metformin",
+    "drug_b": "amlodipine",
+    "expected": "none"
+   },
+   "reference": "none_weak",
+   "reason": "not mentioned in either label (weak evidence of no interaction)",
+   "evidence": {
+    "pair": [
+     "metformin",
+     "amlodipine"
+    ],
+    "klass": "not_mentioned",
+    "labels_found": {
+     "metformin": {
+      "set_id": "74d32a8a-c4c2-4dbb-b376-eea3f8fa64d7",
+      "version": "10",
+      "effective_time": "20241114",
+      "application_number": "NDA021748",
+      "brand": "Metformin hydrochloride"
+     },
+     "amlodipine": {
+      "set_id": "614d974f-51c7-4b18-8171-39eb6e8d4c03",
+      "version": "2",
+      "effective_time": "20260216",
+      "application_number": "NDA214439",
+      "brand": "NORLIQVA"
+     }
+    },
+    "best": null,
+    "matches": []
+   }
+  },
+  {
+   "row": {
+    "drug_a": "sertraline",
+    "drug_b": "acetaminophen",
+    "expected": "none"
+   },
+   "reference": "none_weak",
+   "reason": "not mentioned in either label (weak evidence of no interaction)",
+   "evidence": {
+    "pair": [
+     "sertraline",
+     "acetaminophen"
+    ],
+    "klass": "not_mentioned",
+    "labels_found": {
+     "sertraline": {
+      "set_id": "e0e1f35e-114d-bb39-34f1-70208b94ac9e",
+      "version": "1",
+      "effective_time": "20250806",
+      "application_number": "NDA215133",
+      "brand": "sertraline hydrochloride"
+     },
+     "acetaminophen": {
+      "set_id": "113d92bf-f6c9-cc3d-e063-6294a90af033",
+      "version": "3",
+      "effective_time": "20260902",
+      "application_number": "M013",
+      "brand": "AMAZON BASIC CARE ACETAMINOPHEN"
+     }
+    },
+    "best": null,
+    "matches": []
+   }
+  }
+ ]
+}

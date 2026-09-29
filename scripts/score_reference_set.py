@@ -21,6 +21,8 @@ from src.evaluation.reference_set import OUTCOMES, load, score  # noqa: E402
 from src.graph import PharmGuardGraph, Settings  # noqa: E402
 
 CSV = ROOT / "data" / "validation" / "reference_interactions.csv"
+EVIDENCE = ROOT / "data" / "validation" / "label_evidence.json"
+DRUGSCOM_PICKS = [("simvastatin", "clarithromycin"), ("warfarin", "amiodarone"), ("atorvastatin", "lisinopril")]
 
 
 def to_markdown(r: dict) -> str:
@@ -30,7 +32,20 @@ def to_markdown(r: dict) -> str:
          f"Regenerate with `python scripts/score_reference_set.py --profile {d['profile']}`. {d['data']} "
          f"provenance sha256 `{d['provenance_sha256']}`.", "",
          f"Rows: {r['rows']}; scored {r['scored']}; **skipped {r['skipped_unverified']} unverified** "
-         "(no verified_source / verified_on).", "",
+         "(no verified_source / verified_on).", ""]
+    lab = r.get("label_reference")
+    if lab:
+        L += ["**Reference: FDA labeling, checked automatically** (`python scripts/verify_reference_labels.py`, "
+              f"openFDA drug labels fetched {lab['fetched_on']}). Each drug's label was searched for the other drug by "
+              "generic, salt or brand name, and the wording around the match was classified by keyword rules "
+              "(src/evaluation/label_evidence.py). **The classification is heuristic**, and its rules were refined by "
+              "reading these same labels, so it is not independently validated. An expected interaction counts as "
+              "verified only if a label gives guidance (contraindicated, avoid, or monitor/adjust); "
+              f"{lab['unclear']} rows the labels don't settle are excluded and counted as skipped. A negative control "
+              "counts as verified when neither label names the other drug, which is **only weak evidence** of no "
+              "interaction.", "",
+              "Label evidence for the verified rows: " + ", ".join(f"{k} {v}" for k, v in lab["classes"].items()) + ".", ""]
+    L += [
          "| Outcome | Expected interaction | Negative control |", "|---|---:|---:|"]
     for o in OUTCOMES:
         L.append(f"| {o} | {r['outcomes_positives'][o]} | {r['outcomes_negative_controls'][o]} |")
@@ -40,7 +55,17 @@ def to_markdown(r: dict) -> str:
           f"detected ({f(u['rate'])}).",
           f"- Silent misses: {r['silent']} (must be 0).",
           f"- DDInter vs Drugs.com, {a['rows']} rows with a Drugs.com grade: exact agreement {f(a['exact'])}, "
-          f"linear-weighted κ {f(a['linear_weighted_kappa'])} (levels none < Minor < Moderate < Major).", "",
+          f"linear-weighted κ {f(a['linear_weighted_kappa'])} (levels none < Minor < Moderate < Major). Pairs picked for "
+          "a manual Drugs.com lookup: " + "; ".join(f"{x} + {y}" for x, y in DRUGSCOM_PICKS) + ".", ""]
+    if lab:
+        c = lab["vs_ddinter"]
+        L += [f"- FDA label vs DDInter grade, {c['pairs']} verified interactions (label wording mapped "
+              f"{c['mapping']}): same grade {f(c['mapped_agreement'])} of {c['mapped_pairs']}; DDInter lower than the "
+              f"label: {c['ddinter_lower_than_label']}.", "",
+              "| Label wording / DDInter grade | Pairs |", "|---|---:|"]
+        L += [f"| {k} | {v} |" for k, v in c["grid_label_class_by_ddinter"].items()]
+        L.append("")
+    L += [
           "| Pair | Expected | Min severity | Outcome | PharmGuard grade | Drugs.com |", "|---|---|---|---|---|---|"]
     for x in r["results"]:
         L.append(f"| {x['pair'][0]} + {x['pair'][1]} | {x['expected']} | {x['min_severity'] or '—'} | {x['outcome']} | "
@@ -66,6 +91,17 @@ def main() -> int:
         return 1 if bad else 0
     r = {"data": {**data_stamp(data_dir / "processed"), "data_dir": f"data/profiles/{args.profile}"},
          **score(rows, graph.run)}
+    if EVIDENCE.exists():
+        from collections import Counter
+        from src.evaluation.label_evidence import CLASS_TEXT, severity_comparison
+        ev = json.loads(EVIDENCE.read_text())
+        grade = {tuple(x["pair"]): x["grade"] for x in r["results"]}
+        settled = [p for p in ev["pairs"] if p["reference"] == "interaction"]
+        r["label_reference"] = {
+            "fetched_on": ev["fetched_on"], "unclear": sum(p["reference"] == "unclear" for p in ev["pairs"]),
+            "classes": dict(Counter(CLASS_TEXT[p["evidence"]["klass"]] for p in ev["pairs"] if p["reference"] != "unclear")),
+            "vs_ddinter": severity_comparison([(p["evidence"]["klass"], grade.get((p["row"]["drug_a"], p["row"]["drug_b"])))
+                                               for p in settled])}
     out = Path(args.output_dir)
     out.mkdir(parents=True, exist_ok=True)
     (out / f"reference_set_{args.profile}.json").write_text(json.dumps(r, indent=2) + "\n")

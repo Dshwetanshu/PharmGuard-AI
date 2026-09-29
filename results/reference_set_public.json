@@ -1,0 +1,430 @@
+{
+  "data": {
+    "profile": "public",
+    "data": "Data: public build from RxNorm Current Prescribable 2026-09-08, Drugs@FDA brand names, DDInter bulk download (ddinter2.scbdd.com, 2024-05-21), SIDER 4.1; 169,673 interaction records; not synthetic.",
+    "provenance_sha256": "fc037dc5f67b9c0dd05c4664e48a4888a155d285dc0e1a11369fc971dab31073",
+    "data_dir": "data/profiles/public"
+  },
+  "rows": 41,
+  "scored": 33,
+  "skipped_unverified": 8,
+  "positives": 23,
+  "negative_controls": 10,
+  "outcomes_positives": {
+    "DETECTED": 23,
+    "LISTED_UNGRADED": 0,
+    "NO_DATA": 0,
+    "UNRESOLVED": 0,
+    "SILENT": 0
+  },
+  "outcomes_negative_controls": {
+    "DETECTED": 0,
+    "LISTED_UNGRADED": 10,
+    "NO_DATA": 0,
+    "UNRESOLVED": 0,
+    "SILENT": 0
+  },
+  "recall_graded": 1.0,
+  "recall_including_ungraded": 1.0,
+  "under_triage": {
+    "count": 0,
+    "of_detected": 23,
+    "rate": 0.0,
+    "pairs": []
+  },
+  "silent": 0,
+  "drugscom_agreement": {
+    "rows": 0,
+    "exact": null,
+    "linear_weighted_kappa": null,
+    "confusion_pharmguard_by_drugscom": {}
+  },
+  "results": [
+    {
+      "pair": [
+        "warfarin",
+        "amiodarone"
+      ],
+      "expected": "interaction",
+      "min_severity": "Moderate",
+      "drugscom": null,
+      "outcome": "DETECTED",
+      "grade": "Major"
+    },
+    {
+      "pair": [
+        "simvastatin",
+        "clarithromycin"
+      ],
+      "expected": "interaction",
+      "min_severity": "Major",
+      "drugscom": null,
+      "outcome": "DETECTED",
+      "grade": "Major"
+    },
+    {
+      "pair": [
+        "clopidogrel",
+        "omeprazole"
+      ],
+      "expected": "interaction",
+      "min_severity": "Major",
+      "drugscom": null,
+      "outcome": "DETECTED",
+      "grade": "Major"
+    },
+    {
+      "pair": [
+        "sildenafil",
+        "nitroglycerin"
+      ],
+      "expected": "interaction",
+      "min_severity": "Major",
+      "drugscom": null,
+      "outcome": "DETECTED",
+      "grade": "Major"
+    },
+    {
+      "pair": [
+        "linezolid",
+        "sertraline"
+      ],
+      "expected": "interaction",
+      "min_severity": "Major",
+      "drugscom": null,
+      "outcome": "DETECTED",
+      "grade": "Major"
+    },
+    {
+      "pair": [
+        "lithium",
+        "hydrochlorothiazide"
+      ],
+      "expected": "interaction",
+      "min_severity": "Moderate",
+      "drugscom": null,
+      "outcome": "DETECTED",
+      "grade": "Major"
+    },
+    {
+      "pair": [
+        "digoxin",
+        "amiodarone"
+      ],
+      "expected": "interaction",
+      "min_severity": "Moderate",
+      "drugscom": null,
+      "outcome": "DETECTED",
+      "grade": "Major"
+    },
+    {
+      "pair": [
+        "azathioprine",
+        "allopurinol"
+      ],
+      "expected": "interaction",
+      "min_severity": "Moderate",
+      "drugscom": null,
+      "outcome": "DETECTED",
+      "grade": "Major"
+    },
+    {
+      "pair": [
+        "colchicine",
+        "clarithromycin"
+      ],
+      "expected": "interaction",
+      "min_severity": "Major",
+      "drugscom": null,
+      "outcome": "DETECTED",
+      "grade": "Major"
+    },
+    {
+      "pair": [
+        "tizanidine",
+        "ciprofloxacin"
+      ],
+      "expected": "interaction",
+      "min_severity": "Major",
+      "drugscom": null,
+      "outcome": "DETECTED",
+      "grade": "Major"
+    },
+    {
+      "pair": [
+        "warfarin",
+        "fluconazole"
+      ],
+      "expected": "interaction",
+      "min_severity": "Moderate",
+      "drugscom": null,
+      "outcome": "DETECTED",
+      "grade": "Major"
+    },
+    {
+      "pair": [
+        "simvastatin",
+        "itraconazole"
+      ],
+      "expected": "interaction",
+      "min_severity": "Major",
+      "drugscom": null,
+      "outcome": "DETECTED",
+      "grade": "Major"
+    },
+    {
+      "pair": [
+        "tramadol",
+        "fluoxetine"
+      ],
+      "expected": "interaction",
+      "min_severity": "Moderate",
+      "drugscom": null,
+      "outcome": "DETECTED",
+      "grade": "Major"
+    },
+    {
+      "pair": [
+        "phenelzine",
+        "fluoxetine"
+      ],
+      "expected": "interaction",
+      "min_severity": "Major",
+      "drugscom": null,
+      "outcome": "DETECTED",
+      "grade": "Major"
+    },
+    {
+      "pair": [
+        "carbamazepine",
+        "clarithromycin"
+      ],
+      "expected": "interaction",
+      "min_severity": "Moderate",
+      "drugscom": null,
+      "outcome": "DETECTED",
+      "grade": "Major"
+    },
+    {
+      "pair": [
+        "tacrolimus",
+        "clarithromycin"
+      ],
+      "expected": "interaction",
+      "min_severity": "Moderate",
+      "drugscom": null,
+      "outcome": "DETECTED",
+      "grade": "Major"
+    },
+    {
+      "pair": [
+        "mercaptopurine",
+        "allopurinol"
+      ],
+      "expected": "interaction",
+      "min_severity": "Moderate",
+      "drugscom": null,
+      "outcome": "DETECTED",
+      "grade": "Major"
+    },
+    {
+      "pair": [
+        "pimozide",
+        "clarithromycin"
+      ],
+      "expected": "interaction",
+      "min_severity": "Major",
+      "drugscom": null,
+      "outcome": "DETECTED",
+      "grade": "Major"
+    },
+    {
+      "pair": [
+        "simvastatin",
+        "gemfibrozil"
+      ],
+      "expected": "interaction",
+      "min_severity": "Major",
+      "drugscom": null,
+      "outcome": "DETECTED",
+      "grade": "Major"
+    },
+    {
+      "pair": [
+        "ramelteon",
+        "fluvoxamine"
+      ],
+      "expected": "interaction",
+      "min_severity": "Major",
+      "drugscom": null,
+      "outcome": "DETECTED",
+      "grade": "Major"
+    },
+    {
+      "pair": [
+        "clozapine",
+        "fluvoxamine"
+      ],
+      "expected": "interaction",
+      "min_severity": "Moderate",
+      "drugscom": null,
+      "outcome": "DETECTED",
+      "grade": "Moderate"
+    },
+    {
+      "pair": [
+        "alprazolam",
+        "ketoconazole"
+      ],
+      "expected": "interaction",
+      "min_severity": "Major",
+      "drugscom": null,
+      "outcome": "DETECTED",
+      "grade": "Major"
+    },
+    {
+      "pair": [
+        "apixaban",
+        "ketoconazole"
+      ],
+      "expected": "interaction",
+      "min_severity": "Moderate",
+      "drugscom": null,
+      "outcome": "DETECTED",
+      "grade": "Major"
+    },
+    {
+      "pair": [
+        "acetaminophen",
+        "amoxicillin"
+      ],
+      "expected": "none",
+      "min_severity": "",
+      "drugscom": null,
+      "outcome": "LISTED_UNGRADED",
+      "grade": null
+    },
+    {
+      "pair": [
+        "atorvastatin",
+        "lisinopril"
+      ],
+      "expected": "none",
+      "min_severity": "",
+      "drugscom": null,
+      "outcome": "LISTED_UNGRADED",
+      "grade": null
+    },
+    {
+      "pair": [
+        "montelukast",
+        "cetirizine"
+      ],
+      "expected": "none",
+      "min_severity": "",
+      "drugscom": null,
+      "outcome": "LISTED_UNGRADED",
+      "grade": null
+    },
+    {
+      "pair": [
+        "famotidine",
+        "acetaminophen"
+      ],
+      "expected": "none",
+      "min_severity": "",
+      "drugscom": null,
+      "outcome": "LISTED_UNGRADED",
+      "grade": null
+    },
+    {
+      "pair": [
+        "loratadine",
+        "omeprazole"
+      ],
+      "expected": "none",
+      "min_severity": "",
+      "drugscom": null,
+      "outcome": "LISTED_UNGRADED",
+      "grade": null
+    },
+    {
+      "pair": [
+        "levothyroxine",
+        "acetaminophen"
+      ],
+      "expected": "none",
+      "min_severity": "",
+      "drugscom": null,
+      "outcome": "LISTED_UNGRADED",
+      "grade": null
+    },
+    {
+      "pair": [
+        "pantoprazole",
+        "amlodipine"
+      ],
+      "expected": "none",
+      "min_severity": "",
+      "drugscom": null,
+      "outcome": "LISTED_UNGRADED",
+      "grade": null
+    },
+    {
+      "pair": [
+        "losartan",
+        "acetaminophen"
+      ],
+      "expected": "none",
+      "min_severity": "",
+      "drugscom": null,
+      "outcome": "LISTED_UNGRADED",
+      "grade": null
+    },
+    {
+      "pair": [
+        "metformin",
+        "amlodipine"
+      ],
+      "expected": "none",
+      "min_severity": "",
+      "drugscom": null,
+      "outcome": "LISTED_UNGRADED",
+      "grade": null
+    },
+    {
+      "pair": [
+        "sertraline",
+        "acetaminophen"
+      ],
+      "expected": "none",
+      "min_severity": "",
+      "drugscom": null,
+      "outcome": "LISTED_UNGRADED",
+      "grade": null
+    }
+  ],
+  "label_reference": {
+    "fetched_on": "2026-09-29",
+    "unclear": 8,
+    "classes": {
+      "monitor / adjust": 11,
+      "contraindicated": 11,
+      "avoid / not recommended": 1,
+      "not mentioned": 10
+    },
+    "vs_ddinter": {
+      "pairs": 23,
+      "grid_label_class_by_ddinter": {
+        "avoid / not recommended / Major": 1,
+        "contraindicated / Major": 11,
+        "monitor / adjust / Major": 10,
+        "monitor / adjust / Moderate": 1
+      },
+      "mapped_pairs": 23,
+      "mapped_agreement": 0.5652,
+      "ddinter_lower_than_label": 0,
+      "mapping": "contraindicated or avoid -> Major; monitor/adjust -> Moderate (heuristic)"
+    }
+  }
+}
