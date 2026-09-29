@@ -152,6 +152,24 @@ On https://pharmguard.web.app (and before Hosting, the same checks on the run.ap
   start), then about 6 s to download, verify and load the build. Through web.app, after 25 minutes idle
   (again a new instance in the log), the first `/health` took 15.7 s and the next one 117 ms.
 
+## Redeploy (29 September 2026)
+
+`python scripts/deploy_cloudrun.py` deployed revision `pharmguard-00007-tps` (image
+`sha256:6d805d39f47f9fd3f4bb0693752d6d2d4d7528f75569e60d4273452c829ae750`, 100% of traffic) and re-released
+Hosting; the pinned Google address list had no changes. It adds the FAERS statistics and suppression, the
+"not checked" note for skipped or failed FAERS lookups, and the non-object-body error message. Checked on
+https://pharmguard.web.app afterwards:
+
+- `/health`: ok, public profile, provenance `fc037dc5…` as pinned, `proxy_list_stale: false`, six notices.
+- The six-drug check: deterministic, validation passed (6 claims), xyz123 unrecognized; server-side 102.7 ms on
+  that single request (not a benchmark).
+- Rejections: `[]` body 422 "request body must be a JSON object", 1 drug 422, malformed JSON 422, LLM mode
+  without a key 401. Security headers as above.
+- FAERS on (escitalopram, amoxicillin, melatonin): 1 pair consulted and 2 over the 10 s budget, stated in the
+  report as not checked; 10.3 s end to end for that request.
+- Headless Chrome at 1440 and 375 px, 8 states: no CSP violations, only same-origin requests, fonts loaded, no
+  horizontal scroll (the README screenshots).
+
 ## Cost
 
 **Cloud Run** uses request-based billing. The monthly free tier is 180,000 vCPU-seconds,
