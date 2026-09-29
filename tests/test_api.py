@@ -722,3 +722,16 @@ def test_settings_from_env_defaults():
         ("public", 5, 30.0, 1)
     assert s.graph.rxnorm_enabled is False and s.graph.tracing == "none" and s.graph.faers_enabled is False
     assert s.api_key is None and s.hf_dataset is None
+
+
+@pytest.mark.parametrize("body", ["[]", "[1, 2]", '"warfarin"', "42", "null"])
+def test_non_object_body_says_so_instead_of_empty_fields(client, body):
+    r = client.post("/v1/check", content=body, headers={"content-type": "application/json"})
+    assert r.status_code == 422
+    msg = r.json()["error"]["message"]
+    assert "fields: )" not in msg and msg == "request body must be a JSON object"
+
+
+def test_missing_field_is_still_named(client):
+    r = client.post("/v1/check", json={"mode": "deterministic"})
+    assert r.status_code == 422 and r.json()["error"]["message"] == "invalid request body (fields: drugs)"

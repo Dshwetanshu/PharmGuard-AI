@@ -192,9 +192,11 @@ def create_app(service: Optional[CheckService] = None, settings: Optional[ApiSet
         errors = exc.errors()
         if any(e.get("type") == "json_invalid" for e in errors):
             return _error(request.state.request_id, 422, "invalid_json", "request body is not valid JSON")
-        fields = sorted({".".join(str(x) for x in e.get("loc", ()) if x != "body") for e in errors})
+        fields = sorted({".".join(str(x) for x in e.get("loc", ()) if x != "body") for e in errors} - {""})
+        if not fields:      # the body itself is wrong (a list, a string, a number or null), not a field
+            return _error(request.state.request_id, 422, "invalid_request", "request body must be a JSON object")
         return _error(request.state.request_id, 422, "invalid_request",
-                      "invalid request body" + (f" (fields: {', '.join(f for f in fields if f)})" if fields else ""))
+                      f"invalid request body (fields: {', '.join(fields)})")
 
     @app.exception_handler(Exception)
     async def unhandled(request: Request, exc: Exception):
