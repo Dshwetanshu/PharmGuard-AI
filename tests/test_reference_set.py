@@ -40,12 +40,17 @@ def signal_only_pair(test_data_dir, sample_ingest_report):
     return sorted(key(df[df.source == "TWOSIDES"]) - key(df[df.source == "DDInter"]))[0]
 
 
-def test_repo_reference_set_loads_and_is_all_unverified():
+def test_repo_reference_set_is_verified_only_from_fda_labels():
+    import json
     rows = R.load(REPO_CSV)
     assert len([r for r in rows if r.expected == "interaction"]) >= 30
     assert len([r for r in rows if r.expected == "none"]) >= 10
-    assert not any(r.verified or r.drugscom for r in rows)          # nothing verified yet: nothing scored
-    assert R.score(rows, run=lambda d: pytest.fail("ran an unverified row"))["skipped_unverified"] == len(rows)
+    assert not any(r.drugscom for r in rows)                          # Drugs.com: left for a manual lookup
+    raw = list(csv.DictReader(REPO_CSV.open()))
+    assert all(x["verified_source"].startswith("openFDA label") for x in raw if x["verified_source"])
+    ev = json.loads((REPO_CSV.parent / "label_evidence.json").read_text())["pairs"]
+    unclear = {(p["row"]["drug_a"], p["row"]["drug_b"]) for p in ev if p["reference"] == "unclear"}
+    assert unclear == {(r.drug_a, r.drug_b) for r in rows if not r.verified}
 
 
 def test_outcomes_metrics_and_skips(graph, signal_only_pair, tmp_path):
