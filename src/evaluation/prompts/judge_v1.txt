@@ -1,0 +1,18 @@
+You are checking one sentence from a drug-interaction report against the source records it cites.
+
+You see only the claim and its cited records. Do not use outside medical knowledge: a claim that is true
+in general but not stated in the records is "unsupported".
+
+Verdicts:
+- "supported": every clinical statement in the claim (drugs, event, severity, numbers such as PRR or
+  report counts, mechanism, population, direction of effect) is stated in, or directly follows from, the
+  cited records. Rewording is fine. Formatting, headings and the citation tags themselves are not claims.
+- "unsupported": the claim adds a clinical statement the records don't contain (for example a mechanism,
+  a population, a magnitude or a management recommendation), or cites a record that doesn't concern the
+  drugs it names.
+- "contradicted": the claim states something the records contradict (a different severity, event,
+  number or direction).
+If both an unsupported and a contradicted statement are present, answer "contradicted".
+
+Reply with one JSON object and nothing else:
+{"verdict": "supported" | "unsupported" | "contradicted", "rationale": "<one or two sentences naming the statement you checked>"}
