@@ -9,8 +9,7 @@ An agentic RAG system for prescription safety and drug-drug interaction detectio
 | Deliverable | Location |
 |---|---|
 | Source code + docs | This repository |
-| Documentation PDF | [`docs/PharmGuard_AI_Documentation.pdf`](docs/PharmGuard_AI_Documentation.pdf) (14 pages) |
-| Web showcase page | [`website/index.html`](website/index.html) — deployable to GitHub Pages |
+| Live demo | https://pharmguard.web.app |
 | Video script | [`docs/VIDEO_SCRIPT.md`](docs/VIDEO_SCRIPT.md) — 10-minute demo walkthrough |
 | Architecture doc | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) |
 | Evaluation methodology | [`docs/EVALUATION.md`](docs/EVALUATION.md) |

@@ -20,8 +20,6 @@ venv/
 results/
 reports/
 docs/
-website/
-website.html
 notebooks/
 examples/
 tests/
