@@ -29,6 +29,8 @@ def is_transient_llm_error(exc: BaseException) -> bool:
     if isinstance(exc, LLMError):
         return False
     status = getattr(exc, "status_code", None)
+    if not isinstance(status, int) and type(exc).__module__.startswith("google.genai"):
+        status = getattr(exc, "code", None)        # google.genai.errors.APIError carries the HTTP code
     if isinstance(status, int):
         return status in (408, 409, 429) or status >= 500
     return any(cls.__name__ in _TRANSIENT_CLASSES for cls in type(exc).__mro__)
@@ -63,9 +65,8 @@ class LLMClient:
             key = os.getenv("GOOGLE_API_KEY")
             if not key:
                 raise LLMError("GOOGLE_API_KEY not set.")
-            import google.generativeai as genai
-            genai.configure(api_key=key)
-            return genai.GenerativeModel(self.model)
+            from google import genai      # google-genai; google-generativeai lost support on 2025-11-30
+            return genai.Client(api_key=key)
 
         raise LLMError(f"Unknown provider: {self.provider}")
 
@@ -125,17 +126,22 @@ class LLMClient:
             return resp.choices[0].message.content or ""
 
         if self.provider == "gemini":
-            # Gemini handles system prompt via prepending to first turn
-            joined = system + "\n\n" + "\n".join(
-                f"{m['role'].upper()}: {m['content']}" for m in messages
+            contents = [{"role": "model" if m["role"] == "assistant" else "user", "parts": [{"text": m["content"]}]}
+                        for m in messages]
+            resp = self._client.models.generate_content(
+                model=self.model, contents=contents,
+                config={"system_instruction": system, "temperature": t, "max_output_tokens": mt},
             )
-            resp = self._client.generate_content(
-                joined,
-                generation_config={
-                    "temperature": t,
-                    "max_output_tokens": mt,
-                },
-            )
+            usage = getattr(resp, "usage_metadata", None)
+            self.last_usage = ({"input_tokens": int(usage.prompt_token_count or 0),
+                                "output_tokens": int(usage.candidates_token_count or 0)}
+                               if usage is not None else None)
+            cands = getattr(resp, "candidates", None) or []
+            reason = str(getattr(cands[0], "finish_reason", "") or "") if cands else "NO_CANDIDATES"
+            reason = reason.rsplit(".", 1)[-1]          # FinishReason.STOP -> STOP
+            if reason not in ("STOP", "FINISH_REASON_UNSPECIFIED", ""):
+                # Truncated (MAX_TOKENS), blocked (SAFETY, ...) or empty: never shown; the graph falls back.
+                raise LLMError(f"Gemini response incomplete: finish_reason={reason}")
             return resp.text or ""
 
         raise LLMError(f"Unknown provider: {self.provider}")

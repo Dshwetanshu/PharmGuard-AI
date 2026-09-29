@@ -35,11 +35,13 @@ def _detect_provider() -> str:
 
 
 # Anthropic default checked 2026-09-22 against the Claude API model table
-# (claude-sonnet-4-5 / -4-6 are previous-generation).
+# (claude-sonnet-4-5 / -4-6 are previous-generation). Gemini default checked 2026-09-28 against
+# ai.google.dev/gemini-api/docs/models (stable; gemini-1.5-flash and 2.0-flash are shut down)
+# and the pricing page (has a free tier). OpenAI: unchecked.
 DEFAULT_MODELS = {
     "anthropic": "claude-sonnet-5",
     "openai": "gpt-4o-mini",
-    "gemini": "gemini-1.5-flash",
+    "gemini": "gemini-3.8-flash",
 }
 
 
