@@ -1,4 +1,6 @@
-# Robustness: brand names + misspellings + mixed case
+# Brand names, a misspelling, mixed case
+
+How each entry was read: brands, a spelling match flagged for checking.
 
 ## Input
 
@@ -9,30 +11,40 @@ XANAX
 Prilosec
 ```
 
-## Output
+## Output (deterministic report, public build)
 
 # PharmGuard Interaction Report
 
+## How your entries were read
+- Lipitor → atorvastatin (brand name)
+- metfromin → metformin (spelling match: check this)
+- XANAX → alprazolam (brand name)
+- Prilosec → omeprazole (brand name)
+
 ## Summary
-Analyzed 4 medication(s) across 6 unique pair(s). Retrieved 0 interaction record(s) from structured sources.
+Analyzed 4 medications across 6 unique pairs. Found 2 graded interactions (Major 0, Moderate 2, Minor 0), 4 listings without a severity grade and 0 statistical reporting signals.
+
+## Moderate Findings
+- **alprazolam + omeprazole** — curated severity: Moderate (DDInter) [DDInter:DDI-0911247b36]
+- **atorvastatin + omeprazole** — curated severity: Moderate (DDInter) [DDInter:DDI-ead9feedd4]
+
+## Listed by DDInter without a severity grade
+DDInter lists these pairs without a severity grade; the loaded data can't say whether they matter clinically.
+- **alprazolam + atorvastatin** — curated severity: not graded (DDInter) [DDInter:DDI-df349a2edd]
+- **alprazolam + metformin** — curated severity: not graded (DDInter) [DDInter:DDI-9ce166bea2]
+- **atorvastatin + metformin** — curated severity: not graded (DDInter) [DDInter:DDI-2e6e00a61f]
+- **metformin + omeprazole** — curated severity: not graded (DDInter) [DDInter:DDI-c4fa317e2d]
 
 ## Coverage Notes
-**No data found** for 6 pair(s): alprazolam+atorvastatin, alprazolam+metformin, alprazolam+omeprazole, atorvastatin+metformin, atorvastatin+omeprazole...
+All entries were recognized, and each pair has a record in the loaded data.
 
 ---
-**Disclaimer.** PharmGuard is a decision-support tool grounded in public pharmaceutical databases. It is not a substitute for professional medical judgment. Always consult a licensed clinician or pharmacist before making changes to a medication regimen.
+**Disclaimer.** PharmGuard is a decision-support prototype, not a substitute for professional medical judgment. It reports only what its loaded data contains; absence of data is not evidence of safety.
 
-## Pipeline trace
+Data: public build from RxNorm Current Prescribable 2026-09-08, Drugs@FDA brand names, DDInter bulk download (ddinter2.scbdd.com, 2024-05-21), SIDER 4.1; 169,673 interaction records; not synthetic.
 
-```json
-{
-  "normalize_ms": 1,
-  "plan_ms": 0,
-  "num_pairs": 6,
-  "retrieve_ms": 5,
-  "total_interactions": 0,
-  "no_data_pairs": 6,
-  "generator": "deterministic",
-  "generate_ms": 0
-}
-```
+## How it was produced
+
+- Graph path: normalize → plan → retrieve → template → finalize
+- report_source: `deterministic`
+- Final checker: passed, 6 clinical claims, 6 citations

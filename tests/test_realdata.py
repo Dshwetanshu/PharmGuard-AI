@@ -192,3 +192,16 @@ def test_committed_results_match_the_current_build(profile):
         if hashes != {current}:
             stale[f.name] = sorted(h[:8] for h in hashes)
     assert stale == {}, f"stale vs current {profile} build {current[:8]}: {stale}"
+
+
+def test_examples_are_current():
+    """examples/*.md must match what the public build produces (python scripts/generate_examples.py)."""
+    import sys
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import generate_examples
+    from src.graph import PharmGuardGraph, Settings
+    g = PharmGuardGraph(Settings(data_dir=_processed("public").parent, mode="deterministic"))
+    want = generate_examples.build(g)
+    have = {p.name: p.read_text() for p in (ROOT / "examples").glob("*.md")}
+    assert set(have) == set(want)
+    assert [n for n in want if have[n] != want[n]] == []
