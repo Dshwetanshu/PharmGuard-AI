@@ -9,37 +9,37 @@
   },
   "skipped": 0,
   "summary": {
-    "items_shown": 927,
-    "major_share_of_items": 0.0431,
+    "items_shown": 931,
+    "major_share_of_items": 0.043,
     "max_per_report": {
       "graded": 34,
       "signals": 195,
       "ungraded": 32
     },
     "median_per_report": {
-      "graded": 1.0,
-      "major": 1.0,
-      "no_data_pairs": 0.0,
-      "signals": 3.0,
-      "ungraded": 0.0
+      "graded": 1,
+      "major": 1,
+      "no_data_pairs": 0,
+      "signals": 3,
+      "ungraded": 0
     },
-    "reports": 56,
+    "reports": 57,
     "reports_with_a_major": 36,
     "reports_with_nothing_graded": 6,
     "share_of_items": {
-      "graded": 0.151,
+      "graded": 0.1515,
       "signals": 0.7433,
-      "ungraded": 0.1057
+      "ungraded": 0.1053
     },
     "totals": {
-      "graded": 140,
-      "hidden_signals": 458,
+      "graded": 141,
+      "hidden_signals": 460,
       "major": 40,
       "minor": 14,
-      "moderate": 86,
+      "moderate": 87,
       "no_data_pairs": 0,
-      "pairs": 238,
-      "signals": 689,
+      "pairs": 239,
+      "signals": 692,
       "ungraded": 98,
       "unresolved": 3
     }

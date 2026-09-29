@@ -8,10 +8,10 @@
   },
   "evaluation_cases": {
     "by_code": {},
-    "clinical_claims_checked": 927,
+    "clinical_claims_checked": 931,
     "failing_cases": [],
     "findings": 0,
-    "reports": 56,
+    "reports": 57,
     "reports_with_findings": 0
   },
   "hard_names": {

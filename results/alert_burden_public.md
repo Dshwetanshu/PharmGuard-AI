@@ -3,20 +3,20 @@
 Regenerate with `python scripts/eval_alert_burden.py --profile public`. Offline, no API key, deterministic reports.
 Data: public build from RxNorm Current Prescribable 2026-09-08, Drugs@FDA brand names, DDInter bulk download (ddinter2.scbdd.com, 2024-05-21), SIDER 4.1; 169,673 interaction records; not synthetic. provenance sha256 `fc037dc5f67b9c0dd05c4664e48a4888a155d285dc0e1a11369fc971dab31073`.
 
-56 reports (0 case(s) rejected before a report: fewer than 2 drugs). 238 pairs checked. An *item* is one line a reader sees under a finding heading.
+57 reports (0 case(s) rejected before a report: fewer than 2 drugs). 239 pairs checked. An *item* is one line a reader sees under a finding heading.
 
 | What the reader sees | Total | Share of items | Median per report | Max per report |
 |---|---:|---:|---:|---:|
-| graded interactions (DDInter) | 140 | 58.8% | 1 | 34 |
-| of which Major | 40 | 16.8% | 1 | |
-| of which Moderate / Minor | 86 / 14 | | | |
-| listings without a severity grade | 98 | 41.2% | 0 | 32 |
+| graded interactions (DDInter) | 141 | 59.0% | 1 | 34 |
+| of which Major | 40 | 16.7% | 1 | |
+| of which Moderate / Minor | 87 / 14 | | | |
+| listings without a severity grade | 98 | 41.0% | 0 | 32 |
 | statistical signals shown (TWOSIDES) | 0 | 0.0% | 0 | 0 |
 | statistical signals hidden ("+N more not shown") | 0 | | | |
 | no-data pairs (declared) | 0 | | 0 | |
 | unresolved inputs (declared) | 3 | | | |
 
-Reports with at least one Major: 36 of 56. Reports with nothing graded: 6.
+Reports with at least one Major: 36 of 57. Reports with nothing graded: 6.
 
 ## Per case
 
@@ -54,7 +54,7 @@ Reports with at least one Major: 36 of 56. Reports with nothing graded: 6.
 | CV-04 | 1 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | CV-05 | 1 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | END-01 | 1 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
-| END-02 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
+| END-02 | 1 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | END-03 | 1 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | ID-01 | 1 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | ID-02 | 1 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -78,3 +78,4 @@ Reports with at least one Major: 36 of 56. Reports with nothing graded: 6.
 | LA-06 | 1 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | LA-07 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | LA-08 | 1 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| LA-09 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |

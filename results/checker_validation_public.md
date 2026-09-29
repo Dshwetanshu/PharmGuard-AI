@@ -7,7 +7,7 @@ Template reports on real data; every finding on a clean template report is a fal
 
 | Report set | Reports | Clinical claims checked | Reports with findings | Findings |
 |---|---:|---:|---:|---:|
-| 56 evaluation cases | 56 | 238 | 0 | 0 |
+| 57 evaluation cases | 57 | 239 | 0 | 0 |
 | stress: random 4-drug lists (seed 7) | 200 | 239 | 0 | 0 |
 | hard names (comma, parenthesis or > 30 chars) + 3 partners each | 27 | 153 | 0 | 0 |
 

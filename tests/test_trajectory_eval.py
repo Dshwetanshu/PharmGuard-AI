@@ -26,7 +26,7 @@ def test_step_scoring_all_cases_complete(harness):
     for config in ("deterministic", "llm_mode_without_key"):
         summary = out["step_scoring"][config]["summary"]
         assert summary["overall"]["completion"] == 1.0, summary["failing"]
-        assert summary["suspected_label_misses"] == {"EDG-03": [["atorvastatin", "lisinopril"]]}
+        assert summary["suspected_label_misses"] == {}
     assert out["step_scoring"]["llm_mode_with_key"] is None
     assert all(all(ok for ok, _ in inv.values()) for inv in out["invariant_runs"])
 

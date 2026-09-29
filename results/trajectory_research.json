@@ -9,11 +9,11 @@
   },
   "fault_suite": {
     "skipped": {
-      "absence_safe_once": 56,
+      "absence_safe_once": 57,
       "different_fault_on_retry": 4,
       "mechanism_always": 4,
       "mechanism_once": 4,
-      "omit_major_once": 20,
+      "omit_major_once": 21,
       "phantom_citation_once": 4,
       "retry_repeats_rejected_draft": 4,
       "severity_flip_once": 4,
@@ -34,60 +34,60 @@
         "plan_complete": 1.0,
         "state_json_serializable": 1.0
       },
-      "invariant_runs": 729,
+      "invariant_runs": 742,
       "latency_label": "orchestration overhead only (fake LLMs, research build, no network)",
       "latency_ms_end_to_end": {
-        "p50": 16.3,
-        "p95": 91.8
+        "p50": 16.8,
+        "p95": 93.9
       },
       "latency_ms_per_node": {
         "finalize": {
-          "p50": 0.74,
-          "p95": 13.16
+          "p50": 0.78,
+          "p95": 13.57
         },
         "generate_llm": {
-          "p50": 0.07,
-          "p95": 0.33
+          "p50": 0.08,
+          "p95": 0.35
         },
         "normalize": {
           "p50": 0.03,
-          "p95": 0.12
+          "p95": 0.13
         },
         "plan": {
           "p50": 0.05,
           "p95": 0.15
         },
         "retrieve": {
-          "p50": 11.26,
-          "p95": 47.5
+          "p50": 11.49,
+          "p95": 48.41
         },
         "template": {
-          "p50": 0.05,
-          "p95": 1.74
+          "p50": 0.13,
+          "p95": 2.2
         },
         "validate": {
-          "p50": 1.02,
-          "p95": 13.71
+          "p50": 1.03,
+          "p95": 13.91
         }
       },
-      "llm_calls_per_case": 1.731,
+      "llm_calls_per_case": 1.732,
       "mismatches": [],
       "path_match_rate": 1.0,
       "per_scenario": {
         "clean": {
           "expected_source": "llm",
           "invariants_all_pass": 1.0,
-          "llm_calls_mean": 0.929,
+          "llm_calls_mean": 0.93,
           "path_match": 1.0,
-          "runs": 56,
+          "runs": 57,
           "source_match": 1.0
         },
         "clean+faers": {
           "expected_source": "llm",
           "invariants_all_pass": 1.0,
-          "llm_calls_mean": 0.929,
+          "llm_calls_mean": 0.93,
           "path_match": 1.0,
-          "runs": 56,
+          "runs": 57,
           "source_match": 1.0
         },
         "different_fault_on_retry": {
@@ -95,7 +95,7 @@
           "invariants_all_pass": 1.0,
           "llm_calls_mean": 2,
           "path_match": 1.0,
-          "runs": 52,
+          "runs": 53,
           "source_match": 1.0
         },
         "mechanism_always": {
@@ -103,7 +103,7 @@
           "invariants_all_pass": 1.0,
           "llm_calls_mean": 2,
           "path_match": 1.0,
-          "runs": 52,
+          "runs": 53,
           "source_match": 1.0
         },
         "mechanism_once": {
@@ -111,15 +111,15 @@
           "invariants_all_pass": 1.0,
           "llm_calls_mean": 2,
           "path_match": 1.0,
-          "runs": 52,
+          "runs": 53,
           "source_match": 1.0
         },
         "non_transient_error_once": {
           "expected_source": "deterministic_fallback",
           "invariants_all_pass": 1.0,
-          "llm_calls_mean": 0.929,
+          "llm_calls_mean": 0.93,
           "path_match": 1.0,
-          "runs": 56,
+          "runs": 57,
           "source_match": 1.0
         },
         "omit_major_once": {
@@ -135,7 +135,7 @@
           "invariants_all_pass": 1.0,
           "llm_calls_mean": 2,
           "path_match": 1.0,
-          "runs": 52,
+          "runs": 53,
           "source_match": 1.0
         },
         "retry_repeats_rejected_draft": {
@@ -143,7 +143,7 @@
           "invariants_all_pass": 1.0,
           "llm_calls_mean": 2,
           "path_match": 1.0,
-          "runs": 52,
+          "runs": 53,
           "source_match": 1.0
         },
         "severity_flip_once": {
@@ -151,7 +151,7 @@
           "invariants_all_pass": 1.0,
           "llm_calls_mean": 2,
           "path_match": 1.0,
-          "runs": 52,
+          "runs": 53,
           "source_match": 1.0
         },
         "signal_severity_once": {
@@ -159,23 +159,23 @@
           "invariants_all_pass": 1.0,
           "llm_calls_mean": 2,
           "path_match": 1.0,
-          "runs": 49,
+          "runs": 50,
           "source_match": 1.0
         },
         "transient_error_always": {
           "expected_source": "deterministic_fallback",
           "invariants_all_pass": 1.0,
-          "llm_calls_mean": 1.857,
+          "llm_calls_mean": 1.86,
           "path_match": 1.0,
-          "runs": 56,
+          "runs": 57,
           "source_match": 1.0
         },
         "transient_error_once": {
           "expected_source": "llm_retry",
           "invariants_all_pass": 1.0,
-          "llm_calls_mean": 1.857,
+          "llm_calls_mean": 1.86,
           "path_match": 1.0,
-          "runs": 56,
+          "runs": 57,
           "source_match": 1.0
         },
         "uncited_claim_once": {
@@ -183,12 +183,12 @@
           "invariants_all_pass": 1.0,
           "llm_calls_mean": 2,
           "path_match": 1.0,
-          "runs": 52,
+          "runs": 53,
           "source_match": 1.0
         }
       },
       "recovery_rate": 1.0,
-      "runs": 729,
+      "runs": 742,
       "source_match_rate": 1.0
     }
   },
@@ -212,46 +212,46 @@
       "plan_complete": 1.0,
       "state_json_serializable": 1.0
     },
-    "runs": 841
+    "runs": 856
   },
   "seeded_bugs": {
     "faers_always_consulted": {
       "broken": {
-        "faers_only_when_needed": 0.0274
+        "faers_only_when_needed": 0.027
       },
       "caught": true,
-      "path_match": 0.0274
+      "path_match": 0.027
     },
     "fallback_returns_rejected_draft": {
       "broken": {
-        "exhausted_fallback_matches_deterministic": 0.786,
-        "final_report_valid": 0.786,
-        "no_unvalidated_llm_text": 0.786
+        "exhausted_fallback_matches_deterministic": 0.7857,
+        "final_report_valid": 0.7857,
+        "no_unvalidated_llm_text": 0.7857
       },
       "caught": true,
       "path_match": 1.0
     },
     "non_transient_errors_retried": {
       "broken": {
-        "non_transient_never_retried": 0.9287
+        "non_transient_never_retried": 0.9286
       },
       "caught": true,
-      "path_match": 0.9287
+      "path_match": 0.9286
     },
     "plan_drops_a_pair": {
       "broken": {
-        "exhausted_fallback_matches_deterministic": 0.0658,
-        "plan_complete": 0.0274
+        "exhausted_fallback_matches_deterministic": 0.0647,
+        "plan_complete": 0.027
       },
       "caught": true,
       "path_match": 0.3841
     },
     "retry_limit_off_by_one": {
       "broken": {
-        "llm_attempts_within_budget": 0.7147
+        "llm_attempts_within_budget": 0.7143
       },
       "caught": true,
-      "path_match": 0.7147
+      "path_match": 0.7143
     },
     "validate_always_passes": {
       "broken": {
@@ -267,7 +267,7 @@
       "summary": {
         "failing": 0,
         "overall": {
-          "cases": 56,
+          "cases": 57,
           "completion": 1.0,
           "finalize": 1.0,
           "normalize": 1.0,
@@ -331,7 +331,7 @@
             "route": 1.0
           },
           "LA": {
-            "cases": 8,
+            "cases": 9,
             "completion": 1.0,
             "finalize": 1.0,
             "normalize": 1.0,
@@ -394,7 +394,7 @@
             "route": 1.0
           }
         },
-        "source_gap_misses": 1,
+        "source_gap_misses": 0,
         "suspected_label_misses": 0
       }
     },
@@ -403,7 +403,7 @@
       "summary": {
         "failing": 0,
         "overall": {
-          "cases": 56,
+          "cases": 57,
           "completion": 1.0,
           "finalize": 1.0,
           "normalize": 1.0,
@@ -467,7 +467,7 @@
             "route": 1.0
           },
           "LA": {
-            "cases": 8,
+            "cases": 9,
             "completion": 1.0,
             "finalize": 1.0,
             "normalize": 1.0,
@@ -530,7 +530,7 @@
             "route": 1.0
           }
         },
-        "source_gap_misses": 1,
+        "source_gap_misses": 0,
         "suspected_label_misses": 0
       }
     }

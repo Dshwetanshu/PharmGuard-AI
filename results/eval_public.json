@@ -6,7 +6,7 @@
   },
   "internal_consistency": {
     "note": "internal consistency: ground truth uses the same normalizer and table as retrieval, so recall/precision are 1.0 by construction",
-    "num_cases": 56,
+    "num_cases": 57,
     "mean_recall": 1.0,
     "mean_precision": 1.0,
     "cases": [
@@ -556,17 +556,17 @@
       },
       {
         "case_id": "END-02",
-        "num_drugs": 1,
-        "num_pairs": 0,
-        "ground_truth_pairs": 0,
-        "retrieved_pairs": 0,
-        "true_positives": 0,
+        "num_drugs": 2,
+        "num_pairs": 1,
+        "ground_truth_pairs": 1,
+        "retrieved_pairs": 1,
+        "true_positives": 1,
         "false_positives": 0,
         "false_negatives": 0,
         "recall": 1.0,
         "precision": 1.0,
         "no_data_pairs_flagged": 0,
-        "unresolved_inputs": 1,
+        "unresolved_inputs": 0,
         "hallucination_count": null,
         "severity_correct": null,
         "severity_total": null
@@ -961,36 +961,37 @@
         "hallucination_count": null,
         "severity_correct": null,
         "severity_total": null
+      },
+      {
+        "case_id": "LA-09",
+        "num_drugs": 1,
+        "num_pairs": 0,
+        "ground_truth_pairs": 0,
+        "retrieved_pairs": 0,
+        "true_positives": 0,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "no_data_pairs_flagged": 0,
+        "unresolved_inputs": 1,
+        "hallucination_count": null,
+        "severity_correct": null,
+        "severity_total": null
       }
     ]
   },
   "hand_labels": {
-    "num_cases": 56,
-    "labelled_pairs": 38,
-    "retrieved_pairs": 238,
+    "num_cases": 57,
+    "labelled_pairs": 37,
+    "retrieved_pairs": 239,
     "hits": 37,
-    "recall": 0.974,
+    "recall": 1.0,
     "precision_lower_bound": 0.155,
-    "missed": [
-      [
-        "END-02",
-        [
-          "insulin",
-          "metoprolol"
-        ]
-      ]
-    ],
-    "source_gaps": 1,
+    "missed": [],
+    "source_gaps": 0,
     "pipeline_misses": 0,
-    "missed_source_gap": [
-      [
-        "END-02",
-        [
-          "insulin",
-          "metoprolol"
-        ]
-      ]
-    ],
+    "missed_source_gap": [],
     "missed_pipeline": [],
     "pipeline_recall": 1.0,
     "unlabelled_retrieved": [
@@ -1384,6 +1385,13 @@
         [
           "acetaminophen",
           "levothyroxine"
+        ]
+      ],
+      [
+        "EDG-03",
+        [
+          "atorvastatin",
+          "lisinopril"
         ]
       ],
       [
@@ -3221,26 +3229,21 @@
       },
       {
         "case_id": "EDG-03",
-        "labelled": [
-          [
-            "atorvastatin",
-            "lisinopril"
-          ]
-        ],
+        "labelled": [],
         "retrieved": [
           [
             "atorvastatin",
             "lisinopril"
           ]
         ],
-        "hits": [
+        "hits": [],
+        "missed": [],
+        "unlabelled_retrieved": [
           [
             "atorvastatin",
             "lisinopril"
           ]
-        ],
-        "missed": [],
-        "unlabelled_retrieved": []
+        ]
       },
       {
         "case_id": "EDG-04",
@@ -4161,18 +4164,23 @@
         "case_id": "END-02",
         "labelled": [
           [
-            "insulin",
+            "insulin glargine",
             "metoprolol"
           ]
         ],
-        "retrieved": [],
-        "hits": [],
-        "missed": [
+        "retrieved": [
           [
-            "insulin",
+            "insulin glargine",
             "metoprolol"
           ]
         ],
+        "hits": [
+          [
+            "insulin glargine",
+            "metoprolol"
+          ]
+        ],
+        "missed": [],
         "unlabelled_retrieved": []
       },
       {
@@ -5056,19 +5064,27 @@
             "simvastatin"
           ]
         ]
+      },
+      {
+        "case_id": "LA-09",
+        "labelled": [],
+        "retrieved": [],
+        "hits": [],
+        "missed": [],
+        "unlabelled_retrieved": []
       }
     ]
   },
   "report_checks": {
     "orchestration": "langgraph",
     "template": {
-      "reports": 56,
-      "clinical_claims": 238,
+      "reports": 57,
+      "clinical_claims": 239,
       "fabricated_claims": 0,
       "uncited_claims": 0,
-      "citations": 238,
-      "valid_citations": 238,
-      "pairs_with_records": 238,
+      "citations": 239,
+      "valid_citations": 239,
+      "pairs_with_records": 239,
       "omitted_pairs": 0,
       "major_pairs": 40,
       "omitted_major_pairs": 0,

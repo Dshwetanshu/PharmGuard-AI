@@ -8,15 +8,15 @@
   },
   "fault_suite": {
     "skipped": {
-      "absence_safe_once": 56,
+      "absence_safe_once": 57,
       "different_fault_on_retry": 4,
       "mechanism_always": 4,
       "mechanism_once": 4,
-      "omit_major_once": 20,
+      "omit_major_once": 21,
       "phantom_citation_once": 4,
       "retry_repeats_rejected_draft": 4,
       "severity_flip_once": 4,
-      "signal_severity_once": 56,
+      "signal_severity_once": 57,
       "uncited_claim_once": 4
     },
     "summary": {
@@ -33,40 +33,40 @@
         "plan_complete": 1.0,
         "state_json_serializable": 1.0
       },
-      "invariant_runs": 680,
+      "invariant_runs": 692,
       "latency_label": "orchestration overhead only (fake LLMs, public build, no network)",
       "latency_ms_end_to_end": {
-        "p50": 8.4,
-        "p95": 32.6
+        "p50": 15.3,
+        "p95": 55.8
       },
       "latency_ms_per_node": {
         "finalize": {
-          "p50": 0.2,
-          "p95": 1.82
+          "p50": 0.36,
+          "p95": 3.15
         },
         "generate_llm": {
-          "p50": 0.03,
-          "p95": 0.09
+          "p50": 0.06,
+          "p95": 0.18
         },
         "normalize": {
-          "p50": 0.02,
-          "p95": 0.07
+          "p50": 0.03,
+          "p95": 0.13
         },
         "plan": {
-          "p50": 0.03,
-          "p95": 0.08
+          "p50": 0.05,
+          "p95": 0.15
         },
         "retrieve": {
-          "p50": 6.16,
-          "p95": 25.0
+          "p50": 11.39,
+          "p95": 43.37
         },
         "template": {
-          "p50": 0.05,
-          "p95": 1.03
+          "p50": 0.1,
+          "p95": 1.84
         },
         "validate": {
-          "p50": 0.29,
-          "p95": 2.04
+          "p50": 0.52,
+          "p95": 3.68
         }
       },
       "llm_calls_per_case": 1.712,
@@ -76,17 +76,17 @@
         "clean": {
           "expected_source": "llm",
           "invariants_all_pass": 1.0,
-          "llm_calls_mean": 0.929,
+          "llm_calls_mean": 0.93,
           "path_match": 1.0,
-          "runs": 56,
+          "runs": 57,
           "source_match": 1.0
         },
         "clean+faers": {
           "expected_source": "llm",
           "invariants_all_pass": 1.0,
-          "llm_calls_mean": 0.929,
+          "llm_calls_mean": 0.93,
           "path_match": 1.0,
-          "runs": 56,
+          "runs": 57,
           "source_match": 1.0
         },
         "different_fault_on_retry": {
@@ -94,7 +94,7 @@
           "invariants_all_pass": 1.0,
           "llm_calls_mean": 2,
           "path_match": 1.0,
-          "runs": 52,
+          "runs": 53,
           "source_match": 1.0
         },
         "mechanism_always": {
@@ -102,7 +102,7 @@
           "invariants_all_pass": 1.0,
           "llm_calls_mean": 2,
           "path_match": 1.0,
-          "runs": 52,
+          "runs": 53,
           "source_match": 1.0
         },
         "mechanism_once": {
@@ -110,15 +110,15 @@
           "invariants_all_pass": 1.0,
           "llm_calls_mean": 2,
           "path_match": 1.0,
-          "runs": 52,
+          "runs": 53,
           "source_match": 1.0
         },
         "non_transient_error_once": {
           "expected_source": "deterministic_fallback",
           "invariants_all_pass": 1.0,
-          "llm_calls_mean": 0.929,
+          "llm_calls_mean": 0.93,
           "path_match": 1.0,
-          "runs": 56,
+          "runs": 57,
           "source_match": 1.0
         },
         "omit_major_once": {
@@ -134,7 +134,7 @@
           "invariants_all_pass": 1.0,
           "llm_calls_mean": 2,
           "path_match": 1.0,
-          "runs": 52,
+          "runs": 53,
           "source_match": 1.0
         },
         "retry_repeats_rejected_draft": {
@@ -142,7 +142,7 @@
           "invariants_all_pass": 1.0,
           "llm_calls_mean": 2,
           "path_match": 1.0,
-          "runs": 52,
+          "runs": 53,
           "source_match": 1.0
         },
         "severity_flip_once": {
@@ -150,23 +150,23 @@
           "invariants_all_pass": 1.0,
           "llm_calls_mean": 2,
           "path_match": 1.0,
-          "runs": 52,
+          "runs": 53,
           "source_match": 1.0
         },
         "transient_error_always": {
           "expected_source": "deterministic_fallback",
           "invariants_all_pass": 1.0,
-          "llm_calls_mean": 1.857,
+          "llm_calls_mean": 1.86,
           "path_match": 1.0,
-          "runs": 56,
+          "runs": 57,
           "source_match": 1.0
         },
         "transient_error_once": {
           "expected_source": "llm_retry",
           "invariants_all_pass": 1.0,
-          "llm_calls_mean": 1.857,
+          "llm_calls_mean": 1.86,
           "path_match": 1.0,
-          "runs": 56,
+          "runs": 57,
           "source_match": 1.0
         },
         "uncited_claim_once": {
@@ -174,12 +174,12 @@
           "invariants_all_pass": 1.0,
           "llm_calls_mean": 2,
           "path_match": 1.0,
-          "runs": 52,
+          "runs": 53,
           "source_match": 1.0
         }
       },
       "recovery_rate": 1.0,
-      "runs": 680,
+      "runs": 692,
       "source_match_rate": 1.0
     }
   },
@@ -203,46 +203,46 @@
       "plan_complete": 1.0,
       "state_json_serializable": 1.0
     },
-    "runs": 792
+    "runs": 806
   },
   "seeded_bugs": {
     "faers_always_consulted": {
       "broken": {
-        "faers_only_when_needed": 0.0294
+        "faers_only_when_needed": 0.0289
       },
       "caught": true,
-      "path_match": 0.0294
+      "path_match": 0.0289
     },
     "fallback_returns_rejected_draft": {
       "broken": {
-        "exhausted_fallback_matches_deterministic": 0.7706,
-        "final_report_valid": 0.7706,
-        "no_unvalidated_llm_text": 0.7706
+        "exhausted_fallback_matches_deterministic": 0.7702,
+        "final_report_valid": 0.7702,
+        "no_unvalidated_llm_text": 0.7702
       },
       "caught": true,
       "path_match": 1.0
     },
     "non_transient_errors_retried": {
       "broken": {
-        "non_transient_never_retried": 0.9235
+        "non_transient_never_retried": 0.9234
       },
       "caught": true,
-      "path_match": 0.9235
+      "path_match": 0.9234
     },
     "plan_drops_a_pair": {
       "broken": {
-        "exhausted_fallback_matches_deterministic": 0.0706,
-        "plan_complete": 0.0294
+        "exhausted_fallback_matches_deterministic": 0.0694,
+        "plan_complete": 0.0289
       },
       "caught": true,
       "path_match": 0.4118
     },
     "retry_limit_off_by_one": {
       "broken": {
-        "llm_attempts_within_budget": 0.6941
+        "llm_attempts_within_budget": 0.6936
       },
       "caught": true,
-      "path_match": 0.6941
+      "path_match": 0.6936
     },
     "validate_always_passes": {
       "broken": {
@@ -258,7 +258,7 @@
       "summary": {
         "failing": [],
         "overall": {
-          "cases": 56,
+          "cases": 57,
           "completion": 1.0,
           "finalize": 1.0,
           "normalize": 1.0,
@@ -322,7 +322,7 @@
             "route": 1.0
           },
           "LA": {
-            "cases": 8,
+            "cases": 9,
             "completion": 1.0,
             "finalize": 1.0,
             "normalize": 1.0,
@@ -385,14 +385,7 @@
             "route": 1.0
           }
         },
-        "source_gap_misses": {
-          "END-02": [
-            [
-              "insulin",
-              "metoprolol"
-            ]
-          ]
-        },
+        "source_gap_misses": {},
         "suspected_label_misses": {}
       }
     },
@@ -401,7 +394,7 @@
       "summary": {
         "failing": [],
         "overall": {
-          "cases": 56,
+          "cases": 57,
           "completion": 1.0,
           "finalize": 1.0,
           "normalize": 1.0,
@@ -465,7 +458,7 @@
             "route": 1.0
           },
           "LA": {
-            "cases": 8,
+            "cases": 9,
             "completion": 1.0,
             "finalize": 1.0,
             "normalize": 1.0,
@@ -528,14 +521,7 @@
             "route": 1.0
           }
         },
-        "source_gap_misses": {
-          "END-02": [
-            [
-              "insulin",
-              "metoprolol"
-            ]
-          ]
-        },
+        "source_gap_misses": {},
         "suspected_label_misses": {}
       }
     }

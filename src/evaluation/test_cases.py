@@ -48,9 +48,7 @@ class TestCase:
 # Hand labels suspected to be wrong (flagged for the user's review, NOT changed).
 # The trajectory evaluation counts misses on these pairs separately.
 SUSPECTED_LABEL_ERRORS: Dict[str, List[Tuple[str, str]]] = {
-    # No record in the sample data, and no clinically significant interaction is
-    # generally described for this pair; the case exists to test brand-name lookup.
-    "EDG-03": [("atorvastatin", "lisinopril")],
+    # Empty since the 2026-09-29 review (docs/LABEL_CHANGES.md): EDG-03's label was removed.
 }
 
 
@@ -114,10 +112,10 @@ TEST_CASES: List[TestCase] = [
 
     # ---------- Edge cases ----------
     TestCase("EDG-01", "Single drug (no pairs)", ["metformin"], []),
-    TestCase("EDG-02", "Two drugs with no known interaction",
+    TestCase("EDG-02", "Two drugs with no graded interaction in DDInter",
              ["acetaminophen", "levothyroxine"], []),
     TestCase("EDG-03", "Brand name input",
-             ["Lipitor", "Prinivil"], [("atorvastatin", "lisinopril")],
+             ["Lipitor", "Prinivil"], [],
              expected_resolved={"Lipitor": "atorvastatin", "Prinivil": "lisinopril"}),
     TestCase("EDG-04", "Mixed case + whitespace",
              ["  METFORMIN  ", "Lisinopril", "aspirin"], [],
@@ -163,9 +161,9 @@ TEST_CASES: List[TestCase] = [
     TestCase("END-01", "Diabetes + thyroid",
              ["metformin", "levothyroxine"], []),
     TestCase("END-02", "Insulin + beta-blocker masking",
-             ["insulin", "metoprolol"], [("insulin", "metoprolol")],
-             # Real RxNorm has only specific insulins: "insulin" must stay ambiguous there.
-             expected_by_profile={"public": {"insulin": None}, "research": {"insulin": None}}),
+             ["insulin glargine", "metoprolol"], [("insulin glargine", "metoprolol")],
+             # The synthetic sample has only a generic "insulin", so there this is a source gap.
+             expected_by_profile={"sample": {"insulin glargine": None}}),
     TestCase("END-03", "Steroid + antidiabetic",
              ["prednisone", "metformin"], []),
 
@@ -242,4 +240,7 @@ TEST_CASES: List[TestCase] = [
              expected_unresolved=["Celebyx"]),
     TestCase("LA-08", "Discontinued brand Biaxin + simvastatin", ["Biaxin", "simvastatin"], [],
              expected_resolved={"Biaxin": "clarithromycin"}),
+    TestCase("LA-09", "Ambiguous generic name (plain insulin)", ["insulin", "metoprolol"], [],
+             # Real RxNorm has only specific insulins: "insulin" must stay ambiguous there.
+             expected_by_profile={"public": {"insulin": None}, "research": {"insulin": None}}),
 ]

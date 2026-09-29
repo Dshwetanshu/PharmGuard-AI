@@ -425,16 +425,16 @@
     },
     {
       "case_id": "END-02",
-      "graded": 0,
+      "graded": 1,
       "hidden_signals": 0,
       "major": 0,
       "minor": 0,
-      "moderate": 0,
+      "moderate": 1,
       "no_data_pairs": 0,
-      "pairs": 0,
+      "pairs": 1,
       "signals": 0,
       "ungraded": 0,
-      "unresolved": 1
+      "unresolved": 0
     },
     {
       "case_id": "END-03",
@@ -734,40 +734,53 @@
       "signals": 0,
       "ungraded": 0,
       "unresolved": 0
+    },
+    {
+      "case_id": "LA-09",
+      "graded": 0,
+      "hidden_signals": 0,
+      "major": 0,
+      "minor": 0,
+      "moderate": 0,
+      "no_data_pairs": 0,
+      "pairs": 0,
+      "signals": 0,
+      "ungraded": 0,
+      "unresolved": 1
     }
   ],
   "skipped": 0,
   "summary": {
-    "items_shown": 238,
-    "major_share_of_items": 0.1681,
+    "items_shown": 239,
+    "major_share_of_items": 0.1674,
     "max_per_report": {
       "graded": 34,
       "signals": 0,
       "ungraded": 32
     },
     "median_per_report": {
-      "graded": 1.0,
-      "major": 1.0,
-      "no_data_pairs": 0.0,
-      "signals": 0.0,
-      "ungraded": 0.0
+      "graded": 1,
+      "major": 1,
+      "no_data_pairs": 0,
+      "signals": 0,
+      "ungraded": 0
     },
-    "reports": 56,
+    "reports": 57,
     "reports_with_a_major": 36,
     "reports_with_nothing_graded": 6,
     "share_of_items": {
-      "graded": 0.5882,
+      "graded": 0.59,
       "signals": 0.0,
-      "ungraded": 0.4118
+      "ungraded": 0.41
     },
     "totals": {
-      "graded": 140,
+      "graded": 141,
       "hidden_signals": 0,
       "major": 40,
       "minor": 14,
-      "moderate": 86,
+      "moderate": 87,
       "no_data_pairs": 0,
-      "pairs": 238,
+      "pairs": 239,
       "signals": 0,
       "ungraded": 98,
       "unresolved": 3

@@ -7,16 +7,16 @@
   },
   "fault_suite": {
     "skipped": {
-      "absence_safe_once": 37,
-      "different_fault_on_retry": 17,
-      "mechanism_always": 17,
-      "mechanism_once": 17,
-      "omit_major_once": 34,
-      "phantom_citation_once": 17,
-      "retry_repeats_rejected_draft": 17,
-      "severity_flip_once": 21,
-      "signal_severity_once": 17,
-      "uncited_claim_once": 17
+      "absence_safe_once": 38,
+      "different_fault_on_retry": 18,
+      "mechanism_always": 18,
+      "mechanism_once": 18,
+      "omit_major_once": 35,
+      "phantom_citation_once": 18,
+      "retry_repeats_rejected_draft": 18,
+      "severity_flip_once": 22,
+      "signal_severity_once": 18,
+      "uncited_claim_once": 18
     },
     "summary": {
       "invariant_pass_rate": {
@@ -32,47 +32,47 @@
         "plan_complete": 1.0,
         "state_json_serializable": 1.0
       },
-      "invariant_runs": 629,
+      "invariant_runs": 634,
       "latency_label": "orchestration overhead only (fake LLMs, synthetic sample data, no network)",
       "latency_ms_end_to_end": {
-        "p50": 3.5,
-        "p95": 10.7
+        "p50": 6.7,
+        "p95": 20.3
       },
       "latency_ms_per_node": {
         "faers": {
-          "p50": 0.09,
-          "p95": 0.48
+          "p50": 0.2,
+          "p95": 0.84
         },
         "finalize": {
-          "p50": 0.27,
-          "p95": 1.2
+          "p50": 0.52,
+          "p95": 2.27
         },
         "generate_llm": {
+          "p50": 0.06,
+          "p95": 0.16
+        },
+        "normalize": {
           "p50": 0.03,
           "p95": 0.08
         },
-        "normalize": {
-          "p50": 0.02,
-          "p95": 0.04
-        },
         "plan": {
-          "p50": 0.03,
-          "p95": 0.12
+          "p50": 0.05,
+          "p95": 0.22
         },
         "retrieve": {
-          "p50": 1.18,
-          "p95": 6.45
+          "p50": 2.4,
+          "p95": 11.08
         },
         "template": {
-          "p50": 0.06,
-          "p95": 0.23
+          "p50": 0.11,
+          "p95": 0.47
         },
         "validate": {
-          "p50": 0.33,
-          "p95": 1.9
+          "p50": 0.67,
+          "p95": 3.35
         }
       },
-      "llm_calls_per_case": 1.633,
+      "llm_calls_per_case": 1.62,
       "mismatches": [],
       "path_match_rate": 1.0,
       "per_scenario": {
@@ -87,17 +87,17 @@
         "clean": {
           "expected_source": "llm",
           "invariants_all_pass": 1.0,
-          "llm_calls_mean": 0.839,
+          "llm_calls_mean": 0.825,
           "path_match": 1.0,
-          "runs": 56,
+          "runs": 57,
           "source_match": 1.0
         },
         "clean+faers": {
           "expected_source": "llm",
           "invariants_all_pass": 1.0,
-          "llm_calls_mean": 0.839,
+          "llm_calls_mean": 0.825,
           "path_match": 1.0,
-          "runs": 56,
+          "runs": 57,
           "source_match": 1.0
         },
         "different_fault_on_retry": {
@@ -127,9 +127,9 @@
         "non_transient_error_once": {
           "expected_source": "deterministic_fallback",
           "invariants_all_pass": 1.0,
-          "llm_calls_mean": 0.839,
+          "llm_calls_mean": 0.825,
           "path_match": 1.0,
-          "runs": 56,
+          "runs": 57,
           "source_match": 1.0
         },
         "omit_major_once": {
@@ -175,17 +175,17 @@
         "transient_error_always": {
           "expected_source": "deterministic_fallback",
           "invariants_all_pass": 1.0,
-          "llm_calls_mean": 1.679,
+          "llm_calls_mean": 1.649,
           "path_match": 1.0,
-          "runs": 56,
+          "runs": 57,
           "source_match": 1.0
         },
         "transient_error_once": {
           "expected_source": "llm_retry",
           "invariants_all_pass": 1.0,
-          "llm_calls_mean": 1.679,
+          "llm_calls_mean": 1.649,
           "path_match": 1.0,
-          "runs": 56,
+          "runs": 57,
           "source_match": 1.0
         },
         "uncited_claim_once": {
@@ -198,7 +198,7 @@
         }
       },
       "recovery_rate": 1.0,
-      "runs": 629,
+      "runs": 634,
       "source_match_rate": 1.0
     }
   },
@@ -222,54 +222,54 @@
       "plan_complete": 1.0,
       "state_json_serializable": 1.0
     },
-    "runs": 741
+    "runs": 748
   },
   "seeded_bugs": {
     "faers_always_consulted": {
       "broken": {
-        "faers_only_when_needed": 0.1017
+        "faers_only_when_needed": 0.1088
       },
       "caught": true,
-      "path_match": 0.1017
+      "path_match": 0.1088
     },
     "fallback_returns_rejected_draft": {
       "broken": {
-        "exhausted_fallback_matches_deterministic": 0.814,
-        "final_report_valid": 0.814,
-        "no_unvalidated_llm_text": 0.814
+        "exhausted_fallback_matches_deterministic": 0.8155,
+        "final_report_valid": 0.8155,
+        "no_unvalidated_llm_text": 0.8155
       },
       "caught": true,
       "path_match": 1.0
     },
     "non_transient_errors_retried": {
       "broken": {
-        "non_transient_never_retried": 0.9253
+        "non_transient_never_retried": 0.9259
       },
       "caught": true,
-      "path_match": 0.9253
+      "path_match": 0.9259
     },
     "plan_drops_a_pair": {
       "broken": {
-        "exhausted_fallback_matches_deterministic": 0.2258,
-        "plan_complete": 0.0715
+        "exhausted_fallback_matches_deterministic": 0.2319,
+        "plan_complete": 0.0789
       },
       "caught": true,
-      "path_match": 0.5135
+      "path_match": 0.5174
     },
     "retry_limit_off_by_one": {
       "broken": {
-        "llm_attempts_within_budget": 0.7393
+        "llm_attempts_within_budget": 0.7413
       },
       "caught": true,
-      "path_match": 0.7393
+      "path_match": 0.7413
     },
     "validate_always_passes": {
       "broken": {
-        "final_report_valid": 0.4452,
-        "no_unvalidated_llm_text": 0.4452
+        "final_report_valid": 0.4495,
+        "no_unvalidated_llm_text": 0.4495
       },
       "caught": true,
-      "path_match": 0.4452
+      "path_match": 0.4495
     }
   },
   "step_scoring": {
@@ -277,7 +277,7 @@
       "summary": {
         "failing": [],
         "overall": {
-          "cases": 56,
+          "cases": 57,
           "completion": 1.0,
           "finalize": 1.0,
           "normalize": 1.0,
@@ -341,7 +341,7 @@
             "route": 1.0
           },
           "LA": {
-            "cases": 8,
+            "cases": 9,
             "completion": 1.0,
             "finalize": 1.0,
             "normalize": 1.0,
@@ -404,15 +404,15 @@
             "route": 1.0
           }
         },
-        "source_gap_misses": {},
-        "suspected_label_misses": {
-          "EDG-03": [
+        "source_gap_misses": {
+          "END-02": [
             [
-              "atorvastatin",
-              "lisinopril"
+              "insulin glargine",
+              "metoprolol"
             ]
           ]
-        }
+        },
+        "suspected_label_misses": {}
       }
     },
     "llm_mode_with_key": null,
@@ -420,7 +420,7 @@
       "summary": {
         "failing": [],
         "overall": {
-          "cases": 56,
+          "cases": 57,
           "completion": 1.0,
           "finalize": 1.0,
           "normalize": 1.0,
@@ -484,7 +484,7 @@
             "route": 1.0
           },
           "LA": {
-            "cases": 8,
+            "cases": 9,
             "completion": 1.0,
             "finalize": 1.0,
             "normalize": 1.0,
@@ -547,15 +547,15 @@
             "route": 1.0
           }
         },
-        "source_gap_misses": {},
-        "suspected_label_misses": {
-          "EDG-03": [
+        "source_gap_misses": {
+          "END-02": [
             [
-              "atorvastatin",
-              "lisinopril"
+              "insulin glargine",
+              "metoprolol"
             ]
           ]
-        }
+        },
+        "suspected_label_misses": {}
       }
     }
   }
