@@ -21,7 +21,7 @@ test (`pytest --run-realdata`) fails if a committed result doesn't match the bui
 | How much of a report is graded vs ungraded? | 141 graded (40 Major) and 98 ungraded listings over 239 pairs | public | results/alert_burden_public.md |
 | Does the checker flag clean reports? | 0 findings on 57 + 200 + 27 real-data template reports | public | results/checker_validation_public.md |
 | Does the orchestration behave under faults? | 100% of 11 invariants over 806 runs; 6 of 6 seeded bugs caught | public | results/trajectory_public.md |
-| How faithful are LLM reports? | — (LLM path not yet run) | — | — |
+| How does an LLM do on the harness? | gemini-3.5-flash-lite: 91.5% of first drafts pass the checker; 1 of 47 reports falls back; its own-model judge rates 123 of 123 shown claims supported | **sample only** | results/llm_eval_sample.md |
 | Does a pharmacist find the reports accurate? | — (review not yet done) | — | docs/PHARMACIST_REVIEW_PROTOCOL.md |
 
 ## Definitions
@@ -234,17 +234,47 @@ On the public build that is 57 to 114 generation calls plus about 239 judge call
 - **Audit:** a seeded 20% of judged claims is exported blind (`results/judge_audit_<profile>.csv`, verdicts
   hidden). `python scripts/score_judge_audit.py` reports percent agreement and Cohen's κ.
 
-| | Deterministic template | LLM |
-|---|---:|---:|
-| first-draft pass rate / recovery on retry / fallback rate | n/a | — / — / — |
-| tokens per report | 0 | — |
-| semantic hallucination rate (checker, shown reports) | 0.000 (public) | — |
-| faithfulness (judge) | — | — |
-| judge vs human agreement / Cohen's κ | — | — |
+### First run: gemini-3.5-flash-lite on the synthetic sample (29 September 2026)
 
-No LLM number exists yet. The first planned run uses Gemini's free tier on the **synthetic sample only**, so that
-no public-build data (DDInter, CC BY-NC-SA) goes to a free-tier service. With a single provider, the judge will be
-the same provider as the generator, and the results will say so. Its numbers will be labelled sample-only.
+**Sample-only.** It ran on the 85-record synthetic sample, not the public build, so no DDInter data went to a
+free-tier service. The numbers describe a model on this harness, not PharmGuard's accuracy on real drugs.
+
+- **Model:** Google `gemini-3.5-flash-lite` on the free tier (a key from a project with billing disabled; 253
+  network calls, within that tier's 500 requests a day).
+- **The same model generated the reports and judged them.** A same-provider judge may be lenient with its own
+  output; results/llm_eval_sample.md records the disclosure.
+- **Why not the default model:** the free tier allows `gemini-3.8-flash` only 20 requests a day, so the run
+  would have taken about two weeks.
+
+| | Deterministic template | LLM first draft | LLM report shown |
+|---|---:|---:|---:|
+| reports | 57 | 47 (10 cases have fewer than 2 resolved drugs and never reach the LLM) | 46 |
+| semantic hallucination rate (checker) | 0.000 | 0.016 (2 of 128 claims) | 0.000 |
+| uncited-claim rate (checker) | 0.000 | 0.016 | 0.000 |
+| citation validity / pair and Major omission / completeness | 1.000 / 0 / 0 / 1.000 | 1.000 / 0 / 0 / 1.000 | 1.000 / 0 / 0 / 1.000 |
+| judge: supported / judged | 124 / 124 | not judged | 123 / 123 |
+| judge: contradicted or unsupported | 0 | not judged | 0 |
+
+| LLM runs (47 eligible cases) | Result |
+|---|---|
+| first-draft pass rate | 91.5% (43 of 47) |
+| recovery on retry | 75.0% (3 of 4 failing first drafts) |
+| fallback to the template | 2.1% (1 of 47) |
+| checker findings across rejected drafts | `SEVERITY_ON_STATISTICAL_SIGNAL` 3, `UNCITED_CLAIM` 2 |
+| tokens per report (generation, all attempts) | 1,620.9 |
+| judge calls / invalid judge outputs / judge tokens | 247 / 0 / 100,271 in, 12,728 out |
+| judge vs human agreement / Cohen's κ | — (49 claims exported blind to results/judge_audit_sample.csv, not yet scored) |
+
+What this does and doesn't show:
+- **The guardrail did its job.** Every failing first draft was either fixed on the retry or replaced by the
+  template, so no report that failed the checker was shown. The findings on rejected drafts were a severity
+  word attached to a statistical signal (3) and uncited claims (2).
+- **The judge didn't wrongly flag correct claims.** It rated all 124 template claims supported; those restate
+  record fields, so "supported" is correct for every one.
+- **The judge's sensitivity is unmeasured: —.** It was only shown claims that had already passed the checker. So
+  "123 of 123 supported" can't say how often it would catch a fabrication. Measuring that needs judge runs on
+  known-bad claims (for example the checker's injected faults) and the human audit.
+- **LLM-mode latency: —.** The run spaced calls 5 s apart for the free tier, so its timings measure the spacing.
 
 ## 4. Orchestration: trajectory evaluation
 
@@ -291,12 +321,13 @@ The live numbers were measured from the machine used for the deployment. Cold st
 - a deployment's first instance: 12.9 s from start to ready;
 - local Docker: 16.9 s on the first run after a build, 2.8 s on later runs.
 
-LLM-mode latency is unmeasured: —.
+LLM-mode latency is unmeasured: — (the only LLM run spaced its calls 5 s apart for the free tier).
 
 ## Limitations
 
-- **Lexicon checks are a lower bound.** The checker misses fabrications worded outside its lexicons (2a). No LLM
-  judge result exists yet.
+- **Lexicon checks are a lower bound.** The checker misses fabrications worded outside its lexicons (2a). The
+  LLM judge has run only on the synthetic sample, with the same model judging its own reports, and its ability to
+  catch errors is unmeasured (3).
 - **Pairwise only.** Every check is per pair. A pattern that needs three drugs at once, such as an NSAID + ACE
   inhibitor + diuretic, is not flagged as a combination.
 - **Severities are DDInter's.** PharmGuard copies DDInter's grade and doesn't reconcile references. References
@@ -309,7 +340,7 @@ LLM-mode latency is unmeasured: —.
 - **References are small and partly heuristic.** The FDA-label reference is 33 scored rows with a keyword-based
   wording classification tuned on those same labels. The hand labels are partial.
 - **No mechanism text.** The DDInter bulk files have none, so reports can't say why a pair interacts.
-- **No clinician review and no LLM numbers yet** (3, 5).
+- **No clinician review yet (5), and LLM numbers on the synthetic sample only (3).**
 
 ## Running everything
 

@@ -64,7 +64,7 @@ All from running the code in this repo. Each result file names the data build an
 | Orchestration under scripted faults | **100%** of 11 invariants over 806 runs; **6 of 6** seeded bugs caught | public |
 | Hand-labelled pairs retrieved | **37 of 37** | public |
 | Live latency, six-drug check, end to end (web.app) | p50 **174 ms**, p95 236 ms (n = 38); cold start 15.7 s | live |
-| LLM faithfulness, first-draft pass rate, judge agreement | **—** (not yet run) | — |
+| LLM path (gemini-3.5-flash-lite, free tier), on the synthetic sample only | **91.5%** of first drafts pass the checker; 1 of 47 falls back to the template; its judge (**the same model**) rates 123 of 123 shown claims and 124 of 124 template claims supported. The judge's ability to catch errors, and its agreement with a human, are — | **sample only** |
 | Pharmacist review | **—** (protocol ready, not yet done) | — |
 
 Numbers come from [results/](results/) and [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
@@ -123,8 +123,8 @@ limiting) is in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
   combination.
 - **No mechanisms.** The DDInter bulk files have no mechanism text, so reports don't explain why a pair interacts.
 - **The checker is a lower bound.** Its mechanism, event and population checks use hand-written lexicons, so
-  fabrications worded outside them pass. The LLM judge that would add a second layer is built but hasn't run on
-  a real model yet.
+  fabrications worded outside them pass. The LLM judge has run only on the synthetic sample, with the same model
+  judging its own reports, and it has never been shown a known-bad claim, so its sensitivity is unmeasured.
 - **Many ungraded listings.** DDInter lists many pairs without a grade, including all 10 negative controls in
   the reference set. The report keeps them under their own heading.
 - **Small references.** The FDA-label set is 33 scored rows, classified by keyword rules. There's no

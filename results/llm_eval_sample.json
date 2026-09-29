@@ -1,0 +1,1661 @@
+{
+  "audit": {
+    "csv": "results/judge_audit_sample.csv",
+    "fraction": 0.2,
+    "key": "data/cache (not committed)",
+    "rows": 49,
+    "seed": 20260928
+  },
+  "command": "python scripts/run_llm_eval.py --profile sample --providers gemini --model gemini-3.5-flash-lite --judge-provider gemini --judge-model gemini-3.5-flash-lite --allow-same-provider-judge --min-interval 5",
+  "data": {
+    "data": "Data: synthetic sample dataset (85 interaction records), not real clinical data.",
+    "profile": "sample",
+    "provenance_sha256": "28d02174d104970c84783c43b9264e0424e6ce364c3223695f41749ca49a7506"
+  },
+  "date": "2026-09-29",
+  "judge_model": "gemini-3.5-flash-lite",
+  "judge_prompt": {
+    "file": "src/evaluation/prompts/judge_v1.txt",
+    "sha256": "ce2d0157ac2688a44174b1bc24135788e93303d53ecccbab9bf1f8ea23df41fa"
+  },
+  "providers": [
+    {
+      "cases": 57,
+      "checks": {
+        "llm_first_draft": {
+          "citation_validity": 1.0,
+          "citations": 152,
+          "clinical_claims": 128,
+          "completeness": 1.0,
+          "declared_no_data_pairs": 169,
+          "fabricated_claims": 2,
+          "major_omission_rate": 0.0,
+          "major_pairs": 24,
+          "no_data_pairs": 169,
+          "omitted_major_pairs": 0,
+          "omitted_pairs": 0,
+          "pair_omission_rate": 0.0,
+          "pairs_with_records": 64,
+          "reports": 47,
+          "semantic_hallucination_rate": 0.0156,
+          "uncited_claim_rate": 0.0156,
+          "uncited_claims": 2,
+          "valid_citations": 152
+        },
+        "llm_shown": {
+          "citation_validity": 1.0,
+          "citations": 148,
+          "clinical_claims": 123,
+          "completeness": 1.0,
+          "declared_no_data_pairs": 169,
+          "fabricated_claims": 0,
+          "major_omission_rate": 0.0,
+          "major_pairs": 23,
+          "no_data_pairs": 169,
+          "omitted_major_pairs": 0,
+          "omitted_pairs": 0,
+          "pair_omission_rate": 0.0,
+          "pairs_with_records": 63,
+          "reports": 46,
+          "semantic_hallucination_rate": 0.0,
+          "uncited_claim_rate": 0.0,
+          "uncited_claims": 0,
+          "valid_citations": 148
+        },
+        "template": {
+          "citation_validity": 1.0,
+          "citations": 124,
+          "clinical_claims": 124,
+          "completeness": 1.0,
+          "declared_no_data_pairs": 169,
+          "fabricated_claims": 0,
+          "major_omission_rate": 0.0,
+          "major_pairs": 24,
+          "no_data_pairs": 169,
+          "omitted_major_pairs": 0,
+          "omitted_pairs": 0,
+          "pair_omission_rate": 0.0,
+          "pairs_with_records": 64,
+          "reports": 57,
+          "semantic_hallucination_rate": 0.0,
+          "uncited_claim_rate": 0.0,
+          "uncited_claims": 0,
+          "valid_citations": 124
+        }
+      },
+      "generation_calls": 51,
+      "judge": {
+        "calls": 247,
+        "llm_shown": {
+          "claims": 123,
+          "contradicted": 0,
+          "contradicted_rate": 0.0,
+          "faithfulness": 1.0,
+          "invalid_judge_output": 0,
+          "judged": 123,
+          "supported": 123,
+          "unsupported": 0,
+          "unsupported_rate": 0.0
+        },
+        "template": {
+          "claims": 124,
+          "contradicted": 0,
+          "contradicted_rate": 0.0,
+          "faithfulness": 1.0,
+          "invalid_judge_output": 0,
+          "judged": 124,
+          "supported": 124,
+          "unsupported": 0,
+          "unsupported_rate": 0.0
+        },
+        "usage": {
+          "input_tokens": 100271,
+          "output_tokens": 12728
+        }
+      },
+      "judge_disclosure": {
+        "generator_provider": "gemini",
+        "judge_provider": "gemini",
+        "same_provider": true,
+        "same_provider_allowed": true
+      },
+      "judgements": [
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:GER-01:L13",
+          "rationale": "The event, mechanism, and drugs match the cited record exactly.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:GER-01:L16",
+          "rationale": "The claim matches the drugs, event, and mechanism stated in the cited record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:GER-01:L17",
+          "rationale": "The claim correctly reflects the drugs, event (additive GI bleeding), mechanism, and severity stated in the cited record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:GER-01:L25",
+          "rationale": "The claim that aspirin and omeprazole cause a reduced antiplatelet effect with a PRR of 4.8 is directly supported by the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:GER-01:L26",
+          "rationale": "The cited record confirms the drug pair (aspirin, sertraline), the event (gastrointestinal bleeding), and the PRR value (6.2).",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:GER-01:L27",
+          "rationale": "The cited TWOSIDES record states the drugs aspirin and spironolactone, the event reduced diuretic efficacy, and a PRR of 2.6, all of which match the claim.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:GER-01:L28",
+          "rationale": "The claim correctly reflects the drugs lisinopril and metformin, the event hypoglycemia risk, and the PRR of 2.4 as stated in the cited record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:GER-01:L29",
+          "rationale": "The claim correctly reflects the drugs lisinopril and spironolactone, the event hyperkalemia, and the PRR of 14.2 as stated in the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:GER-01:L30",
+          "rationale": "The claim correctly reflects the drugs lisinopril and spironolactone, the event renal failure, and the PRR value of 7.8 stated in the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:GER-02:L10",
+          "rationale": "The mechanism, event, drugs, and interaction details in the claim directly match the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:GER-02:L13",
+          "rationale": "The claim states the drugs aspirin and ibuprofen, the event gastrointestinal hemorrhage, and the PRR of 12.4, all of which are directly stated in the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:GER-02:L14",
+          "rationale": "The claim matches the drugs, event, and PRR value reported in the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:GER-02:L15",
+          "rationale": "The cited record explicitly states the drugs (lisinopril, metformin), event (hypoglycemia risk), and PRR (2.4).",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:GER-03:L10",
+          "rationale": "The claim matches the drug pair, event, and mechanism stated in the cited record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:GER-03:L11",
+          "rationale": "The mechanism and event for clopidogrel and omeprazole match the cited record exactly.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:GER-03:L14",
+          "rationale": "The cited record explicitly states the drugs (aspirin, clopidogrel), the event (bleeding), and the PRR value (5.1).",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:GER-03:L15",
+          "rationale": "The cited record explicitly states the drugs aspirin and omeprazole, the event 'reduced antiplatelet effect', and a PRR of 4.8.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:GER-03:L16",
+          "rationale": "Both events (reduced antiplatelet effect and reduced antiplatelet response) for clopidogrel and omeprazole, along with their respective PRR values of 7.2 and 6.9, are directly stated in the cited TWOSIDES records.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:GER-04:L11",
+          "rationale": "The claim that amiodarone reduces digoxin clearance and that the digoxin dose is typically halved is directly supported by the mechanism described in the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:GER-04:L12",
+          "rationale": "The claim that amiodarone inhibits warfarin metabolism and requires INR monitoring with CYP2C9 inhibition is directly stated in the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:GER-04:L15",
+          "rationale": "The claim of amiodarone and digoxin causing digoxin toxicity with a PRR of 22.1 is directly supported by the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:GER-04:L16",
+          "rationale": "Both the events (bleeding and prolonged prothrombin time) and their respective PRR values (13.8 and 11.2) for the combination of amiodarone and warfarin are directly supported by the cited TWOSIDES records.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:TXT-01:L6",
+          "rationale": "The event, severity, and mechanism stated in the claim ('NSAID potentiation of anticoagulation', 'NSAID inhibits platelet function and can displace warfarin from protein binding') directly match the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:TXT-01:L9",
+          "rationale": "The cited record confirms the drug pair (ibuprofen + warfarin), the event (hemorrhage), and the PRR value (15.6).",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:TXT-02:L7",
+          "rationale": "The cited record confirms the interaction between phenelzine and sertraline resulting in serotonin syndrome, with the mechanism noted as MAOI + SSRI co-administration.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:TXT-02:L12",
+          "rationale": "The claim that phenelzine combined with sertraline leads to serotonin syndrome with a PRR of 45.8 is directly stated in the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:TXT-03:L8",
+          "rationale": "The claim that clarithromycin strongly inhibits CYP3A4 metabolism of simvastatin is explicitly stated in the mechanism field of the cited record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:TXT-03:L17",
+          "rationale": "The claim correctly reflects the drugs (clarithromycin and simvastatin), the event (rhabdomyolysis), and the PRR value (19.7) as stated in the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:TXT-04:L6",
+          "rationale": "The cited record confirms the lisinopril and spironolactone major interaction involving additive potassium retention and hyperkalemia risk.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:TXT-04:L9",
+          "rationale": "Every part of the claim including the drugs, the event (additive potassium retention), and the mechanism matches the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:TXT-04:L12",
+          "rationale": "The cited record confirms the drug pair lisinopril and spironolactone, the event hyperkalemia, and the PRR of 14.2.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:TXT-04:L13",
+          "rationale": "The cited record confirms the drug pair lisinopril and spironolactone, the event 'renal failure', and the PRR of 7.8.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:TXT-05:L6",
+          "rationale": "The cited record confirms the drug pair ammiodarone and ciprofloxacin, the event QT prolongation, and the PRR of 11.8.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:TXT-06:L9",
+          "rationale": "The claimed event ('CNS depressant additivity'), mechanism ('Benzodiazepine + opioid combination carries respiratory depression risk'), and the drug pair (alprazolam + oxycodone) are all directly stated in the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:TXT-06:L12",
+          "rationale": "The cited record confirms the drug pair alprazolam and oxycodone, the event respiratory depression, and the PRR of 13.4.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:TXT-07:L7",
+          "rationale": "The mechanism and event stated in the claim ('Additive serotonergic effects can precipitate serotonin syndrome') directly match the mechanism provided in the cited record for sertraline and tramadol.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:TXT-07:L9",
+          "rationale": "The claim states sertraline + tramadol causes serotonin syndrome with a PRR of 14.20, which directly matches the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:TXT-07:L10",
+          "rationale": "The claim correctly reflects the drugs, event, and PRR of 11.90 stated in the cited record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:TXT-08:L6",
+          "rationale": "The claim perfectly matches the event and mechanism stated in the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:TXT-08:L9",
+          "rationale": "The cited record confirms the drug pair digoxin and furosemide, the event hypokalemia-induced toxicity, and the exact PRR value of 6.4.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:TXT-09:L8",
+          "rationale": "The cited record explicitly states the interaction between ibuprofen and methotrexate results in 'reduced methotrexate clearance'.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:TXT-09:L11",
+          "rationale": "The claim that ibuprofen and methotrexate leads to methotrexate toxicity with a PRR of 10.8 is directly supported by the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:TXT-10:L6",
+          "rationale": "The claim that ciprofloxacin inhibits theophylline metabolism and causes toxicity risk via CYP1A2 inhibition is fully supported by the mechanism and event stated in the cited record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:TXT-10:L9",
+          "rationale": "The claim correctly reflects the ciprofloxacin and theophylline interaction, theophylline toxicity event, and PRR of 15.1 as stated in the cited record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:EDG-04:L8",
+          "rationale": "The claimed drugs (lisinopril and metformin), event (hypoglycemia risk), and PRR (2.4) are all explicitly stated in the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:EDG-05:L8",
+          "rationale": "The claim correctly reflects the drugs, event, and PRR value of 2.40 stated in the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:EDG-07:L18",
+          "rationale": "The claim states 'additive bleeding via dual antihemostatic action', which matches the event and mechanism described in the cited record for aspirin and warfarin.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:EDG-07:L19",
+          "rationale": "The event 'NSAID potentiation of anticoagulation' for ibuprofen and warfarin is explicitly stated in the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:EDG-07:L22",
+          "rationale": "The cited record explicitly states the interaction between aspirin and omeprazole results in 'reduced antiplatelet response' (or reduced aspirin efficacy).",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:EDG-07:L23",
+          "rationale": "The claimed drugs (aspirin and sertraline) and event (additive GI bleeding) match the DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:EDG-07:L24",
+          "rationale": "The claim states ibuprofen + lisinopril causes NSAID-induced renal dysfunction, which matches the event and drugs listed in the cited record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:EDG-07:L25",
+          "rationale": "The claim that Ibuprofen + sertraline causes additive GI bleeding is directly supported by the event and mechanism listed in the cited record [DDInter:DDI-00000021].",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:EDG-07:L28",
+          "rationale": "The claim that amlodipine and simvastatin have a mild CYP3A4 interaction matches the event and severity described in the cited record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:EDG-07:L29",
+          "rationale": "The claim that levothyroxine and omeprazole result in reduced levothyroxine absorption is directly stated in the cited record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:EDG-07:L35",
+          "rationale": "The claim that amlodipine and simvastatin result in increased simvastatin levels with a PRR of 3.20 is directly supported by the cited record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:EDG-07:L36",
+          "rationale": "The claim correctly reflects the drugs, event, and PRR value of 12.40 stated in the cited record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:EDG-07:L37",
+          "rationale": "The cited record confirms the drug pair (aspirin + omeprazole), the event (reduced antiplatelet effect), and the PRR value (4.8).",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:EDG-07:L38",
+          "rationale": "The claim matches the cited record for the drug combination (aspirin + sertraline), the event (gastrointestinal bleeding), and the PRR value (6.20).",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:EDG-07:L39",
+          "rationale": "The cited record confirms the drug pair (aspirin + warfarin), the event (hemorrhage), and the exact PRR (18.7 or 18.70).",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:EDG-07:L40",
+          "rationale": "The claim of gastrointestinal bleeding with a PRR of 16.20 for the combination of aspirin and warfarin is directly supported by the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:EDG-07:L41",
+          "rationale": "The claim accurately reflects the drugs ibuprofen and lisinopril, the event acute kidney injury, and the PRR value of 5.90 found in the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:EDG-07:L42",
+          "rationale": "The claim that ibuprofen combined with sertraline is associated with gastrointestinal bleeding with a PRR of 4.60 is directly supported by the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:EDG-07:L43",
+          "rationale": "The cited record confirms the drug pair (ibuprofen + warfarin), the event (hemorrhage), and the exact PRR (15.6) mentioned in the claim.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:EDG-07:L44",
+          "rationale": "The cited record confirms the drug pair (levothyroxine + omeprazole), the specific event ('reduced levothyroxine absorption'), and the PRR value of 3.1 (matching 3.10).",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:EDG-07:L45",
+          "rationale": "The claim correctly reflects the drugs, event, and PRR value (2.40) stated in the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:EDG-07:L46",
+          "rationale": "The claim states that sertraline combined with warfarin is associated with an increased international normalised ratio with a PRR of 5.10, which exactly matches the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:EDG-07:L47",
+          "rationale": "The claim that sertraline and warfarin are associated with bleeding risk with a PRR of 4.20 is directly supported by the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:MH-01:L8",
+          "rationale": "The claim correctly reflects the drugs, event, and mechanism stated in the cited record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:MH-01:L12",
+          "rationale": "The claim states ibuprofen + sertraline causes gastrointestinal bleeding with a PRR of 4.6, which matches the event, drugs, and PRR value in the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:CV-01:L9",
+          "rationale": "All elements of the claim, including the drugs, the event 'additive potassium retention', the mechanism, and the hyperkalemia risk, are directly stated in the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:CV-01:L15",
+          "rationale": "The cited record confirms the drug pair lisinopril and spironolactone, the event hyperkalemia, and the PRR of 14.2.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:CV-01:L16",
+          "rationale": "The cited record explicitly states the drugs (lisinopril, spironolactone), the event (renal failure), and the PRR (7.8).",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:CV-02:L7",
+          "rationale": "The claim that aspirin and clopidogrel are associated with bleeding with a PRR of 5.1 is directly supported by the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:CV-03:L9",
+          "rationale": "The cited record explicitly states that trimethoprim inhibits warfarin metabolism, INR may rise, and involves CYP2C9 inhibition.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:CV-03:L12",
+          "rationale": "The cited record confirms the drug pair (trimethoprim + warfarin), the event (international normalised ratio increased), and the PRR value (10.3).",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:CV-04:L9",
+          "rationale": "All parts of the claim regarding drugs, event, and mechanism are explicitly stated in the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:CV-04:L12",
+          "rationale": "The claim that metoprolol and verapamil cause bradycardia with a PRR of 9.8 matches the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:CV-05:L6",
+          "rationale": "The mechanism and myopathy risk for atorvastatin and gemfibrozil are explicitly stated in the cited record [DDInter:DDI-00000022].",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:CV-05:L9",
+          "rationale": "The cited records state that the combination of atorvastatin and gemfibrozil is associated with myopathy and a PRR of 7.8.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:END-01:L6",
+          "rationale": "The side effects diarrhea, lactic acidosis, and nausea for metformin are all explicitly listed in the cited SIDER records.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:ID-01:L9",
+          "rationale": "The claim perfectly matches the event, mechanism, and risk stated in the cited record [DDInter:DDI-00000013].",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:ID-01:L12",
+          "rationale": "The cited record confirms azithromycin and sotalol cause QT prolongation with a PRR of 11.4.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:ID-02:L6",
+          "rationale": "The claim correctly reflects the drugs, severity, event, and mechanism stated in the cited record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:ID-02:L12",
+          "rationale": "The claim matches the severity, event, mechanism, and drug pair provided in the cited record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:ID-02:L22",
+          "rationale": "The claim matches the drug pair, event, and PRR value reported in the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:ID-03:L9",
+          "rationale": "The mechanism and clinical statement that rifampin induces CYP3A4 lowering contraceptive exposure when used with ethinyl estradiol are directly stated in the cited record [DDInter:DDI-00000014].",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:ID-03:L22",
+          "rationale": "The claim that ethinyl estradiol and rifampin are associated with contraceptive failure with a PRR of 13.7 is directly stated in the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:ID-04:L7",
+          "rationale": "The claim that ritonavir CYP3A4 inhibition causes marked simvastatin accumulation is directly stated in the mechanism field of the cited record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:ID-04:L12",
+          "rationale": "The cited TWOSIDES record explicitly lists ritonavir, simvastatin, the event rhabdomyolysis, and a PRR of 24.5.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:ONC-01:L9",
+          "rationale": "Every part of the claim regarding methotrexate and omeprazole, including the reduced MTX clearance and the mechanism of delayed methotrexate elimination due to PPI co-administration, is directly stated in the cited record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:ONC-01:L12",
+          "rationale": "The cited record explicitly states the drugs methotrexate and omeprazole, the event 'delayed methotrexate elimination', and the PRR of 5.3.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:ONC-02:L6",
+          "rationale": "The claim that there is a curated interaction and statistical reporting signals is supported by the DDInter interaction record and the TWOSIDES signal record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:ONC-02:L12",
+          "rationale": "The claim that paroxetine blocks CYP2D6 activation of tamoxifen to endoxifen is directly stated in the mechanism field of the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:ONC-02:L21",
+          "rationale": "The cited record explicitly states the drugs paroxetine and tamoxifen, the event 'reduced tamoxifen efficacy', and the PRR of 6.8.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:PAIN-01:L9",
+          "rationale": "The drugs, event, severity, and mechanism stated in the claim directly match the information provided in the cited record [DDInter:DDI-00000011].",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:PAIN-01:L12",
+          "rationale": "The claim states that alprazolam and oxycodone cause respiratory depression with a PRR of 13.40, which matches the event, drugs, and PRR provided in the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:PAIN-02:L7",
+          "rationale": "The mechanism 'Additive serotonergic effects can precipitate serotonin syndrome' is explicitly stated in the cited record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:PAIN-02:L13",
+          "rationale": "The cited record confirms the drug pair (fluoxetine + tramadol), the event (serotonin syndrome), and the exact PRR (12.8).",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:PAIN-03:L10",
+          "rationale": "The claim states 'Combined CNS depression with respiratory concerns', which directly matches the mechanism listed in the cited DDInter record for gabapentin and oxycodone.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:PAIN-03:L15",
+          "rationale": "The cited record confirms the drug pair gabapentin and oxycodone, the event CNS depression, and the PRR of 5.6.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:RSP-01:L9",
+          "rationale": "The mechanism stating that non-selective beta-blockade can blunt the bronchodilator effect is directly stated in the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:RSP-01:L12",
+          "rationale": "The claim that albuterol and propranolol are associated with bronchospasm at a PRR of 5.4 is directly supported by the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:RSP-02:L7",
+          "rationale": "The cited record confirms the major interaction between ciprofloxacin and theophylline, including CYP1A2 inhibition and ciprofloxacin inhibiting theophylline metabolism.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:RSP-02:L10",
+          "rationale": "The claim that ciprofloxacin inhibits theophylline metabolism with a toxicity risk is directly supported by the mechanism stated in the cited record [DDInter:DDI-00000015].",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:RSP-02:L13",
+          "rationale": "The claim states that ciprofloxacin and theophylline lead to theophylline toxicity with a PRR of 15.1, which matches the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:GI-01:L7",
+          "rationale": "The claim that PPI inhibition of CYP2C19 reduces clopidogrel activation is directly supported by the mechanism stated in the cited record [DDInter:DDI-00000018].",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:GI-01:L9",
+          "rationale": "The cited record confirms the drug pair (omeprazole + clopidogrel), the event (reduced antiplatelet effect), and the PRR value of 7.2.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:GI-01:L10",
+          "rationale": "The cited record explicitly states the drugs omeprazole and clopidogrel, the event 'reduced antiplatelet response', and a PRR of 6.9.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:REAL-01:L16",
+          "rationale": "The claim that aspirin and warfarin cause additive bleeding via dual antihemostatic action directly matches the event, drugs, and mechanism stated in the cited record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:REAL-01:L19",
+          "rationale": "The claim states that the combination of aspirin and omeprazole leads to a reduced antiplatelet response, which is directly supported by the event and drugs listed in the cited record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:REAL-01:L20",
+          "rationale": "The cited record explicitly states the drugs (aspirin, sertraline), the event (additive GI bleeding), and the severity (Moderate).",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:REAL-01:L23",
+          "rationale": "The cited record explicitly states the interaction between levothyroxine and omeprazole leads to reduced levothyroxine absorption.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:REAL-01:L29",
+          "rationale": "The claim that aspirin and omeprazole cause a reduced antiplatelet effect with a PRR of 4.8 is directly supported by the cited record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:REAL-01:L30",
+          "rationale": "The claim that aspirin and sertraline cause gastrointestinal bleeding with a PRR of 6.2 is directly stated in the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:REAL-01:L31",
+          "rationale": "The claim correctly reflects the events (hemorrhage and gastrointestinal bleeding) and their exact PRR values (18.7 and 16.2) for the combination of aspirin and warfarin as stated in the cited TWOSIDES records.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:REAL-01:L32",
+          "rationale": "The claim that the combination of furosemide and metformin results in reduced renal clearance with a PRR of 2.8 is directly stated in the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:REAL-01:L33",
+          "rationale": "The cited record confirms the drug pair (levothyroxine + omeprazole), the event (reduced levothyroxine absorption), and the exact PRR value of 3.1.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:REAL-01:L34",
+          "rationale": "The claim matches the cited record which states lisinopril and metformin have a hypoglycemia risk with a PRR of 2.4.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:REAL-01:L35",
+          "rationale": "The claim correctly reflects the international normalised ratio increased (PRR 5.1) and bleeding risk (PRR 4.2) for the sertraline and warfarin combination as stated in the cited TWOSIDES records.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:LA-08:L9",
+          "rationale": "The mechanism and event described in the claim ('Clarithromycin strongly inhibits CYP3A4 metabolism of simvastatin' and 'CYP3A4-mediated statin exposure') directly match the mechanism and event in the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:LA-08:L12",
+          "rationale": "The claim states the drugs clarithromycin and simvastatin, the event rhabdomyolysis, and the PRR of 19.7, all of which are directly supported by the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:LA-09:L8",
+          "rationale": "The mechanism 'Beta-blocker may mask adrenergic signs of hypoglycemia' is explicitly stated in the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "gemini:llm:LA-09:L11",
+          "rationale": "The cited record confirms the drug combination of insulin and metoprolol, the event 'masked hypoglycemia', and a PRR of 4.9.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:GER-01:L16",
+          "rationale": "The claim matches the severity, event, and mechanism stated in the cited DDInter record for lisinopril and spironolactone.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:GER-01:L19",
+          "rationale": "All details in the claim, including the severity (Moderate), event (reduced antiplatelet response), and mechanism, directly match the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:GER-01:L20",
+          "rationale": "Every clinical statement in the claim regarding drugs, severity, event, and mechanism matches the cited DDInter record exactly.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:GER-01:L24",
+          "rationale": "The cited record confirms the drugs (aspirin, omeprazole), event (reduced antiplatelet effect), and PRR (4.80), while the mention of 'co-reports n/a' simply reflects the absence of reported co-counts in the source.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:GER-01:L25",
+          "rationale": "The claim matches the drug pair, event, and PRR of 6.20 from the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:GER-01:L26",
+          "rationale": "The claim states the drugs (aspirin, spironolactone), event (reduced diuretic efficacy), and PRR (2.60), all of which directly match the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:GER-01:L27",
+          "rationale": "The claim accurately reflects the drugs, event, and PRR of 2.40 found in the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:GER-01:L28",
+          "rationale": "The claim states lisinopril + spironolactone leads to hyperkalemia with a PRR of 14.20, which is directly supported by the TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:GER-01:L29",
+          "rationale": "The claim correctly reflects the drugs lisinopril and spironolactone, the event renal failure, and the PRR of 7.80 from the cited record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:GER-02:L15",
+          "rationale": "All elements of the claim including the drugs, severity, event, and source mechanism are directly supported by the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:GER-02:L19",
+          "rationale": "The claim correctly reflects the drugs, event, and PRR (12.40) found in the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:GER-02:L20",
+          "rationale": "The claim states lisinopril and ibuprofen cause acute kidney injury with a PRR of 5.90 and co-reports n/a, which directly matches the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:GER-02:L21",
+          "rationale": "The claim accurately reflects the drugs, event, and PRR of 2.40 found in the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:GER-03:L15",
+          "rationale": "All details in the claim, including the severity (Moderate), event (reduced antiplatelet response), and mechanism, directly match the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:GER-03:L16",
+          "rationale": "The claim matches the DDInter record for clopidogrel and omeprazole, including severity (Moderate), event (CYP2C19 inhibition), and mechanism.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:GER-03:L20",
+          "rationale": "The claim states aspirin + clopidogrel with bleeding, PRR 5.10, and co-reports n/a, which matches the cited record's PRR of 5.1 and event 'bleeding'.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:GER-03:L21",
+          "rationale": "The cited record confirms the drugs (aspirin, omeprazole), event (reduced antiplatelet effect), and PRR (4.80), while the mention of 'co-reports n/a' simply reflects the absence of reported co-counts in the source.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:GER-03:L22",
+          "rationale": "The claim of clopidogrel and omeprazole causing a reduced antiplatelet effect with a PRR of 7.20 is directly supported by the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:GER-03:L23",
+          "rationale": "The claim states the drugs omeprazole and clopidogrel, the event reduced antiplatelet response, a PRR of 6.90, and co-reports n/a, all of which are supported by the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:GER-04:L14",
+          "rationale": "Every part of the claim regarding the amiodarone and digoxin interaction, including severity, event, and mechanism, directly matches the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:GER-04:L15",
+          "rationale": "All details in the claim regarding severity, event, and mechanism match the cited DDInter record exactly.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:GER-04:L19",
+          "rationale": "The claim correctly states the drugs (amiodarone + digoxin), the event (digoxin toxicity), and the PRR (22.10) as reported in the cited source.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:GER-04:L20",
+          "rationale": "The claimed drugs (warfarin + amiodarone), event (bleeding), and PRR (13.80) are directly supported by the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:GER-04:L21",
+          "rationale": "The claim accurately reflects the drugs (warfarin + amiodarone), event (prolonged prothrombin time), and PRR (11.20) found in the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:TXT-01:L11",
+          "rationale": "Every part of the claim including the severity (Major), event (NSAID potentiation of anticoagulation), and mechanism matches the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:TXT-01:L15",
+          "rationale": "The claim matches the cited TWOSIDES record for the drug pair warfarin and ibuprofen, the event hemorrhage, and the PRR of 15.60.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:TXT-02:L11",
+          "rationale": "The claimed drugs (sertraline + phenelzine), severity (Major), event (serotonin syndrome), and mechanism are all explicitly stated in the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:TXT-02:L15",
+          "rationale": "The claim states sertraline + phenelzine causes serotonin syndrome with a PRR of 45.80 and co-reports n/a, which directly matches the provided TWOSIDES record showing phenelzine, sertraline, serotonin syndrome, and a PRR of 45.8.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:TXT-03:L11",
+          "rationale": "Every clinical statement in the claim regarding severity, event, and mechanism matches the data provided in the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:TXT-03:L15",
+          "rationale": "The cited record confirms the combination of simvastatin and clarithromycin results in rhabdomyolysis with a PRR of 19.7.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:TXT-04:L11",
+          "rationale": "The claim matches the severity, event, and mechanism stated in the cited DDInter record for lisinopril and spironolactone.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:TXT-04:L15",
+          "rationale": "The claim states lisinopril + spironolactone leads to hyperkalemia with a PRR of 14.20, which is directly supported by the TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:TXT-04:L16",
+          "rationale": "The claim correctly reflects the drugs lisinopril and spironolactone, the event renal failure, and the PRR of 7.80 from the cited record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:TXT-05:L12",
+          "rationale": "The claim correctly reflects the drugs, event, and PRR of 11.80 found in the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:TXT-06:L11",
+          "rationale": "The claim matches the severity, event, mechanism, and drugs stated in the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:TXT-06:L15",
+          "rationale": "The claim states the drugs alprazolam and oxycodone, the event respiratory depression, and the PRR of 13.40, all of which are directly supported by the cited record. The mention of co-reports n/a is also acceptable as it simply acknowledges the absence of data in the record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:TXT-07:L11",
+          "rationale": "All details in the claim\u2014including the drugs, severity (Major), event (serotonergic overlap), and mechanism\u2014are directly stated in the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:TXT-07:L15",
+          "rationale": "The claimed drugs (sertraline + tramadol), event (serotonin syndrome), and PRR (14.20) are directly supported by the cited record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:TXT-07:L16",
+          "rationale": "The claim states drugs (tramadol + sertraline), event (serotonin syndrome), and PRR (11.90), all of which match the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:TXT-08:L11",
+          "rationale": "All elements of the claim, including the moderate severity, hypokalemia-driven digoxin toxicity event, and source mechanism, are explicitly stated in the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:TXT-08:L15",
+          "rationale": "The claimed event ('hypokalemia-induced toxicity'), drugs ('digoxin', 'furosemide'), and PRR (6.40) match the cited TWOSIDES record, and the absence of co-reports ('n/a') correctly reflects the available data.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:TXT-09:L11",
+          "rationale": "Every part of the claim regarding severity, event, and mechanism matches the provided DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:TXT-09:L15",
+          "rationale": "The claimed drugs (methotrexate + ibuprofen), event (methotrexate toxicity), and PRR (10.80) are all present and match the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:TXT-10:L11",
+          "rationale": "Every part of the claim regarding severity, event, and mechanism matches the cited DDInter record exactly.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:TXT-10:L15",
+          "rationale": "The claim states theophylline + ciprofloxacin causes theophylline toxicity with a PRR of 15.10 and co-reports n/a, which directly matches the provided TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:EDG-04:L13",
+          "rationale": "The claim accurately reflects the drugs, event, and PRR of 2.40 found in the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:EDG-05:L12",
+          "rationale": "The claim accurately reflects the drugs, event, and PRR of 2.40 found in the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:EDG-07:L21",
+          "rationale": "The claim matches the DDInter record regarding the drugs, severity, event, and mechanism.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:EDG-07:L22",
+          "rationale": "Every part of the claim including the severity (Major), event (NSAID potentiation of anticoagulation), and mechanism matches the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:EDG-07:L25",
+          "rationale": "All details in the claim, including the severity (Moderate), event (reduced antiplatelet response), and mechanism, directly match the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:EDG-07:L26",
+          "rationale": "Every clinical statement in the claim regarding drugs, severity, event, and mechanism matches the cited DDInter record exactly.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:EDG-07:L27",
+          "rationale": "All elements of the claim including the drugs, severity, event, and source mechanism are directly supported by the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:EDG-07:L28",
+          "rationale": "All elements of the claim including the curated severity, event, and mechanism match the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:EDG-07:L31",
+          "rationale": "All details in the claim regarding the drugs, severity, event, and mechanism are fully supported by the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:EDG-07:L32",
+          "rationale": "All details in the claim including the curated severity (Minor), event (reduced levothyroxine absorption), and source mechanism match the cited DDInter record exactly.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:EDG-07:L36",
+          "rationale": "The claim states amlodipine + simvastatin causes increased simvastatin levels with a PRR of 3.20, which is fully supported by the cited record [TWOSIDES:TS-00000042].",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:EDG-07:L37",
+          "rationale": "The claim correctly reflects the drugs, event, and PRR (12.40) found in the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:EDG-07:L38",
+          "rationale": "The cited record confirms the drugs (aspirin, omeprazole), event (reduced antiplatelet effect), and PRR (4.80), while the mention of 'co-reports n/a' simply reflects the absence of reported co-counts in the source.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:EDG-07:L39",
+          "rationale": "The claim matches the drug pair, event, and PRR of 6.20 from the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:EDG-07:L40",
+          "rationale": "The claim correctly reflects the aspirin + warfarin hemorrhage signal with a PRR of 18.70 from the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:EDG-07:L41",
+          "rationale": "The claim states aspirin + warfarin causes gastrointestinal bleeding with a PRR of 16.20, which matches the event, drugs, and PRR in the cited record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:EDG-07:L42",
+          "rationale": "The claim states lisinopril and ibuprofen cause acute kidney injury with a PRR of 5.90 and co-reports n/a, which directly matches the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:EDG-07:L43",
+          "rationale": "The claim states sertraline + ibuprofen causes gastrointestinal bleeding with a PRR of 4.60 and co-reports n/a, which is directly supported by the cited TWOSIDES record listing ibuprofen, sertraline, gastrointestinal bleeding, and a PRR of 4.6.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:EDG-07:L44",
+          "rationale": "The claim matches the cited TWOSIDES record for the drug pair warfarin and ibuprofen, the event hemorrhage, and the PRR of 15.60.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:EDG-07:L45",
+          "rationale": "The cited record confirms the drugs (levothyroxine, omeprazole), the event (reduced levothyroxine absorption), and the PRR (3.1, equivalent to 3.10) while correctly noting co-reports as n/a.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:EDG-07:L46",
+          "rationale": "The claim accurately reflects the drugs, event, and PRR of 2.40 found in the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:EDG-07:L47",
+          "rationale": "The claimed drugs (sertraline + warfarin), event (international normalised ratio increased), and PRR (5.10) are directly supported by the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:EDG-07:L48",
+          "rationale": "The claimed drugs (warfarin + sertraline), event (bleeding risk), and PRR (4.20) match the cited TWOSIDES record, and the absence of co-report data is consistent with the provided source.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:MH-01:L11",
+          "rationale": "All elements of the claim including the curated severity, event, and mechanism match the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:MH-01:L15",
+          "rationale": "The claim states sertraline + ibuprofen causes gastrointestinal bleeding with a PRR of 4.60 and co-reports n/a, which is directly supported by the cited TWOSIDES record listing ibuprofen, sertraline, gastrointestinal bleeding, and a PRR of 4.6.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:MH-02:L11",
+          "rationale": "Every clinical statement in the claim, including the severity, event, and mechanism, is directly stated in the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:MH-02:L15",
+          "rationale": "The claim states the drugs (lithium + hydrochlorothiazide), event (lithium toxicity), and PRR (16.80), all of which are directly supported by the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:CV-01:L13",
+          "rationale": "The claim matches the severity, event, and mechanism stated in the cited DDInter record for lisinopril and spironolactone.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:CV-01:L17",
+          "rationale": "The claim states lisinopril + spironolactone leads to hyperkalemia with a PRR of 14.20, which is directly supported by the TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:CV-01:L18",
+          "rationale": "The claim correctly reflects the drugs lisinopril and spironolactone, the event renal failure, and the PRR of 7.80 from the cited record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:CV-02:L13",
+          "rationale": "The claim states aspirin + clopidogrel with bleeding, PRR 5.10, and co-reports n/a, which matches the cited record's PRR of 5.1 and event 'bleeding'.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:CV-03:L11",
+          "rationale": "Every part of the claim including the drugs, severity, and mechanism matches the data provided in the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:CV-03:L15",
+          "rationale": "The claim that warfarin and trimethoprim cause an increased international normalised ratio with a PRR of 10.30 is directly supported by the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:CV-04:L11",
+          "rationale": "Every clinical statement in the claim regarding metoprolol and verapamil matches the provided DDInter source record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:CV-04:L15",
+          "rationale": "The claim states the drugs metoprolol and verapamil, the event bradycardia, and the PRR of 9.80, all of which are directly supported by the cited record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:CV-05:L11",
+          "rationale": "Every part of the claim including the severity, event, and mechanism matches the cited DDInter record exactly.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:CV-05:L15",
+          "rationale": "The claim states the drugs atorvastatin and gemfibrozil, event myopathy, and PRR 7.80, all of which are directly supported by the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:ID-01:L11",
+          "rationale": "Every part of the claim including the severity, event, and mechanism directly matches the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:ID-01:L15",
+          "rationale": "The claim correctly reflects the drugs (azithromycin + sotalol), event (QT prolongation), and PRR (11.40) found in the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:ID-02:L11",
+          "rationale": "All details in the claim regarding the drugs, curated severity (Moderate), event (chelation-reduced absorption), and source mechanism are explicitly stated in the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:ID-02:L15",
+          "rationale": "The claim matches the drugs, event, and PRR value of 4.2 (4.20) found in the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:ID-03:L11",
+          "rationale": "All parts of the claim regarding severity, mechanism, and events for rifampin and ethinyl estradiol are directly stated in the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:ID-03:L15",
+          "rationale": "The claimed drugs (rifampin + ethinyl estradiol), event (contraceptive failure), PRR (13.70), and co-reports (n/a due to absence in the source record) are all directly supported by the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:ID-04:L11",
+          "rationale": "All details in the claim including the severity, interaction type, and mechanism match the cited DDInter record exactly.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:ID-04:L15",
+          "rationale": "The cited record confirms the drug pair (simvastatin + ritonavir), the event (rhabdomyolysis), and the PRR (24.5), with co-reports correctly noted as n/a due to the absence of that metric in the source.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:ONC-01:L11",
+          "rationale": "The curated severity (Moderate), the event (reduced MTX clearance), and the source mechanism match the information provided in the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:ONC-01:L15",
+          "rationale": "The claim matches the drug pair, event, and PRR of 5.30 from the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:ONC-02:L11",
+          "rationale": "All details in the claim including the severity (Moderate), the mechanism ('Paroxetine blocks CYP2D6 activation of tamoxifen to endoxifen'), and the source (DDInter) match the provided citation record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:ONC-02:L15",
+          "rationale": "The claimed drugs (tamoxifen + paroxetine), event (reduced tamoxifen efficacy), and PRR (6.80) are all explicitly stated in the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:PAIN-01:L11",
+          "rationale": "The claim matches the severity, event, mechanism, and drugs stated in the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:PAIN-01:L15",
+          "rationale": "The claim states the drugs alprazolam and oxycodone, the event respiratory depression, and the PRR of 13.40, all of which are directly supported by the cited record. The mention of co-reports n/a is also acceptable as it simply acknowledges the absence of data in the record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:PAIN-02:L11",
+          "rationale": "Every part of the claim including the drugs, severity, event, and source mechanism matches the cited DDInter record exactly.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:PAIN-02:L15",
+          "rationale": "The claim matches the cited record for the drug pair, event, and PRR of 12.80.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:PAIN-03:L13",
+          "rationale": "All details in the claim including the moderate severity, CNS depressant additivity, and mechanism match the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:PAIN-03:L17",
+          "rationale": "The claim matches the cited record for gabapentin and oxycodone regarding the event 'CNS depression' and PRR of 5.60.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:RSP-01:L11",
+          "rationale": "Every part of the claim including the drugs, curated severity (Moderate), event (beta-receptor antagonism), and mechanism matches the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:RSP-01:L15",
+          "rationale": "The claim correctly reflects the albuterol and propranolol drug pair, the event 'bronchospasm', and the PRR of 5.40 stated in the cited record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:RSP-02:L12",
+          "rationale": "Every part of the claim regarding severity, event, and mechanism matches the cited DDInter record exactly.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:RSP-02:L16",
+          "rationale": "The claim states theophylline + ciprofloxacin causes theophylline toxicity with a PRR of 15.10 and co-reports n/a, which directly matches the provided TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:GI-01:L11",
+          "rationale": "The claim matches the DDInter record for clopidogrel and omeprazole, including severity (Moderate), event (CYP2C19 inhibition), and mechanism.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:GI-01:L15",
+          "rationale": "The claim of clopidogrel and omeprazole causing a reduced antiplatelet effect with a PRR of 7.20 is directly supported by the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:GI-01:L16",
+          "rationale": "The claim states the drugs omeprazole and clopidogrel, the event reduced antiplatelet response, a PRR of 6.90, and co-reports n/a, all of which are supported by the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:REAL-01:L19",
+          "rationale": "The claim matches the DDInter record regarding the drugs, severity, event, and mechanism.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:REAL-01:L22",
+          "rationale": "All details in the claim, including the severity (Moderate), event (reduced antiplatelet response), and mechanism, directly match the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:REAL-01:L23",
+          "rationale": "Every clinical statement in the claim regarding drugs, severity, event, and mechanism matches the cited DDInter record exactly.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:REAL-01:L26",
+          "rationale": "All details in the claim including the curated severity (Minor), event (reduced levothyroxine absorption), and source mechanism match the cited DDInter record exactly.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:REAL-01:L30",
+          "rationale": "The cited record confirms the drugs (aspirin, omeprazole), event (reduced antiplatelet effect), and PRR (4.80), while the mention of 'co-reports n/a' simply reflects the absence of reported co-counts in the source.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:REAL-01:L31",
+          "rationale": "The claim matches the drug pair, event, and PRR of 6.20 from the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:REAL-01:L32",
+          "rationale": "The claim correctly reflects the aspirin + warfarin hemorrhage signal with a PRR of 18.70 from the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:REAL-01:L33",
+          "rationale": "The claim states aspirin + warfarin causes gastrointestinal bleeding with a PRR of 16.20, which matches the event, drugs, and PRR in the cited record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:REAL-01:L34",
+          "rationale": "The claim accurately reflects the drugs, event, and PRR of 2.80 found in the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:REAL-01:L35",
+          "rationale": "The cited record confirms the drugs (levothyroxine, omeprazole), the event (reduced levothyroxine absorption), and the PRR (3.1, equivalent to 3.10) while correctly noting co-reports as n/a.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:REAL-01:L36",
+          "rationale": "The claim accurately reflects the drugs, event, and PRR of 2.40 found in the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:REAL-01:L37",
+          "rationale": "The claimed drugs (sertraline + warfarin), event (international normalised ratio increased), and PRR (5.10) are directly supported by the cited TWOSIDES record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:REAL-01:L38",
+          "rationale": "The claimed drugs (warfarin + sertraline), event (bleeding risk), and PRR (4.20) match the cited TWOSIDES record, and the absence of co-report data is consistent with the provided source.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:LA-08:L11",
+          "rationale": "Every clinical statement in the claim regarding severity, event, and mechanism matches the data provided in the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:LA-08:L15",
+          "rationale": "The cited record confirms the combination of simvastatin and clarithromycin results in rhabdomyolysis with a PRR of 19.7.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:LA-09:L11",
+          "rationale": "All details including the drugs, severity (Moderate), event (masked hypoglycemia), and mechanism are explicitly stated in the cited DDInter record.",
+          "verdict": "supported"
+        },
+        {
+          "called_judge": true,
+          "claim_id": "template:LA-09:L15",
+          "rationale": "The claim correctly reflects the drugs, event, PRR value (4.90), and source data from the cited record.",
+          "verdict": "supported"
+        }
+      ],
+      "latency_ms_p50": {
+        "deterministic": 14.0,
+        "llm_mode": 4875.7
+      },
+      "llm_reports_shown": 46,
+      "llm_runs": {
+        "cases": 57,
+        "fallback_rate": 0.0213,
+        "first_draft_checks": {
+          "citation_validity": 1.0,
+          "citations": 152,
+          "clinical_claims": 128,
+          "completeness": 1.0,
+          "declared_no_data_pairs": 169,
+          "fabricated_claims": 2,
+          "major_omission_rate": 0.0,
+          "major_pairs": 24,
+          "no_data_pairs": 169,
+          "omitted_major_pairs": 0,
+          "omitted_pairs": 0,
+          "pair_omission_rate": 0.0,
+          "pairs_with_records": 64,
+          "reports": 47,
+          "semantic_hallucination_rate": 0.0156,
+          "uncited_claim_rate": 0.0156,
+          "uncited_claims": 2,
+          "valid_citations": 152
+        },
+        "first_draft_pass_rate": 0.9149,
+        "llm_eligible_cases": 47,
+        "llm_errors": {},
+        "not_eligible_insufficient_input": 10,
+        "recovery_on_retry": 0.75,
+        "report_sources": {
+          "deterministic_fallback": 1,
+          "deterministic_insufficient_input": 10,
+          "llm": 43,
+          "llm_retry": 3
+        },
+        "tokens_per_report": 1620.9,
+        "top_finding_codes": [
+          [
+            "SEVERITY_ON_STATISTICAL_SIGNAL",
+            3
+          ],
+          [
+            "UNCITED_CLAIM",
+            2
+          ]
+        ]
+      },
+      "model": "gemini:gemini-3.5-flash-lite",
+      "provider": "gemini"
+    }
+  ]
+}

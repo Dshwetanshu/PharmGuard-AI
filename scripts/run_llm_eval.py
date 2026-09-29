@@ -76,9 +76,14 @@ def llm_client(provider: str, model: str, min_interval: float, cache: bool):
 
 def to_markdown(r: dict) -> str:
     d = r["data"]
-    L = ["# LLM-path evaluation" + (" (SIMULATED LLM)" if r.get("simulated") else ""), "",
+    sample = d.get("profile") == "sample"
+    L = ["# LLM-path evaluation" + (" (SIMULATED LLM)" if r.get("simulated") else "")
+         + (" — sample-only (synthetic data)" if sample else ""), "",
          f"Regenerate with `{r['command']}` ({r['date']}). {d['data']} provenance sha256 `{d['provenance_sha256']}`.",
          f"Judge prompt `{r['judge_prompt']['file']}` sha256 `{r['judge_prompt']['sha256']}`.", ""]
+    if sample:
+        L += ["**Sample-only.** Every number here comes from the 85-record synthetic sample, not real clinical data; "
+              "it describes the model's behaviour on this harness, not PharmGuard's accuracy on real drugs.", ""]
     if r.get("simulated"):
         L += ["**Every LLM in this run is a scripted fake.** These numbers test the harness, not a model.", ""]
     for p in r["providers"]:
