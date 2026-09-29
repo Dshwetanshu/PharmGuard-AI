@@ -2,7 +2,7 @@
 
 A drug-interaction checker that cites a source record for every finding and says what it couldn't check.
 
-**Live demo: https://pharmguard.web.app**
+**Live demo: [https://pharmguard.web.app](https://pharmguard.web.app)**
 
 PharmGuard is a RAG system with deterministic planning. Enter 2 to 12 medicines (generic names, brands, even
 misspellings) and it:
