@@ -116,7 +116,8 @@ limiting) is in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 ## Limitations
 
 - **Severity grades are DDInter's.** PharmGuard doesn't reconcile references, and references disagree widely.
-  In one comparison of three major resources, 78% of the drug pairs they list appeared in only one of them
+  In one comparison of three major resources, 78.04% of the 121,351 drug pairs they list (94,708) appeared in
+  only one of them
   ([Kontsioti et al., 2022](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9545693/)). Against FDA labeling,
   DDInter grades 10 of 23 verified pairs higher than the label's wording.
 - **Pairwise only.** A risk that needs three drugs together (NSAID + ACE inhibitor + diuretic) isn't flagged as a
@@ -151,7 +152,7 @@ The code is MIT-licensed (see [`LICENSE`](LICENSE)). The data has its own licens
   share alike).
 - RxNorm (U.S. National Library of Medicine) and Drugs@FDA (U.S. FDA) are public domain, with the attribution
   NLM and the FDA ask for.
-- TWOSIDES has no stated license and is used only in a local research build; nothing derived from it is
-  published.
+- TWOSIDES has no stated license. It is used only in a local research build: no TWOSIDES records or row-level
+  data are published, only aggregate evaluation statistics (for example the κ in Results).
 
 Citations, license notices and the attribution text are in [`docs/DATASETS.md`](docs/DATASETS.md).
