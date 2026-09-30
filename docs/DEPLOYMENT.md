@@ -170,6 +170,29 @@ https://pharmguard.web.app afterwards:
 - Headless Chrome at 1440 and 375 px, 8 states: no CSP violations, only same-origin requests, fonts loaded, no
   horizontal scroll (the README screenshots).
 
+## Redeploy (30 September 2026)
+
+Before it, revision `pharmguard-00007-tps` already ran main's code: its `/app` was byte-identical to main's
+`src/`, `api/` and `requirements-api.lock`. The redeploy tested the allowlist `.dockerignore` and renewed the
+pinned Google list (no range changes). `python scripts/deploy_cloudrun.py` built and pushed image
+`sha256:607435fa2b94bb7ec6a9167588b5e30a2173c1b7e9e003b99927183c93072c24`, but `gcloud run deploy` exited with
+"Resource readiness deadline exceeded". The script stopped there, so its own live verification and the Hosting
+re-release didn't run. Revision `pharmguard-00008-zbk` later became ready and took 100% of traffic.
+Its instance started with the public build loaded ("data_loaded=True profile=public"). For a few minutes after
+that, `/health` on both run.app and web.app returned Google's HTML 500 page; then both returned 200. The cause
+wasn't found (the service logs weren't read). The same image run locally returned 200 on `/health` and a correct
+`/v1/check`. Checked on https://pharmguard.web.app afterwards:
+
+- `/health`: ok, public profile, provenance `fc037dc5…` as pinned, `proxy_list_stale: false`, six notices.
+- The six-drug check: deterministic, validation passed (6 claims, 6 citations).
+- Rejections: `[]` body 422, 1 drug 422, malformed JSON 422, LLM mode without a key 401. Security headers
+  (CSP, HSTS, nosniff, DENY, no-referrer) present.
+- Headless Chrome at 1440 and 375 px: report rendered, no console errors, only same-origin requests, fonts
+  loaded, no horizontal scroll.
+
+The static files are unchanged since the 29 September release, so skipping the Hosting re-release left no stale
+page.
+
 ## Cost
 
 **Cloud Run** uses request-based billing. The monthly free tier is 180,000 vCPU-seconds,
