@@ -271,9 +271,19 @@ What this does and doesn't show:
   word attached to a statistical signal (3) and uncited claims (2).
 - **The judge didn't wrongly flag correct claims.** It rated all 124 template claims supported; those restate
   record fields, so "supported" is correct for every one.
-- **The judge's sensitivity is unmeasured: —.** It was only shown claims that had already passed the checker. So
-  "123 of 123 supported" can't say how often it would catch a fabrication. Measuring that needs judge runs on
-  known-bad claims (for example the checker's injected faults) and the human audit.
+- **The judge's sensitivity on real LLM errors is unmeasured: —.** In this run it was only shown claims that had
+  already passed the checker, so "123 of 123 supported" can't say how often it would catch a fabrication.
+- **On injected faults (synthetic fixtures, 30 September 2026):** `python scripts/judge_checker_faults.py`
+  (same judge model, 238 calls, no generator involved). It rated **165 of 181 known-bad claims (91.2%)**
+  unsupported or contradicted, all 10 blind-spot probes the lexicon checker misses, and all 43 clean fixture
+  claims supported. A known-bad claim is a cited claim the fault changed, on the line where the checker raises
+  that fault's code. The 16 misses: 10 severity words attached to a statistical signal ("a serious risk",
+  "Major severity"), and 6 event swaps between near-synonyms (INR increased, prolonged prothrombin time,
+  increased anticoagulant effect), which are arguably not errors. Another 37 phantom-citation claims were rated
+  unsupported without a call. 77 injections (omissions, a line moved under another heading, a dropped "+N
+  more") have no claim a per-claim judge could see. The faults reuse the checker's lexicon terms and the
+  fixtures are small (3 scenarios), so treat this as a sanity check, not a sensitivity estimate. Results:
+  [results/judge_faults_sample.md](../results/judge_faults_sample.md).
 - **LLM-mode latency: —.** The run spaced calls 5 s apart for the free tier, so its timings measure the spacing.
 
 ## 4. Orchestration: trajectory evaluation

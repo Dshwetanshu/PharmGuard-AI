@@ -142,8 +142,11 @@ synthetic sample, redaction on. The scripted first draft fails <code>validate</c
   combination.
 - **No mechanisms.** The DDInter bulk files have no mechanism text, so reports don't explain why a pair interacts.
 - **The checker is a lower bound.** Its mechanism, event and population checks use hand-written lexicons, so
-  fabrications worded outside them pass. The LLM judge has run only on the synthetic sample, with the same model
-  judging its own reports, and it has never been shown a known-bad claim, so its sensitivity is unmeasured.
+  fabrications worded outside them pass. The LLM judge has run only on synthetic data. On the checker's injected
+  faults it rated 165 of 181 known-bad claims (91.2%) unsupported or contradicted, and all 10 blind-spot probes
+  too, while calling all 43 clean claims supported. It missed 10 severity words attached to statistical signals.
+  These faults are synthetic and use the checker's own terms, so this isn't its sensitivity on real LLM errors
+  ([results/judge_faults_sample.md](results/judge_faults_sample.md)).
 - **Many ungraded listings.** DDInter lists many pairs without a grade, including all 10 negative controls in
   the reference set. The report keeps them under their own heading.
 - **Small references.** The FDA-label set is 33 scored rows, classified by keyword rules. There's no

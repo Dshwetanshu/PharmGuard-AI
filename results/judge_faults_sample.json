@@ -1,0 +1,3713 @@
+{
+  "command": "python scripts/judge_checker_faults.py --provider gemini --model gemini-3.5-flash-lite --min-interval 5",
+  "run_on": "2026-09-30",
+  "judge": "gemini:gemini-3.5-flash-lite",
+  "judge_prompt": {
+    "file": "src/evaluation/prompts/judge_v1.txt",
+    "sha256": "ce2d0157ac2688a44174b1bc24135788e93303d53ecccbab9bf1f8ea23df41fa"
+  },
+  "calls": 234,
+  "cache_hits": 234,
+  "usage": {
+    "input_tokens": 93035,
+    "output_tokens": 11107
+  },
+  "not_judgeable": {
+    "severity_flip": 5,
+    "omitted_major": 6,
+    "absence_as_safety": 18,
+    "uncited_claim": 32,
+    "faers_as_curated": 6,
+    "severity_on_signal": 6,
+    "missing_hidden_count": 4
+  },
+  "summary": {
+    "fault": {
+      "all": {
+        "claims": 218,
+        "supported": 16,
+        "unsupported": 138,
+        "contradicted": 64,
+        "invalid": 0
+      },
+      "llm_judged": {
+        "claims": 181,
+        "supported": 16,
+        "unsupported": 101,
+        "contradicted": 64,
+        "invalid": 0
+      },
+      "by_name": {
+        "mechanism_injection": {
+          "claims": 32,
+          "supported": 0,
+          "unsupported": 29,
+          "contradicted": 3,
+          "invalid": 0
+        },
+        "canonical_pgp_to_cyp3a4": {
+          "claims": 2,
+          "supported": 0,
+          "unsupported": 0,
+          "contradicted": 2,
+          "invalid": 0
+        },
+        "severity_flip": {
+          "claims": 5,
+          "supported": 0,
+          "unsupported": 1,
+          "contradicted": 4,
+          "invalid": 0
+        },
+        "citation_swap": {
+          "claims": 34,
+          "supported": 0,
+          "unsupported": 20,
+          "contradicted": 14,
+          "invalid": 0
+        },
+        "phantom_citation": {
+          "claims": 0,
+          "supported": 0,
+          "unsupported": 0,
+          "contradicted": 0,
+          "invalid": 0
+        },
+        "prr_distortion": {
+          "claims": 22,
+          "supported": 0,
+          "unsupported": 0,
+          "contradicted": 22,
+          "invalid": 0
+        },
+        "event_swap": {
+          "claims": 32,
+          "supported": 6,
+          "unsupported": 7,
+          "contradicted": 19,
+          "invalid": 0
+        },
+        "population_injection": {
+          "claims": 32,
+          "supported": 0,
+          "unsupported": 32,
+          "contradicted": 0,
+          "invalid": 0
+        },
+        "severity_on_signal": {
+          "claims": 22,
+          "supported": 10,
+          "unsupported": 12,
+          "contradicted": 0,
+          "invalid": 0
+        }
+      },
+      "rated_without_call": 37
+    },
+    "blind_spot": {
+      "all": {
+        "claims": 10,
+        "supported": 0,
+        "unsupported": 6,
+        "contradicted": 4,
+        "invalid": 0
+      },
+      "llm_judged": {
+        "claims": 10,
+        "supported": 0,
+        "unsupported": 6,
+        "contradicted": 4,
+        "invalid": 0
+      },
+      "by_name": {
+        "mechanism outside lexicon ('hepatic enzyme blockade')": {
+          "claims": 2,
+          "supported": 0,
+          "unsupported": 2,
+          "contradicted": 0,
+          "invalid": 0
+        },
+        "population outside lexicon ('patients over 80')": {
+          "claims": 2,
+          "supported": 0,
+          "unsupported": 2,
+          "contradicted": 0,
+          "invalid": 0
+        },
+        "unquantified magnitude ('risk roughly triples')": {
+          "claims": 2,
+          "supported": 0,
+          "unsupported": 2,
+          "contradicted": 0,
+          "invalid": 0
+        },
+        "event outside lexicon ('muscle breakdown')": {
+          "claims": 2,
+          "supported": 0,
+          "unsupported": 0,
+          "contradicted": 2,
+          "invalid": 0
+        },
+        "reversed direction ('lowering digoxin levels')": {
+          "claims": 2,
+          "supported": 0,
+          "unsupported": 0,
+          "contradicted": 2,
+          "invalid": 0
+        }
+      },
+      "rated_without_call": 0
+    },
+    "control": {
+      "all": {
+        "claims": 43,
+        "supported": 43,
+        "unsupported": 0,
+        "contradicted": 0,
+        "invalid": 0
+      },
+      "llm_judged": {
+        "claims": 43,
+        "supported": 43,
+        "unsupported": 0,
+        "contradicted": 0,
+        "invalid": 0
+      },
+      "by_name": {
+        "clean fixture claim": {
+          "claims": 43,
+          "supported": 43,
+          "unsupported": 0,
+          "contradicted": 0,
+          "invalid": 0
+        }
+      },
+      "rated_without_call": 0
+    }
+  },
+  "rows": [
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "template",
+      "site": "cardiac",
+      "claim": "digoxin + verapamil \u2014 curated severity: Major (DDInter); digoxin toxicity; source mechanism: \"Verapamil inhibits P-glycoprotein, raising digoxin levels\"",
+      "citations": [
+        "[DDInter:FX-0001]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The claim matches the DDInter source record for severity, event, and mechanism."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "template",
+      "site": "cardiac",
+      "claim": "simvastatin + verapamil \u2014 curated severity: Moderate (DDInter); myopathy; source mechanism: \"Verapamil inhibits CYP3A4 metabolism of simvastatin\"",
+      "citations": [
+        "[DDInter:FX-0004]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "All elements of the claim including the severity, event, and mechanism match the cited DDInter record."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "template",
+      "site": "cardiac",
+      "claim": "clarithromycin + simvastatin \u2014 rhabdomyolysis: PRR 19.70, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0002]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The claim states the drugs (clarithromycin + simvastatin), event (rhabdomyolysis), and PRR (19.70), all of which are directly supported by the cited TWOSIDES record."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "template",
+      "site": "cardiac",
+      "claim": "clarithromycin + digoxin \u2014 digoxin toxicity: PRR 6.10, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0003]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The claim correctly reflects the drug pair (clarithromycin + digoxin), the event (digoxin toxicity), and the PRR (6.10) from the cited source record."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "template",
+      "site": "cardiac",
+      "claim": "metformin + verapamil \u2014 hypoglycemia: PRR 2.40, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0005]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The claimed drugs (metformin + verapamil), event (hypoglycemia), and PRR (2.40) match the cited TWOSIDES record exactly."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "template",
+      "site": "cardiac",
+      "claim": "metformin + simvastatin \u2014 nausea: 42 reports; PRR \u2014, ROR \u2014 (95% CI \u2014\u2013\u2014), chi-square \u2014",
+      "citations": [
+        "[FAERS:FX-F001]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The claim that the combination of metformin and simvastatin is associated with 42 reports of nausea is directly supported by the cited FAERS record."
+    },
+    {
+      "group": "fault",
+      "name": "mechanism_injection",
+      "style": "template",
+      "site": "FX-0001",
+      "claim": "digoxin + verapamil \u2014 curated severity: Major (DDInter); digoxin toxicity; source mechanism: \"Verapamil inhibits P-glycoprotein, raising digoxin levels\" via CYP3A4 inhibition",
+      "citations": [
+        "[DDInter:FX-0001]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim adds the mechanism \"via CYP3A4 inhibition\", which is not present in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "mechanism_injection",
+      "style": "template",
+      "site": "FX-0004",
+      "claim": "simvastatin + verapamil \u2014 curated severity: Moderate (DDInter); myopathy; source mechanism: \"Verapamil inhibits CYP3A4 metabolism of simvastatin\" via P-glycoprotein inhibition",
+      "citations": [
+        "[DDInter:FX-0004]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim adds 'via P-glycoprotein inhibition', which is not present in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "mechanism_injection",
+      "style": "template",
+      "site": "FX-0002",
+      "claim": "clarithromycin + simvastatin \u2014 rhabdomyolysis: PRR 19.70, co-reports n/a via CYP3A4 inhibition",
+      "citations": [
+        "[TWOSIDES:FX-0002]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim mentions the mechanism 'via CYP3A4 inhibition' and 'co-reports n/a', neither of which are stated in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "mechanism_injection",
+      "style": "template",
+      "site": "FX-0003",
+      "claim": "clarithromycin + digoxin \u2014 digoxin toxicity: PRR 6.10, co-reports n/a via CYP3A4 inhibition",
+      "citations": [
+        "[TWOSIDES:FX-0003]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states the mechanism 'via CYP3A4 inhibition', which is not mentioned in the cited records."
+    },
+    {
+      "group": "fault",
+      "name": "mechanism_injection",
+      "style": "template",
+      "site": "FX-0005",
+      "claim": "metformin + verapamil \u2014 hypoglycemia: PRR 2.40, co-reports n/a via CYP3A4 inhibition",
+      "citations": [
+        "[TWOSIDES:FX-0005]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states a mechanism via CYP3A4 inhibition, which is not mentioned in the cited records."
+    },
+    {
+      "group": "fault",
+      "name": "canonical_pgp_to_cyp3a4",
+      "style": "template",
+      "site": "FX-0001 P-glycoprotein -> CYP3A4",
+      "claim": "digoxin + verapamil \u2014 curated severity: Major (DDInter); digoxin toxicity; source mechanism: \"Verapamil inhibits CYP3A4, raising digoxin levels\"",
+      "citations": [
+        "[DDInter:FX-0001]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states the mechanism is inhibition of CYP3A4, whereas the source record explicitly states the mechanism is inhibition of P-glycoprotein."
+    },
+    {
+      "group": "fault",
+      "name": "severity_flip",
+      "style": "template",
+      "site": "FX-0001 Major->Minor",
+      "claim": "digoxin + verapamil \u2014 curated severity: Minor (DDInter); digoxin toxicity; source mechanism: \"Verapamil inhibits P-glycoprotein, raising digoxin levels\"",
+      "citations": [
+        "[DDInter:FX-0001]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states a curated severity of 'Minor (DDInter)', whereas the cited source record [DDInter:FX-0001] lists the severity as 'Major'."
+    },
+    {
+      "group": "fault",
+      "name": "severity_flip",
+      "style": "template",
+      "site": "FX-0004 Moderate->Major",
+      "claim": "simvastatin + verapamil \u2014 curated severity: Major (DDInter); myopathy; source mechanism: \"Verapamil inhibits CYP3A4 metabolism of simvastatin\"",
+      "citations": [
+        "[DDInter:FX-0004]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states a severity of 'Major (DDInter)', but the cited record reports the severity as 'Moderate'."
+    },
+    {
+      "group": "fault",
+      "name": "citation_swap",
+      "style": "template",
+      "site": "FX-0001 cites FX-0004",
+      "claim": "digoxin + verapamil \u2014 curated severity: Major (DDInter); digoxin toxicity; source mechanism: \"Verapamil inhibits P-glycoprotein, raising digoxin levels\"",
+      "citations": [
+        "[DDInter:FX-0004]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited record DDInter:FX-0004 concerns simvastatin and verapamil, whereas the claim is about digoxin and verapamil."
+    },
+    {
+      "group": "fault",
+      "name": "citation_swap",
+      "style": "template",
+      "site": "FX-0002 cites FX-0003",
+      "claim": "clarithromycin + simvastatin \u2014 rhabdomyolysis: PRR 19.70, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0003]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited record is about clarithromycin and digoxin causing digoxin toxicity, whereas the claim is about clarithromycin and simvastatin causing rhabdomyolysis."
+    },
+    {
+      "group": "fault",
+      "name": "citation_swap",
+      "style": "template",
+      "site": "FX-0003 cites FX-0002",
+      "claim": "clarithromycin + digoxin \u2014 digoxin toxicity: PRR 6.10, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0002]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited record is about clarithromycin and simvastatin causing rhabdomyolysis, which does not support the claim about clarithromycin, digoxin, and digoxin toxicity."
+    },
+    {
+      "group": "fault",
+      "name": "citation_swap",
+      "style": "template",
+      "site": "FX-0004 cites FX-0001",
+      "claim": "simvastatin + verapamil \u2014 curated severity: Moderate (DDInter); myopathy; source mechanism: \"Verapamil inhibits CYP3A4 metabolism of simvastatin\"",
+      "citations": [
+        "[DDInter:FX-0001]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited record concerns digoxin and verapamil, whereas the claim is about simvastatin and verapamil."
+    },
+    {
+      "group": "fault",
+      "name": "citation_swap",
+      "style": "template",
+      "site": "FX-0005 cites FX-0002",
+      "claim": "metformin + verapamil \u2014 hypoglycemia: PRR 2.40, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0002]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited record concerns clarithromycin and simvastatin, whereas the claim is about metformin and verapamil."
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "template",
+      "site": "FX-0001 -> FX-9000",
+      "claim": "digoxin + verapamil \u2014 curated severity: Major (DDInter); digoxin toxicity; source mechanism: \"Verapamil inhibits P-glycoprotein, raising digoxin levels\"",
+      "citations": [
+        "[DDInter:FX-9000]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [DDInter:FX-9000]"
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "template",
+      "site": "FX-0002 -> FX-9001",
+      "claim": "clarithromycin + simvastatin \u2014 rhabdomyolysis: PRR 19.70, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-9001]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [TWOSIDES:FX-9001]"
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "template",
+      "site": "FX-0003 -> FX-9002",
+      "claim": "clarithromycin + digoxin \u2014 digoxin toxicity: PRR 6.10, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-9002]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [TWOSIDES:FX-9002]"
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "template",
+      "site": "FX-0004 -> FX-9003",
+      "claim": "simvastatin + verapamil \u2014 curated severity: Moderate (DDInter); myopathy; source mechanism: \"Verapamil inhibits CYP3A4 metabolism of simvastatin\"",
+      "citations": [
+        "[DDInter:FX-9003]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [DDInter:FX-9003]"
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "template",
+      "site": "FX-0005 -> FX-9004",
+      "claim": "metformin + verapamil \u2014 hypoglycemia: PRR 2.40, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-9004]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [TWOSIDES:FX-9004]"
+    },
+    {
+      "group": "fault",
+      "name": "prr_distortion",
+      "style": "template",
+      "site": "FX-0002 PRR 19.7->29.55",
+      "claim": "clarithromycin + simvastatin \u2014 rhabdomyolysis: PRR 29.55, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0002]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states a PRR of 29.55, but the cited record [TWOSIDES:FX-0002] lists the PRR as 19.7."
+    },
+    {
+      "group": "fault",
+      "name": "prr_distortion",
+      "style": "template",
+      "site": "FX-0003 PRR 6.1->9.15",
+      "claim": "clarithromycin + digoxin \u2014 digoxin toxicity: PRR 9.15, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0003]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states a PRR of 9.15, but the cited record indicates a PRR of 6.1."
+    },
+    {
+      "group": "fault",
+      "name": "prr_distortion",
+      "style": "template",
+      "site": "FX-0005 PRR 2.4->3.6",
+      "claim": "metformin + verapamil \u2014 hypoglycemia: PRR 3.60, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0005]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states a PRR of 3.60, whereas the cited record reports a PRR of 2.4."
+    },
+    {
+      "group": "fault",
+      "name": "event_swap",
+      "style": "template",
+      "site": "FX-0001 'digoxin toxicity'->'rhabdomyolysis'",
+      "claim": "digoxin + verapamil \u2014 curated severity: Major (DDInter); rhabdomyolysis; source mechanism: \"Verapamil inhibits P-glycoprotein, raising digoxin levels\"",
+      "citations": [
+        "[DDInter:FX-0001]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The cited record lists the event as 'digoxin toxicity', whereas the claim states the event is 'rhabdomyolysis'."
+    },
+    {
+      "group": "fault",
+      "name": "event_swap",
+      "style": "template",
+      "site": "FX-0002 'rhabdomyolysis'->'digoxin toxicity'",
+      "claim": "clarithromycin + simvastatin \u2014 digoxin toxicity: PRR 19.70, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0002]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states that the drug pair causes digoxin toxicity, whereas the cited record indicates the event is rhabdomyolysis."
+    },
+    {
+      "group": "fault",
+      "name": "event_swap",
+      "style": "template",
+      "site": "FX-0003 'digoxin toxicity'->'rhabdomyolysis'",
+      "claim": "clarithromycin + digoxin \u2014 rhabdomyolysis: PRR 6.10, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0003]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states the event is rhabdomyolysis, whereas the cited record states the event is digoxin toxicity."
+    },
+    {
+      "group": "fault",
+      "name": "event_swap",
+      "style": "template",
+      "site": "FX-0004 'myopathy'->'digoxin toxicity'",
+      "claim": "simvastatin + verapamil \u2014 curated severity: Moderate (DDInter); digoxin toxicity; source mechanism: \"Verapamil inhibits CYP3A4 metabolism of simvastatin\"",
+      "citations": [
+        "[DDInter:FX-0004]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim includes 'digoxin toxicity', which is not mentioned anywhere in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "event_swap",
+      "style": "template",
+      "site": "FX-0005 'hypoglycemia'->'digoxin toxicity'",
+      "claim": "metformin + verapamil \u2014 digoxin toxicity: PRR 2.40, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0005]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states the event is digoxin toxicity with PRR 2.40, whereas the cited record states the event is hypoglycemia with PRR 2.4."
+    },
+    {
+      "group": "fault",
+      "name": "population_injection",
+      "style": "template",
+      "site": "FX-0001 + elderly patients",
+      "claim": "digoxin + verapamil \u2014 curated severity: Major (DDInter); digoxin toxicity; source mechanism: \"Verapamil inhibits P-glycoprotein, raising digoxin levels\", particularly in elderly patients",
+      "citations": [
+        "[DDInter:FX-0001]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim adds the qualifier 'particularly in elderly patients', which is not mentioned in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "population_injection",
+      "style": "template",
+      "site": "FX-0004 + pregnancy",
+      "claim": "simvastatin + verapamil \u2014 curated severity: Moderate (DDInter); myopathy; source mechanism: \"Verapamil inhibits CYP3A4 metabolism of simvastatin\", particularly in pregnancy",
+      "citations": [
+        "[DDInter:FX-0004]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim adds the population 'particularly in pregnancy', which is not mentioned in the cited records."
+    },
+    {
+      "group": "fault",
+      "name": "population_injection",
+      "style": "template",
+      "site": "FX-0002 + patients with renal impairment",
+      "claim": "clarithromycin + simvastatin \u2014 rhabdomyolysis: PRR 19.70, co-reports n/a, particularly in patients with renal impairment",
+      "citations": [
+        "[TWOSIDES:FX-0002]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited records do not contain the statement regarding patients with renal impairment."
+    },
+    {
+      "group": "fault",
+      "name": "population_injection",
+      "style": "template",
+      "site": "FX-0003 + children",
+      "claim": "clarithromycin + digoxin \u2014 digoxin toxicity: PRR 6.10, co-reports n/a, particularly in children",
+      "citations": [
+        "[TWOSIDES:FX-0003]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states that digoxin toxicity occurs 'particularly in children', but this population is not mentioned in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "population_injection",
+      "style": "template",
+      "site": "FX-0005 + patients with hepatic impairment",
+      "claim": "metformin + verapamil \u2014 hypoglycemia: PRR 2.40, co-reports n/a, particularly in patients with hepatic impairment",
+      "citations": [
+        "[TWOSIDES:FX-0005]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim adds the qualifier 'particularly in patients with hepatic impairment', which is not mentioned in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "severity_on_signal",
+      "style": "template",
+      "site": "FX-0002 + 'Major severity'",
+      "claim": "clarithromycin + simvastatin \u2014 rhabdomyolysis: PRR 19.70, co-reports n/a; Major severity",
+      "citations": [
+        "[TWOSIDES:FX-0002]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The cited record supports the drug pair (clarithromycin + simvastatin), the event (rhabdomyolysis), and the PRR (19.70). The mention of 'Major severity' and 'co-reports n/a' do not contradict the data and are standard formatting or missing field handling."
+    },
+    {
+      "group": "fault",
+      "name": "severity_on_signal",
+      "style": "template",
+      "site": "FX-0003 + 'a serious risk'",
+      "claim": "clarithromycin + digoxin \u2014 digoxin toxicity: PRR 6.10, co-reports n/a, a serious risk",
+      "citations": [
+        "[TWOSIDES:FX-0003]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim includes 'co-reports n/a, a serious risk', which are not stated in the cited records."
+    },
+    {
+      "group": "fault",
+      "name": "severity_on_signal",
+      "style": "template",
+      "site": "FX-0005 + 'clinically significant'",
+      "claim": "metformin + verapamil \u2014 hypoglycemia: PRR 2.40, co-reports n/a, clinically significant",
+      "citations": [
+        "[TWOSIDES:FX-0005]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The claimed drugs (metformin, verapamil), event (hypoglycemia), and PRR (2.40) are all explicitly stated in the cited record [TWOSIDES:FX-0005]."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "template",
+      "site": "anticoagulation",
+      "claim": "amiodarone + warfarin \u2014 curated severity: Major (DDInter); increased anticoagulant effect; source mechanism: \"Amiodarone inhibits CYP2C9 and CYP3A4 metabolism of warfarin\"",
+      "citations": [
+        "[DDInter:FX-0102]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "Every clinical statement in the claim regarding severity, event, and mechanism matches the cited DDInter record."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "template",
+      "site": "anticoagulation",
+      "claim": "ciprofloxacin + warfarin \u2014 curated severity: not graded (DDInter); source mechanism: \"Ciprofloxacin may increase INR\"",
+      "citations": [
+        "[DDInter:FX-0105]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The claimed severity ('not graded') and source mechanism ('Ciprofloxacin may increase INR') directly match the provided DDInter record."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "template",
+      "site": "anticoagulation",
+      "claim": "amiodarone + warfarin \u2014 prolonged prothrombin time: PRR 11.20, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0101]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The claim states amiodarone + warfarin causes prolonged prothrombin time with a PRR of 11.20 and n/a co-reports, which is directly supported by the cited record [TWOSIDES:FX-0101]."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "template",
+      "site": "anticoagulation",
+      "claim": "amiodarone + warfarin \u2014 INR increased: PRR 9.40, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0106]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The claim correctly reflects the drugs, event, and PRR of 9.40 stated in the cited TWOSIDES record."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "template",
+      "site": "anticoagulation",
+      "claim": "amiodarone + warfarin \u2014 haematoma: PRR 7.20, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0107]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The claim correctly reflects the drugs (amiodarone + warfarin), event (haematoma), and PRR (7.20) stated in the cited record."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "template",
+      "site": "anticoagulation",
+      "claim": "amiodarone + ciprofloxacin \u2014 QT prolongation: PRR 11.80, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0103]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The claim correctly reflects the drugs, event (QT prolongation), and PRR (11.80) stated in the cited record [TWOSIDES:FX-0103]."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "template",
+      "site": "anticoagulation",
+      "claim": "sertraline + warfarin \u2014 minor bleeding: PRR 4.20, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0104]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The claim correctly reflects the drugs (sertraline + warfarin), event (minor bleeding), PRR (4.20), and notes that co-reports are not provided in the source record."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "template",
+      "site": "anticoagulation",
+      "claim": "amiodarone + sertraline \u2014 dizziness: 7 reports; PRR \u2014, ROR \u2014 (95% CI \u2014\u2013\u2014), chi-square \u2014",
+      "citations": [
+        "[FAERS:FX-F101]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The claim states amiodarone + sertraline with dizziness and 7 reports, which directly matches the cited FAERS record."
+    },
+    {
+      "group": "fault",
+      "name": "mechanism_injection",
+      "style": "template",
+      "site": "FX-0102",
+      "claim": "amiodarone + warfarin \u2014 curated severity: Major (DDInter); increased anticoagulant effect; source mechanism: \"Amiodarone inhibits CYP2C9 and CYP3A4 metabolism of warfarin\" via P-glycoprotein inhibition",
+      "citations": [
+        "[DDInter:FX-0102]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim adds the mechanism 'via P-glycoprotein inhibition' which is not present in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "mechanism_injection",
+      "style": "template",
+      "site": "FX-0105",
+      "claim": "ciprofloxacin + warfarin \u2014 curated severity: not graded (DDInter); source mechanism: \"Ciprofloxacin may increase INR\" via CYP3A4 inhibition",
+      "citations": [
+        "[DDInter:FX-0105]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim attributes the mechanism \"via CYP3A4 inhibition\", but the cited record only states \"Ciprofloxacin may increase INR\" without mentioning CYP3A4 inhibition."
+    },
+    {
+      "group": "fault",
+      "name": "mechanism_injection",
+      "style": "template",
+      "site": "FX-0101",
+      "claim": "amiodarone + warfarin \u2014 prolonged prothrombin time: PRR 11.20, co-reports n/a via CYP3A4 inhibition",
+      "citations": [
+        "[TWOSIDES:FX-0101]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited record does not contain information regarding a mechanism (CYP3A4 inhibition) or co-reports."
+    },
+    {
+      "group": "fault",
+      "name": "mechanism_injection",
+      "style": "template",
+      "site": "FX-0106",
+      "claim": "amiodarone + warfarin \u2014 INR increased: PRR 9.40, co-reports n/a via CYP3A4 inhibition",
+      "citations": [
+        "[TWOSIDES:FX-0106]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states that the interaction occurs 'via CYP3A4 inhibition', but this mechanism is not mentioned in the cited records."
+    },
+    {
+      "group": "fault",
+      "name": "mechanism_injection",
+      "style": "template",
+      "site": "FX-0107",
+      "claim": "amiodarone + warfarin \u2014 haematoma: PRR 7.20, co-reports n/a via CYP3A4 inhibition",
+      "citations": [
+        "[TWOSIDES:FX-0107]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states a mechanism via CYP3A4 inhibition and co-reports n/a, but the cited record only contains the drug pair, event, and PRR."
+    },
+    {
+      "group": "fault",
+      "name": "mechanism_injection",
+      "style": "template",
+      "site": "FX-0103",
+      "claim": "amiodarone + ciprofloxacin \u2014 QT prolongation: PRR 11.80, co-reports n/a via CYP3A4 inhibition",
+      "citations": [
+        "[TWOSIDES:FX-0103]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states that the interaction occurs via 'CYP3A4 inhibition', but this mechanism is not mentioned in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "mechanism_injection",
+      "style": "template",
+      "site": "FX-0104",
+      "claim": "sertraline + warfarin \u2014 minor bleeding: PRR 4.20, co-reports n/a via CYP3A4 inhibition",
+      "citations": [
+        "[TWOSIDES:FX-0104]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited records do not contain any information regarding the mechanism of CYP3A4 inhibition or co-reports."
+    },
+    {
+      "group": "fault",
+      "name": "severity_flip",
+      "style": "template",
+      "site": "FX-0102 Major->Minor",
+      "claim": "amiodarone + warfarin \u2014 curated severity: Minor (DDInter); increased anticoagulant effect; source mechanism: \"Amiodarone inhibits CYP2C9 and CYP3A4 metabolism of warfarin\"",
+      "citations": [
+        "[DDInter:FX-0102]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states the severity is Minor, but the cited record states the severity is Major."
+    },
+    {
+      "group": "fault",
+      "name": "severity_flip",
+      "style": "template",
+      "site": "FX-0105 Unknown->Major",
+      "claim": "ciprofloxacin + warfarin \u2014 curated severity: Major (DDInter); source mechanism: \"Ciprofloxacin may increase INR\"",
+      "citations": [
+        "[DDInter:FX-0105]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states a curated severity of 'Major', but the cited DDInter record lists the severity as 'not graded'."
+    },
+    {
+      "group": "fault",
+      "name": "citation_swap",
+      "style": "template",
+      "site": "FX-0101 cites FX-0103",
+      "claim": "amiodarone + warfarin \u2014 prolonged prothrombin time: PRR 11.20, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0103]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The cited record concerns amiodarone and ciprofloxacin causing QT prolongation, whereas the claim is about amiodarone and warfarin causing prolonged prothrombin time."
+    },
+    {
+      "group": "fault",
+      "name": "citation_swap",
+      "style": "template",
+      "site": "FX-0102 cites FX-0105",
+      "claim": "amiodarone + warfarin \u2014 curated severity: Major (DDInter); increased anticoagulant effect; source mechanism: \"Amiodarone inhibits CYP2C9 and CYP3A4 metabolism of warfarin\"",
+      "citations": [
+        "[DDInter:FX-0105]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The cited record concerns ciprofloxacin and warfarin, whereas the claim is about amiodarone and warfarin."
+    },
+    {
+      "group": "fault",
+      "name": "citation_swap",
+      "style": "template",
+      "site": "FX-0103 cites FX-0101",
+      "claim": "amiodarone + ciprofloxacin \u2014 QT prolongation: PRR 11.80, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0101]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited record is about amiodarone and warfarin causing prolonged prothrombin time, which does not support the claim about amiodarone and ciprofloxacin causing QT prolongation with a PRR of 11.80."
+    },
+    {
+      "group": "fault",
+      "name": "citation_swap",
+      "style": "template",
+      "site": "FX-0104 cites FX-0101",
+      "claim": "sertraline + warfarin \u2014 minor bleeding: PRR 4.20, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0101]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited record concerns amiodarone and warfarin rather than sertraline and warfarin, and does not contain the claimed event, PRR, or co-reports value."
+    },
+    {
+      "group": "fault",
+      "name": "citation_swap",
+      "style": "template",
+      "site": "FX-0105 cites FX-0102",
+      "claim": "ciprofloxacin + warfarin \u2014 curated severity: not graded (DDInter); source mechanism: \"Ciprofloxacin may increase INR\"",
+      "citations": [
+        "[DDInter:FX-0102]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited record is about amiodarone and warfarin, but the claim is about ciprofloxacin and warfarin."
+    },
+    {
+      "group": "fault",
+      "name": "citation_swap",
+      "style": "template",
+      "site": "FX-0106 cites FX-0103",
+      "claim": "amiodarone + warfarin \u2014 INR increased: PRR 9.40, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0103]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited record describes amiodarone and ciprofloxacin for QT prolongation, whereas the claim is about amiodarone and warfarin for INR increased with a PRR of 9.40."
+    },
+    {
+      "group": "fault",
+      "name": "citation_swap",
+      "style": "template",
+      "site": "FX-0107 cites FX-0103",
+      "claim": "amiodarone + warfarin \u2014 haematoma: PRR 7.20, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0103]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The cited record concerns amiodarone and ciprofloxacin causing QT prolongation, whereas the claim states amiodarone and warfarin causing haematoma with a PRR of 7.20."
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "template",
+      "site": "FX-0101 -> FX-9000",
+      "claim": "amiodarone + warfarin \u2014 prolonged prothrombin time: PRR 11.20, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-9000]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [TWOSIDES:FX-9000]"
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "template",
+      "site": "FX-0102 -> FX-9001",
+      "claim": "amiodarone + warfarin \u2014 curated severity: Major (DDInter); increased anticoagulant effect; source mechanism: \"Amiodarone inhibits CYP2C9 and CYP3A4 metabolism of warfarin\"",
+      "citations": [
+        "[DDInter:FX-9001]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [DDInter:FX-9001]"
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "template",
+      "site": "FX-0103 -> FX-9002",
+      "claim": "amiodarone + ciprofloxacin \u2014 QT prolongation: PRR 11.80, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-9002]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [TWOSIDES:FX-9002]"
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "template",
+      "site": "FX-0104 -> FX-9003",
+      "claim": "sertraline + warfarin \u2014 minor bleeding: PRR 4.20, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-9003]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [TWOSIDES:FX-9003]"
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "template",
+      "site": "FX-0105 -> FX-9004",
+      "claim": "ciprofloxacin + warfarin \u2014 curated severity: not graded (DDInter); source mechanism: \"Ciprofloxacin may increase INR\"",
+      "citations": [
+        "[DDInter:FX-9004]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [DDInter:FX-9004]"
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "template",
+      "site": "FX-0106 -> FX-9005",
+      "claim": "amiodarone + warfarin \u2014 INR increased: PRR 9.40, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-9005]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [TWOSIDES:FX-9005]"
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "template",
+      "site": "FX-0107 -> FX-9006",
+      "claim": "amiodarone + warfarin \u2014 haematoma: PRR 7.20, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-9006]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [TWOSIDES:FX-9006]"
+    },
+    {
+      "group": "fault",
+      "name": "prr_distortion",
+      "style": "template",
+      "site": "FX-0101 PRR 11.2->16.8",
+      "claim": "amiodarone + warfarin \u2014 prolonged prothrombin time: PRR 16.80, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0101]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states a PRR of 16.80, whereas the cited record reports a PRR of 11.2."
+    },
+    {
+      "group": "fault",
+      "name": "prr_distortion",
+      "style": "template",
+      "site": "FX-0103 PRR 11.8->17.7",
+      "claim": "amiodarone + ciprofloxacin \u2014 QT prolongation: PRR 17.70, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0103]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states a PRR of 17.70, but the cited record [TWOSIDES:FX-0103] reports a PRR of 11.8."
+    },
+    {
+      "group": "fault",
+      "name": "prr_distortion",
+      "style": "template",
+      "site": "FX-0104 PRR 4.2->6.3",
+      "claim": "sertraline + warfarin \u2014 minor bleeding: PRR 6.30, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0104]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states a PRR of 6.30, but the cited record [TWOSIDES:FX-0104] reports a PRR of 4.2."
+    },
+    {
+      "group": "fault",
+      "name": "prr_distortion",
+      "style": "template",
+      "site": "FX-0106 PRR 9.4->14.1",
+      "claim": "amiodarone + warfarin \u2014 INR increased: PRR 14.10, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0106]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states a PRR of 14.10, but the cited TWOSIDES record states a PRR of 9.4."
+    },
+    {
+      "group": "fault",
+      "name": "prr_distortion",
+      "style": "template",
+      "site": "FX-0107 PRR 7.2->10.8",
+      "claim": "amiodarone + warfarin \u2014 haematoma: PRR 10.80, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0107]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states a PRR of 10.80, whereas the cited record reports a PRR of 7.2."
+    },
+    {
+      "group": "fault",
+      "name": "event_swap",
+      "style": "template",
+      "site": "FX-0101 'prolonged prothrombin time'->'increased anticoagulant effect'",
+      "claim": "amiodarone + warfarin \u2014 increased anticoagulant effect: PRR 11.20, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0101]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The claim correctly reflects the drugs, the effect of increased anticoagulant effect via prolonged prothrombin time, and the PRR of 11.20 stated in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "event_swap",
+      "style": "template",
+      "site": "FX-0102 'increased anticoagulant effect'->'prolonged prothrombin time'",
+      "claim": "amiodarone + warfarin \u2014 curated severity: Major (DDInter); prolonged prothrombin time; source mechanism: \"Amiodarone inhibits CYP2C9 and CYP3A4 metabolism of warfarin\"",
+      "citations": [
+        "[DDInter:FX-0102]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The claim accurately reflects the severity, mechanism, and drugs stated in the cited record [DDInter:FX-0102], and includes the clinical event of prolonged prothrombin time representing the increased anticoagulant effect."
+    },
+    {
+      "group": "fault",
+      "name": "event_swap",
+      "style": "template",
+      "site": "FX-0103 'QT prolongation'->'prolonged prothrombin time'",
+      "claim": "amiodarone + ciprofloxacin \u2014 prolonged prothrombin time: PRR 11.80, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0103]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states the event is prolonged prothrombin time, whereas the cited record lists the event as QT prolongation."
+    },
+    {
+      "group": "fault",
+      "name": "event_swap",
+      "style": "template",
+      "site": "FX-0104 'minor bleeding'->'prolonged prothrombin time'",
+      "claim": "sertraline + warfarin \u2014 prolonged prothrombin time: PRR 4.20, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0104]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states the event is 'prolonged prothrombin time', whereas the cited record states the event is 'minor bleeding'."
+    },
+    {
+      "group": "fault",
+      "name": "event_swap",
+      "style": "template",
+      "site": "FX-0105 'interaction'->'prolonged prothrombin time'",
+      "claim": "ciprofloxacin + warfarin \u2014 curated severity: not graded (DDInter); prolonged prothrombin time; source mechanism: \"Ciprofloxacin may increase INR\"",
+      "citations": [
+        "[DDInter:FX-0105]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states 'prolonged prothrombin time', which is not mentioned in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "event_swap",
+      "style": "template",
+      "site": "FX-0106 'INR increased'->'prolonged prothrombin time'",
+      "claim": "amiodarone + warfarin \u2014 prolonged prothrombin time: PRR 9.40, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0106]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The claim of amiodarone + warfarin leading to prolonged prothrombin time (INR increased) with a PRR of 9.40 is directly supported by the cited TWOSIDES record."
+    },
+    {
+      "group": "fault",
+      "name": "event_swap",
+      "style": "template",
+      "site": "FX-0107 'haematoma'->'prolonged prothrombin time'",
+      "claim": "amiodarone + warfarin \u2014 prolonged prothrombin time: PRR 7.20, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0107]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states the event is 'prolonged prothrombin time', but the cited record states the event is 'haematoma'."
+    },
+    {
+      "group": "fault",
+      "name": "population_injection",
+      "style": "template",
+      "site": "FX-0102 + elderly patients",
+      "claim": "amiodarone + warfarin \u2014 curated severity: Major (DDInter); increased anticoagulant effect; source mechanism: \"Amiodarone inhibits CYP2C9 and CYP3A4 metabolism of warfarin\", particularly in elderly patients",
+      "citations": [
+        "[DDInter:FX-0102]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim adds that the interaction occurs 'particularly in elderly patients', which is not mentioned in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "population_injection",
+      "style": "template",
+      "site": "FX-0105 + pregnancy",
+      "claim": "ciprofloxacin + warfarin \u2014 curated severity: not graded (DDInter); source mechanism: \"Ciprofloxacin may increase INR\", particularly in pregnancy",
+      "citations": [
+        "[DDInter:FX-0105]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim adds the statement 'particularly in pregnancy', which is not mentioned in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "population_injection",
+      "style": "template",
+      "site": "FX-0101 + patients with renal impairment",
+      "claim": "amiodarone + warfarin \u2014 prolonged prothrombin time: PRR 11.20, co-reports n/a, particularly in patients with renal impairment",
+      "citations": [
+        "[TWOSIDES:FX-0101]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states that prolonged prothrombin time occurs 'particularly in patients with renal impairment', but this population restriction does not appear in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "population_injection",
+      "style": "template",
+      "site": "FX-0106 + children",
+      "claim": "amiodarone + warfarin \u2014 INR increased: PRR 9.40, co-reports n/a, particularly in children",
+      "citations": [
+        "[TWOSIDES:FX-0106]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states the effect occurs 'particularly in children', which is not mentioned in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "population_injection",
+      "style": "template",
+      "site": "FX-0107 + patients with hepatic impairment",
+      "claim": "amiodarone + warfarin \u2014 haematoma: PRR 7.20, co-reports n/a, particularly in patients with hepatic impairment",
+      "citations": [
+        "[TWOSIDES:FX-0107]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim adds the specific patient population 'particularly in patients with hepatic impairment', which is not present in the cited records."
+    },
+    {
+      "group": "fault",
+      "name": "population_injection",
+      "style": "template",
+      "site": "FX-0103 + elderly patients",
+      "claim": "amiodarone + ciprofloxacin \u2014 QT prolongation: PRR 11.80, co-reports n/a, particularly in elderly patients",
+      "citations": [
+        "[TWOSIDES:FX-0103]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim adds the population detail 'particularly in elderly patients', which is not mentioned in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "population_injection",
+      "style": "template",
+      "site": "FX-0104 + pregnancy",
+      "claim": "sertraline + warfarin \u2014 minor bleeding: PRR 4.20, co-reports n/a, particularly in pregnancy",
+      "citations": [
+        "[TWOSIDES:FX-0104]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim adds the qualifier 'particularly in pregnancy', which is not mentioned in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "severity_on_signal",
+      "style": "template",
+      "site": "FX-0101 + 'Major severity'",
+      "claim": "amiodarone + warfarin \u2014 prolonged prothrombin time: PRR 11.20, co-reports n/a; Major severity",
+      "citations": [
+        "[TWOSIDES:FX-0101]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states a severity of 'Major', but the cited records do not contain any information regarding the severity of the event."
+    },
+    {
+      "group": "fault",
+      "name": "severity_on_signal",
+      "style": "template",
+      "site": "FX-0106 + 'a serious risk'",
+      "claim": "amiodarone + warfarin \u2014 INR increased: PRR 9.40, co-reports n/a, a serious risk",
+      "citations": [
+        "[TWOSIDES:FX-0106]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The claim that amiodarone and warfarin lead to INR increased with a PRR of 9.40 and are a serious risk is supported by the cited TWOSIDES record indicating a signal for INR increased with a PRR of 9.4."
+    },
+    {
+      "group": "fault",
+      "name": "severity_on_signal",
+      "style": "template",
+      "site": "FX-0107 + 'clinically significant'",
+      "claim": "amiodarone + warfarin \u2014 haematoma: PRR 7.20, co-reports n/a, clinically significant",
+      "citations": [
+        "[TWOSIDES:FX-0107]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states the interaction is 'clinically significant' and 'co-reports n/a', which are not present in the cited records."
+    },
+    {
+      "group": "fault",
+      "name": "severity_on_signal",
+      "style": "template",
+      "site": "FX-0103 + 'moderate interaction'",
+      "claim": "amiodarone + ciprofloxacin \u2014 QT prolongation: PRR 11.80, co-reports n/a (moderate interaction)",
+      "citations": [
+        "[TWOSIDES:FX-0103]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim includes the rating '(moderate interaction)' and 'co-reports n/a', which are not present in the cited records."
+    },
+    {
+      "group": "fault",
+      "name": "severity_on_signal",
+      "style": "template",
+      "site": "FX-0104 + 'potentially life-threatening'",
+      "claim": "sertraline + warfarin \u2014 minor bleeding: PRR 4.20, co-reports n/a, potentially life-threatening",
+      "citations": [
+        "[TWOSIDES:FX-0104]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited records do not state that the event 'minor bleeding' is 'potentially life-threatening'."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "template",
+      "site": "renal",
+      "claim": "ibuprofen + lithium \u2014 curated severity: Major (DDInter); lithium toxicity; source mechanism: \"NSAIDs reduce renal lithium clearance\"",
+      "citations": [
+        "[DDInter:FX-0201]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "All elements of the claim including the curated severity, event, and mechanism are explicitly supported by the cited DDInter record."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "template",
+      "site": "renal",
+      "claim": "ibuprofen + lisinopril \u2014 acute kidney injury: PRR 5.90, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0202]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The claim accurately reflects the drug pair, event, and PRR of 5.90 found in the cited TWOSIDES record."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "template",
+      "site": "renal",
+      "claim": "lisinopril + lithium \u2014 lithium toxicity: PRR 4.40, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0203]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The claimed drugs (lisinopril + lithium), event (lithium toxicity), and PRR (4.40) match the cited record exactly."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "template",
+      "site": "renal",
+      "claim": "hydrochlorothiazide + lithium \u2014 lithium toxicity: PRR 16.80, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0204]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The claimed drugs (hydrochlorothiazide + lithium), event (lithium toxicity), and PRR (16.80) are all explicitly stated in the cited TWOSIDES record."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "template",
+      "site": "renal",
+      "claim": "hydrochlorothiazide + ibuprofen \u2014 renal failure: 30 reports; PRR \u2014, ROR \u2014 (95% CI \u2014\u2013\u2014), chi-square \u2014",
+      "citations": [
+        "[FAERS:FX-F201]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The cited FAERS record explicitly states the drugs hydrochlorothiazide and ibuprofen, the event renal failure, and a report count of 30, which matches the claim."
+    },
+    {
+      "group": "fault",
+      "name": "mechanism_injection",
+      "style": "template",
+      "site": "FX-0201",
+      "claim": "ibuprofen + lithium \u2014 curated severity: Major (DDInter); lithium toxicity; source mechanism: \"NSAIDs reduce renal lithium clearance\" via CYP3A4 inhibition",
+      "citations": [
+        "[DDInter:FX-0201]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states that the mechanism is 'via CYP3A4 inhibition', but the cited record only states 'NSAIDs reduce renal lithium clearance' and does not mention CYP3A4 inhibition."
+    },
+    {
+      "group": "fault",
+      "name": "mechanism_injection",
+      "style": "template",
+      "site": "FX-0202",
+      "claim": "ibuprofen + lisinopril \u2014 acute kidney injury: PRR 5.90, co-reports n/a via CYP3A4 inhibition",
+      "citations": [
+        "[TWOSIDES:FX-0202]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states that the interaction occurs 'via CYP3A4 inhibition', but the cited records do not contain any mention of a mechanism."
+    },
+    {
+      "group": "fault",
+      "name": "mechanism_injection",
+      "style": "template",
+      "site": "FX-0203",
+      "claim": "lisinopril + lithium \u2014 lithium toxicity: PRR 4.40, co-reports n/a via CYP3A4 inhibition",
+      "citations": [
+        "[TWOSIDES:FX-0203]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited records do not mention CYP3A4 inhibition as the mechanism for the lisinopril and lithium interaction."
+    },
+    {
+      "group": "fault",
+      "name": "mechanism_injection",
+      "style": "template",
+      "site": "FX-0204",
+      "claim": "hydrochlorothiazide + lithium \u2014 lithium toxicity: PRR 16.80, co-reports n/a via CYP3A4 inhibition",
+      "citations": [
+        "[TWOSIDES:FX-0204]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim introduces the mechanism 'via CYP3A4 inhibition', which is not present in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "severity_flip",
+      "style": "template",
+      "site": "FX-0201 Major->Minor",
+      "claim": "ibuprofen + lithium \u2014 curated severity: Minor (DDInter); lithium toxicity; source mechanism: \"NSAIDs reduce renal lithium clearance\"",
+      "citations": [
+        "[DDInter:FX-0201]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states a severity of 'Minor' from DDInter, but the cited record states a severity of 'Major'."
+    },
+    {
+      "group": "fault",
+      "name": "citation_swap",
+      "style": "template",
+      "site": "FX-0202 cites FX-0203",
+      "claim": "ibuprofen + lisinopril \u2014 acute kidney injury: PRR 5.90, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0203]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim mentions ibuprofen and lisinopril with acute kidney injury (PRR 5.90), but the cited record covers lisinopril and lithium with lithium toxicity."
+    },
+    {
+      "group": "fault",
+      "name": "citation_swap",
+      "style": "template",
+      "site": "FX-0203 cites FX-0202",
+      "claim": "lisinopril + lithium \u2014 lithium toxicity: PRR 4.40, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0202]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited record concerns lisinopril and ibuprofen, whereas the claim is about lisinopril and lithium leading to lithium toxicity."
+    },
+    {
+      "group": "fault",
+      "name": "citation_swap",
+      "style": "template",
+      "site": "FX-0204 cites FX-0202",
+      "claim": "hydrochlorothiazide + lithium \u2014 lithium toxicity: PRR 16.80, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0202]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited record is about ibuprofen and lisinopril, not hydrochlorothiazide and lithium, and does not mention lithium toxicity or the cited PRR."
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "template",
+      "site": "FX-0201 -> FX-9000",
+      "claim": "ibuprofen + lithium \u2014 curated severity: Major (DDInter); lithium toxicity; source mechanism: \"NSAIDs reduce renal lithium clearance\"",
+      "citations": [
+        "[DDInter:FX-9000]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [DDInter:FX-9000]"
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "template",
+      "site": "FX-0202 -> FX-9001",
+      "claim": "ibuprofen + lisinopril \u2014 acute kidney injury: PRR 5.90, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-9001]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [TWOSIDES:FX-9001]"
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "template",
+      "site": "FX-0203 -> FX-9002",
+      "claim": "lisinopril + lithium \u2014 lithium toxicity: PRR 4.40, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-9002]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [TWOSIDES:FX-9002]"
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "template",
+      "site": "FX-0204 -> FX-9003",
+      "claim": "hydrochlorothiazide + lithium \u2014 lithium toxicity: PRR 16.80, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-9003]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [TWOSIDES:FX-9003]"
+    },
+    {
+      "group": "fault",
+      "name": "prr_distortion",
+      "style": "template",
+      "site": "FX-0202 PRR 5.9->8.85",
+      "claim": "ibuprofen + lisinopril \u2014 acute kidney injury: PRR 8.85, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0202]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states a PRR of 8.85 for acute kidney injury, whereas the cited record reports a PRR of 5.9."
+    },
+    {
+      "group": "fault",
+      "name": "prr_distortion",
+      "style": "template",
+      "site": "FX-0203 PRR 4.4->6.6",
+      "claim": "lisinopril + lithium \u2014 lithium toxicity: PRR 6.60, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0203]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states a PRR of 6.60, whereas the cited record reports a PRR of 4.4."
+    },
+    {
+      "group": "fault",
+      "name": "prr_distortion",
+      "style": "template",
+      "site": "FX-0204 PRR 16.8->25.2",
+      "claim": "hydrochlorothiazide + lithium \u2014 lithium toxicity: PRR 25.20, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0204]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states a PRR of 25.20, whereas the cited record lists the PRR as 16.8."
+    },
+    {
+      "group": "fault",
+      "name": "event_swap",
+      "style": "template",
+      "site": "FX-0201 'lithium toxicity'->'acute kidney injury'",
+      "claim": "ibuprofen + lithium \u2014 curated severity: Major (DDInter); acute kidney injury; source mechanism: \"NSAIDs reduce renal lithium clearance\"",
+      "citations": [
+        "[DDInter:FX-0201]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim includes the event 'acute kidney injury', which is not mentioned in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "event_swap",
+      "style": "template",
+      "site": "FX-0202 'acute kidney injury'->'lithium toxicity'",
+      "claim": "ibuprofen + lisinopril \u2014 lithium toxicity: PRR 5.90, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0202]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states that ibuprofen and lisinopril cause lithium toxicity with a PRR of 5.90, whereas the cited record states the event is acute kidney injury."
+    },
+    {
+      "group": "fault",
+      "name": "event_swap",
+      "style": "template",
+      "site": "FX-0203 'lithium toxicity'->'acute kidney injury'",
+      "claim": "lisinopril + lithium \u2014 acute kidney injury: PRR 4.40, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0203]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states the event is acute kidney injury, but the cited record states the event is lithium toxicity."
+    },
+    {
+      "group": "fault",
+      "name": "event_swap",
+      "style": "template",
+      "site": "FX-0204 'lithium toxicity'->'acute kidney injury'",
+      "claim": "hydrochlorothiazide + lithium \u2014 acute kidney injury: PRR 16.80, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0204]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states the event is acute kidney injury, but the cited record reports the event as lithium toxicity."
+    },
+    {
+      "group": "fault",
+      "name": "population_injection",
+      "style": "template",
+      "site": "FX-0201 + elderly patients",
+      "claim": "ibuprofen + lithium \u2014 curated severity: Major (DDInter); lithium toxicity; source mechanism: \"NSAIDs reduce renal lithium clearance\", particularly in elderly patients",
+      "citations": [
+        "[DDInter:FX-0201]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim adds the qualifier 'particularly in elderly patients', which is not mentioned in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "population_injection",
+      "style": "template",
+      "site": "FX-0202 + pregnancy",
+      "claim": "ibuprofen + lisinopril \u2014 acute kidney injury: PRR 5.90, co-reports n/a, particularly in pregnancy",
+      "citations": [
+        "[TWOSIDES:FX-0202]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states that acute kidney injury occurs 'particularly in pregnancy', but this population restriction is not present in the cited records."
+    },
+    {
+      "group": "fault",
+      "name": "population_injection",
+      "style": "template",
+      "site": "FX-0203 + patients with renal impairment",
+      "claim": "lisinopril + lithium \u2014 lithium toxicity: PRR 4.40, co-reports n/a, particularly in patients with renal impairment",
+      "citations": [
+        "[TWOSIDES:FX-0203]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim adds the statement 'particularly in patients with renal impairment', which is not mentioned in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "population_injection",
+      "style": "template",
+      "site": "FX-0204 + children",
+      "claim": "hydrochlorothiazide + lithium \u2014 lithium toxicity: PRR 16.80, co-reports n/a, particularly in children",
+      "citations": [
+        "[TWOSIDES:FX-0204]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim adds the population 'particularly in children', which is not mentioned in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "severity_on_signal",
+      "style": "template",
+      "site": "FX-0202 + 'Major severity'",
+      "claim": "ibuprofen + lisinopril \u2014 acute kidney injury: PRR 5.90, co-reports n/a; Major severity",
+      "citations": [
+        "[TWOSIDES:FX-0202]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited records do not contain information regarding the severity ('Major severity') of the acute kidney injury."
+    },
+    {
+      "group": "fault",
+      "name": "severity_on_signal",
+      "style": "template",
+      "site": "FX-0203 + 'a serious risk'",
+      "claim": "lisinopril + lithium \u2014 lithium toxicity: PRR 4.40, co-reports n/a, a serious risk",
+      "citations": [
+        "[TWOSIDES:FX-0203]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The claim matches the cited TWOSIDES record for lisinopril and lithium, including the event and PRR of 4.40."
+    },
+    {
+      "group": "fault",
+      "name": "severity_on_signal",
+      "style": "template",
+      "site": "FX-0204 + 'clinically significant'",
+      "claim": "hydrochlorothiazide + lithium \u2014 lithium toxicity: PRR 16.80, co-reports n/a, clinically significant",
+      "citations": [
+        "[TWOSIDES:FX-0204]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The claim correctly states the drugs (hydrochlorothiazide + lithium), the event (lithium toxicity), and the PRR (16.80, which matches 16.8 in the source record)."
+    },
+    {
+      "group": "blind_spot",
+      "name": "mechanism outside lexicon ('hepatic enzyme blockade')",
+      "style": "template",
+      "site": "cardiac",
+      "claim": "clarithromycin + simvastatin \u2014 rhabdomyolysis: PRR 19.70, co-reports n/a through hepatic enzyme blockade",
+      "citations": [
+        "[TWOSIDES:FX-0002]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states a mechanism ('through hepatic enzyme blockade'), which is not present in the cited records."
+    },
+    {
+      "group": "blind_spot",
+      "name": "population outside lexicon ('patients over 80')",
+      "style": "template",
+      "site": "cardiac",
+      "claim": "clarithromycin + simvastatin \u2014 rhabdomyolysis: PRR 19.70, co-reports n/a, especially in patients over 80",
+      "citations": [
+        "[TWOSIDES:FX-0002]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited record does not contain the population statement 'especially in patients over 80'."
+    },
+    {
+      "group": "blind_spot",
+      "name": "unquantified magnitude ('risk roughly triples')",
+      "style": "template",
+      "site": "cardiac",
+      "claim": "clarithromycin + simvastatin \u2014 rhabdomyolysis: PRR 19.70, co-reports n/a; the risk roughly triples",
+      "citations": [
+        "[TWOSIDES:FX-0002]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states that 'the risk roughly triples', but the cited records do not contain this information."
+    },
+    {
+      "group": "blind_spot",
+      "name": "event outside lexicon ('muscle breakdown')",
+      "style": "template",
+      "site": "cardiac",
+      "claim": "clarithromycin + digoxin \u2014 muscle breakdown: PRR 6.10, co-reports n/a",
+      "citations": [
+        "[TWOSIDES:FX-0003]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states the event is muscle breakdown, but the cited record states the event is digoxin toxicity."
+    },
+    {
+      "group": "blind_spot",
+      "name": "reversed direction ('lowering digoxin levels')",
+      "style": "template",
+      "site": "cardiac",
+      "claim": "digoxin + verapamil \u2014 curated severity: Major (DDInter); digoxin toxicity; source mechanism: \"Verapamil inhibits P-glycoprotein, lowering digoxin levels\"",
+      "citations": [
+        "[DDInter:FX-0001]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states that verapamil lowers digoxin levels, whereas the source record states it raises digoxin levels."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "prose",
+      "site": "cardiac",
+      "claim": "Lanoxin (digoxin) with verapamil: digoxin toxicity .",
+      "citations": [
+        "[DDInter:FX-0001]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The cited record explicitly states the interaction between digoxin and verapamil results in digoxin toxicity."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "prose",
+      "site": "cardiac",
+      "claim": "Mechanism per source: \"Verapamil inhibits P-glycoprotein, raising digoxin levels\" .",
+      "citations": [
+        "[DDInter:FX-0001]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The claim that verapamil inhibits P-glycoprotein, raising digoxin levels matches the mechanism stated in the cited DDInter record."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "prose",
+      "site": "cardiac",
+      "claim": "Combining Zocor (simvastatin) and verapamil is associated with myopathy .",
+      "citations": [
+        "[DDInter:FX-0004]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The cited record confirms the combination of simvastatin and verapamil is associated with myopathy."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "prose",
+      "site": "cardiac",
+      "claim": "The source attributes this to: \"Verapamil inhibits CYP3A4 metabolism of simvastatin\" .",
+      "citations": [
+        "[DDInter:FX-0004]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The claim that 'Verapamil inhibits CYP3A4 metabolism of simvastatin' is directly stated in the mechanism field of the cited record [DDInter:FX-0004]."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "prose",
+      "site": "cardiac",
+      "claim": "Clarithromycin with simvastatin: reporting signal for rhabdomyolysis, PRR 19.7 .",
+      "citations": [
+        "[TWOSIDES:FX-0002]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The cited record confirms the drug pair (clarithromycin and simvastatin), the event (rhabdomyolysis), the signal type, and the PRR of 19.7."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "prose",
+      "site": "cardiac",
+      "claim": "Co-reports of Clarithromycin and digoxin show a disproportionality signal for digoxin toxicity (PRR 6.1) .",
+      "citations": [
+        "[TWOSIDES:FX-0003]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The cited record confirms the co-report of clarithromycin and digoxin showing a disproportionality signal for digoxin toxicity with a PRR of 6.1."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "prose",
+      "site": "cardiac",
+      "claim": "Metformin with verapamil: reporting signal for hypoglycemia, PRR 2.4 .",
+      "citations": [
+        "[TWOSIDES:FX-0005]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The claim that the combination of metformin and verapamil has a reporting signal for hypoglycemia with a PRR of 2.4 is directly supported by the cited TWOSIDES record."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "prose",
+      "site": "cardiac",
+      "claim": "metformin + simvastatin \u2014 nausea: 42 reports; PRR \u2014, ROR \u2014 (95% CI \u2014\u2013\u2014), chi-square \u2014",
+      "citations": [
+        "[FAERS:FX-F001]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The claim that the combination of metformin and simvastatin is associated with 42 reports of nausea is directly supported by the cited FAERS record."
+    },
+    {
+      "group": "fault",
+      "name": "mechanism_injection",
+      "style": "prose",
+      "site": "FX-0001",
+      "claim": "Lanoxin (digoxin) with verapamil: digoxin toxicity via CYP3A4 inhibition .",
+      "citations": [
+        "[DDInter:FX-0001]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states the mechanism is CYP3A4 inhibition, whereas the cited record states the mechanism is P-glycoprotein inhibition."
+    },
+    {
+      "group": "fault",
+      "name": "mechanism_injection",
+      "style": "prose",
+      "site": "FX-0004",
+      "claim": "Combining Zocor (simvastatin) and verapamil is associated with myopathy via P-glycoprotein inhibition .",
+      "citations": [
+        "[DDInter:FX-0004]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states the mechanism is P-glycoprotein inhibition, whereas the cited record states the mechanism is inhibition of CYP3A4 metabolism."
+    },
+    {
+      "group": "fault",
+      "name": "mechanism_injection",
+      "style": "prose",
+      "site": "FX-0002",
+      "claim": "Clarithromycin with simvastatin: reporting signal for rhabdomyolysis, PRR 19.7 via CYP3A4 inhibition .",
+      "citations": [
+        "[TWOSIDES:FX-0002]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states the mechanism 'via CYP3A4 inhibition', which is not mentioned in the cited records."
+    },
+    {
+      "group": "fault",
+      "name": "mechanism_injection",
+      "style": "prose",
+      "site": "FX-0003",
+      "claim": "Co-reports of Clarithromycin and digoxin show a disproportionality signal for digoxin toxicity (PRR 6.1) via CYP3A4 inhibition .",
+      "citations": [
+        "[TWOSIDES:FX-0003]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states that the disproportionality signal occurs via CYP3A4 inhibition, but the cited records do not mention any mechanism."
+    },
+    {
+      "group": "fault",
+      "name": "mechanism_injection",
+      "style": "prose",
+      "site": "FX-0005",
+      "claim": "Metformin with verapamil: reporting signal for hypoglycemia, PRR 2.4 via CYP3A4 inhibition .",
+      "citations": [
+        "[TWOSIDES:FX-0005]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states that hypoglycemia occurs via CYP3A4 inhibition, but the cited record does not contain this mechanism."
+    },
+    {
+      "group": "fault",
+      "name": "canonical_pgp_to_cyp3a4",
+      "style": "prose",
+      "site": "FX-0001 P-glycoprotein -> CYP3A4",
+      "claim": "Mechanism per source: \"Verapamil inhibits CYP3A4, raising digoxin levels\" .",
+      "citations": [
+        "[DDInter:FX-0001]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states that verapamil inhibits CYP3A4, whereas the cited record states that verapamil inhibits P-glycoprotein."
+    },
+    {
+      "group": "fault",
+      "name": "citation_swap",
+      "style": "prose",
+      "site": "FX-0001 cites FX-0004",
+      "claim": "Lanoxin (digoxin) with verapamil: digoxin toxicity .",
+      "citations": [
+        "[DDInter:FX-0004]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited record concerns simvastatin and verapamil causing myopathy, whereas the claim is about Lanoxin (digoxin) and verapamil causing digoxin toxicity."
+    },
+    {
+      "group": "fault",
+      "name": "citation_swap",
+      "style": "prose",
+      "site": "FX-0001 cites FX-0004",
+      "claim": "Mechanism per source: \"Verapamil inhibits P-glycoprotein, raising digoxin levels\" .",
+      "citations": [
+        "[DDInter:FX-0004]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states that verapamil inhibits P-glycoprotein raising digoxin levels, but the cited record [DDInter:FX-0004] involves simvastatin and verapamil with a mechanism regarding CYP3A4 metabolism."
+    },
+    {
+      "group": "fault",
+      "name": "citation_swap",
+      "style": "prose",
+      "site": "FX-0002 cites FX-0003",
+      "claim": "Clarithromycin with simvastatin: reporting signal for rhabdomyolysis, PRR 19.7 .",
+      "citations": [
+        "[TWOSIDES:FX-0003]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states a reporting signal for rhabdomyolysis with clarithromycin and simvastatin (PRR 19.7), but the cited record is about clarithromycin and digoxin causing digoxin toxicity (PRR 6.1)."
+    },
+    {
+      "group": "fault",
+      "name": "citation_swap",
+      "style": "prose",
+      "site": "FX-0003 cites FX-0002",
+      "claim": "Co-reports of Clarithromycin and digoxin show a disproportionality signal for digoxin toxicity (PRR 6.1) .",
+      "citations": [
+        "[TWOSIDES:FX-0002]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The cited record concerns clarithromycin and simvastatin leading to rhabdomyolysis, whereas the claim states a signal for clarithromycin and digoxin leading to digoxin toxicity."
+    },
+    {
+      "group": "fault",
+      "name": "citation_swap",
+      "style": "prose",
+      "site": "FX-0004 cites FX-0001",
+      "claim": "Combining Zocor (simvastatin) and verapamil is associated with myopathy .",
+      "citations": [
+        "[DDInter:FX-0001]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited record concerns digoxin and verapamil, whereas the claim is about simvastatin and verapamil causing myopathy, which is not mentioned in the record."
+    },
+    {
+      "group": "fault",
+      "name": "citation_swap",
+      "style": "prose",
+      "site": "FX-0004 cites FX-0001",
+      "claim": "The source attributes this to: \"Verapamil inhibits CYP3A4 metabolism of simvastatin\" .",
+      "citations": [
+        "[DDInter:FX-0001]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited record describes an interaction between digoxin and verapamil via P-glycoprotein, whereas the claim attributes an interaction involving simvastatin and CYP3A4 metabolism which is not present in the record."
+    },
+    {
+      "group": "fault",
+      "name": "citation_swap",
+      "style": "prose",
+      "site": "FX-0005 cites FX-0002",
+      "claim": "Metformin with verapamil: reporting signal for hypoglycemia, PRR 2.4 .",
+      "citations": [
+        "[TWOSIDES:FX-0002]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited record concerns clarithromycin and simvastatin causing rhabdomyolysis, not metformin and verapamil causing hypoglycemia."
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "prose",
+      "site": "FX-0001 -> FX-9000",
+      "claim": "Lanoxin (digoxin) with verapamil: digoxin toxicity .",
+      "citations": [
+        "[DDInter:FX-9000]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [DDInter:FX-9000]"
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "prose",
+      "site": "FX-0001 -> FX-9000",
+      "claim": "Mechanism per source: \"Verapamil inhibits P-glycoprotein, raising digoxin levels\" .",
+      "citations": [
+        "[DDInter:FX-9000]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [DDInter:FX-9000]"
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "prose",
+      "site": "FX-0002 -> FX-9001",
+      "claim": "Clarithromycin with simvastatin: reporting signal for rhabdomyolysis, PRR 19.7 .",
+      "citations": [
+        "[TWOSIDES:FX-9001]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [TWOSIDES:FX-9001]"
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "prose",
+      "site": "FX-0003 -> FX-9002",
+      "claim": "Co-reports of Clarithromycin and digoxin show a disproportionality signal for digoxin toxicity (PRR 6.1) .",
+      "citations": [
+        "[TWOSIDES:FX-9002]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [TWOSIDES:FX-9002]"
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "prose",
+      "site": "FX-0004 -> FX-9003",
+      "claim": "Combining Zocor (simvastatin) and verapamil is associated with myopathy .",
+      "citations": [
+        "[DDInter:FX-9003]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [DDInter:FX-9003]"
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "prose",
+      "site": "FX-0004 -> FX-9003",
+      "claim": "The source attributes this to: \"Verapamil inhibits CYP3A4 metabolism of simvastatin\" .",
+      "citations": [
+        "[DDInter:FX-9003]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [DDInter:FX-9003]"
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "prose",
+      "site": "FX-0005 -> FX-9004",
+      "claim": "Metformin with verapamil: reporting signal for hypoglycemia, PRR 2.4 .",
+      "citations": [
+        "[TWOSIDES:FX-9004]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [TWOSIDES:FX-9004]"
+    },
+    {
+      "group": "fault",
+      "name": "prr_distortion",
+      "style": "prose",
+      "site": "FX-0002 PRR 19.7->29.55",
+      "claim": "Clarithromycin with simvastatin: reporting signal for rhabdomyolysis, PRR 29.6 .",
+      "citations": [
+        "[TWOSIDES:FX-0002]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states a PRR of 29.6, whereas the cited record reports a PRR of 19.7."
+    },
+    {
+      "group": "fault",
+      "name": "prr_distortion",
+      "style": "prose",
+      "site": "FX-0003 PRR 6.1->9.15",
+      "claim": "Co-reports of Clarithromycin and digoxin show a disproportionality signal for digoxin toxicity (PRR 9.2) .",
+      "citations": [
+        "[TWOSIDES:FX-0003]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states a PRR of 9.2, but the cited record reports a PRR of 6.1."
+    },
+    {
+      "group": "fault",
+      "name": "prr_distortion",
+      "style": "prose",
+      "site": "FX-0005 PRR 2.4->3.6",
+      "claim": "Metformin with verapamil: reporting signal for hypoglycemia, PRR 3.6 .",
+      "citations": [
+        "[TWOSIDES:FX-0005]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states a PRR of 3.6, but the cited record reports a PRR of 2.4."
+    },
+    {
+      "group": "fault",
+      "name": "event_swap",
+      "style": "prose",
+      "site": "FX-0001 'digoxin toxicity'->'rhabdomyolysis'",
+      "claim": "Lanoxin (digoxin) with verapamil: rhabdomyolysis .",
+      "citations": [
+        "[DDInter:FX-0001]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states that the interaction between Lanoxin (digoxin) and verapamil results in rhabdomyolysis, but the cited record only reports 'digoxin toxicity'."
+    },
+    {
+      "group": "fault",
+      "name": "event_swap",
+      "style": "prose",
+      "site": "FX-0002 'rhabdomyolysis'->'digoxin toxicity'",
+      "claim": "Clarithromycin with simvastatin: reporting signal for digoxin toxicity, PRR 19.7 .",
+      "citations": [
+        "[TWOSIDES:FX-0002]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states that the reporting signal is for digoxin toxicity, whereas the cited record states the event is rhabdomyolysis."
+    },
+    {
+      "group": "fault",
+      "name": "event_swap",
+      "style": "prose",
+      "site": "FX-0003 'digoxin toxicity'->'rhabdomyolysis'",
+      "claim": "Co-reports of Clarithromycin and digoxin show a disproportionality signal for rhabdomyolysis (PRR 6.1) .",
+      "citations": [
+        "[TWOSIDES:FX-0003]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states that the co-reports show a signal for rhabdomyolysis, whereas the cited record states the event is digoxin toxicity."
+    },
+    {
+      "group": "fault",
+      "name": "event_swap",
+      "style": "prose",
+      "site": "FX-0004 'myopathy'->'digoxin toxicity'",
+      "claim": "Combining Zocor (simvastatin) and verapamil is associated with digoxin toxicity .",
+      "citations": [
+        "[DDInter:FX-0004]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited record describes an interaction between simvastatin and verapamil resulting in myopathy, but does not mention digoxin toxicity."
+    },
+    {
+      "group": "fault",
+      "name": "event_swap",
+      "style": "prose",
+      "site": "FX-0005 'hypoglycemia'->'digoxin toxicity'",
+      "claim": "Metformin with verapamil: reporting signal for digoxin toxicity, PRR 2.4 .",
+      "citations": [
+        "[TWOSIDES:FX-0005]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states a reporting signal for digoxin toxicity, but the cited record reports hypoglycemia as the event for metformin with verapamil."
+    },
+    {
+      "group": "fault",
+      "name": "population_injection",
+      "style": "prose",
+      "site": "FX-0001 + elderly patients",
+      "claim": "Lanoxin (digoxin) with verapamil: digoxin toxicity, particularly in elderly patients .",
+      "citations": [
+        "[DDInter:FX-0001]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited records do not mention elderly patients as a specified population for digoxin toxicity."
+    },
+    {
+      "group": "fault",
+      "name": "population_injection",
+      "style": "prose",
+      "site": "FX-0004 + pregnancy",
+      "claim": "Combining Zocor (simvastatin) and verapamil is associated with myopathy, particularly in pregnancy .",
+      "citations": [
+        "[DDInter:FX-0004]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim introduces the condition 'particularly in pregnancy', which is not mentioned in the cited records."
+    },
+    {
+      "group": "fault",
+      "name": "population_injection",
+      "style": "prose",
+      "site": "FX-0002 + patients with renal impairment",
+      "claim": "Clarithromycin with simvastatin: reporting signal for rhabdomyolysis, PRR 19.7, particularly in patients with renal impairment .",
+      "citations": [
+        "[TWOSIDES:FX-0002]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim adds that the signal is particularly prominent in patients with renal impairment, which is not mentioned in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "population_injection",
+      "style": "prose",
+      "site": "FX-0003 + children",
+      "claim": "Co-reports of Clarithromycin and digoxin show a disproportionality signal for digoxin toxicity (PRR 6.1), particularly in children .",
+      "citations": [
+        "[TWOSIDES:FX-0003]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited records do not mention that the disproportionality signal occurs particularly in children."
+    },
+    {
+      "group": "fault",
+      "name": "population_injection",
+      "style": "prose",
+      "site": "FX-0005 + patients with hepatic impairment",
+      "claim": "Metformin with verapamil: reporting signal for hypoglycemia, PRR 2.4, particularly in patients with hepatic impairment .",
+      "citations": [
+        "[TWOSIDES:FX-0005]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states that hypoglycemia is particularly prevalent in patients with hepatic impairment, but the cited record does not contain any mention of hepatic impairment."
+    },
+    {
+      "group": "fault",
+      "name": "severity_on_signal",
+      "style": "prose",
+      "site": "FX-0002 + 'Major severity'",
+      "claim": "Clarithromycin with simvastatin: reporting signal for rhabdomyolysis, PRR 19.7; Major severity .",
+      "citations": [
+        "[TWOSIDES:FX-0002]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited records do not state a severity level such as 'Major severity'."
+    },
+    {
+      "group": "fault",
+      "name": "severity_on_signal",
+      "style": "prose",
+      "site": "FX-0003 + 'a serious risk'",
+      "claim": "Co-reports of Clarithromycin and digoxin show a disproportionality signal for digoxin toxicity (PRR 6.1), a serious risk .",
+      "citations": [
+        "[TWOSIDES:FX-0003]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The cited record confirms the co-reports of clarithromycin and digoxin show a signal for digoxin toxicity with a PRR of 6.1."
+    },
+    {
+      "group": "fault",
+      "name": "severity_on_signal",
+      "style": "prose",
+      "site": "FX-0005 + 'clinically significant'",
+      "claim": "Metformin with verapamil: reporting signal for hypoglycemia, PRR 2.4, clinically significant .",
+      "citations": [
+        "[TWOSIDES:FX-0005]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited records do not contain the claim that the interaction is clinically significant."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "prose",
+      "site": "anticoagulation",
+      "claim": "Amiodarone with warfarin: increased anticoagulant effect .",
+      "citations": [
+        "[DDInter:FX-0102]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The cited record explicitly states the interaction between amiodarone and warfarin results in an increased anticoagulant effect."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "prose",
+      "site": "anticoagulation",
+      "claim": "Mechanism per source: \"Amiodarone inhibits CYP2C9 and CYP3A4 metabolism of warfarin\" .",
+      "citations": [
+        "[DDInter:FX-0102]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The mechanism stated in the claim matches the mechanism provided in the cited record [DDInter:FX-0102]."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "prose",
+      "site": "anticoagulation",
+      "claim": "Cipro (ciprofloxacin) with warfarin: interaction .",
+      "citations": [
+        "[DDInter:FX-0105]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The claim states that Cipro (ciprofloxacin) and warfarin have an interaction, which is directly supported by the cited record [DDInter:FX-0105]."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "prose",
+      "site": "anticoagulation",
+      "claim": "Mechanism per source: \"Ciprofloxacin may increase INR\" .",
+      "citations": [
+        "[DDInter:FX-0105]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The mechanism stated in the claim ('Ciprofloxacin may increase INR') directly matches the mechanism field in the cited record [DDInter:FX-0105]."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "prose",
+      "site": "anticoagulation",
+      "claim": "Amiodarone with warfarin: reporting signal for prolonged prothrombin time, PRR 11.2 .",
+      "citations": [
+        "[TWOSIDES:FX-0101]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The claim that amiodarone with warfarin has a reporting signal for prolonged prothrombin time with a PRR of 11.2 is directly supported by the cited record."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "prose",
+      "site": "anticoagulation",
+      "claim": "Co-reports of Amiodarone and warfarin show a disproportionality signal for INR increased (PRR 9.4) .",
+      "citations": [
+        "[TWOSIDES:FX-0106]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The cited record confirms the co-reporting of amiodarone and warfarin with an INR increased event and a PRR of 9.4."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "prose",
+      "site": "anticoagulation",
+      "claim": "Amiodarone with warfarin: reporting signal for haematoma, PRR 7.2 .",
+      "citations": [
+        "[TWOSIDES:FX-0107]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The cited record confirms the combination of amiodarone and warfarin, the event haematoma, and the PRR of 7.2."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "prose",
+      "site": "anticoagulation",
+      "claim": "Co-reports of Amiodarone and ciprofloxacin show a disproportionality signal for QT prolongation (PRR 11.8) .",
+      "citations": [
+        "[TWOSIDES:FX-0103]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The cited record confirms the co-reports of amiodarone and ciprofloxacin show a signal for QT prolongation with a PRR of 11.8."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "prose",
+      "site": "anticoagulation",
+      "claim": "Sertraline with warfarin: reporting signal for minor bleeding, PRR 4.2 .",
+      "citations": [
+        "[TWOSIDES:FX-0104]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The cited record confirms sertraline with warfarin yields a reporting signal for minor bleeding with a PRR of 4.2."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "prose",
+      "site": "anticoagulation",
+      "claim": "amiodarone + sertraline \u2014 dizziness: 7 reports; PRR \u2014, ROR \u2014 (95% CI \u2014\u2013\u2014), chi-square \u2014",
+      "citations": [
+        "[FAERS:FX-F101]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The claim states amiodarone + sertraline with dizziness and 7 reports, which directly matches the cited FAERS record."
+    },
+    {
+      "group": "fault",
+      "name": "mechanism_injection",
+      "style": "prose",
+      "site": "FX-0102",
+      "claim": "Amiodarone with warfarin: increased anticoagulant effect via P-glycoprotein inhibition .",
+      "citations": [
+        "[DDInter:FX-0102]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states the mechanism is P-glycoprotein inhibition, but the cited record states the mechanism is inhibition of CYP2C9 and CYP3A4 metabolism."
+    },
+    {
+      "group": "fault",
+      "name": "mechanism_injection",
+      "style": "prose",
+      "site": "FX-0105",
+      "claim": "Cipro (ciprofloxacin) with warfarin: interaction via CYP3A4 inhibition .",
+      "citations": [
+        "[DDInter:FX-0105]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited record states the mechanism as 'Ciprofloxacin may increase INR', whereas the claim states the interaction occurs 'via CYP3A4 inhibition', which is not mentioned in the source records."
+    },
+    {
+      "group": "fault",
+      "name": "mechanism_injection",
+      "style": "prose",
+      "site": "FX-0101",
+      "claim": "Amiodarone with warfarin: reporting signal for prolonged prothrombin time, PRR 11.2 via CYP3A4 inhibition .",
+      "citations": [
+        "[TWOSIDES:FX-0101]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states that the interaction occurs via CYP3A4 inhibition, which is not mentioned in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "mechanism_injection",
+      "style": "prose",
+      "site": "FX-0106",
+      "claim": "Co-reports of Amiodarone and warfarin show a disproportionality signal for INR increased (PRR 9.4) via CYP3A4 inhibition .",
+      "citations": [
+        "[TWOSIDES:FX-0106]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states that the INR increased signal occurs via CYP3A4 inhibition, but this mechanism is not mentioned in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "mechanism_injection",
+      "style": "prose",
+      "site": "FX-0107",
+      "claim": "Amiodarone with warfarin: reporting signal for haematoma, PRR 7.2 via CYP3A4 inhibition .",
+      "citations": [
+        "[TWOSIDES:FX-0107]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states a mechanism via CYP3A4 inhibition, which is not mentioned in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "mechanism_injection",
+      "style": "prose",
+      "site": "FX-0103",
+      "claim": "Co-reports of Amiodarone and ciprofloxacin show a disproportionality signal for QT prolongation (PRR 11.8) via CYP3A4 inhibition .",
+      "citations": [
+        "[TWOSIDES:FX-0103]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states that the disproportionality signal occurs 'via CYP3A4 inhibition', but this mechanism is not mentioned in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "mechanism_injection",
+      "style": "prose",
+      "site": "FX-0104",
+      "claim": "Sertraline with warfarin: reporting signal for minor bleeding, PRR 4.2 via CYP3A4 inhibition .",
+      "citations": [
+        "[TWOSIDES:FX-0104]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states that the interaction occurs 'via CYP3A4 inhibition', but this mechanism is not mentioned anywhere in the cited records."
+    },
+    {
+      "group": "fault",
+      "name": "citation_swap",
+      "style": "prose",
+      "site": "FX-0101 cites FX-0103",
+      "claim": "Amiodarone with warfarin: reporting signal for prolonged prothrombin time, PRR 11.2 .",
+      "citations": [
+        "[TWOSIDES:FX-0103]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited record is for amiodarone and ciprofloxacin causing QT prolongation, whereas the claim concerns amiodarone with warfarin and prolonged prothrombin time."
+    },
+    {
+      "group": "fault",
+      "name": "citation_swap",
+      "style": "prose",
+      "site": "FX-0102 cites FX-0105",
+      "claim": "Amiodarone with warfarin: increased anticoagulant effect .",
+      "citations": [
+        "[DDInter:FX-0105]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited record is about ciprofloxacin and warfarin, whereas the claim concerns amiodarone and warfarin."
+    },
+    {
+      "group": "fault",
+      "name": "citation_swap",
+      "style": "prose",
+      "site": "FX-0102 cites FX-0105",
+      "claim": "Mechanism per source: \"Amiodarone inhibits CYP2C9 and CYP3A4 metabolism of warfarin\" .",
+      "citations": [
+        "[DDInter:FX-0105]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim cites [DDInter:FX-0105] for the mechanism that amiodarone inhibits CYP2C9 and CYP3A4 metabolism of warfarin, but the cited record only concerns ciprofloxacin and warfarin."
+    },
+    {
+      "group": "fault",
+      "name": "citation_swap",
+      "style": "prose",
+      "site": "FX-0103 cites FX-0101",
+      "claim": "Co-reports of Amiodarone and ciprofloxacin show a disproportionality signal for QT prolongation (PRR 11.8) .",
+      "citations": [
+        "[TWOSIDES:FX-0101]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The cited record is for amiodarone and warfarin causing prolonged prothrombin time (PRR 11.2), which contradicts the claim about amiodarone and ciprofloxacin causing QT prolongation with a PRR of 11.8."
+    },
+    {
+      "group": "fault",
+      "name": "citation_swap",
+      "style": "prose",
+      "site": "FX-0104 cites FX-0101",
+      "claim": "Sertraline with warfarin: reporting signal for minor bleeding, PRR 4.2 .",
+      "citations": [
+        "[TWOSIDES:FX-0101]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The cited record concerns amiodarone and warfarin causing prolonged prothrombin time, whereas the claim mentions sertraline and warfarin causing minor bleeding with a PRR of 4.2."
+    },
+    {
+      "group": "fault",
+      "name": "citation_swap",
+      "style": "prose",
+      "site": "FX-0105 cites FX-0102",
+      "claim": "Cipro (ciprofloxacin) with warfarin: interaction .",
+      "citations": [
+        "[DDInter:FX-0102]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited record concerns amiodarone and warfarin, whereas the claim concerns ciprofloxacin and warfarin."
+    },
+    {
+      "group": "fault",
+      "name": "citation_swap",
+      "style": "prose",
+      "site": "FX-0105 cites FX-0102",
+      "claim": "Mechanism per source: \"Ciprofloxacin may increase INR\" .",
+      "citations": [
+        "[DDInter:FX-0102]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states that ciprofloxacin increases INR via the source mechanism, but the cited record [DDInter:FX-0102] concerns amiodarone and warfarin."
+    },
+    {
+      "group": "fault",
+      "name": "citation_swap",
+      "style": "prose",
+      "site": "FX-0106 cites FX-0103",
+      "claim": "Co-reports of Amiodarone and warfarin show a disproportionality signal for INR increased (PRR 9.4) .",
+      "citations": [
+        "[TWOSIDES:FX-0103]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The cited record concerns amiodarone and ciprofloxacin causing QT prolongation, whereas the claim states amiodarone and warfarin cause an INR increase with a PRR of 9.4."
+    },
+    {
+      "group": "fault",
+      "name": "citation_swap",
+      "style": "prose",
+      "site": "FX-0107 cites FX-0103",
+      "claim": "Amiodarone with warfarin: reporting signal for haematoma, PRR 7.2 .",
+      "citations": [
+        "[TWOSIDES:FX-0103]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited record is about amiodarone and ciprofloxacin causing QT prolongation, whereas the claim is about amiodarone and warfarin causing haematoma with a PRR of 7.2."
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "prose",
+      "site": "FX-0101 -> FX-9000",
+      "claim": "Amiodarone with warfarin: reporting signal for prolonged prothrombin time, PRR 11.2 .",
+      "citations": [
+        "[TWOSIDES:FX-9000]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [TWOSIDES:FX-9000]"
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "prose",
+      "site": "FX-0102 -> FX-9001",
+      "claim": "Amiodarone with warfarin: increased anticoagulant effect .",
+      "citations": [
+        "[DDInter:FX-9001]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [DDInter:FX-9001]"
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "prose",
+      "site": "FX-0102 -> FX-9001",
+      "claim": "Mechanism per source: \"Amiodarone inhibits CYP2C9 and CYP3A4 metabolism of warfarin\" .",
+      "citations": [
+        "[DDInter:FX-9001]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [DDInter:FX-9001]"
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "prose",
+      "site": "FX-0103 -> FX-9002",
+      "claim": "Co-reports of Amiodarone and ciprofloxacin show a disproportionality signal for QT prolongation (PRR 11.8) .",
+      "citations": [
+        "[TWOSIDES:FX-9002]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [TWOSIDES:FX-9002]"
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "prose",
+      "site": "FX-0104 -> FX-9003",
+      "claim": "Sertraline with warfarin: reporting signal for minor bleeding, PRR 4.2 .",
+      "citations": [
+        "[TWOSIDES:FX-9003]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [TWOSIDES:FX-9003]"
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "prose",
+      "site": "FX-0105 -> FX-9004",
+      "claim": "Cipro (ciprofloxacin) with warfarin: interaction .",
+      "citations": [
+        "[DDInter:FX-9004]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [DDInter:FX-9004]"
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "prose",
+      "site": "FX-0105 -> FX-9004",
+      "claim": "Mechanism per source: \"Ciprofloxacin may increase INR\" .",
+      "citations": [
+        "[DDInter:FX-9004]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [DDInter:FX-9004]"
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "prose",
+      "site": "FX-0106 -> FX-9005",
+      "claim": "Co-reports of Amiodarone and warfarin show a disproportionality signal for INR increased (PRR 9.4) .",
+      "citations": [
+        "[TWOSIDES:FX-9005]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [TWOSIDES:FX-9005]"
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "prose",
+      "site": "FX-0107 -> FX-9006",
+      "claim": "Amiodarone with warfarin: reporting signal for haematoma, PRR 7.2 .",
+      "citations": [
+        "[TWOSIDES:FX-9006]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [TWOSIDES:FX-9006]"
+    },
+    {
+      "group": "fault",
+      "name": "prr_distortion",
+      "style": "prose",
+      "site": "FX-0101 PRR 11.2->16.8",
+      "claim": "Amiodarone with warfarin: reporting signal for prolonged prothrombin time, PRR 16.8 .",
+      "citations": [
+        "[TWOSIDES:FX-0101]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states a PRR of 16.8, but the cited record [TWOSIDES:FX-0101] reports a PRR of 11.2."
+    },
+    {
+      "group": "fault",
+      "name": "prr_distortion",
+      "style": "prose",
+      "site": "FX-0103 PRR 11.8->17.7",
+      "claim": "Co-reports of Amiodarone and ciprofloxacin show a disproportionality signal for QT prolongation (PRR 17.7) .",
+      "citations": [
+        "[TWOSIDES:FX-0103]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states a PRR of 17.7, but the cited record [TWOSIDES:FX-0103] reports a PRR of 11.8 for QT prolongation."
+    },
+    {
+      "group": "fault",
+      "name": "prr_distortion",
+      "style": "prose",
+      "site": "FX-0104 PRR 4.2->6.3",
+      "claim": "Sertraline with warfarin: reporting signal for minor bleeding, PRR 6.3 .",
+      "citations": [
+        "[TWOSIDES:FX-0104]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states a PRR of 6.3, whereas the cited record states a PRR of 4.2."
+    },
+    {
+      "group": "fault",
+      "name": "prr_distortion",
+      "style": "prose",
+      "site": "FX-0106 PRR 9.4->14.1",
+      "claim": "Amiodarone with warfarin: reporting signal for INR increased, PRR 14.1 .",
+      "citations": [
+        "[TWOSIDES:FX-0106]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states a PRR of 14.1, but the cited record [TWOSIDES:FX-0106] states a PRR of 9.4."
+    },
+    {
+      "group": "fault",
+      "name": "prr_distortion",
+      "style": "prose",
+      "site": "FX-0107 PRR 7.2->10.8",
+      "claim": "Co-reports of Amiodarone and warfarin show a disproportionality signal for haematoma (PRR 10.8) .",
+      "citations": [
+        "[TWOSIDES:FX-0107]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states a PRR of 10.8 for haematoma, but the cited record reports a PRR of 7.2."
+    },
+    {
+      "group": "fault",
+      "name": "event_swap",
+      "style": "prose",
+      "site": "FX-0101 'prolonged prothrombin time'->'increased anticoagulant effect'",
+      "claim": "Amiodarone with warfarin: reporting signal for increased anticoagulant effect, PRR 11.2 .",
+      "citations": [
+        "[TWOSIDES:FX-0101]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states an 'increased anticoagulant effect', which is not mentioned in the source record (the record only mentions 'prolonged prothrombin time')."
+    },
+    {
+      "group": "fault",
+      "name": "event_swap",
+      "style": "prose",
+      "site": "FX-0102 'increased anticoagulant effect'->'prolonged prothrombin time'",
+      "claim": "Amiodarone with warfarin: prolonged prothrombin time .",
+      "citations": [
+        "[DDInter:FX-0102]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The claim states 'prolonged prothrombin time', which directly follows from the cited record's event of 'increased anticoagulant effect' for the drug pair amiodarone and warfarin."
+    },
+    {
+      "group": "fault",
+      "name": "event_swap",
+      "style": "prose",
+      "site": "FX-0103 'QT prolongation'->'prolonged prothrombin time'",
+      "claim": "Co-reports of Amiodarone and ciprofloxacin show a disproportionality signal for prolonged prothrombin time (PRR 11.8) .",
+      "citations": [
+        "[TWOSIDES:FX-0103]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states the event is 'prolonged prothrombin time', but the cited record states the event is 'QT prolongation'."
+    },
+    {
+      "group": "fault",
+      "name": "event_swap",
+      "style": "prose",
+      "site": "FX-0104 'minor bleeding'->'prolonged prothrombin time'",
+      "claim": "Sertraline with warfarin: reporting signal for prolonged prothrombin time, PRR 4.2 .",
+      "citations": [
+        "[TWOSIDES:FX-0104]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states 'prolonged prothrombin time', but the cited record states 'minor bleeding'."
+    },
+    {
+      "group": "fault",
+      "name": "event_swap",
+      "style": "prose",
+      "site": "FX-0105 'interaction'->'prolonged prothrombin time'",
+      "claim": "Cipro (ciprofloxacin) with warfarin: prolonged prothrombin time .",
+      "citations": [
+        "[DDInter:FX-0105]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The cited record states that ciprofloxacin and warfarin interact with the mechanism that ciprofloxacin may increase INR, which directly supports the claim of prolonged prothrombin time."
+    },
+    {
+      "group": "fault",
+      "name": "event_swap",
+      "style": "prose",
+      "site": "FX-0106 'INR increased'->'prolonged prothrombin time'",
+      "claim": "Co-reports of Amiodarone and warfarin show a disproportionality signal for prolonged prothrombin time (PRR 9.4) .",
+      "citations": [
+        "[TWOSIDES:FX-0106]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The cited record confirms the drug pair amiodarone and warfarin, the event of prolonged prothrombin time (INR increased), and a PRR of 9.4."
+    },
+    {
+      "group": "fault",
+      "name": "event_swap",
+      "style": "prose",
+      "site": "FX-0107 'haematoma'->'prolonged prothrombin time'",
+      "claim": "Amiodarone with warfarin: reporting signal for prolonged prothrombin time, PRR 7.2 .",
+      "citations": [
+        "[TWOSIDES:FX-0107]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states the event is 'prolonged prothrombin time', whereas the cited record lists the event as 'haematoma'."
+    },
+    {
+      "group": "fault",
+      "name": "population_injection",
+      "style": "prose",
+      "site": "FX-0102 + elderly patients",
+      "claim": "Amiodarone with warfarin: increased anticoagulant effect, particularly in elderly patients .",
+      "citations": [
+        "[DDInter:FX-0102]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim mentions that the interaction particularly affects elderly patients, but this population is not stated in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "population_injection",
+      "style": "prose",
+      "site": "FX-0105 + pregnancy",
+      "claim": "Cipro (ciprofloxacin) with warfarin: interaction, particularly in pregnancy .",
+      "citations": [
+        "[DDInter:FX-0105]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim mentions an interaction particularly in pregnancy, but the cited records contain no information about pregnancy."
+    },
+    {
+      "group": "fault",
+      "name": "population_injection",
+      "style": "prose",
+      "site": "FX-0101 + patients with renal impairment",
+      "claim": "Amiodarone with warfarin: reporting signal for prolonged prothrombin time, PRR 11.2, particularly in patients with renal impairment .",
+      "citations": [
+        "[TWOSIDES:FX-0101]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states that prolonged prothrombin time occurs particularly in patients with renal impairment, which is not mentioned in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "population_injection",
+      "style": "prose",
+      "site": "FX-0106 + children",
+      "claim": "Co-reports of Amiodarone and warfarin show a disproportionality signal for INR increased (PRR 9.4), particularly in children .",
+      "citations": [
+        "[TWOSIDES:FX-0106]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states the disproportionality signal for INR increased is particularly in children, which is not mentioned in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "population_injection",
+      "style": "prose",
+      "site": "FX-0107 + patients with hepatic impairment",
+      "claim": "Amiodarone with warfarin: reporting signal for haematoma, PRR 7.2, particularly in patients with hepatic impairment .",
+      "citations": [
+        "[TWOSIDES:FX-0107]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states the signal is particularly in patients with hepatic impairment, which is not mentioned in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "population_injection",
+      "style": "prose",
+      "site": "FX-0103 + elderly patients",
+      "claim": "Co-reports of Amiodarone and ciprofloxacin show a disproportionality signal for QT prolongation (PRR 11.8), particularly in elderly patients .",
+      "citations": [
+        "[TWOSIDES:FX-0103]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states that the disproportionality signal is seen 'particularly in elderly patients', but the cited record contains no mention of patient age or elderly populations."
+    },
+    {
+      "group": "fault",
+      "name": "population_injection",
+      "style": "prose",
+      "site": "FX-0104 + pregnancy",
+      "claim": "Sertraline with warfarin: reporting signal for minor bleeding, PRR 4.2, particularly in pregnancy .",
+      "citations": [
+        "[TWOSIDES:FX-0104]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states the effect occurs particularly in pregnancy, which is not mentioned in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "severity_on_signal",
+      "style": "prose",
+      "site": "FX-0101 + 'Major severity'",
+      "claim": "Amiodarone with warfarin: reporting signal for prolonged prothrombin time, PRR 11.2; Major severity .",
+      "citations": [
+        "[TWOSIDES:FX-0101]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states a 'Major severity' for the interaction, which is not mentioned in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "severity_on_signal",
+      "style": "prose",
+      "site": "FX-0106 + 'a serious risk'",
+      "claim": "Co-reports of Amiodarone and warfarin show a disproportionality signal for INR increased (PRR 9.4), a serious risk .",
+      "citations": [
+        "[TWOSIDES:FX-0106]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The cited record confirms the co-report of amiodarone and warfarin for the event 'INR increased' with a PRR of 9.4."
+    },
+    {
+      "group": "fault",
+      "name": "severity_on_signal",
+      "style": "prose",
+      "site": "FX-0107 + 'clinically significant'",
+      "claim": "Amiodarone with warfarin: reporting signal for haematoma, PRR 7.2, clinically significant .",
+      "citations": [
+        "[TWOSIDES:FX-0107]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states that the interaction is 'clinically significant', but this severity or qualification is not present in the cited records."
+    },
+    {
+      "group": "fault",
+      "name": "severity_on_signal",
+      "style": "prose",
+      "site": "FX-0103 + 'moderate interaction'",
+      "claim": "Co-reports of Amiodarone and ciprofloxacin show a disproportionality signal for QT prolongation (PRR 11.8) (moderate interaction) .",
+      "citations": [
+        "[TWOSIDES:FX-0103]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The cited record confirms the drugs amiodarone and ciprofloxacin, the event QT prolongation, and the PRR of 11.8. The descriptor 'moderate interaction' is considered formatting/classification and does not contradict the record."
+    },
+    {
+      "group": "fault",
+      "name": "severity_on_signal",
+      "style": "prose",
+      "site": "FX-0104 + 'potentially life-threatening'",
+      "claim": "Sertraline with warfarin: reporting signal for minor bleeding, PRR 4.2, potentially life-threatening .",
+      "citations": [
+        "[TWOSIDES:FX-0104]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states that the combination is 'potentially life-threatening', but this severity or risk is not mentioned in the cited record."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "prose",
+      "site": "renal",
+      "claim": "Advil (ibuprofen) with lithium: lithium toxicity .",
+      "citations": [
+        "[DDInter:FX-0201]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The cited record confirms the interaction between ibuprofen and lithium resulting in lithium toxicity."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "prose",
+      "site": "renal",
+      "claim": "Mechanism per source: \"NSAIDs reduce renal lithium clearance\" .",
+      "citations": [
+        "[DDInter:FX-0201]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The mechanism 'NSAIDs reduce renal lithium clearance' is explicitly stated in the cited record [DDInter:FX-0201]."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "prose",
+      "site": "renal",
+      "claim": "Co-reports of Advil (ibuprofen) and lisinopril show a disproportionality signal for acute kidney injury (PRR 5.9) .",
+      "citations": [
+        "[TWOSIDES:FX-0202]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The claim that co-reports of ibuprofen and lisinopril show a disproportionality signal for acute kidney injury with a PRR of 5.9 is directly supported by the cited TWOSIDES record."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "prose",
+      "site": "renal",
+      "claim": "Lisinopril with lithium: reporting signal for lithium toxicity, PRR 4.4 .",
+      "citations": [
+        "[TWOSIDES:FX-0203]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The cited record confirms the drugs (lisinopril and lithium), the event (lithium toxicity), and the specific PRR (4.4)."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "prose",
+      "site": "renal",
+      "claim": "Co-reports of Hctz (hydrochlorothiazide) and lithium show a disproportionality signal for lithium toxicity (PRR 16.8) .",
+      "citations": [
+        "[TWOSIDES:FX-0204]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The cited record confirms the co-reports of hydrochlorothiazide and lithium show a disproportionality signal for lithium toxicity with a PRR of 16.8."
+    },
+    {
+      "group": "control",
+      "name": "clean fixture claim",
+      "style": "prose",
+      "site": "renal",
+      "claim": "hydrochlorothiazide + ibuprofen \u2014 renal failure: 30 reports; PRR \u2014, ROR \u2014 (95% CI \u2014\u2013\u2014), chi-square \u2014",
+      "citations": [
+        "[FAERS:FX-F201]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The cited FAERS record explicitly states the drugs hydrochlorothiazide and ibuprofen, the event renal failure, and a report count of 30, which matches the claim."
+    },
+    {
+      "group": "fault",
+      "name": "mechanism_injection",
+      "style": "prose",
+      "site": "FX-0201",
+      "claim": "Advil (ibuprofen) with lithium: lithium toxicity via CYP3A4 inhibition .",
+      "citations": [
+        "[DDInter:FX-0201]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states the mechanism is CYP3A4 inhibition, whereas the cited record states the mechanism is that NSAIDs reduce renal lithium clearance."
+    },
+    {
+      "group": "fault",
+      "name": "mechanism_injection",
+      "style": "prose",
+      "site": "FX-0202",
+      "claim": "Co-reports of Advil (ibuprofen) and lisinopril show a disproportionality signal for acute kidney injury (PRR 5.9) via CYP3A4 inhibition .",
+      "citations": [
+        "[TWOSIDES:FX-0202]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states that the acute kidney injury occurs via CYP3A4 inhibition, but this mechanism is not mentioned in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "mechanism_injection",
+      "style": "prose",
+      "site": "FX-0203",
+      "claim": "Lisinopril with lithium: reporting signal for lithium toxicity, PRR 4.4 via CYP3A4 inhibition .",
+      "citations": [
+        "[TWOSIDES:FX-0203]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited record does not mention CYP3A4 inhibition."
+    },
+    {
+      "group": "fault",
+      "name": "mechanism_injection",
+      "style": "prose",
+      "site": "FX-0204",
+      "claim": "Co-reports of Hctz (hydrochlorothiazide) and lithium show a disproportionality signal for lithium toxicity (PRR 16.8) via CYP3A4 inhibition .",
+      "citations": [
+        "[TWOSIDES:FX-0204]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited record supports the co-reports, event, and PRR of 16.8, but does not mention CYP3A4 inhibition."
+    },
+    {
+      "group": "fault",
+      "name": "citation_swap",
+      "style": "prose",
+      "site": "FX-0202 cites FX-0203",
+      "claim": "Co-reports of Advil (ibuprofen) and lisinopril show a disproportionality signal for acute kidney injury (PRR 5.9) .",
+      "citations": [
+        "[TWOSIDES:FX-0203]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The cited record concerns lisinopril and lithium with lithium toxicity, whereas the claim states Advil and lisinopril with acute kidney injury (PRR 5.9)."
+    },
+    {
+      "group": "fault",
+      "name": "citation_swap",
+      "style": "prose",
+      "site": "FX-0203 cites FX-0202",
+      "claim": "Lisinopril with lithium: reporting signal for lithium toxicity, PRR 4.4 .",
+      "citations": [
+        "[TWOSIDES:FX-0202]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The cited record concerns lisinopril and ibuprofen for acute kidney injury, whereas the claim mentions lisinopril, lithium, and lithium toxicity with a PRR of 4.4."
+    },
+    {
+      "group": "fault",
+      "name": "citation_swap",
+      "style": "prose",
+      "site": "FX-0204 cites FX-0202",
+      "claim": "Co-reports of Hctz (hydrochlorothiazide) and lithium show a disproportionality signal for lithium toxicity (PRR 16.8) .",
+      "citations": [
+        "[TWOSIDES:FX-0202]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The cited record concerns ibuprofen and lisinopril with acute kidney injury (PRR 5.9), whereas the claim states hydrochlorothiazide and lithium with lithium toxicity (PRR 16.8)."
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "prose",
+      "site": "FX-0201 -> FX-9000",
+      "claim": "Advil (ibuprofen) with lithium: lithium toxicity .",
+      "citations": [
+        "[DDInter:FX-9000]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [DDInter:FX-9000]"
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "prose",
+      "site": "FX-0201 -> FX-9000",
+      "claim": "Mechanism per source: \"NSAIDs reduce renal lithium clearance\" .",
+      "citations": [
+        "[DDInter:FX-9000]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [DDInter:FX-9000]"
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "prose",
+      "site": "FX-0202 -> FX-9001",
+      "claim": "Co-reports of Advil (ibuprofen) and lisinopril show a disproportionality signal for acute kidney injury (PRR 5.9) .",
+      "citations": [
+        "[TWOSIDES:FX-9001]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [TWOSIDES:FX-9001]"
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "prose",
+      "site": "FX-0203 -> FX-9002",
+      "claim": "Lisinopril with lithium: reporting signal for lithium toxicity, PRR 4.4 .",
+      "citations": [
+        "[TWOSIDES:FX-9002]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [TWOSIDES:FX-9002]"
+    },
+    {
+      "group": "fault",
+      "name": "phantom_citation",
+      "style": "prose",
+      "site": "FX-0204 -> FX-9003",
+      "claim": "Co-reports of Hctz (hydrochlorothiazide) and lithium show a disproportionality signal for lithium toxicity (PRR 16.8) .",
+      "citations": [
+        "[TWOSIDES:FX-9003]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": false,
+      "rationale": "cites no record in the evidence: [TWOSIDES:FX-9003]"
+    },
+    {
+      "group": "fault",
+      "name": "prr_distortion",
+      "style": "prose",
+      "site": "FX-0202 PRR 5.9->8.85",
+      "claim": "Co-reports of Advil (ibuprofen) and lisinopril show a disproportionality signal for acute kidney injury (PRR 8.8) .",
+      "citations": [
+        "[TWOSIDES:FX-0202]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states a PRR of 8.8, but the cited record reports a PRR of 5.9."
+    },
+    {
+      "group": "fault",
+      "name": "prr_distortion",
+      "style": "prose",
+      "site": "FX-0203 PRR 4.4->6.6",
+      "claim": "Lisinopril with lithium: reporting signal for lithium toxicity, PRR 6.6 .",
+      "citations": [
+        "[TWOSIDES:FX-0203]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states a PRR of 6.6, whereas the cited record states a PRR of 4.4."
+    },
+    {
+      "group": "fault",
+      "name": "prr_distortion",
+      "style": "prose",
+      "site": "FX-0204 PRR 16.8->25.2",
+      "claim": "Co-reports of Hctz (hydrochlorothiazide) and lithium show a disproportionality signal for lithium toxicity (PRR 25.2) .",
+      "citations": [
+        "[TWOSIDES:FX-0204]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states a PRR of 25.2, whereas the cited record reports a PRR of 16.8."
+    },
+    {
+      "group": "fault",
+      "name": "event_swap",
+      "style": "prose",
+      "site": "FX-0201 'lithium toxicity'->'acute kidney injury'",
+      "claim": "Advil (ibuprofen) with lithium: acute kidney injury .",
+      "citations": [
+        "[DDInter:FX-0201]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited record lists the event as 'lithium toxicity', whereas the claim states 'acute kidney injury'."
+    },
+    {
+      "group": "fault",
+      "name": "event_swap",
+      "style": "prose",
+      "site": "FX-0202 'acute kidney injury'->'lithium toxicity'",
+      "claim": "Co-reports of Advil (ibuprofen) and lisinopril show a disproportionality signal for lithium toxicity (PRR 5.9) .",
+      "citations": [
+        "[TWOSIDES:FX-0202]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states that co-reports of ibuprofen and lisinopril show a signal for lithium toxicity, whereas the cited record shows the event is acute kidney injury."
+    },
+    {
+      "group": "fault",
+      "name": "event_swap",
+      "style": "prose",
+      "site": "FX-0203 'lithium toxicity'->'acute kidney injury'",
+      "claim": "Lisinopril with lithium: reporting signal for acute kidney injury, PRR 4.4 .",
+      "citations": [
+        "[TWOSIDES:FX-0203]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states the event is acute kidney injury, but the cited record reports the event as lithium toxicity."
+    },
+    {
+      "group": "fault",
+      "name": "event_swap",
+      "style": "prose",
+      "site": "FX-0204 'lithium toxicity'->'acute kidney injury'",
+      "claim": "Co-reports of Hctz (hydrochlorothiazide) and lithium show a disproportionality signal for acute kidney injury (PRR 16.8) .",
+      "citations": [
+        "[TWOSIDES:FX-0204]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states the event is acute kidney injury, whereas the cited record states the event is lithium toxicity."
+    },
+    {
+      "group": "fault",
+      "name": "population_injection",
+      "style": "prose",
+      "site": "FX-0201 + elderly patients",
+      "claim": "Advil (ibuprofen) with lithium: lithium toxicity, particularly in elderly patients .",
+      "citations": [
+        "[DDInter:FX-0201]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim specifies that the interaction occurs 'particularly in elderly patients', but this population is not mentioned in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "population_injection",
+      "style": "prose",
+      "site": "FX-0202 + pregnancy",
+      "claim": "Co-reports of Advil (ibuprofen) and lisinopril show a disproportionality signal for acute kidney injury (PRR 5.9), particularly in pregnancy .",
+      "citations": [
+        "[TWOSIDES:FX-0202]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states the signal is particularly in pregnancy, but the cited record contains no mention of pregnancy."
+    },
+    {
+      "group": "fault",
+      "name": "population_injection",
+      "style": "prose",
+      "site": "FX-0203 + patients with renal impairment",
+      "claim": "Lisinopril with lithium: reporting signal for lithium toxicity, PRR 4.4, particularly in patients with renal impairment .",
+      "citations": [
+        "[TWOSIDES:FX-0203]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states that lithium toxicity with lisinopril occurs particularly in patients with renal impairment, but this population is not mentioned in the cited record."
+    },
+    {
+      "group": "fault",
+      "name": "population_injection",
+      "style": "prose",
+      "site": "FX-0204 + children",
+      "claim": "Co-reports of Hctz (hydrochlorothiazide) and lithium show a disproportionality signal for lithium toxicity (PRR 16.8), particularly in children .",
+      "citations": [
+        "[TWOSIDES:FX-0204]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited record supports the drug pair, event, and PRR of 16.8, but does not mention the population 'particularly in children'."
+    },
+    {
+      "group": "fault",
+      "name": "severity_on_signal",
+      "style": "prose",
+      "site": "FX-0202 + 'Major severity'",
+      "claim": "Co-reports of Advil (ibuprofen) and lisinopril show a disproportionality signal for acute kidney injury (PRR 5.9); Major severity .",
+      "citations": [
+        "[TWOSIDES:FX-0202]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited records do not mention the severity (\"Major severity\") of the event."
+    },
+    {
+      "group": "fault",
+      "name": "severity_on_signal",
+      "style": "prose",
+      "site": "FX-0203 + 'a serious risk'",
+      "claim": "Lisinopril with lithium: reporting signal for lithium toxicity, PRR 4.4, a serious risk .",
+      "citations": [
+        "[TWOSIDES:FX-0203]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The cited record confirms the drug pair lisinopril and lithium, the event lithium toxicity, the signal designation, and the PRR of 4.4."
+    },
+    {
+      "group": "fault",
+      "name": "severity_on_signal",
+      "style": "prose",
+      "site": "FX-0204 + 'clinically significant'",
+      "claim": "Co-reports of Hctz (hydrochlorothiazide) and lithium show a disproportionality signal for lithium toxicity (PRR 16.8), clinically significant .",
+      "citations": [
+        "[TWOSIDES:FX-0204]"
+      ],
+      "verdict": "supported",
+      "called_judge": true,
+      "rationale": "The cited record confirms the co-reports of hydrochlorothiazide and lithium show a signal for lithium toxicity with a PRR of 16.8."
+    },
+    {
+      "group": "blind_spot",
+      "name": "mechanism outside lexicon ('hepatic enzyme blockade')",
+      "style": "prose",
+      "site": "cardiac",
+      "claim": "Clarithromycin with simvastatin: reporting signal for rhabdomyolysis, PRR 19.7 through hepatic enzyme blockade .",
+      "citations": [
+        "[TWOSIDES:FX-0002]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim includes the mechanism 'through hepatic enzyme blockade', which is not mentioned in the cited record."
+    },
+    {
+      "group": "blind_spot",
+      "name": "population outside lexicon ('patients over 80')",
+      "style": "prose",
+      "site": "cardiac",
+      "claim": "Clarithromycin with simvastatin: reporting signal for rhabdomyolysis, PRR 19.7, especially in patients over 80 .",
+      "citations": [
+        "[TWOSIDES:FX-0002]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The cited record does not mention the patient age group 'over 80', which makes that part of the claim unsupported."
+    },
+    {
+      "group": "blind_spot",
+      "name": "unquantified magnitude ('risk roughly triples')",
+      "style": "prose",
+      "site": "cardiac",
+      "claim": "Clarithromycin with simvastatin: reporting signal for rhabdomyolysis, PRR 19.7; the risk roughly triples .",
+      "citations": [
+        "[TWOSIDES:FX-0002]"
+      ],
+      "verdict": "unsupported",
+      "called_judge": true,
+      "rationale": "The claim states that 'the risk roughly triples', which is not mentioned in the cited record."
+    },
+    {
+      "group": "blind_spot",
+      "name": "event outside lexicon ('muscle breakdown')",
+      "style": "prose",
+      "site": "cardiac",
+      "claim": "Co-reports of Clarithromycin and digoxin show a disproportionality signal for muscle breakdown (PRR 6.1) .",
+      "citations": [
+        "[TWOSIDES:FX-0003]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states that co-reports show a signal for 'muscle breakdown', whereas the cited record states the event is 'digoxin toxicity'."
+    },
+    {
+      "group": "blind_spot",
+      "name": "reversed direction ('lowering digoxin levels')",
+      "style": "prose",
+      "site": "cardiac",
+      "claim": "Mechanism per source: \"Verapamil inhibits P-glycoprotein, lowering digoxin levels\" .",
+      "citations": [
+        "[DDInter:FX-0001]"
+      ],
+      "verdict": "contradicted",
+      "called_judge": true,
+      "rationale": "The claim states that verapamil lowers digoxin levels, whereas the source record states that it raises digoxin levels."
+    }
+  ]
+}
