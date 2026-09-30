@@ -65,3 +65,5 @@ Label evidence for the verified rows: monitor / adjust 11, contraindicated 11, a
 | losartan + acetaminophen | none | — | LISTED_UNGRADED | — | — |
 | metformin + amlodipine | none | — | LISTED_UNGRADED | — | — |
 | sertraline + acetaminophen | none | — | LISTED_UNGRADED | — | — |
+
+**Data license.** Contains data derived from DDInter and SIDER 4.1 (PharmGuard public build), licensed CC BY-NC-SA 4.0 (https://creativecommons.org/licenses/by-nc-sa/4.0/), not MIT: non-commercial use only, share alike. Citations and attributions: docs/DATASETS.md.

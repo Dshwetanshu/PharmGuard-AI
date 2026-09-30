@@ -13,7 +13,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from src.data.attribution import notices_for_dir  # noqa: E402
+from src.data.attribution import DERIVED_DATA_NOTE, notices_for_dir  # noqa: E402
 from src.graph import PharmGuardGraph, Settings  # noqa: E402
 
 OUT = ROOT / "examples"
@@ -51,7 +51,7 @@ def render(graph, title: str, drugs, note: str) -> str:
         "## How it was produced", "",
         f"- Graph path: {path}", f"- report_source: `{s['report_source']}`",
         f"- Final checker: {'passed' if v['passed'] else 'FAILED'}, {v['stats']['clinical_claims']} clinical claims, "
-        f"{v['stats']['citations']} citations", ""])
+        f"{v['stats']['citations']} citations", "", DERIVED_DATA_NOTE, ""])
 
 
 def index(graph) -> str:
@@ -62,6 +62,7 @@ def index(graph) -> str:
     L += [f"| [{f}.md]({f}.md) | {t}: {n} |" for f, t, _, n in EXAMPLES]
     L += ["", "## Data sources and attribution", ""]
     L += [f"- **{n.title}.** {n.text}" for n in notices_for_dir(graph.settings.to_config().paths.processed_dir)]
+    L += ["", DERIVED_DATA_NOTE]
     return "\n".join(L) + "\n"
 
 
@@ -103,7 +104,8 @@ def sample_case(graph) -> str:
             L.append(f"| {line[2:].split(' [')[0]} | {rec['severity'] if rec else 'NOT IN EVIDENCE'} | {', '.join(flagged.get(n, [])) or 'no finding'} |")
     L += ["", f"Final checker: {'passed' if v['passed'] else 'FAILED'}; {v['stats']['clinical_claims']} clinical claims, "
           f"{v['stats']['citations']} citations, findings: {v['findings'] or 'none'}. The no-data pair and the "
-          "unresolved input are declared under Coverage Notes; the disclaimer and data line are added by code.", ""]
+          "unresolved input are declared under Coverage Notes; the disclaimer and data line are added by code.", "",
+          DERIVED_DATA_NOTE, ""]
     return "\n".join(L)
 
 

@@ -56,6 +56,14 @@ NONCOMMERCIAL_NOTICE = (
     "only; anything derived from that data must be shared under the same license, with the "
     "attributions above."
 )
+# For committed files that hold record-level content from the public build (examples/, docs/appendix/,
+# docs/images/, results/reference_set_public.*): those parts are under the data license, not the code's MIT.
+DERIVED_DATA_LICENSE = (
+    "Contains data derived from DDInter and SIDER 4.1 (PharmGuard public build), licensed CC BY-NC-SA 4.0 "
+    "(https://creativecommons.org/licenses/by-nc-sa/4.0/), not MIT: non-commercial use only, share alike. "
+    "Citations and attributions: docs/DATASETS.md."
+)
+DERIVED_DATA_NOTE = f"**Data license.** {DERIVED_DATA_LICENSE}"
 SYNTHETIC_NOTICE = ("Synthetic sample data: hand-written records for testing, not taken from any dataset "
                     "and not real clinical data.")
 

@@ -139,3 +139,5 @@ Data: public build from RxNorm Current Prescribable 2026-09-08, Drugs@FDA brand 
 | **simvastatin + warfarin** — curated severity: Minor (DDInter) | Minor | no finding |
 
 Final checker: passed; 5 clinical claims, 5 citations, findings: none. The no-data pair and the unresolved input are declared under Coverage Notes; the disclaimer and data line are added by code.
+
+**Data license.** Contains data derived from DDInter and SIDER 4.1 (PharmGuard public build), licensed CC BY-NC-SA 4.0 (https://creativecommons.org/licenses/by-nc-sa/4.0/), not MIT: non-commercial use only, share alike. Citations and attributions: docs/DATASETS.md.

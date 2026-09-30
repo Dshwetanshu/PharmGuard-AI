@@ -4,7 +4,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from src.data.attribution import (
-    DOC_END, DOC_START, NONCOMMERCIAL_NOTICE, RXNORM_STATEMENT, TWOSIDES_NOTICE, datasets_md_block,
+    DERIVED_DATA_LICENSE, DERIVED_DATA_NOTE, DOC_END, DOC_START, NONCOMMERCIAL_NOTICE, RXNORM_STATEMENT, TWOSIDES_NOTICE, datasets_md_block,
     notices_for_provenance,
 )
 
@@ -57,3 +57,22 @@ def test_every_notice_has_a_short_line_that_keeps_the_license_and_required_wordi
             assert (lic in n.text) == (lic in n.short) or n.key == "noncommercial", (n.key, lic)
     rx = next(n for n in notices if n.key == "rxnorm")
     assert RXNORM_STATEMENT in rx.short          # NLM's required statement stays visible
+
+
+DERIVED_FILES = (sorted((ROOT / "examples").glob("*.md")) + [ROOT / "docs" / "appendix" / "sample_case.md",
+                 ROOT / "docs" / "images" / "README.md", ROOT / "results" / "reference_set_public.md"])
+
+
+def test_files_with_record_level_real_data_carry_the_data_license():
+    """examples/, docs/appendix/, docs/images/ and the per-pair reference results are CC BY-NC-SA, not MIT."""
+    import json
+    missing = [str(p.relative_to(ROOT)) for p in DERIVED_FILES if not p.exists() or DERIVED_DATA_NOTE not in p.read_text()]
+    assert missing == []
+    assert json.loads((ROOT / "results" / "reference_set_public.json").read_text())["license"] == DERIVED_DATA_LICENSE
+
+
+def test_readme_license_section_separates_data_derived_parts_from_mit():
+    lic = (ROOT / "README.md").read_text().split("## License", 1)[1]
+    for part in ("examples/", "docs/appendix/", "docs/images/", "results/reference_set_public"):
+        assert part in lic
+    assert "not MIT" in lic

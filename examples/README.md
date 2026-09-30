@@ -22,3 +22,5 @@ PharmGuard's deterministic reports for 9 scenarios on the **public build** (the 
 - **Drugs@FDA.** Brand names, including discontinued products, from the Drugs@FDA data files (datdaf_20260924, files dated 2026-09-23), U.S. Food and Drug Administration; public domain. The FDA does not endorse this product.
 - **openFDA.** Data provided by the U.S. Food and Drug Administration (https://open.fda.gov). Used only when the optional FAERS lookup is enabled; FAERS reports are unvalidated, and the FDA does not endorse this product.
 - **Non-commercial use.** This build contains data licensed CC BY-NC-SA 4.0 (DDInter, SIDER 4.1). Non-commercial use only; anything derived from that data must be shared under the same license, with the attributions above.
+
+**Data license.** Contains data derived from DDInter and SIDER 4.1 (PharmGuard public build), licensed CC BY-NC-SA 4.0 (https://creativecommons.org/licenses/by-nc-sa/4.0/), not MIT: non-commercial use only, share alike. Citations and attributions: docs/DATASETS.md.

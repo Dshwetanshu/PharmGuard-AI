@@ -17,6 +17,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 from src.data.provenance import data_stamp  # noqa: E402
+from src.data.attribution import DERIVED_DATA_LICENSE, DERIVED_DATA_NOTE  # noqa: E402
 from src.evaluation.reference_set import OUTCOMES, load, score  # noqa: E402
 from src.graph import PharmGuardGraph, Settings  # noqa: E402
 
@@ -70,6 +71,7 @@ def to_markdown(r: dict) -> str:
     for x in r["results"]:
         L.append(f"| {x['pair'][0]} + {x['pair'][1]} | {x['expected']} | {x['min_severity'] or '—'} | {x['outcome']} | "
                  f"{x['grade'] or '—'} | {x['drugscom'] or '—'} |")
+    L += ["", DERIVED_DATA_NOTE]
     return "\n".join(L) + "\n"
 
 
@@ -90,7 +92,7 @@ def main() -> int:
         print(f"{len(rows)} rows; names that don't resolve to themselves: {bad or 'none'}")
         return 1 if bad else 0
     r = {"data": {**data_stamp(data_dir / "processed"), "data_dir": f"data/profiles/{args.profile}"},
-         **score(rows, graph.run)}
+         "license": DERIVED_DATA_LICENSE, **score(rows, graph.run)}
     if EVIDENCE.exists():
         from collections import Counter
         from src.evaluation.label_evidence import CLASS_TEXT, severity_comparison

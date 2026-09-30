@@ -5,6 +5,7 @@
     "provenance_sha256": "fc037dc5f67b9c0dd05c4664e48a4888a155d285dc0e1a11369fc971dab31073",
     "data_dir": "data/profiles/public"
   },
+  "license": "Contains data derived from DDInter and SIDER 4.1 (PharmGuard public build), licensed CC BY-NC-SA 4.0 (https://creativecommons.org/licenses/by-nc-sa/4.0/), not MIT: non-commercial use only, share alike. Citations and attributions: docs/DATASETS.md.",
   "rows": 41,
   "scored": 33,
   "skipped_unverified": 8,

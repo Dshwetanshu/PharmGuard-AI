@@ -39,3 +39,5 @@ Data: public build from RxNorm Current Prescribable 2026-09-08, Drugs@FDA brand 
 - Graph path: normalize → plan → retrieve → template → finalize
 - report_source: `deterministic`
 - Final checker: passed, 0 clinical claims, 0 citations
+
+**Data license.** Contains data derived from DDInter and SIDER 4.1 (PharmGuard public build), licensed CC BY-NC-SA 4.0 (https://creativecommons.org/licenses/by-nc-sa/4.0/), not MIT: non-commercial use only, share alike. Citations and attributions: docs/DATASETS.md.

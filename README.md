@@ -155,4 +155,9 @@ The code is MIT-licensed (see [`LICENSE`](LICENSE)). The data has its own licens
 - TWOSIDES has no stated license. It is used only in a local research build: no TWOSIDES records or row-level
   data are published, only aggregate evaluation statistics (for example the κ in Results).
 
+**Data-derived parts of this repo are not MIT.** [`examples/`](examples/), [`docs/appendix/`](docs/appendix/),
+the app screenshots in [`docs/images/`](docs/images/) and `results/reference_set_public.{md,json}` (per-pair
+DDInter grades) contain data derived from DDInter and SIDER. They fall under the data license, CC BY-NC-SA 4.0,
+not MIT, and each carries a note saying so. The other result files hold aggregate statistics only.
+
 Citations, license notices and the attribution text are in [`docs/DATASETS.md`](docs/DATASETS.md).
