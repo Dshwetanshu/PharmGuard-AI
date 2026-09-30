@@ -113,6 +113,24 @@ Without a verified build, the server stays up but fails closed. `POST /v1/check`
 `{"drugs": [...]}`; see [docs/API.md](docs/API.md). Deployment (Cloud Run behind Firebase Hosting, costs, rate
 limiting) is in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
+## Observability
+
+Tracing is optional and off by default (`PHARMGUARD_TRACING=phoenix` or `langsmith`). A trace has one root span
+per request and one span per graph node, carrying status, route, attempt number, finding codes, counts and
+timings, plus child spans for the RxNorm/FAERS HTTP calls and the LLM call (model, tokens, latency).
+**Redaction is on by default** (`PHARMGUARD_TRACE_REDACT=true`): inputs, outputs and prompts show as
+`__REDACTED__`, and PharmGuard's own attributes never contain drug names or report text. **Tracing is off on
+the live site**: the API builds its graph with tracing disabled and its image installs no tracing backend.
+Details are in [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md).
+
+<p align="center">
+  <img src="docs/images/phoenix-simulated-retry.png" width="430" alt="Phoenix trace of a simulated-LLM retry: generate_llm, validate, generate_llm, validate, finalize; inputs and outputs redacted">
+</p>
+<p align="center"><em>Simulated LLM. A local Phoenix trace of <code>demo.py --simulate-retry</code> on the
+synthetic sample, redaction on. The scripted first draft fails <code>validate</code> (its
+<code>pharmguard.*</code> attributes record <code>UNSUPPORTED_MECHANISM</code>) and the retry passes. The green
+"OK" is the span's OpenTelemetry status: the node ran without an error.</em></p>
+
 ## Limitations
 
 - **Severity grades are DDInter's.** PharmGuard doesn't reconcile references, and references disagree widely.
